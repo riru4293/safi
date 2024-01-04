@@ -63,7 +63,7 @@ import jp.mydns.projectk.safi.value.Condition;
 /**
  * Abstract identity content data access object for batch processing.
  *
- * @param <C> Content entity type
+ * @param <C> content entity type
  *
  * @author riru
  * @version 1.0.0

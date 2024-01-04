@@ -122,8 +122,8 @@ public interface ContentValue extends PersistableValue, RecordableValue {
     /**
      * Abstract builder of the {@link ContentValue}.
      *
-     * @param <B> Builder type
-     * @param <V> Value type
+     * @param <B> builder type
+     * @param <V> value type
      * @author riru
      * @version 1.0.0
      * @since 1.0.0
