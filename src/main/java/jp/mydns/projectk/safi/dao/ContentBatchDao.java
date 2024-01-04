@@ -320,17 +320,17 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
 
         CriteriaQuery<Tuple> cq = em.getCriteriaBuilder().createTupleQuery();
 
-        return JpaUtils.toChunkedStream(em.createQuery(cq.multiselect(buildSelections(cq.from(getContentEntityClass())))))
-                .map(convertElements(JpaUtils::toMap));
+        return JpaUtils.toChunkedStream(em.createQuery(cq.multiselect(buildSelections(cq.from(getContentEntityClass()))
+                .toArray(Selection<?>[]::new)))).map(convertElements(JpaUtils::toMap));
 
     }
 
     /**
-     * Build fetch elements for {@link #fetchAll() }
+     * Build fetch elements for {@link #fetchAll()}
      *
      * @param p path of the content entity
      * @return list of the {@code Selection}
      * @since 1.0.0
      */
-    protected abstract Selection<?>[] buildSelections(Path<C> p);
+    protected abstract List<Selection<String>> buildSelections(Path<C> p);
 }

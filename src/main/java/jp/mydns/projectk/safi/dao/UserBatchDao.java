@@ -29,6 +29,8 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Selection;
 import jakarta.persistence.metamodel.SingularAttribute;
+import java.util.List;
+import java.util.stream.Stream;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.UserPathContext;
 import jp.mydns.projectk.safi.entity.ContentEntity_;
@@ -70,24 +72,24 @@ public class UserBatchDao extends ContentBatchDao<UserEntity> {
     }
 
     @Override
-    protected Selection<?>[] buildSelections(Path<UserEntity> p) {
-        return new Selection<?>[]{
-            p.get(ContentEntity_.id).alias("id"),
-            p.get(ContentEntity_.txtEnabled).alias("enabled"),
-            p.get(ContentEntity_.name).alias("name"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att01).alias("att01"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att02).alias("att02"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att03).alias("att03"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att04).alias("att04"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att05).alias("att05"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att06).alias("att06"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att07).alias("att07"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att08).alias("att08"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att09).alias("att09"),
-            p.get(ContentEntity_.attsEmb).get(AttsEmb_.att10).alias("att10"),
-            p.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.from).alias("from"),
-            p.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.to).alias("to"),
-            p.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.ban).alias("ban")
-        };
+    protected List<Selection<String>> buildSelections(Path<UserEntity> p) {
+        return Stream.of(
+                p.get(ContentEntity_.id).alias("id"),
+                p.get(ContentEntity_.txtEnabled).alias("enabled"),
+                p.get(ContentEntity_.name).alias("name"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att01).alias("att01"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att02).alias("att02"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att03).alias("att03"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att04).alias("att04"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att05).alias("att05"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att06).alias("att06"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att07).alias("att07"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att08).alias("att08"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att09).alias("att09"),
+                p.get(ContentEntity_.attsEmb).get(AttsEmb_.att10).alias("att10"),
+                p.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.from).alias("from"),
+                p.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.to).alias("to"),
+                p.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.ban).alias("ban")
+        ).toList();
     }
 }
