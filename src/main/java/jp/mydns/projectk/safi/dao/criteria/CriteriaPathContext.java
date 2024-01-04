@@ -41,10 +41,11 @@ import java.util.function.Supplier;
 public interface CriteriaPathContext {
 
     /**
-     * Supply the {@code IllegalArgumentException}. Using when specified undefined element name.
+     * Returns a {@code Supplier} that throw {@code IllegalArgumentException}. Using when specified undefined element
+     * name.
      *
      * @param name element name
-     * @return supplier that throw {@code IllegalArgumentException}
+     * @return {@code Supplier} that throw {@code IllegalArgumentException}
      * @since 1.0.0
      */
     static Supplier<IllegalArgumentException> undefinedPath(String name) {
@@ -52,7 +53,7 @@ public interface CriteriaPathContext {
     }
 
     /**
-     * Resolve the path from name.
+     * Resolve the element path from element name.
      *
      * @param name element name
      * @return element path
@@ -83,7 +84,7 @@ public interface CriteriaPathContext {
         }
 
         /**
-         * Resolve the path from name.
+         * Resolve the element path from element name.
          *
          * @param name element name
          * @return element path
