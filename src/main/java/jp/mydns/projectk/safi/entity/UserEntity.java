@@ -78,9 +78,8 @@ public class UserEntity extends ContentEntity {
     }
 
     /**
-     * Indicates that other object is equal to this one.
+     * Indicates that other object is equal to this one. Equal if primary keys are equal in the same class
      *
-     * @implSpec Equal if primary keys are equal in the same class
      * @param other an any object
      * @return {@code true} if equals, otherwise {@code false}.
      * @since 1.0.0

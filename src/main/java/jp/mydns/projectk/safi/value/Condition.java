@@ -53,6 +53,14 @@ import java.util.stream.Stream;
  * representation increases availability. It is easy to include in communications or store in a database or file.
  *
  * <p>
+ * Implementation requirements.
+ * <ul>
+ * <li>This class is immutable and thread-safe.</li>
+ * <li>This class can be converted to JSON Object.</li>
+ * <li>This and JSON can be converted bidirectionally.</li>
+ * </ul>
+ *
+ * <p>
  * JSON Format<pre><code>
  * {
  *     "operation": "AND",
@@ -71,8 +79,6 @@ import java.util.stream.Stream;
  * }
  * </code></pre>
  *
- * @implSpec This and JSON can be converted bidirectionally.
- * @implSpec This class is immutable and thread-safe.
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
@@ -178,6 +184,12 @@ public interface Condition {
     /**
      * Combination of filtering conditions.
      *
+     * <p>
+     * Implementation requirements.
+     * <ul>
+     * <li>This class is immutable and thread-safe.</li>
+     * </ul>
+     *
      * <pre>JSON Example:
      * <code>
      * {
@@ -186,7 +198,6 @@ public interface Condition {
      * }
      * </code></pre>
      *
-     * @implSpec This and JSON can be converted bidirectionally.
      * @author riru
      * @version 1.0.0
      * @since 1.0.0
@@ -207,6 +218,12 @@ public interface Condition {
     /**
      * A single filtering condition.
      *
+     * <p>
+     * Implementation requirements.
+     * <ul>
+     * <li>This class is immutable and thread-safe.</li>
+     * </ul>
+     *
      * <pre>JSON Example:
      * <code>
      * {
@@ -216,7 +233,6 @@ public interface Condition {
      * }
      * </code></pre>
      *
-     * @implSpec This and JSON can be converted bidirectionally.
      * @author riru
      * @version 1.0.0
      * @since 1.0.0
@@ -246,7 +262,6 @@ public interface Condition {
     /**
      * JSON deserializer for {@code Condition}.
      *
-     * @implSpec This class is mutable and non thread-safe.
      * @author riru
      * @version 1.0.0
      * @since 1.0.0

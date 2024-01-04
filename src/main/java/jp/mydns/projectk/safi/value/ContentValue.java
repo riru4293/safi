@@ -47,7 +47,6 @@ import jp.mydns.projectk.safi.validator.Strict;
  * Implementation requirements.
  * <ul>
  * <li>This class is immutable and thread-safe.</li>
- * <li>This class can be converted to JSON Object.</li>
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
