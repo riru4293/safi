@@ -1,0 +1,269 @@
+/*
+ * Copyright (c) 2024, Project-K
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * * Redistributions of source code must retain the above copyright notice, this
+ *   list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ *   this list of conditions and the following disclaimer in the documentation
+ *   and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+package jp.mydns.projectk.safi.entity;
+
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import jp.mydns.projectk.safi.validator.Strict;
+import jp.mydns.projectk.safi.validator.TimeAccuracy;
+import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.value.PersistableValue;
+
+/**
+ * Common entity. This class has one version number field qualified with {@link Version}. Thereby realizing an
+ * optimistic lock of entity. And also this class implements entity's common footer items. Footer items are
+ * automatically set by {@link FooterUpdater}.
+ *
+ * @author riru
+ * @version 1.0.0
+ * @since 1.0.0
+ */
+@MappedSuperclass
+@EntityListeners({FooterUpdater.class})
+public abstract class CommonEntity implements Serializable, PersistableValue {
+
+    private static final long serialVersionUID = 7002393193138803696L;
+
+    @Basic(optional = false)
+    @Column(name = "note")
+    protected String note;
+
+    @Version
+    @Column(name = "version", nullable = false)
+    protected int version;
+
+    @Basic(optional = false)
+    @Column(name = "reg_ts", updatable = false, nullable = false)
+    protected LocalDateTime registerTime;
+
+    @Basic(optional = false)
+    @Column(name = "reg_id", updatable = false, nullable = false, length = 250)
+    protected String registerAccountId;
+
+    @Basic(optional = false)
+    @Column(name = "reg_ap", updatable = false, nullable = false, length = 250)
+    protected String registerProcessName;
+
+    @Basic(optional = false)
+    @Column(name = "upd_ts", nullable = false)
+    protected LocalDateTime updateTime;
+
+    @Basic(optional = false)
+    @Column(name = "upd_id", nullable = false, length = 250)
+    protected String updateAccountId;
+
+    @Basic(optional = false)
+    @Column(name = "upd_ap", nullable = false, length = 250)
+    protected String updateProcessName;
+
+    /**
+     * Get a note for this entity.
+     *
+     * @return note. It may be {@code null}.
+     * @since 1.0.0
+     */
+    @Override
+    public String getNote() {
+        return note;
+    }
+
+    /**
+     * Set a note for this entity. This value is only used to record notes about the data records represented by the
+     * entity and is never used to process.
+     *
+     * @param note note. It can be set {@code null}.
+     * @since 1.0.0
+     */
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    /**
+     * Get entity version.
+     *
+     * @return entity version
+     * @since 1.0.0
+     */
+    @PositiveOrZero(groups = {Strict.class})
+    @Override
+    public int getVersion() {
+        return version;
+    }
+
+    /**
+     * Set entity version. This value used for optimistic locking. Will be thrown {@code OptimisticLockException} when
+     * inserted or updated when the configured version number is not equal to that of the database.
+     *
+     * @param version entity version
+     * @since 1.0.0
+     */
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    /**
+     * Get time the entity was persisted.
+     *
+     * @return persisted time. It time zone is UTC.
+     * @since 1.0.0
+     */
+    @NotNull(groups = {Strict.class})
+    @TimeRange(groups = {Strict.class})
+    @TimeAccuracy(groups = {Strict.class})
+    public LocalDateTime getRegisterTime() {
+        return registerTime;
+    }
+
+    /**
+     * Set time the entity was persisted.
+     *
+     * @param registerTime persisted time. It time zone is UTC.
+     * @since 1.0.0
+     */
+    public void setRegisterTime(LocalDateTime registerTime) {
+        this.registerTime = registerTime;
+    }
+
+    /**
+     * Get id of the user who made the entity persistent.
+     *
+     * @return persisted user id
+     * @since 1.0.0
+     */
+    @NotBlank(groups = {Strict.class})
+    @Size(max = 250, groups = {Strict.class})
+    public String getRegisterAccountId() {
+        return registerAccountId;
+    }
+
+    /**
+     * Set id of the user who made the entity persistent.
+     *
+     * @param registerAccountId persisted user id
+     * @since 1.0.0
+     */
+    public void setRegisterAccountId(String registerAccountId) {
+        this.registerAccountId = registerAccountId;
+    }
+
+    /**
+     * Get name of the process who made the entity persistent.
+     *
+     * @return persisted process name
+     * @since 1.0.0
+     */
+    @NotBlank(groups = {Strict.class})
+    @Size(max = 250, groups = {Strict.class})
+    public String getRegisterProcessName() {
+        return registerProcessName;
+    }
+
+    /**
+     * Set name of the process who made the entity persistent.
+     *
+     * @param registerProcessName persisted process name
+     * @since 1.0.0
+     */
+    public void setRegisterProcessName(String registerProcessName) {
+        this.registerProcessName = registerProcessName;
+    }
+
+    /**
+     * Get time the entity was last updated.
+     *
+     * @return last updated time. It time zone is UTC.
+     * @since 1.0.0
+     */
+    @NotNull(groups = {Strict.class})
+    @TimeRange(groups = {Strict.class})
+    @TimeAccuracy(groups = {Strict.class})
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    /**
+     * Set time the entity was last updated.
+     *
+     * @param updateTime last updated time, It time zone is UTC.
+     * @since 1.0.0
+     */
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    /**
+     * Get id of the user who made the entity last updated.
+     *
+     * @return last updated user id
+     * @since 1.0.0
+     */
+    @NotBlank(groups = {Strict.class})
+    @Size(max = 250, groups = {Strict.class})
+    public String getUpdateAccountId() {
+        return updateAccountId;
+    }
+
+    /**
+     * Set id of the user who made the entity last updated.
+     *
+     * @param updateAccountId last updated user id
+     * @since 1.0.0
+     */
+    public void setUpdateAccountId(String updateAccountId) {
+        this.updateAccountId = updateAccountId;
+    }
+
+    /**
+     * Get name of the process who made the entity last updated.
+     *
+     * @return last updated process name
+     * @since 1.0.0
+     */
+    @NotBlank(groups = {Strict.class})
+    @Size(max = 250, groups = {Strict.class})
+    public String getUpdateProcessName() {
+        return updateProcessName;
+    }
+
+    /**
+     * Set name of the process who made the entity last updated.
+     *
+     * @param updateProcessName last updated process name
+     * @since 1.0.0
+     */
+    public void setUpdateProcessName(String updateProcessName) {
+        this.updateProcessName = updateProcessName;
+    }
+}
