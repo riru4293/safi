@@ -47,7 +47,6 @@ import jp.mydns.projectk.safi.validator.Strict;
  * Implementation requirements.
  * <ul>
  * <li>This class is immutable and thread-safe.</li>
- * <li>This class can be converted to JSON Object.</li>
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
@@ -122,8 +121,8 @@ public interface ContentValue extends PersistableValue, RecordableValue {
     /**
      * Abstract builder of the {@link ContentValue}.
      *
-     * @param <B> Builder type
-     * @param <V> Value type
+     * @param <B> builder type
+     * @param <V> value type
      * @author riru
      * @version 1.0.0
      * @since 1.0.0

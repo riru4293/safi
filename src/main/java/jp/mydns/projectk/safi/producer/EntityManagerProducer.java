@@ -68,7 +68,7 @@ public class EntityManagerProducer {
     /**
      * Produce the {@code EntityManager} for batch processing.
      *
-     * @return the {@code EntityManager} for batch
+     * @return the {@code EntityManager} for batch processing
      * @since 1.0.0
      */
     @ForBatch

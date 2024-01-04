@@ -39,8 +39,13 @@ import java.util.stream.Stream;
 /**
  * Filtering operation. Interface for {@link Single} or {@link Multi}.
  *
- * @implSpec This and JSON can be converted bidirectionally.
- * @implSpec This class is immutable and thread-safe.
+ * <p>
+ * Implementation requirements.
+ * <ul>
+ * <li>This class is immutable and thread-safe.</li>
+ * <li>This and JSON can be converted bidirectionally.</li>
+ * </ul>
+ *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
@@ -166,7 +171,6 @@ public interface FilteringOperation {
     /**
      * JSON deserializer for {@code FilteringOperation}.
      *
-     * @implSpec This class is immutable and thread-safe.
      * @author riru
      * @version 1.0.0
      * @since 1.0.0

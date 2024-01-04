@@ -56,14 +56,14 @@ import jp.mydns.projectk.safi.entity.ImportWorkEntity;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity_;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb_;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer;
-import static jp.mydns.projectk.safi.util.FunctionUtils.applyToList;
 import jp.mydns.projectk.safi.util.JpaUtils;
+import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
 import jp.mydns.projectk.safi.value.Condition;
 
 /**
  * Abstract identity content data access object for batch processing.
  *
- * @param <C> Content entity type
+ * @param <C> content entity type
  *
  * @author riru
  * @version 1.0.0
@@ -103,16 +103,16 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     /**
      * Get the {@code CriteriaPathContext} made from entity path.
      *
-     * @param p path of the content entity
+     * @param contentEntityPath path of the content entity
      * @return the {@code CriteriaPathContext} made from entity path
      * @throws NullPointerException if {@code contentEntityPath} is {@code null}
      * @since 1.0.0
      */
-    protected abstract CriteriaPathContext getPathContext(Path<C> p);
+    protected abstract CriteriaPathContext getPathContext(Path<C> contentEntityPath);
 
     /**
-     * Get id list of to be added content. They are id list that exist only in the import-work compared to the content
-     * entity.
+     * Get contents that will be added by import. They are id list that exist only in the import-work compared to the
+     * content entity.
      *
      * @param targets target id list. Further refine the results with these id list.
      * @return id list of to be added content
@@ -148,7 +148,8 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get the contents to be updated. They exist both in import-work and content entity, yet have different values.
+     * Get contents that will be updated by import. They exist both in import-work and content entity, yet have
+     * different values.
      *
      * @param targets target id list. Further refine the results with these id list.
      * @return to be updated content
@@ -212,7 +213,8 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get count of the lost contents. They are exist only in the content entity compared to the import-work.
+     * Get count of contents that will be lost by import. They are exist only in the content entity compared to the
+     * import-work.
      *
      * @param additional additional extract condition
      * @return count of the lost contents
@@ -220,12 +222,12 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public long getCountOfLost(Condition additional) {
+    public long getCountOfLosts(Condition additional) {
         return buildGetLostQuery(Long.class, Objects.requireNonNull(additional)).getSingleResult();
     }
 
     /**
-     * Get the lost contents. They are exist only in the content entity compared to the import-work.
+     * Get contents that will be lost by import. They are exist only in the content entity compared to the import-work.
      *
      * @param additional additional extract condition
      * @return lost contents
@@ -275,9 +277,8 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get contents that require rebuilding.
-     * <p>
-     * Extracts content that is invalid and has a refTime with in valid term, or versa.
+     * Get contents that require rebuilding. Extracts content that is invalid and has a refTime with in valid term, or
+     * versa.
      *
      * @param refTime reference time for judging rebuild
      * @return contents that require rebuilding
@@ -311,26 +312,27 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Extract the all content as {@code Map} for exportation.
+     * Extract for exportation contents as chunked stream of {@code Map<String, String>}.
      *
-     * @return all content
+     * @return exportation contents
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public Stream<List<Map<String, String>>> fetchAll() {
+    public Stream<List<Map<String, String>>> getExports() {
 
         CriteriaQuery<Tuple> cq = em.getCriteriaBuilder().createTupleQuery();
 
-        return JpaUtils.toChunkedStream(em.createQuery(cq.multiselect(buildSelections(cq.from(getContentEntityClass())))))
-                .map(applyToList(JpaUtils::toMap));
+        return JpaUtils.toChunkedStream(em.createQuery(cq.multiselect(getExportItems(cq.from(getContentEntityClass()))
+                .toArray(Selection<?>[]::new)))).map(convertElements(JpaUtils::toMap));
 
     }
 
     /**
-     * Build fetch elements for {@link #fetchAll() }
+     * Get export items for {@link #getExports()}
      *
-     * @param p path of the content entity
+     * @param contentEntityPath path of the content entity
      * @return list of the {@code Selection}
      * @since 1.0.0
      */
-    protected abstract Selection<?>[] buildSelections(Path<C> p);
+    protected abstract List<Selection<String>> getExportItems(Path<C> contentEntityPath);
 }
