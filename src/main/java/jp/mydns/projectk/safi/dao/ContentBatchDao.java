@@ -56,8 +56,8 @@ import jp.mydns.projectk.safi.entity.ImportWorkEntity;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity_;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb_;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer;
-import static jp.mydns.projectk.safi.util.FunctionUtils.applyToList;
 import jp.mydns.projectk.safi.util.JpaUtils;
+import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
 import jp.mydns.projectk.safi.value.Condition;
 
 /**
@@ -321,7 +321,7 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
         CriteriaQuery<Tuple> cq = em.getCriteriaBuilder().createTupleQuery();
 
         return JpaUtils.toChunkedStream(em.createQuery(cq.multiselect(buildSelections(cq.from(getContentEntityClass())))))
-                .map(applyToList(JpaUtils::toMap));
+                .map(convertElements(JpaUtils::toMap));
 
     }
 

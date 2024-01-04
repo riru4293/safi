@@ -46,7 +46,7 @@ import static java.util.function.Function.identity;
 import java.util.function.Predicate;
 import static java.util.function.Predicate.not;
 import java.util.stream.Stream;
-import static jp.mydns.projectk.safi.util.PredicateUtils.p;
+import static jp.mydns.projectk.safi.util.LambdaUtils.p;
 
 /**
  * Utilities for {@link JsonValue}.
