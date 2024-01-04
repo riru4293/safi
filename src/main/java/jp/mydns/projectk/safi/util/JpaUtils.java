@@ -72,14 +72,13 @@ public class JpaUtils {
     }
 
     /**
-     * Build a chunked stream from query result. Implementation depends on the EclipseLink.
+     * Build a chunked stream from query results. Implementation depends on the EclipseLink.
      *
-     * @param <T> Entity type
+     * @param <T> entity type
      * @param query typed query
-     * @return chunked stream
+     * @return chunked stream of query results
      * @throws NullPointerException if {@code query} is {@code null}
      * @throws PersistenceException if the query execution was failed
-     * @see QueryHints
      * @since 1.0.0
      */
     public static <T> Stream<List<T>> toChunkedStream(TypedQuery<T> query) {
@@ -87,13 +86,14 @@ public class JpaUtils {
     }
 
     /**
-     * Build a chunked stream from query result. Implementation depends on the EclipseLink.
+     * Build a chunked stream from query results. Implementation depends on the EclipseLink.
      *
-     * @param <T> Entity type
+     * @param <T> entity type
      * @param query typed query
      * @param hints additional hints
-     * @return chunked stream
+     * @return chunked stream of query results
      * @throws NullPointerException if any argument is {@code null}
+     * @throws ClassCastException if JPA implement is not EclipseLink
      * @throws PersistenceException if the query execution was failed
      * @see QueryHints
      * @since 1.0.0
@@ -140,31 +140,31 @@ public class JpaUtils {
     /**
      * Conversion to {@code Map<String, String>} from {@code Tuple}.
      *
-     * @param t the {@code Tuple}
+     * @param tuple the {@code Tuple}
      * @return a map where the key is the alias name and the value is the string representation. Alias names may contain
      * certain prefixes, but key names do not. The prefix has {@value #PREFIX_JSONOBJECT},
      * {@value #PREFIX_JSONARRAY}.
-     * @throws NullPointerException if {@code t} is {@code null}
+     * @throws NullPointerException if {@code tuple} is {@code null}
      * @since 1.0.0
      */
-    public static Map<String, String> toMap(Tuple t) {
-        return Objects.requireNonNull(t).getElements().stream().map(TupleElement::getAlias).filter(Objects::nonNull)
-                .collect(toUnmodifiableMap(JpaUtils::removePrefix, n -> String.valueOf(t.get(n))));
+    public static Map<String, String> toMap(Tuple tuple) {
+        return Objects.requireNonNull(tuple).getElements().stream().map(TupleElement::getAlias).filter(Objects::nonNull)
+                .collect(toUnmodifiableMap(JpaUtils::removePrefix, n -> String.valueOf(tuple.get(n))));
     }
 
     /**
      * Conversion to {@code JsonObject} from {@code Tuple}.
      *
-     * @param t the {@code Tuple}
+     * @param tuple the {@code Tuple}
      * @return a {@code JsonObject} where the key is the alias name. Alias names may contain certain prefixes, but key
      * names do not. The prefix has {@value #PREFIX_JSONOBJECT},
      * {@value #PREFIX_JSONARRAY}.
-     * @throws NullPointerException if {@code t} is {@code null}
+     * @throws NullPointerException if {@code tuple} is {@code null}
      * @since 1.0.0
      */
-    public static JsonObject toJsonObject(Tuple t) {
-        return Objects.requireNonNull(t).getElements().stream().map(TupleElement::getAlias).filter(Objects::nonNull)
-                .map(a -> toJsonEntry(a, t)).collect(JsonCollectors.toJsonObject());
+    public static JsonObject toJsonObject(Tuple tuple) {
+        return Objects.requireNonNull(tuple).getElements().stream().map(TupleElement::getAlias).filter(Objects::nonNull)
+                .map(a -> toJsonEntry(a, tuple)).collect(JsonCollectors.toJsonObject());
     }
 
     private static Map.Entry<String, JsonValue> toJsonEntry(String a, Tuple t) {
