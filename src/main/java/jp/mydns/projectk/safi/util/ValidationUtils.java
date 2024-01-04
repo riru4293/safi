@@ -33,7 +33,7 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * Utilities for validation.
+ * Utilities for Jakarta Bean Validation.
  *
  * <p>
  * Implementation requirements.
@@ -51,25 +51,24 @@ public class ValidationUtils {
     }
 
     /**
-     * Validate that the value is valid.
+     * Verify that the value is valid using {@code jakarta.validation.Validator}.
      *
-     * @param <V> Value type
-     * @param value validation value
+     * @param <T> value type
+     * @param value value that to be validated
      * @param validator the {@code Validator}
      * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-     * @return valid value
+     * @return value as is that received by argument {@code value}
      * @throws NullPointerException if any argument is {@code null}
-     * @throws ConstraintViolationException if {@code value} has constraint violation
+     * @throws ConstraintViolationException if {@code value} is invalid
      * @since 1.0.0
      */
-    public static <V> V requireValid(V value, Validator validator, Class<?>... groups) {
+    public static <T> T requireValid(T value, Validator validator, Class<?>... groups) {
 
         Objects.requireNonNull(value);
         Objects.requireNonNull(validator);
-
         Stream.of(Objects.requireNonNull(groups)).forEach(Objects::requireNonNull);
 
-        Set<ConstraintViolation<V>> violations = validator.validate(value, groups);
+        Set<ConstraintViolation<T>> violations = validator.validate(value, groups);
 
         if (!violations.isEmpty()) {
             throw new ConstraintViolationException(violations);
