@@ -71,6 +71,7 @@ public class ImportWorkDao {
      * @throws NullPointerException if {@code works} is {@code null}, or if contains {@code null} in the {@code works}.
      * @throws TransactionRequiredException if there is no transaction
      * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
      */
     public void appends(Stream<ImportWorkEntity> works) {
         works.forEach(comDao::persist);
