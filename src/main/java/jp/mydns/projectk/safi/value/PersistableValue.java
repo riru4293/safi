@@ -68,7 +68,7 @@ public interface PersistableValue {
     int getVersion();
 
     /**
-     * Abstract builder of the {@link Persistable}.
+     * Abstract builder of the {@link PersistableValue}.
      *
      * @param <B> builder type
      * @param <V> value type
