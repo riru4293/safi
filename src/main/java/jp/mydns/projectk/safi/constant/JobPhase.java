@@ -26,7 +26,7 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * THe phase of job execution.
+ * The phase of job execution.
  *
  * @author riru
  * @version 1.0.0
