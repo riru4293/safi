@@ -78,28 +78,21 @@ public class TimeUtils {
      * @since 1.0.0
      */
     public static LocalDateTime toLocalDateTime(String localDateTime) {
-
-        Objects.requireNonNull(localDateTime);
-
-        return LocalDateTime.parse(localDateTime, ISO_LOCAL_DATE_TIME);
+        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
     }
 
     /**
      * Try parse to the {@code LocalDateTime}.
      *
      * @param localDateTime string representation of the {@code LocalDateTime}
-     * @return the {@code LocalDateTime}
+     * @return the {@code LocalDateTime}. Empty if failed parse to the {@code LocalDateTime}.
      * @see DateTimeFormatter#ISO_LOCAL_DATE_TIME
      * @since 1.0.0
      */
     public static Optional<LocalDateTime> tryToLocalDateTime(String localDateTime) {
-
         try {
-
             return Optional.of(toLocalDateTime(localDateTime));
-
         } catch (RuntimeException ignore) {
-
             return Optional.empty();
         }
     }
