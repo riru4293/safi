@@ -176,8 +176,10 @@ public class AttsEmb implements Serializable {
      */
     @Override
     public String toString() {
-        return "Attributes{" + "att01=" + att01 + ", att02=" + att02 + ", att03=" + att03 + ", att04=" + att04
-                + ", att05=" + att05 + ", att06=" + att06 + ", att07=" + att07 + ", att08=" + att08
-                + ", att09=" + att09 + ", att10=" + att10 + '}';
+        return "Attributes{" + AttName.ATT01 + "=" + att01 + ", " + AttName.ATT02 + "=" + att02
+                + ", " + AttName.ATT03 + "=" + att03 + ", " + AttName.ATT04 + "=" + att04
+                + ", " + AttName.ATT05 + "=" + att05 + ", " + AttName.ATT06 + "=" + att06
+                + ", " + AttName.ATT07 + "=" + att07 + ", " + AttName.ATT08 + "=" + att08
+                + ", " + AttName.ATT09 + "=" + att09 + ", " + AttName.ATT10 + "=" + att10 + '}';
     }
 }
