@@ -91,7 +91,7 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
     protected String txtEnabled;
 
     @Embedded
-    protected TxtValidityPeriodEmb txtValidityPeriod;
+    protected TxtValidityPeriodEmb txtValidityPeriod = new TxtValidityPeriodEmb();
 
     /**
      * Get content id.
