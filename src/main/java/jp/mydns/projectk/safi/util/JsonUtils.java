@@ -37,6 +37,7 @@ import jakarta.json.stream.JsonParser;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Objects;
@@ -165,7 +166,19 @@ public class JsonUtils {
     /**
      * Returns a JSON string representation of time.
      *
-     * @param localDateTime the time. It's can be {@code null}.
+     * @param offsetDateTime the {@code OffsetDateTime}. It's can be {@code null}.
+     * @return a JSON string representation of time. That format is ISO8601. Return {@link JsonValue#NULL} if
+     * {@code offsetDateTime} is {@code null}
+     * @since 1.0.0
+     */
+    public static JsonValue toJsonValue(OffsetDateTime offsetDateTime) {
+        return toJsonValue(TimeUtils.toLocalDateTime(offsetDateTime));
+    }
+
+    /**
+     * Returns a JSON string representation of time.
+     *
+     * @param localDateTime the {@code LocalDateTime}. It's can be {@code null}.
      * @return a JSON string representation of time. That format is ISO8601. Return {@link JsonValue#NULL} if
      * {@code localDateTime} is {@code null}
      * @since 1.0.0
