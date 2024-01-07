@@ -315,4 +315,31 @@ public interface ContentValue extends PersistableValue, RecordableValue {
             }
         }
     }
+
+    /**
+     * Digest value generator for identity contents.
+     *
+     * <p>
+     * Implementation requirements.
+     * <ul>
+     * <li>This class is immutable and thread-safe.</li>
+     * </ul>
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    interface DigestGenerator {
+
+        /**
+         * Generate a digest value.
+         *
+         * @param sources source values
+         * @return digest value
+         * @throws NullPointerException when {@code sources} is {@code null}
+         * @throws IllegalArgumentException if contains an unexpected element in {@code sources}
+         * @since 1.0.0
+         */
+        String generate(Object... sources);
+    }
 }

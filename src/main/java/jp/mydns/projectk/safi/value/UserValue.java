@@ -34,8 +34,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.lang.reflect.Type;
 import java.util.Objects;
-import java.util.function.Function;
-import java.util.stream.Stream;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
@@ -95,18 +93,18 @@ public interface UserValue extends ContentValue {
      */
     class Builder extends ContentValue.AbstractBuilder<Builder, UserValue> {
 
-        private final Function<Stream<Object>, String> digestGen;
+        private final DigestGenerator digestGenerator;
 
         /**
          * Constructor.
          *
-         * @param digestGen digest value generator
-         * @throws NullPointerException if {@code digestGen} is {@code null}
+         * @param digestGenerator digest value generator
+         * @throws NullPointerException if {@code digestGenerator} is {@code null}
          * @since 1.0.0
          */
-        public Builder(Function<Stream<Object>, String> digestGen) {
+        public Builder(DigestGenerator digestGenerator) {
             super(Builder.class);
-            this.digestGen = Objects.requireNonNull(digestGen);
+            this.digestGenerator = Objects.requireNonNull(digestGenerator);
         }
 
         /**
@@ -121,7 +119,7 @@ public interface UserValue extends ContentValue {
          */
         @Override
         public UserValue build(Validator validator, Class<?>... groups) {
-            String digest = digestGen.apply(Stream.of(id, enabled, name, atts, validityPeriod));
+            final String digest = digestGenerator.generate(id, enabled, name, atts, validityPeriod);
             return ValidationUtils.requireValid(new Bean(this, digest), validator, groups);
         }
 
