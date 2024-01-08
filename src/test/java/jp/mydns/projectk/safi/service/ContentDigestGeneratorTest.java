@@ -88,7 +88,7 @@ class ContentDigestGeneratorTest {
 
         var instance = new ContentDigestGenerator();
 
-        assertThatIllegalArgumentException().isThrownBy(() -> instance.generate(new Object()))
+        assertThatIllegalArgumentException().isThrownBy(() -> instance.generate(Map.of("att01", "value")))
                 .withMessage("Unexpected type as digest source.");
 
     }
