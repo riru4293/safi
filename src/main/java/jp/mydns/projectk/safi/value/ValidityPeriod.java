@@ -39,6 +39,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
+import java.util.function.Predicate;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.Strict;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
@@ -121,6 +122,22 @@ public interface ValidityPeriod {
         OffsetDateTime r = OffsetDateTime.of(refTime, ZoneOffset.UTC);
 
         return !isBan() && !r.isBefore(getFrom()) && !r.isAfter(getTo());
+
+    }
+
+    /**
+     * Returns a {@code Predicate} that test whether {@code ValidityPeriod} contains {@code refTime}.
+     *
+     * @param refTime reference date time. It timezone is UTC.
+     * @return a {@code Predicate} that test whether {@code ValidityPeriod} contains {@code refTime}
+     * @throws NullPointerException if {@code refTime} is {@code null}
+     * @since 1.0.0
+     */
+    static Predicate<ValidityPeriod> containsWith(LocalDateTime refTime) {
+
+        Objects.requireNonNull(refTime);
+
+        return v -> v.isEnabled(refTime);
 
     }
 
