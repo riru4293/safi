@@ -25,8 +25,10 @@
  */
 package jp.mydns.projectk.safi.constant;
 
+import jp.mydns.projectk.safi.value.ContentValue;
+
 /**
- * Identity content kind.
+ * Kind definitions of the {@link ContentValue}.
  *
  * @author riru
  * @version 1.0.0
@@ -34,9 +36,43 @@ package jp.mydns.projectk.safi.constant;
  */
 public enum ContentKind {
     /**
-     * Indicate that identity content of the user.
+     * Represents the identity content <i>User</i>.
      *
      * @since 1.0.0
      */
     USER,
+    /**
+     * Represents the identity content <i>Authentication-Medium</i>.
+     *
+     * @since 1.0.0
+     */
+    MEDIUM,
+    /**
+     * Represents the identity content <i>Organization</i> #2.
+     *
+     * @since 1.0.0
+     */
+    ORG1,
+    /**
+     * Represents the identity content <i>Organization</i> #2.
+     *
+     * @since 1.0.0
+     */
+    ORG2,
+    /**
+     * Represents the identity content <i>Belong-Organizations</i>.
+     *
+     * @since 1.0.0
+     */
+    BELONG_ORG,
+    /**
+     * Represents the identity content <i>Group</i>.
+     */
+    GROUP,
+    /**
+     * Represents the identity content <i>Belong-Group</i>.
+     *
+     * @since 1.0.0
+     */
+    BELONG_GROUP,
 }

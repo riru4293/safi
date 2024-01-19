@@ -33,8 +33,8 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.value.ContentValue;
 
 /**
- * Attribute key definitions. The {@code attribute} is a key-value format element of {@link ContentValue} whose key is
- * {@code attribute-key}. Here we define its key.
+ * Definitions of the <i>Attribute-Key</i>. The <i>Attribute</i> is a key-value format element of the
+ * {@link ContentValue} whose key is <i>Attribute-Key</i>.
  *
  * @author riru
  * @version 1.0.0
@@ -42,61 +42,61 @@ import jp.mydns.projectk.safi.value.ContentValue;
  */
 public enum AttKey {
     /**
-     * Attribute 1.
+     * <i>Attribute-Key</i> #1. Serializing this value results in {@code att01}.
      *
      * @since 1.0.0
      */
     ATT01("att01"),
     /**
-     * Attribute 2.
+     * <i>Attribute-Key</i> #2. Serializing this value results in {@code att02}.
      *
      * @since 1.0.0
      */
     ATT02("att02"),
     /**
-     * Attribute 3.
+     * <i>Attribute-Key</i> #3. Serializing this value results in {@code att03}.
      *
      * @since 1.0.0
      */
     ATT03("att03"),
     /**
-     * Attribute 4.
+     * <i>Attribute-Key</i> #4. Serializing this value results in {@code att04}.
      *
      * @since 1.0.0
      */
     ATT04("att04"),
     /**
-     * Attribute 5.
+     * <i>Attribute-Key</i> #5. Serializing this value results in {@code att05}.
      *
      * @since 1.0.0
      */
     ATT05("att05"),
     /**
-     * Attribute 6.
+     * <i>Attribute-Key</i> #6. Serializing this value results in {@code att06}.
      *
      * @since 1.0.0
      */
     ATT06("att06"),
     /**
-     * Attribute 7.
+     * <i>Attribute-Key</i> #7. Serializing this value results in {@code att07}.
      *
      * @since 1.0.0
      */
     ATT07("att07"),
     /**
-     * Attribute 8.
+     * <i>Attribute-Key</i> #8. Serializing this value results in {@code att08}.
      *
      * @since 1.0.0
      */
     ATT08("att08"),
     /**
-     * Attribute 9.
+     * <i>Attribute-Key</i> #9. Serializing this value results in {@code att09}.
      *
      * @since 1.0.0
      */
     ATT09("att09"),
     /**
-     * Attribute 10.
+     * <i>Attribute-Key</i> #10. Serializing this value results in {@code att10}.
      *
      * @since 1.0.0
      */
@@ -109,7 +109,7 @@ public enum AttKey {
     }
 
     /**
-     * Get attribute key name. Attribute key names are used as serialized values when serializing to JSON etc.
+     * Get <i>Attribute-Key</i> name. It is the serialized result of {@code AttKey} when it is serialized to JSON, etc.
      *
      * @return attribute key name
      * @since 1.0.0
@@ -123,15 +123,15 @@ public enum AttKey {
             = Stream.of(AttKey.values()).collect(toUnmodifiableMap(AttKey::toString, identity()));
 
     /**
-     * Resolve from attribute key name.
+     * Resolve the {@code AttKey} from <i>Attribute-Key</i> name.
      *
-     * @param keyName attribute key name
+     * @param keyName <i>Attribute-Key</i> name
      * @return the {@code AttKey}
-     * @throws IllegalArgumentException if {@code name} is unexpected
+     * @throws IllegalArgumentException if {@code keyName} is wrong
      * @since 1.0.0
      */
     public static AttKey of(String keyName) {
         return Optional.ofNullable(reverses.get(keyName)).orElseThrow(
-                () -> new IllegalArgumentException("Incorrect attribute key name. [%s]".formatted(keyName)));
+                () -> new IllegalArgumentException("Specified name is wrong as Attribute-Key. [%s]".formatted(keyName)));
     }
 }
