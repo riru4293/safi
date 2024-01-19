@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.entity.embedded;
 
+import jakarta.persistence.Embeddable;
 import jakarta.persistence.Embedded;
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -35,7 +36,7 @@ import org.eclipse.persistence.descriptors.ClassDescriptor;
 import org.eclipse.persistence.mappings.AggregateObjectMapping;
 
 /**
- * Prohibit the mapping of {@code null} to {@link Embedded}. Implementation depends on the EclipseLink.
+ * Prohibit the mapping of {@code null} to {@link Embedded}. Implementation depends on the <i>EclipseLink</i>.
  *
  * @author riru
  * @version 1.0.0
@@ -44,27 +45,21 @@ import org.eclipse.persistence.mappings.AggregateObjectMapping;
 public final class NoEmbedNull implements DescriptorCustomizer {
 
     /**
-     * Prevent certain {@code Embeddable} field from always becoming {@code null} when entity mapping.
+     * Prevent certain {@link Embeddable} field from always becoming {@code null} when entity mapping.
      *
      * @param descriptor the {@code ClassDescriptor}
      * @since 1.0.0
      */
     @Override
     public void customize(ClassDescriptor descriptor) {
-
-        withInheritors(descriptor.getJavaClass())
-                .map(Class::getDeclaredFields).flatMap(Stream::of)
-                .filter(f -> Objects.nonNull(toEmbedded(f)))
-                .map(Field::getName)
-                .map(descriptor::getMappingForAttributeName)
-                .map(AggregateObjectMapping.class::cast)
+        withInheritors(descriptor.getJavaClass()).map(Class::getDeclaredFields).flatMap(Stream::of)
+                .filter(f -> Objects.nonNull(toEmbedded(f))).map(Field::getName)
+                .map(descriptor::getMappingForAttributeName).map(AggregateObjectMapping.class::cast)
                 .forEach(this::setNoAllowedNull);
-
     }
 
     private Stream<Class<?>> withInheritors(Class<?> clazz) {
-        return Optional.ofNullable(clazz.getSuperclass())
-                .map(p -> Stream.concat(Stream.of(clazz), withInheritors(p)))
+        return Optional.ofNullable(clazz.getSuperclass()).map(p -> Stream.concat(Stream.of(clazz), withInheritors(p)))
                 .orElseGet(() -> Stream.of(clazz));
     }
 
