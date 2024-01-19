@@ -29,6 +29,7 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -42,7 +43,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.PersistableValue;
 
 /**
- * Common entity. This class has one version number field qualified with {@link Version}. Thereby realizing an
+ * Common JPA entity. This class has one version number field qualified with {@link Version}. Thereby realizing an
  * optimistic lock of entity. And also this class implements entity's common footer items. Footer items are
  * automatically set by {@link FooterUpdater}.
  *
@@ -123,7 +124,7 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
     }
 
     /**
-     * Set entity version. This value used for optimistic locking. Will be thrown {@code OptimisticLockException} when
+     * Set entity version. This value used for optimistic locking. Will be thrown {@link OptimisticLockException} when
      * inserted or updated when the configured version number is not equal to that of the database.
      *
      * @param version entity version
