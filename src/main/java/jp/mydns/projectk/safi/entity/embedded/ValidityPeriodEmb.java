@@ -40,7 +40,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
- * Implementation of {@code ValidityPeriod} as a built-in part of JPA entity.
+ * Implementation of the {@code ValidityPeriod} as a built-in part of JPA entity.
  *
  * @author riru
  * @version 1.0.0
@@ -73,18 +73,16 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     /**
      * Constructor.
      *
-     * @param validityPeriod the {@code ValidityPeriod}
-     * @throws NullPointerException if {@code validityPeriod} is {@code null}
+     * @param vp the {@code ValidityPeriod}
+     * @throws NullPointerException if {@code vp} is {@code null}
      * @since 1.0.0
      */
-    public ValidityPeriodEmb(ValidityPeriod validityPeriod) {
+    public ValidityPeriodEmb(ValidityPeriod vp) {
+        Objects.requireNonNull(vp);
 
-        Objects.requireNonNull(validityPeriod);
-
-        localFrom = TimeUtils.toLocalDateTime(validityPeriod.getFrom());
-        localTo = TimeUtils.toLocalDateTime(validityPeriod.getTo());
-        ban = validityPeriod.isBan();
-
+        localFrom = TimeUtils.toLocalDateTime(vp.getFrom());
+        localTo = TimeUtils.toLocalDateTime(vp.getTo());
+        ban = vp.isBan();
     }
 
     /**
@@ -185,24 +183,23 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     }
 
     /**
-     * Indicates that specified object is equal to this one
+     * Indicates that other object is equal to this instance.
      *
      * @param other an any object
-     * @return {@code true} if matches otherwise {@code false}
+     * @return {@code true} if equals otherwise {@code false}.
      * @since 1.0.0
      */
     @Override
     public boolean equals(Object other) {
         return this == other || other instanceof ValidityPeriod o
                 && Objects.equals(localFrom, TimeUtils.toLocalDateTime(o.getFrom()))
-                && Objects.equals(localTo, TimeUtils.toLocalDateTime(o.getTo()))
-                && Objects.equals(ban, o.isBan());
+                && Objects.equals(localTo, TimeUtils.toLocalDateTime(o.getTo())) && Objects.equals(ban, o.isBan());
     }
 
     /**
-     * Returns a string representation of this.
+     * Returns a string representation of this instance.
      *
-     * @return a string representation
+     * @return string representation of this instance
      * @since 1.0.0
      */
     @Override
