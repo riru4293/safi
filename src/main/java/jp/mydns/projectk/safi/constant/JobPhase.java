@@ -26,7 +26,7 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * The phase of job execution.
+ * Phase name definitions for job execution.
  *
  * @author riru
  * @version 1.0.0
@@ -34,19 +34,19 @@ package jp.mydns.projectk.safi.constant;
  */
 public enum JobPhase {
     /**
-     * Contents transform phase.
+     * Represents a phase of content transformation.
      *
      * @since 1.0.0
      */
     TRANSFORMATION,
     /**
-     * Contents validate phase.
+     * Represents a phase of content validation.
      *
      * @since 1.0.0
      */
     VALIDATION,
     /**
-     * Contents provisioning phase.
+     * Represents a phase of content provision.
      *
      * @since 1.0.0
      */
