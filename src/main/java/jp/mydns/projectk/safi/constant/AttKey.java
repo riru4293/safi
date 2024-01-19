@@ -39,6 +39,7 @@ import jp.mydns.projectk.safi.value.ContentValue;
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
+ * @see ContentValue#getAtts() <i>Attribute</i> is explained in {@code ContentValue#getAtts()}
  */
 public enum AttKey {
     /**

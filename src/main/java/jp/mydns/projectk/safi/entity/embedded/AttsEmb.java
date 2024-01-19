@@ -33,107 +33,110 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
-import jp.mydns.projectk.safi.constant.AttName;
+import jp.mydns.projectk.safi.constant.AttKey;
+import jp.mydns.projectk.safi.validator.Strict;
+import jp.mydns.projectk.safi.value.ContentValue;
 
 /**
- * Attribute values.
+ * Implementation of the <i>Attribute</i> collection as a built-in part of JPA entity.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
+ * @see ContentValue#getAtts() <i>Attribute</i> is explained in {@code ContentValue#getAtts()}
  */
 @Embeddable
 public class AttsEmb implements Serializable {
 
     private static final long serialVersionUID = 5106454913064640730L;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att01")
     private String att01;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att02")
     private String att02;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att03")
     private String att03;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att04")
     private String att04;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att05")
     private String att05;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att06")
     private String att06;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att07")
     private String att07;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att08")
     private String att08;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att09")
     private String att09;
 
-    @Size(max = 200)
+    @Size(max = 200, groups = {Strict.class})
     @Column(name = "att10")
     private String att10;
 
     /**
-     * Update all fields of this from specified attributes.
+     * Update all fields with the value of {@code atts}.
      *
-     * @param atts attributes
-     * @return previous values
+     * @param atts <i>Attribute</i> collection
+     * @return previous <i>Attribute</i> collection
      * @throws NullPointerException if {@code atts} is {@code null}
      * @since 1.0.0
      */
-    public Map<AttName, String> update(Map<AttName, String> atts) {
+    public Map<AttKey, String> update(Map<AttKey, String> atts) {
 
-        Map<AttName, String> previous = toMap();
+        Map<AttKey, String> previous = toMap();
 
-        att01 = atts.get(AttName.ATT01);
-        att02 = atts.get(AttName.ATT02);
-        att03 = atts.get(AttName.ATT03);
-        att04 = atts.get(AttName.ATT04);
-        att05 = atts.get(AttName.ATT05);
-        att06 = atts.get(AttName.ATT06);
-        att07 = atts.get(AttName.ATT07);
-        att08 = atts.get(AttName.ATT08);
-        att09 = atts.get(AttName.ATT09);
-        att10 = atts.get(AttName.ATT10);
+        att01 = atts.get(AttKey.ATT01);
+        att02 = atts.get(AttKey.ATT02);
+        att03 = atts.get(AttKey.ATT03);
+        att04 = atts.get(AttKey.ATT04);
+        att05 = atts.get(AttKey.ATT05);
+        att06 = atts.get(AttKey.ATT06);
+        att07 = atts.get(AttKey.ATT07);
+        att08 = atts.get(AttKey.ATT08);
+        att09 = atts.get(AttKey.ATT09);
+        att10 = atts.get(AttKey.ATT10);
 
         return previous;
 
     }
 
     /**
-     * Get attributes.
+     * Get <i>Attribute</i> collection.
      *
-     * @return attributes
+     * @return <i>Attribute</i> collection
      * @since 1.0.0
      */
-    public Map<AttName, String> toMap() {
+    public Map<AttKey, String> toMap() {
 
-        Map<AttName, String> atts = new EnumMap<>(AttName.class);
+        Map<AttKey, String> atts = new EnumMap<>(AttKey.class);
 
-        atts.put(AttName.ATT01, att01);
-        atts.put(AttName.ATT02, att02);
-        atts.put(AttName.ATT03, att03);
-        atts.put(AttName.ATT04, att04);
-        atts.put(AttName.ATT05, att05);
-        atts.put(AttName.ATT06, att06);
-        atts.put(AttName.ATT07, att07);
-        atts.put(AttName.ATT08, att08);
-        atts.put(AttName.ATT09, att09);
-        atts.put(AttName.ATT10, att10);
+        atts.put(AttKey.ATT01, att01);
+        atts.put(AttKey.ATT02, att02);
+        atts.put(AttKey.ATT03, att03);
+        atts.put(AttKey.ATT04, att04);
+        atts.put(AttKey.ATT05, att05);
+        atts.put(AttKey.ATT06, att06);
+        atts.put(AttKey.ATT07, att07);
+        atts.put(AttKey.ATT08, att08);
+        atts.put(AttKey.ATT09, att09);
+        atts.put(AttKey.ATT10, att10);
 
         atts.values().removeIf(Objects::isNull);
 
@@ -142,9 +145,9 @@ public class AttsEmb implements Serializable {
     }
 
     /**
-     * Returns a hash code value of this.
+     * Returns a hash code value of this instance.
      *
-     * @return a hash code value. It is generated from all the field values.
+     * @return a hash code value
      * @since 1.0.0
      */
     @Override
@@ -153,33 +156,32 @@ public class AttsEmb implements Serializable {
     }
 
     /**
-     * Indicates that other object is equal to this one.
+     * Indicates that other object is equal to this instance.
      *
      * @param other an any object
-     * @return {@code true} if equals otherwise {@code false}
+     * @return {@code true} if equals otherwise {@code false}.
      * @since 1.0.0
      */
     @Override
     public boolean equals(Object other) {
-        return this == other || other instanceof AttsEmb o
-                && Objects.equals(att01, o.att01) && Objects.equals(att02, o.att02) && Objects.equals(att03, o.att03)
-                && Objects.equals(att04, o.att04) && Objects.equals(att05, o.att05) && Objects.equals(att06, o.att06)
-                && Objects.equals(att07, o.att07) && Objects.equals(att08, o.att08)
-                && Objects.equals(att09, o.att09) && Objects.equals(att10, o.att10);
+        return this == other || other instanceof AttsEmb o && Objects.equals(att01, o.att01)
+                && Objects.equals(att02, o.att02) && Objects.equals(att03, o.att03) && Objects.equals(att04, o.att04)
+                && Objects.equals(att05, o.att05) && Objects.equals(att06, o.att06) && Objects.equals(att07, o.att07)
+                && Objects.equals(att08, o.att08) && Objects.equals(att09, o.att09) && Objects.equals(att10, o.att10);
     }
 
     /**
-     * Returns a string representation of this.
+     * Returns a string representation of this instance.
      *
-     * @return string representation of this
+     * @return string representation of this instance
      * @since 1.0.0
      */
     @Override
     public String toString() {
-        return "Attributes{" + AttName.ATT01 + "=" + att01 + ", " + AttName.ATT02 + "=" + att02
-                + ", " + AttName.ATT03 + "=" + att03 + ", " + AttName.ATT04 + "=" + att04
-                + ", " + AttName.ATT05 + "=" + att05 + ", " + AttName.ATT06 + "=" + att06
-                + ", " + AttName.ATT07 + "=" + att07 + ", " + AttName.ATT08 + "=" + att08
-                + ", " + AttName.ATT09 + "=" + att09 + ", " + AttName.ATT10 + "=" + att10 + '}';
+        return "Attributes{" + AttKey.ATT01 + "=" + att01 + ", " + AttKey.ATT02 + "=" + att02
+                + ", " + AttKey.ATT03 + "=" + att03 + ", " + AttKey.ATT04 + "=" + att04
+                + ", " + AttKey.ATT05 + "=" + att05 + ", " + AttKey.ATT06 + "=" + att06
+                + ", " + AttKey.ATT07 + "=" + att07 + ", " + AttKey.ATT08 + "=" + att08
+                + ", " + AttKey.ATT09 + "=" + att09 + ", " + AttKey.ATT10 + "=" + att10 + '}';
     }
 }
