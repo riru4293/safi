@@ -30,7 +30,7 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * Text representation of the {@code ValidityPeriodEmb}.
+ * Text representation of the {@link ValidityPeriodEmb} as a built-in part of JPA entity.
  *
  * @author riru
  * @version 1.0.0
@@ -51,9 +51,9 @@ public class TxtValidityPeriodEmb implements Serializable {
     private String ban;
 
     /**
-     * Get begin date time of valid period.
+     * Get begin time of valid period.
      *
-     * @return begin date time of valid period
+     * @return begin time of valid period
      * @since 1.0.0
      */
     public String getFrom() {
@@ -61,9 +61,9 @@ public class TxtValidityPeriodEmb implements Serializable {
     }
 
     /**
-     * Get end date time of valid period.
+     * Get end time of valid period.
      *
-     * @return end date time of valid period
+     * @return end time of valid period
      * @since 1.0.0
      */
     public String getTo() {
@@ -73,7 +73,7 @@ public class TxtValidityPeriodEmb implements Serializable {
     /**
      * Get flag indicating forced invalidity.
      *
-     * @return {@code "true"} if force invalidity, otherwise {@code "false"}.
+     * @return {@code true} if force invalidity, otherwise {@code false}.
      * @since 1.0.0
      */
     public String getBan() {
