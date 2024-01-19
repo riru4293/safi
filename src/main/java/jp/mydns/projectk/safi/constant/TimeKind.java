@@ -25,8 +25,10 @@
  */
 package jp.mydns.projectk.safi.constant;
 
+import jp.mydns.projectk.safi.value.TimeConfiguration;
+
 /**
- * Time kind definition.
+ * Kind definitions of the {@link TimeConfiguration}.
  *
  * @author riru
  * @version 1.0.0
@@ -34,7 +36,7 @@ package jp.mydns.projectk.safi.constant;
  */
 public enum TimeKind {
     /**
-     * A time inside the application.
+     * Indicates that the current time inside the <i>SAFI</i>.
      *
      * @since 1.0.0
      */
