@@ -25,8 +25,10 @@
  */
 package jp.mydns.projectk.safi.constant;
 
+import jp.mydns.projectk.safi.value.Job;
+
 /**
- * Job status definition.
+ * Status name definitions for {@link Job}.
  *
  * @author riru
  * @version 1.0.0
@@ -34,31 +36,31 @@ package jp.mydns.projectk.safi.constant;
  */
 public enum JobStatus {
     /**
-     * Execution schedule.
+     * Indicates that the job run is scheduled.
      *
      * @since 1.0.0
      */
     SCHEDULE,
     /**
-     * Running.
+     * Indicates that the job is now running.
      *
      * @since 1.0.0
      */
     RUNNING,
     /**
-     * Finished as abort.
+     * Indicates that job execution has been aborted.
      *
      * @since 1.0.0
      */
     ABORT,
     /**
-     * Finished as success.
+     * Indicates that the job execution ended normally.
      *
      * @since 1.0.0
      */
     SUCCESS,
     /**
-     * Finished as failure.
+     * Indicates that job execution ended abnormally.
      *
      * @since 1.0.0
      */
