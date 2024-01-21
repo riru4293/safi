@@ -36,7 +36,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Map;
 import java.util.Objects;
-import jp.mydns.projectk.safi.constant.AttName;
+import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.entity.embedded.AttsEmb;
 import jp.mydns.projectk.safi.entity.embedded.NoEmbedNull;
 import jp.mydns.projectk.safi.entity.embedded.TxtValidityPeriodEmb;
@@ -166,7 +166,7 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
      * @since 1.0.0
      */
     @Override
-    public Map<AttName, String> getAtts() {
+    public Map<AttKey, String> getAtts() {
         return attsEmb.toMap();
     }
 
@@ -177,7 +177,7 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
      * @throws NullPointerException if {@code atts} is {@code null}
      * @since 1.0.0
      */
-    public void setAtts(Map<AttName, String> atts) {
+    public void setAtts(Map<AttKey, String> atts) {
         this.attsEmb.update(Objects.requireNonNull(atts));
     }
 

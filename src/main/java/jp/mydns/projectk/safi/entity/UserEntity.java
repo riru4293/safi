@@ -67,7 +67,7 @@ public class UserEntity extends ContentEntity {
     }
 
     /**
-     * Returns a hash code value of this.
+     * Returns a hash code value.
      *
      * @return a hash code value
      * @since 1.0.0
@@ -78,7 +78,7 @@ public class UserEntity extends ContentEntity {
     }
 
     /**
-     * Indicates that other object is equal to this one. Equal if primary keys are equal in the same class
+     * Indicates that other object is equal to this instance. Equal if primary keys are equal in the same class
      *
      * @param other an any object
      * @return {@code true} if equals, otherwise {@code false}.
@@ -90,9 +90,9 @@ public class UserEntity extends ContentEntity {
     }
 
     /**
-     * Returns a string representation of this.
+     * Returns a string representation.
      *
-     * @return string representation of this
+     * @return string representation of this instance
      * @since 1.0.0
      */
     @Override

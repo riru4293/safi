@@ -119,7 +119,7 @@ public class ImportWorkEntity implements Serializable {
     }
 
     /**
-     * Returns a hash code value of this.
+     * Returns a hash code value.
      *
      * @return a hash code value. It is generated from the primary key value.
      * @since 1.0.0
@@ -130,7 +130,7 @@ public class ImportWorkEntity implements Serializable {
     }
 
     /**
-     * Indicates that other object is equal to this one. Equality means that can be cast to this class and primary key
+     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary key
      * is match.
      *
      * @param other an any object
@@ -143,9 +143,9 @@ public class ImportWorkEntity implements Serializable {
     }
 
     /**
-     * Returns a string representation of this.
+     * Returns a string representation.
      *
-     * @return string representation of this
+     * @return string representation of this instance
      * @since 1.0.0
      */
     @Override

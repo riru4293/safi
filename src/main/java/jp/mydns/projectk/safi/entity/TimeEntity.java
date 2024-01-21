@@ -37,7 +37,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import jp.mydns.projectk.safi.constant.TimeKind;
+import jp.mydns.projectk.safi.constant.TimeConfigKind;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
@@ -60,7 +60,7 @@ public class TimeEntity extends CommonEntity {
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     @Column(name = "kind", nullable = false, length = 20)
-    private TimeKind id;
+    private TimeConfigKind id;
 
     @Basic(optional = false)
     @Column(name = "value", nullable = false)
@@ -78,7 +78,7 @@ public class TimeEntity extends CommonEntity {
      * @since 1.0.0
      */
     @NotNull
-    public TimeKind getId() {
+    public TimeConfigKind getId() {
         return id;
     }
 
@@ -88,7 +88,7 @@ public class TimeEntity extends CommonEntity {
      * @param id the {@code TimeKind}
      * @since 1.0.0
      */
-    public void setId(TimeKind id) {
+    public void setId(TimeConfigKind id) {
         this.id = id;
     }
 
@@ -136,7 +136,7 @@ public class TimeEntity extends CommonEntity {
     }
 
     /**
-     * Returns a hash code value of this.
+     * Returns a hash code value.
      *
      * @return a hash code value
      * @since 1.0.0
@@ -147,7 +147,7 @@ public class TimeEntity extends CommonEntity {
     }
 
     /**
-     * Indicates that other object is equal to this one.
+     * Indicates that other object is equal to this instance.
      *
      * @param other an any object
      * @return {@code true} if equals, otherwise {@code false}.
@@ -159,9 +159,9 @@ public class TimeEntity extends CommonEntity {
     }
 
     /**
-     * Returns a string representation of this.
+     * Returns a string representation.
      *
-     * @return string representation of this
+     * @return string representation of this instance
      * @since 1.0.0
      */
     @Override
