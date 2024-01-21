@@ -145,7 +145,7 @@ public class AttsEmb implements Serializable {
     }
 
     /**
-     * Returns a hash code value of this instance.
+     * Returns a hash code value.
      *
      * @return a hash code value
      * @since 1.0.0
