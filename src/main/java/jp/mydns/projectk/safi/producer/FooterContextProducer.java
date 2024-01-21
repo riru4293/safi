@@ -41,7 +41,7 @@ import jp.mydns.projectk.safi.value.RequestContext;
  * @since 1.0.0
  */
 @RequestScoped
-public class EntityFooterProducer {
+public class FooterContextProducer {
 
     @Inject
     private RequestContext reqCtx;
