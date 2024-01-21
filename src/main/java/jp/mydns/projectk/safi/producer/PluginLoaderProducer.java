@@ -38,7 +38,7 @@ import jp.mydns.projectk.safi.plugin.ImporterPlugin;
 import jp.mydns.projectk.safi.service.ConfigService;
 
 /**
- * Produce the plug-in loader.
+ * Produce the {@link PluginLoader}.
  *
  * @author riru
  * @version 1.0.0

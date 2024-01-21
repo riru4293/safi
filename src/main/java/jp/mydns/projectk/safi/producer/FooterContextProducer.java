@@ -34,7 +34,7 @@ import jp.mydns.projectk.safi.service.RealTimeService;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- * Produce the {@code FooterContext}.
+ * Produce the {@link FooterContext}.
  *
  * @author riru
  * @version 1.0.0
