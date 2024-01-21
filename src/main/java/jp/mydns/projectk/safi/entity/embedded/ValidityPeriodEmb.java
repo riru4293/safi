@@ -96,9 +96,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     }
 
     /**
-     * Get begin date time of valid period.
+     * Get begin date-time of validity period.
      *
-     * @return begin date time of valid period
+     * @return begin date-time of validity period
      * @since 1.0.0
      */
     @NotNull(groups = {Strict.class})
@@ -109,9 +109,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     }
 
     /**
-     * Set begin date time of valid period.
+     * Set begin date-time of validity period.
      *
-     * @param localFrom begin date time of valid period
+     * @param localFrom begin date-time of validity period
      * @since 1.0.0
      */
     public void setLocalFrom(LocalDateTime localFrom) {
@@ -129,9 +129,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     }
 
     /**
-     * Get end date time of valid period.
+     * Get end date-time of validity period.
      *
-     * @return end date time of valid period
+     * @return end date-time of validity period
      * @since 1.0.0
      */
     @NotNull(groups = {Strict.class})
@@ -142,9 +142,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     }
 
     /**
-     * Set end date time of valid period.
+     * Set end date-time of validity period.
      *
-     * @param localTo end date time of valid period
+     * @param localTo end date-time of validity period
      * @since 1.0.0
      */
     public void setLocalTo(LocalDateTime localTo) {

@@ -47,13 +47,13 @@ public class TxtValidityPeriodEmb implements Serializable {
     @Column(name = "txt_to_ts", insertable = false, updatable = false)
     private String to;
 
-    @Column(name = "ban", insertable = false, updatable = false)
+    @Column(name = "txt_ban", insertable = false, updatable = false)
     private String ban;
 
     /**
-     * Get begin time of valid period.
+     * Get begin date-time of validity period.
      *
-     * @return begin time of valid period
+     * @return begin date-time of validity period
      * @since 1.0.0
      */
     public String getFrom() {
@@ -61,9 +61,9 @@ public class TxtValidityPeriodEmb implements Serializable {
     }
 
     /**
-     * Get end time of valid period.
+     * Get end date-time of validity period.
      *
-     * @return end time of valid period
+     * @return end date-time of validity period
      * @since 1.0.0
      */
     public String getTo() {
@@ -71,9 +71,9 @@ public class TxtValidityPeriodEmb implements Serializable {
     }
 
     /**
-     * Get flag indicating forced invalidity.
+     * Returns {@code true} if forbidden to be valid.
      *
-     * @return {@code true} if force invalidity, otherwise {@code false}.
+     * @return {@code true} if forbidden to be valid, otherwise {@code false}.
      * @since 1.0.0
      */
     public String getBan() {
