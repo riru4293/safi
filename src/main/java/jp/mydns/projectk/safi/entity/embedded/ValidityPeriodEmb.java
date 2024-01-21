@@ -197,7 +197,7 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     }
 
     /**
-     * Returns a string representation of this instance.
+     * Returns a string representation.
      *
      * @return string representation of this instance
      * @since 1.0.0
