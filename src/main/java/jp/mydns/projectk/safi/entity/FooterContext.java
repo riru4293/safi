@@ -28,7 +28,7 @@ package jp.mydns.projectk.safi.entity;
 import java.time.LocalDateTime;
 
 /**
- * Provides entity common footer values.
+ * Provides a footer values for {@link CommonEntity}.
  *
  * @author riru
  * @version 1.0.0
@@ -53,7 +53,7 @@ public interface FooterContext {
     String getAccountId();
 
     /**
-     * Get process name.
+     * Get current process name.
      *
      * @return process name
      * @since 1.0.0

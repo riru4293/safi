@@ -39,7 +39,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * JPA entity for {@code w_import} table.
+ * JPA entity for the <i>w_import</i> table. Used only to compare ingested content with registered content. Updates are
+ * not possible, and only bulk registration and deletion are supported.
  *
  * @author riru
  * @version 1.0.0
@@ -130,8 +131,8 @@ public class ImportWorkEntity implements Serializable {
     }
 
     /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary key
-     * is match.
+     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
+     * key is match.
      *
      * @param other an any object
      * @return {@code true} if equals, otherwise {@code false}.
@@ -145,7 +146,7 @@ public class ImportWorkEntity implements Serializable {
     /**
      * Returns a string representation.
      *
-     * @return string representation of this instance
+     * @return a string representation
      * @since 1.0.0
      */
     @Override

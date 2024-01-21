@@ -47,11 +47,12 @@ import jp.mydns.projectk.safi.value.ValidityPeriod;
 import org.eclipse.persistence.annotations.Customizer;
 
 /**
- * Abstract entity implements of the identity content.
+ * An abstract implementation of the <i>Id Content</i> entity.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
+ * @see ContentValue <i>Id Content</i> is explained in {@code ContentValue}
  */
 @MappedSuperclass
 @Customizer(NoEmbedNull.class)
@@ -160,9 +161,9 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
     }
 
     /**
-     * Get attribute values.
+     * Get <i>Attribute</i> collection.
      *
-     * @return attribute values
+     * @return <i>Attribute</i> collection
      * @since 1.0.0
      */
     @Override
@@ -171,9 +172,9 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
     }
 
     /**
-     * Set attribute values.
+     * Set <i>Attribute</i> collection.
      *
-     * @param atts attribute values
+     * @param atts <i>Attribute</i> collection
      * @throws NullPointerException if {@code atts} is {@code null}
      * @since 1.0.0
      */

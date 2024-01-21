@@ -31,7 +31,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 
 /**
- * Set values in common footer when insert and update to database.
+ * Set footer values in the {@link CommonEntity} when insert and update to database.
  *
  * @author riru
  * @version 1.0.0

@@ -44,7 +44,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
- * JPA entity for {@code m_time} table.
+ * JPA entity for the <i>m_time</i> table.
  *
  * @author riru
  * @version 1.0.0
@@ -52,7 +52,7 @@ import jp.mydns.projectk.safi.value.ValidityPeriod;
  */
 @Entity
 @Table(name = "m_time")
-public class TimeEntity extends CommonEntity {
+public class TimeConfigEntity extends CommonEntity {
 
     private static final long serialVersionUID = -8634128441967110929L;
 
@@ -93,9 +93,9 @@ public class TimeEntity extends CommonEntity {
     }
 
     /**
-     * Get time value.
+     * Get time-configuration value.
      *
-     * @return time value. It may be {@code null}.
+     * @return time-configuration value. It may be {@code null}.
      * @since 1.0.0
      */
     @NotNull
@@ -106,9 +106,9 @@ public class TimeEntity extends CommonEntity {
     }
 
     /**
-     * Set time value.
+     * Set time-configuration value.
      *
-     * @param value time value. It can be set {@code null}.
+     * @param value time-configuration value. It can be set {@code null}.
      * @since 1.0.0
      */
     public void setValue(LocalDateTime value) {
@@ -138,7 +138,7 @@ public class TimeEntity extends CommonEntity {
     /**
      * Returns a hash code value.
      *
-     * @return a hash code value
+     * @return a hash code value. It is generated from the primary key value.
      * @since 1.0.0
      */
     @Override
@@ -147,7 +147,8 @@ public class TimeEntity extends CommonEntity {
     }
 
     /**
-     * Indicates that other object is equal to this instance.
+     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
+     * key is match.
      *
      * @param other an any object
      * @return {@code true} if equals, otherwise {@code false}.
@@ -155,17 +156,17 @@ public class TimeEntity extends CommonEntity {
      */
     @Override
     public boolean equals(Object other) {
-        return this == other || other instanceof TimeEntity o && Objects.equals(id, o.id);
+        return this == other || other instanceof TimeConfigEntity o && Objects.equals(id, o.id);
     }
 
     /**
      * Returns a string representation.
      *
-     * @return string representation of this instance
+     * @return a string representation
      * @since 1.0.0
      */
     @Override
     public String toString() {
-        return "TimeEntity{" + "id=" + id + ", value=" + value + ", validityPeriod=" + validityPeriod + '}';
+        return "TimeConfigEntity{" + "id=" + id + ", value=" + value + ", validityPeriod=" + validityPeriod + '}';
     }
 }

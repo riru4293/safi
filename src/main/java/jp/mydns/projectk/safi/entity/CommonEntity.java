@@ -90,7 +90,8 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
     protected String updateProcessName;
 
     /**
-     * Get a note for this entity.
+     * Get a note for this entity. This value is only used to record notes about the data records represented by the
+     * entity and is never used to process.
      *
      * @return note. It may be {@code null}.
      * @since 1.0.0
@@ -105,6 +106,7 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * entity and is never used to process.
      *
      * @param note note. It can be set {@code null}.
+     * @see #getNote() Note is explained in {@code #getNote()}
      * @since 1.0.0
      */
     public void setNote(String note) {
@@ -112,7 +114,9 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
     }
 
     /**
-     * Get entity version.
+     * Get entity version. This value used for optimistic locking. Will be thrown {@link OptimisticLockException} when
+     * inserted or updated when the configured version number is not equal to that of the database. The version of the
+     * entity before persistence is 0.
      *
      * @return entity version
      * @since 1.0.0
@@ -124,10 +128,10 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
     }
 
     /**
-     * Set entity version. This value used for optimistic locking. Will be thrown {@link OptimisticLockException} when
-     * inserted or updated when the configured version number is not equal to that of the database.
+     * Set entity version.
      *
      * @param version entity version
+     * @see #getVersion() Version is explained in {@code #getVersion()}
      * @since 1.0.0
      */
     public void setVersion(int version) {

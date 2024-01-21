@@ -37,7 +37,7 @@ import jakarta.persistence.Table;
 import java.util.Objects;
 
 /**
- * JPA entity for {@code t_user} table.
+ * JPA entity for the <i>t_user</i> table.
  *
  * @author riru
  * @version 1.0.0
@@ -92,7 +92,7 @@ public class UserEntity extends ContentEntity {
     /**
      * Returns a string representation.
      *
-     * @return string representation of this instance
+     * @return a string representation
      * @since 1.0.0
      */
     @Override
