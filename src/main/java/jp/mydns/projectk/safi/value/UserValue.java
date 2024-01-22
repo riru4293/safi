@@ -55,7 +55,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * <pre><code>
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/user-content.schema.json",
+ *     "$id": "https://project-k.mydns.jp/safi/user-content.schema.json",
  *     "title": "UserContent",
  *     "description": "ID-Content of the User",
  *     "type": "object",
@@ -132,7 +132,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *             },
  *             "validityPeriod": {
  *                 "description": "Validity period",
- *                 "$ref": "https://project-k.mydns.jp/validity-period.schema.json"
+ *                 "$ref": "https://project-k.mydns.jp/safi/validity-period.schema.json"
  *             },
  *             "digest": {
  *                 "description": "Digest value",
