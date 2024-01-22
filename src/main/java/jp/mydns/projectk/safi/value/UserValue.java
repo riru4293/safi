@@ -245,7 +245,7 @@ public interface UserValue extends ContentValue {
             @Override
             public String toString() {
                 return "User{" + "id=" + id + ", enabled=" + enabled + ", name=" + name + ", atts=" + atts
-                        + ", validityPeriod=" + validityPeriod + ", digest=" + digest + ", version=" + version + '}';
+                        + ", validityPeriod=" + validityPeriod + ", digest=" + digest + '}';
             }
         }
     }
