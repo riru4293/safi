@@ -35,13 +35,17 @@ import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.Objects;
 import static java.util.stream.Collectors.toUnmodifiableMap;
-import jp.mydns.projectk.safi.constant.AttName;
+import jp.mydns.projectk.safi.constant.AttKey;
+import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.validator.Strict;
 
 /**
- * {@code ContentValue} is a data that can be identified by an ID. In addition to the ID, it has an valid period and a
- * digest value. If it is outside the expiration time, the content will be treated as non-existent. Content with the
- * same ID and digest value is considered to be the same content.
+ * {@code ContentValue} is data that can be identified by ID and is the main content of this application, called
+ * <i>ID-Content</i>. In addition to an ID, an <i>ID-Content</i> has a {@link ValidityPeriod}(expiration time), a name,
+ * a collection of
+ * <i>Attribute</i>, and a digest value. If it is outside the expiration time, the content will be treated as
+ * non-existent. Content with the same ID and digest value is considered to be the same content. The digest value is
+ * calculated from all <i>ID-Content</i> elements except itself.
  *
  * <p>
  * Implementation requirements.
@@ -69,7 +73,8 @@ public interface ContentValue extends PersistableValue, RecordableValue {
     String getId();
 
     /**
-     * Get the valid state.
+     * Get the valid state. It is the flag calculated from {@link #getValidityPeriod()} and
+     * {@link AppTimeService#getLocalNow()}, and is the value at the time of calculation.
      *
      * @return {@code true} if enabled, otherwise {@code false}.
      * @since 1.0.0
@@ -98,20 +103,22 @@ public interface ContentValue extends PersistableValue, RecordableValue {
     String getName();
 
     /**
-     * Get attribute values.
+     * Get the <i>Attribute</i> collection. <i>Attribute</i> is element of <i>ID-Content</i> and is data item that can
+     * take arbitrary value. The meaning of the value is determined by the user, not by the application.
      *
-     * @return attribute values
+     * @return <i>Attribute</i> collection
      * @since 1.0.0
      */
     @Schema(description = "Attribute values.")
     @NotNull(groups = {Strict.class})
-    Map<AttName, @Size(max = 200, groups = {Strict.class}) String> getAtts();
+    Map<AttKey, @Size(max = 200, groups = {Strict.class}) String> getAtts();
 
     /**
      * Get digest value of this. If the contents match exactly, the same digest value can be obtained.
      *
      * @return digest value
      * @since 1.0.0
+     * @see DigestGenerator
      */
     @Schema(description = "Content digest value.")
     @NotBlank(groups = {Strict.class})
@@ -133,15 +140,21 @@ public interface ContentValue extends PersistableValue, RecordableValue {
         protected String id;
         protected boolean enabled;
         protected String name;
-        protected Map<AttName, String> atts;
+        protected Map<AttKey, String> atts;
         protected ValidityPeriod validityPeriod;
 
+        /**
+         * Constructor.
+         *
+         * @param builderType the class to build by this builder
+         * @since 1.0.0
+         */
         protected AbstractBuilder(Class<B> builderType) {
             super(builderType);
         }
 
         /**
-         * Set all properties from {@code src}.
+         * Set all properties from {@code src} except the digest value.
          *
          * @param src source value
          * @return updated this
@@ -150,7 +163,6 @@ public interface ContentValue extends PersistableValue, RecordableValue {
          */
         @Override
         public B with(V src) {
-
             super.with(Objects.requireNonNull(src));
 
             this.id = src.getId();
@@ -160,7 +172,6 @@ public interface ContentValue extends PersistableValue, RecordableValue {
             this.validityPeriod = src.getValidityPeriod();
 
             return builderType.cast(this);
-
         }
 
         /**
@@ -200,13 +211,13 @@ public interface ContentValue extends PersistableValue, RecordableValue {
         }
 
         /**
-         * Set attribute values.
+         * Set the <i>Attribute</i> collection.
          *
-         * @param atts attribute values
+         * @param atts the <i>Attribute</i> collection
          * @return updated this
          * @since 1.0.0
          */
-        public B withAtts(Map<AttName, String> atts) {
+        public B withAtts(Map<AttKey, String> atts) {
             this.atts = atts;
             return builderType.cast(this);
         }
@@ -223,6 +234,15 @@ public interface ContentValue extends PersistableValue, RecordableValue {
             return builderType.cast(this);
         }
 
+        /**
+         * Abstract implements of the {@code ContentValue}.
+         *
+         * @param <B> the type of builder that constructs this class
+         * @param <V> the type of this class
+         * @author riru
+         * @version 1.0.0
+         * @since 1.0.0
+         */
         protected abstract static class AbstractBean extends PersistableValue.AbstractBuilder.AbstractBean
                 implements ContentValue {
 
@@ -230,15 +250,26 @@ public interface ContentValue extends PersistableValue, RecordableValue {
             protected boolean enabled;
             protected String name;
             @JsonbTransient // Note: When serializing an enum to JSON, I want to avoid that value becoming an enum name.
-            protected Map<AttName, String> atts;
+            protected Map<AttKey, String> atts;
             protected ValidityPeriod validityPeriod;
             protected String digest;
 
+            /**
+             * Constructor. Used only for deserialization from JSON.
+             *
+             * @since 1.0.0
+             */
             protected AbstractBean() {
             }
 
+            /**
+             * Constructor.
+             *
+             * @param builder the {@code ContentValue.AbstractBuilder}
+             * @param digest digest value. It must be provided by {@code builder}.
+             * @since 1.0.0
+             */
             protected AbstractBean(ContentValue.AbstractBuilder<?, ?> builder, String digest) {
-
                 super(builder);
 
                 this.id = builder.id;
@@ -247,41 +278,84 @@ public interface ContentValue extends PersistableValue, RecordableValue {
                 this.atts = builder.atts;
                 this.validityPeriod = builder.validityPeriod;
                 this.digest = digest;
-
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public String getId() {
                 return id;
             }
 
+            /**
+             * Set content id.
+             *
+             * @param id content id
+             * @since 1.0.0
+             */
             public void setId(String id) {
                 this.id = id;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public boolean isEnabled() {
                 return enabled;
             }
 
+            /**
+             * Set the valid state.
+             *
+             * @param enabled valid state
+             * @since 1.0.0
+             */
             public void setEnabled(boolean enabled) {
                 this.enabled = enabled;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public String getName() {
                 return name;
             }
 
+            /**
+             * Set content name.
+             *
+             * @param name content name
+             * @since 1.0.0
+             */
             public void setName(String name) {
                 this.name = name;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
-            public Map<AttName, String> getAtts() {
+            public Map<AttKey, String> getAtts() {
                 return atts != null ? unmodifiableMap(atts) : null;
             }
 
+            /**
+             * Get the <i>Attribute</i> collection for serialization to JSON.
+             *
+             * @return <i>Attribute</i> collection for serialization to JSON
+             * @since 1.0.0
+             */
             public Map<String, String> getAttributes() {
                 return atts != null
                         ? atts.entrySet().stream().collect(toUnmodifiableMap(
@@ -289,27 +363,54 @@ public interface ContentValue extends PersistableValue, RecordableValue {
                         : null;
             }
 
+            /**
+             * Set the <i>Attribute</i> collection for serialization to JSON.
+             *
+             * @param atts <i>Attribute</i> collection for serialization to JSON
+             * @since 1.0.0
+             */
             public void setAttributes(Map<String, String> atts) {
                 this.atts = atts != null
-                        ? atts.entrySet().stream().collect(toUnmodifiableMap(
-                                e -> AttName.of(e.getKey()), Map.Entry::getValue))
+                        ? atts.entrySet().stream().collect(toUnmodifiableMap(e -> AttKey.of(e.getKey()), Map.Entry::getValue))
                         : null;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public ValidityPeriod getValidityPeriod() {
                 return validityPeriod;
             }
 
+            /**
+             * Set the {@code ValidityPeriod}.
+             *
+             * @param validityPeriod the {@code ValidityPeriod}
+             * @since 1.0.0
+             */
             public void setValidityPeriod(ValidityPeriod validityPeriod) {
                 this.validityPeriod = validityPeriod;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public String getDigest() {
                 return digest;
             }
 
+            /**
+             * Set digest value.
+             *
+             * @param digest digest value
+             * @since 1.0.0
+             */
             public void setDigest(String digest) {
                 this.digest = digest;
             }
@@ -317,7 +418,7 @@ public interface ContentValue extends PersistableValue, RecordableValue {
     }
 
     /**
-     * Digest value generator for identity contents.
+     * Digest value generator for <i>ID-Content</i>.
      *
      * <p>
      * Implementation requirements.
@@ -334,7 +435,7 @@ public interface ContentValue extends PersistableValue, RecordableValue {
         /**
          * Generate a digest value.
          *
-         * @param sources source values
+         * @param sources source values. They are elements of <i>ID-Content</i> excluding the digest value.
          * @return digest value
          * @throws NullPointerException when {@code sources} is {@code null}
          * @throws IllegalArgumentException if contains an unexpected element in {@code sources}
