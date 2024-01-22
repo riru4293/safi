@@ -84,7 +84,7 @@ public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
     }
 
     /**
-     * Set the {@code TimeKind}.
+     * Set id of the configuration.
      *
      * @param id the {@code TimeKind}
      * @since 1.0.0
@@ -106,9 +106,9 @@ public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
     }
 
     /**
-     * Set time value.
+     * Set value of the configuration.
      *
-     * @param value time value. It can be set {@code null}.
+     * @param value the {@code LocalDateTime}. It can be set {@code null}.
      * @since 1.0.0
      */
     public void setValue(LocalDateTime value) {
@@ -128,7 +128,7 @@ public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
     }
 
     /**
-     * Set the {@code ValidityPeriod}.
+     * Set the validity-period of the configuration.
      *
      * @param validityPeriod the {@code ValidityPeriod}
      * @since 1.0.0
