@@ -34,11 +34,13 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.lang.reflect.Type;
 import java.util.Objects;
+import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
  * <i>ID-Content</i> of the <i>User</i> that represents one user. All other <i>ID-Content</i> are directly or indirectly
- * related to <i>User</i>, and <i>User</i> is the base point of the relationship.
+ * related to <i>User</i>, and <i>User</i> is the base point of the relationship. It is persisted via
+ * {@link UserEntity}.
  *
  * <p>
  * Implementation requirements.
