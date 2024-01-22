@@ -37,7 +37,8 @@ import java.util.Objects;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
- * <i>ID-Content</i> of the <i>User</i> that represents one user.
+ * <i>ID-Content</i> of the <i>User</i> that represents one user. All other <i>ID-Content</i> are directly or indirectly
+ * related to <i>User</i>, and <i>User</i> is the base point of the relationship.
  *
  * <p>
  * Implementation requirements.
