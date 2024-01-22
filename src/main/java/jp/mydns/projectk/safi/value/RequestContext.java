@@ -30,7 +30,8 @@ import java.util.Optional;
 import static java.util.function.Predicate.not;
 
 /**
- * Current request information.
+ * Current request information. A <i>Request</i> is a processing request, and there are processing requests via Web API
+ * and background processing requests by the system.
  *
  * @author riru
  * @version 1.0.0
@@ -67,7 +68,7 @@ public class RequestContext {
     }
 
     /**
-     * Get account id.
+     * Get account id. {@code SAFI} if request is background processing by the system.
      *
      * @return account id
      * @throws IllegalStateException if value has not been set yet
@@ -91,7 +92,7 @@ public class RequestContext {
     }
 
     /**
-     * Returns a string representation of this.
+     * Returns a string representation.
      *
      * @return a string representation
      * @since 1.0.0
@@ -116,5 +117,4 @@ public class RequestContext {
         return Optional.ofNullable(v).orElseThrow(
                 () -> new IllegalStateException("Value has not been set yet."));
     }
-
 }
