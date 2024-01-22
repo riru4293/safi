@@ -86,7 +86,7 @@ public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
     /**
      * Set id of the configuration.
      *
-     * @param id the {@code TimeKind}
+     * @param id the {@code TimeConfigKind}
      * @since 1.0.0
      */
     public void setId(TimeConfigKind id) {
