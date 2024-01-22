@@ -37,7 +37,7 @@ import java.util.Objects;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
- * {@code User} is represents one user. It is main-content in this application.
+ * <i>ID-Content</i> of the <i>User</i> that represents one user.
  *
  * <p>
  * Implementation requirements.
@@ -48,31 +48,113 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * </ul>
  *
  * <p>
- * JSON Format<pre><code>
+ * JSON format
+ * <pre><code>
  * {
- *     "id": "user-id",
- *     "enabled": true,
- *     "name": "user-name",
- *     "attributes": {
- *         "att01": "att01-value",
- *         "att02": "att02-value",
- *         "att03": "att03-value",
- *         "att04": "att04-value",
- *         "att05": "att05-value",
- *         "att06": "att06-value",
- *         "att07": "att07-value",
- *         "att08": "att08-value",
- *         "att09": "att09-value",
- *         "att10": "att10-value"
- *     },
- *     "validityPeriod": {
- *         "from": "2000-01-01T00:00:00Z",
- *         "to": "2999-12-31T23:59:59Z",
- *         "ban": false
- *     },
- *     "digest": "digest-value",
- *     "note": "description",
- *     "version": 3
+ *     "$schema": "https://json-schema.org/draft/2020-12/schema",
+ *     "$id": "https://project-k.mydns.jp/user-content.schema.json",
+ *     "title": "UserContent",
+ *     "description": "ID-Content of the User",
+ *     "type": "object",
+ *     "properties": {
+ *         "id": {
+ *             "description": "User id",
+ *             "type": "string",
+ *             "minLength": 1,
+ *             "maxLength": 36
+ *         },
+ *         "enabled": {
+ *             "description": "Validity state flag",
+ *             "type": "boolean"
+ *         },
+ *         "name": {
+ *             "description": "User name",
+ *             "type": "string",
+ *             "maxLength": 100
+ *         },
+ *         "attributes": {
+ *             "description": "Attribute collection",
+ *             "type": "object",
+ *             "properties": {
+ *                 "att01": {
+ *                     "description": "Attribute #2",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att02": {
+ *                     "description": "Attribute #1",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att03": {
+ *                     "description": "Attribute #3",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att04": {
+ *                     "description": "Attribute #4",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att05": {
+ *                     "description": "Attribute #5",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att06": {
+ *                     "description": "Attribute #6",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att07": {
+ *                     "description": "Attribute #7",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att08": {
+ *                     "description": "Attribute #8",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att09": {
+ *                     "description": "Attribute #9",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 },
+ *                 "att10": {
+ *                     "description": "Attribute #10",
+ *                     "type": "string",
+ *                     "maxLength": 200
+ *                 }
+ *             },
+ *             "validityPeriod": {
+ *                 "description": "Validity period",
+ *                 "$ref": "https://project-k.mydns.jp/validity-period.schema.json"
+ *             },
+ *             "digest": {
+ *                 "description": "Digest value",
+ *                 "type": "string",
+ *                 "minLength": 1,
+ *                 "maxLength": 128
+ *             },
+ *             "note": {
+ *                 "description": "Note for this content",
+ *                 "type": "string"
+ *             },
+ *             "version": {
+ *                 "description": "Content version stored in database. 0 if not yet stored.",
+ *                 "type": "integer",
+ *                 "minimum": 0
+ *             }
+ *         },
+ *         "required": [
+ *             "id",
+ *             "enabled",
+ *             "attributes",
+ *             "validityPeriod",
+ *             "version"
+ *         ]
+ *     }
  * }
  * </code></pre>
  *
@@ -80,7 +162,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @version 1.0.0
  * @since 1.0.0
  */
-@Schema(name = "User", description = "'User' is represents one user. It is main-content in this application.")
+@Schema(name = "UserValue", description = "ID-Content of the User.")
 @JsonbTypeDeserializer(UserValue.Deserializer.class)
 public interface UserValue extends ContentValue {
 
@@ -98,7 +180,7 @@ public interface UserValue extends ContentValue {
         /**
          * Constructor.
          *
-         * @param digestGenerator digest value generator
+         * @param digestGenerator the {@code DigestGenerator}
          * @throws NullPointerException if {@code digestGenerator} is {@code null}
          * @since 1.0.0
          */
@@ -123,15 +205,40 @@ public interface UserValue extends ContentValue {
             return ValidationUtils.requireValid(new Bean(this, digest), validator, groups);
         }
 
+        /**
+         * Implements of the {@code UserValue}.
+         *
+         * @author riru
+         * @version 1.0.0
+         * @since 1.0.0
+         */
         protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean implements UserValue {
 
+            /**
+             * Constructor. Used only for deserialization from JSON.
+             *
+             * @since 1.0.0
+             */
             protected Bean() {
             }
 
+            /**
+             * Constructor.
+             *
+             * @param builder the {@code UserValue.Builder}
+             * @param digest digest value. It must be provided by {@code builder}.
+             * @since 1.0.0
+             */
             protected Bean(UserValue.Builder builder, String digest) {
                 super(builder, digest);
             }
 
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 1.0.0
+             */
             @Override
             public String toString() {
                 return "User{" + "id=" + id + ", enabled=" + enabled + ", name=" + name + ", atts=" + atts
@@ -149,6 +256,11 @@ public interface UserValue extends ContentValue {
      */
     class Deserializer implements JsonbDeserializer<UserValue> {
 
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
         @Override
         public UserValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return dc.deserialize(Builder.Bean.class, jp);
