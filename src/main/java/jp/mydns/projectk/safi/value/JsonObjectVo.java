@@ -201,7 +201,7 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
     }
 
     /**
-     * Returns a hash code value of this.
+     * Returns a hash code value.
      *
      * @return a hash code value
      * @since 1.0.0
@@ -215,7 +215,7 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
      * Indicates that specified object is equal to this one.
      *
      * @param other an any object
-     * @return {@code true} if matches otherwise {@code false}
+     * @return {@code true} if matches otherwise {@code false}.
      * @since 1.0.0
      */
     @Override
@@ -224,7 +224,7 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
     }
 
     /**
-     * Returns a string representation of this.
+     * Returns a string representation.
      *
      * @return a string representation
      * @since 1.0.0
