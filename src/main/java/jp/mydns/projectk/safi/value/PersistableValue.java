@@ -95,14 +95,12 @@ public interface PersistableValue {
          * @since 1.0.0
          */
         public B with(V src) {
-
             Objects.requireNonNull(src);
 
             this.note = src.getNote();
             this.version = src.getVersion();
 
             return builderType.cast(this);
-
         }
 
         /**
@@ -141,33 +139,73 @@ public interface PersistableValue {
          */
         public abstract V build(Validator validator, Class<?>... groups);
 
+        /**
+         * Abstract implements of the {@code PersistableValue}.
+         *
+         * @author riru
+         * @version 1.0.0
+         * @since 1.0.0
+         */
         protected abstract static class AbstractBean implements PersistableValue {
 
             protected String note;
             protected int version;
 
+            /**
+             * Constructor. Used only for deserialization from JSON.
+             *
+             * @since 1.0.0
+             */
             protected AbstractBean() {
             }
 
+            /**
+             * Constructor.
+             *
+             * @param builder the {@code PersistableValue.AbstractBuilder}
+             * @since 1.0.0
+             */
             protected AbstractBean(AbstractBuilder<?, ?> builder) {
                 this.note = builder.note;
                 this.version = builder.version;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public String getNote() {
                 return note;
             }
 
+            /**
+             * Set note for this value.
+             *
+             * @param note for this value. It can be set {@code null}.
+             * @since 1.0.0
+             */
             public void setNote(String note) {
                 this.note = note;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public int getVersion() {
                 return version;
             }
 
+            /**
+             * Set version number for this value.
+             *
+             * @param version version number
+             * @since 1.0.0
+             */
             public void setVersion(int version) {
                 this.version = version;
             }
