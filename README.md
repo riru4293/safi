@@ -68,6 +68,30 @@ CREATE TABLE           `t_user` (
   COMMENT='Identity content of the user.'
 ;
 
+DROP   TABLE IF EXISTS `m_time`;
+CREATE TABLE           `m_time` (
+-- ---------------------+--------+--------+--------+---
+    `kind`                VARCHAR(     20) NOT NULL
+  , `value`              DATETIME
+  , `from_ts`            DATETIME          NOT NULL
+  , `to_ts`              DATETIME          NOT NULL
+  , `ban`                 BOOLEAN          NOT NULL
+-- ---------------------+--------+--------+--------+---
+  , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci
+  , `version`                 INT          NOT NULL
+  , `reg_ts`             DATETIME          NOT NULL
+  , `reg_id`              VARCHAR(     36) NOT NULL
+  , `reg_ap`              VARCHAR(     36) NOT NULL
+  , `upd_ts`             DATETIME          NOT NULL
+  , `upd_id`              VARCHAR(     36) NOT NULL
+  , `upd_ap`              VARCHAR(     36) NOT NULL
+-- ---------------------+--------+--------+--------+---
+  , PRIMARY KEY (`kind`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC
+  COMMENT='Time definitions for application.'
+;
+
+
 ```
 
 ## Setup GlassFish
@@ -77,7 +101,7 @@ Pool Name: SafiPool
 Resource Type: javax.sql.XADataSource
 Database Driver Vendor: MariaDB
 User: safi
-Url: jdbc:mariadb://localhost/safi
+Url: jdbc:mariadb://localhost/safi?sessionVariables=innodb_lock_wait_timeout=3
 Password: Golden Hammer
 
 
@@ -86,7 +110,7 @@ Pool Name: SafiBatchPool
 Resource Type: javax.sql.XADataSource
 Database Driver Vendor: MariaDB
 User: safi-batch
-Url: jdbc:mariadb://localhost/safi
+Url: jdbc:mariadb://localhost/safi?sessionVariables=innodb_lock_wait_timeout=60
 Password: A secret makes a woman woman.
 
 
@@ -96,3 +120,17 @@ JNDI Name: jdbc/safi
 
 ### JDBC Resource jdbc/safi-batch
 JNDI Name: jdbc/safi-batch
+
+### JVM Options
+-Dsafi.root.dir=/path-of-dist/safi
+
+## files
+cd ${dist}
+mkdir safi
+mkdir safi/tmp
+mkdir safi/var
+mkdir safi/var/job
+mkdir safi/var/plugin
+mkdir safi/var/plugin/function
+mkdir safi/var/plugin/importer
+
