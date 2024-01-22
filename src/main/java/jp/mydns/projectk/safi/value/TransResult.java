@@ -30,10 +30,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import jp.mydns.projectk.safi.service.TransformService;
 
 /**
- * Transformation result content. If the transformation is successful, the content is stored as a result content. If
- * transformation failed, error messages and source content are stored.
+ * A result of the transform processing. If the transformation succeeded, contains a transformed content and a source
+ * content. If the transformation failed, contains an error message and a source content.
  *
  * <p>
  * Implementation requirements.
@@ -44,6 +45,7 @@ import java.util.Objects;
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
+ * @see TransformService.Transformer#transform(java.util.Map) Transform processing
  */
 public interface TransResult extends RecordableValue {
 
@@ -168,7 +170,7 @@ public interface TransResult extends RecordableValue {
         }
 
         /**
-         * Returns a string representation of this.
+         * Returns a string representation.
          *
          * @return a string representation
          * @since 1.0.0
@@ -256,7 +258,7 @@ public interface TransResult extends RecordableValue {
         }
 
         /**
-         * Returns a string representation of this.
+         * Returns a string representation.
          *
          * @return a string representation
          * @since 1.0.0
