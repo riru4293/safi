@@ -36,41 +36,41 @@ import jp.mydns.projectk.safi.value.ContentValue;
  */
 public enum ContentKind {
     /**
-     * Represents the identity content <i>User</i>.
+     * Represents the <i>ID-Content</i> of the <i>User</i>.
      *
      * @since 1.0.0
      */
     USER,
     /**
-     * Represents the identity content <i>Authentication-Medium</i>.
+     * Represents the <i>ID-Content</i> of the <i>Authentication-Medium</i>.
      *
      * @since 1.0.0
      */
     MEDIUM,
     /**
-     * Represents the identity content <i>Organization</i> #2.
+     * Represents the <i>ID-Content</i> of the <i>Organization</i> #2.
      *
      * @since 1.0.0
      */
     ORG1,
     /**
-     * Represents the identity content <i>Organization</i> #2.
+     * Represents the <i>ID-Content</i> of the <i>Organization</i> #2.
      *
      * @since 1.0.0
      */
     ORG2,
     /**
-     * Represents the identity content <i>Belong-Organizations</i>.
+     * Represents the <i>ID-Content</i> of the <i>Belong-Organization</i>.
      *
      * @since 1.0.0
      */
     BELONG_ORG,
     /**
-     * Represents the identity content <i>Group</i>.
+     * Represents the <i>ID-Content</i> of the <i>Group</i>.
      */
     GROUP,
     /**
-     * Represents the identity content <i>Belong-Group</i>.
+     * Represents the <i>ID-Content</i> of the <i>Belong-Group</i>.
      *
      * @since 1.0.0
      */
