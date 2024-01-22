@@ -72,7 +72,6 @@ public interface FilteringOperation {
      * @since 1.0.0
      */
     default Single asSingle() {
-
         return Single.class.cast(this);
     }
 
@@ -84,12 +83,11 @@ public interface FilteringOperation {
      * @since 1.0.0
      */
     default Multi asMulti() {
-
         return Multi.class.cast(this);
     }
 
     /**
-     * Represents a match operation for a single value. For example, the "EQUAL" operator.
+     * Represents a match operation for a single value. For example, the {@code EQUAL} operator.
      *
      * @author riru
      * @version 1.0.0
@@ -97,43 +95,43 @@ public interface FilteringOperation {
      */
     enum Single implements FilteringOperation {
         /**
-         * {@code EQUAL} operation.
+         * Indicates a equal.
          *
          * @since 1.0.0
          */
         EQUAL,
         /**
-         * {@code FORWARD MATCH} operation.
+         * Indicates a forward-match.
          *
          * @since 1.0.0
          */
         FORWARD_MATCH,
         /**
-         * {@code PARTIAL MATCH} operation.
+         * Indicates a partial-match.
          *
          * @since 1.0.0
          */
         PARTIAL_MATCH,
         /**
-         * {@code BACKWARD MATCH} operation.
+         * Indicates a backward-match.
          *
          * @since 1.0.0
          */
         BACKWARD_MATCH,
         /**
-         * {@code GRATER THAN} operation.
+         * Indicates a greater-than.
          *
          * @since 1.0.0
          */
         GRATER_THAN,
         /**
-         * {@code LESS THAN} operation.
+         * Indicates a less-than.
          *
          * @since 1.0.0
          */
         LESS_THAN,
         /**
-         * {@code IS NULL} operation.
+         * Indicates a is-null.
          *
          * @since 1.0.0
          */
@@ -141,7 +139,7 @@ public interface FilteringOperation {
     }
 
     /**
-     * Filtering operation that aggregate filtering operations. For example, the "AND" operator.
+     * Filtering operation that aggregate filtering operations. For example, the {@code AND} operator.
      *
      * @author riru
      * @version 1.0.0
@@ -149,19 +147,19 @@ public interface FilteringOperation {
      */
     enum Multi implements FilteringOperation {
         /**
-         * {@code AND} operation.
+         * Indicates a logical product.
          *
          * @since 1.0.0
          */
         AND,
         /**
-         * {@code OR} operation.
+         * Indicates a logical sum.
          *
          * @since 1.0.0
          */
         OR,
         /**
-         * {@code NOT OR} operation.
+         * Indicates the negation of a logical sum.
          *
          * @since 1.0.0
          */
@@ -177,11 +175,16 @@ public interface FilteringOperation {
      */
     class Deserializer implements JsonbDeserializer<FilteringOperation> {
 
-        private static final Set<String> multiOpNames = Stream.of(Multi.values()).map(Enum::name).collect(toUnmodifiableSet());
+        private static final Set<String> multiOpNames
+                = Stream.of(Multi.values()).map(Enum::name).collect(toUnmodifiableSet());
 
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
         @Override
         public FilteringOperation deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-
             String opName = ctx.deserialize(String.class, parser);
 
             if (opName == null) {
@@ -189,7 +192,6 @@ public interface FilteringOperation {
             }
 
             return multiOpNames.contains(opName) ? Multi.valueOf(opName) : Single.valueOf(opName);
-
         }
     }
 }
