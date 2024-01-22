@@ -47,12 +47,12 @@ import jp.mydns.projectk.safi.value.ValidityPeriod;
 import org.eclipse.persistence.annotations.Customizer;
 
 /**
- * An abstract implementation of the <i>ID Content</i> entity.
+ * An abstract implementation of the <i>ID-Content</i> entity.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
- * @see ContentValue <i>ID Content</i> is explained in {@code ContentValue}
+ * @see ContentValue <i>ID-Content</i> is explained in {@code ContentValue}
  */
 @MappedSuperclass
 @Customizer(NoEmbedNull.class)
