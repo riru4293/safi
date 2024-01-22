@@ -41,6 +41,7 @@ import jp.mydns.projectk.safi.constant.TimeConfigKind;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.value.TimeConfigValue;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
@@ -52,7 +53,7 @@ import jp.mydns.projectk.safi.value.ValidityPeriod;
  */
 @Entity
 @Table(name = "m_time")
-public class TimeConfigEntity extends CommonEntity {
+public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
 
     private static final long serialVersionUID = -8634128441967110929L;
 
@@ -72,12 +73,12 @@ public class TimeConfigEntity extends CommonEntity {
     protected ValidityPeriodEmb validityPeriod;
 
     /**
-     * Get the {@code TimeKind}.
+     * {@inheritDoc}
      *
-     * @return the {@code TimeKind}
      * @since 1.0.0
      */
     @NotNull
+    @Override
     public TimeConfigKind getId() {
         return id;
     }
@@ -93,22 +94,21 @@ public class TimeConfigEntity extends CommonEntity {
     }
 
     /**
-     * Get time-configuration value.
+     * {@inheritDoc}
      *
-     * @return time-configuration value. It may be {@code null}.
      * @since 1.0.0
      */
-    @NotNull
     @TimeAccuracy
     @TimeRange
+    @Override
     public LocalDateTime getValue() {
         return value;
     }
 
     /**
-     * Set time-configuration value.
+     * Set time value.
      *
-     * @param value time-configuration value. It can be set {@code null}.
+     * @param value time value. It can be set {@code null}.
      * @since 1.0.0
      */
     public void setValue(LocalDateTime value) {
@@ -116,11 +116,13 @@ public class TimeConfigEntity extends CommonEntity {
     }
 
     /**
-     * Get the {@code ValidityPeriod}.
+     * {@inheritDoc}
      *
-     * @return the {@code ValidityPeriod}
      * @since 1.0.0
      */
+    @NotNull
+    @Valid
+    @Override
     public ValidityPeriod getValidityPeriod() {
         return validityPeriod;
     }
