@@ -31,8 +31,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
-import jp.mydns.projectk.safi.constant.AttName;
-import static jp.mydns.projectk.safi.constant.AttName.*;
+import jp.mydns.projectk.safi.constant.AttKey;
+import static jp.mydns.projectk.safi.constant.AttKey.*;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -68,7 +68,7 @@ class ContentDigestGeneratorTest {
             [null,"hello",true,"2000-01-01T00:00:00","2999-12-31T23:59:59",false\
             ,"a01","a02",null,null,null,null,null,null,null,"a10"]""".getBytes(StandardCharsets.UTF_8));
 
-        Map<AttName, String> atts = Map.of(ATT01, "a01", ATT02, "a02", ATT10, "a10");
+        Map<AttKey, String> atts = Map.of(ATT01, "a01", ATT02, "a02", ATT10, "a10");
 
         ValidityPeriod vp = new ValidityPeriod.Builder().build(validator);
 
