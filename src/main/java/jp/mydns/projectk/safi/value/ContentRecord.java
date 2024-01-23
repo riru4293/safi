@@ -54,21 +54,76 @@ import jp.mydns.projectk.safi.validator.Strict;
  * </ul>
  *
  * <p>
- * JSON Format: If success.<pre><code>
+ * JSON format
+ * <pre><code>
  * {
- *     "id": "required",
- *     "kind": "required",
- *     "value": { },
- *     "messages": [ "optional" ]
- * }
- * </code></pre>
- *
- * JSON Format: If failure.<pre><code>
- * {
- *     "kind": "required",
- *     "failurePhase": "required",
- *     "value": { },
- *     "messages": [ "optional" ]
+ *     "$schema": "https://json-schema.org/draft/2020-12/schema",
+ *     "$id": "https://project-k.mydns.jp/safi/content-record.schema.json",
+ *     "title": "Filtdef",
+ *     "description": "An information for filtering the contents.",
+ *     "type": "object",
+ *     "properties": {
+ *         "id": {
+ *             "description": "Content id.",
+ *             "type": "string",
+ *             "maxLength": 36
+ *         },
+ *         "kind": {
+ *             "description": "Record kind.",
+ *             "type": "string",
+ *             "enum": [
+ *                 "REGISTER",
+ *                 "DELETION",
+ *                 "FAILURE"
+ *             ]
+ *         },
+ *         "failurePhase": {
+ *             "description": "Failure phase.",
+ *             "type": "string",
+ *             "enum": [
+ *                 "TRANSFORMATION",
+ *                 "VALIDATION",
+ *                 "PROVISIONING"
+ *             ]
+ *         },
+ *         "value": {
+ *             "description": "Content value.",
+ *             "type": "object"
+ *         },
+ *         "messages": {
+ *             "description": "Result messages.",
+ *             "type": "array",
+ *             "items": {
+ *                 "type": "string"
+ *             }
+ *         },
+ *         "required": [
+ *             "kind",
+ *             "value",
+ *             "messages"
+ *         ],
+ *         "allOf": [
+ *             {
+ *                 "if": {
+ *                     "kind": {
+ *                         "operation": {
+ *                             "const": "FAILURE"
+ *                         }
+ *                     }
+ *                 },
+ *                 "then": {
+ *                     "required": [
+ *                         "failurePhase"
+ *                     ]
+ *                 },
+ *                 "else": {
+ *                     "required": [
+ *                         "id"
+ *                     ]
+ *                 }
+ *             }
+ *         ]
+ *     }
  * }
  * </code></pre>
  *
@@ -236,24 +291,51 @@ public interface ContentRecord {
                 this.messages = builder.messages;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public String getId() {
                 return id;
             }
 
+            /**
+             * Set content id.
+             *
+             * @param id content id
+             * @since 1.0.0
+             */
             public void setId(String id) {
                 this.id = id;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public RecordKind getKind() {
                 return kind;
             }
 
+            /**
+             * Set the kind of processing result.
+             *
+             * @param kind the {@code RecordKind}
+             * @since 1.0.0
+             */
             public void setKind(RecordKind kind) {
                 this.kind = kind;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public JobPhase getFailurePhase() {
                 return failurePhase;
@@ -263,24 +345,52 @@ public interface ContentRecord {
                 this.failurePhase = failurePhase;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public JsonObject getValue() {
                 return value;
             }
 
+            /**
+             * Set content value.
+             *
+             * @param value content value
+             * @since 1.0.0
+             */
             public void setValue(JsonObject value) {
                 this.value = value;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public List<String> getMessages() {
                 return messages;
             }
 
+            /**
+             * Set the result messages of processed content.
+             *
+             * @param messages result messages
+             * @since 1.0.0
+             */
             public void setMessages(List<String> messages) {
                 this.messages = messages;
             }
 
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 1.0.0
+             */
             @Override
             public String toString() {
                 return "ContentRecord{" + "id=" + id + ", kind=" + kind + ", failurePhase=" + failurePhase
@@ -298,6 +408,11 @@ public interface ContentRecord {
      */
     class Deserializer implements JsonbDeserializer<ContentRecord> {
 
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
         @Override
         public ContentRecord deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return dc.deserialize(Builder.Bean.class, jp);
