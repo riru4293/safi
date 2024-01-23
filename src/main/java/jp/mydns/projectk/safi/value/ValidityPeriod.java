@@ -61,22 +61,22 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * <pre><code>
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/validity-period.schema.json",
+ *     "$id": "https://project-k.mydns.jp/safi/validity-period.schema.json",
  *     "title": "ValidityPeriod",
- *     "description": "Validity period",
+ *     "description": "Validity period.",
  *     "type": "object",
  *     "properties": {
  *         "properties": {
  *             "from": {
- *                 "description": "Begin date-time of validity period",
+ *                 "description": "Begin date-time of validity period.",
  *                 "type": "date-time"
  *             },
  *             "to": {
- *                 "description": "End date-time of validity period",
+ *                 "description": "End date-time of validity period.",
  *                 "type": "date-time"
  *             },
  *             "ban": {
- *                 "description": "Flag that forbidden to be valid",
+ *                 "description": "Flag that forbidden to be valid.",
  *                 "type": "boolean"
  *             }
  *         }
@@ -127,7 +127,7 @@ public interface ValidityPeriod {
      * @return {@code true} if forbidden to be valid, otherwise {@code false}.
      * @since 1.0.0
      */
-    @Schema(example = "false", description = "true if forbidden to be valid, otherwise false.")
+    @Schema(example = "false", description = "Flag that forbidden to be valid. true if forbidden.")
     boolean isBan();
 
     /**
