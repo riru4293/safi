@@ -63,7 +63,7 @@ import jp.mydns.projectk.plugin.Plugin;
  *         },
  *         "args": {
  *             "description": "Plugin execution arguments.",
- *             "type": "object",
+ *             "type": "object"
  *         },
  *         "required": [
  *             "name",
