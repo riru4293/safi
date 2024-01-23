@@ -66,6 +66,7 @@ import jp.mydns.projectk.safi.validator.Strict;
  *         "id": {
  *             "description": "Content id.",
  *             "type": "string",
+ *             "minLength": 1,
  *             "maxLength": 36
  *         },
  *         "kind": {
@@ -142,7 +143,7 @@ public interface ContentRecord {
      * @since 1.0.0
      */
     @Schema(description = "Content id.")
-    @Size(max = 36, groups = {Strict.class})
+    @Size(min = 1, max = 36, groups = {Strict.class})
     String getId();
 
     /**
