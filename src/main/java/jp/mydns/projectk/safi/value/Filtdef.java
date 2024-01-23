@@ -62,7 +62,12 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *     "properties": {
  *         "trnsdef": {
  *             "description": "Configuration for transformation.",
- *             "$ref": "https://project-k.mydns.jp/safi/trnsdef.schema.json"
+ *             "type": "object",
+ *             "patternProperties": {
+ *                 "^.+$": {
+ *                     "type": "string"
+ *                 }
+ *             }
  *         },
  *         "condition": {
  *             "description": "Plugin execution arguments.",
