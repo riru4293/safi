@@ -57,91 +57,91 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
  *     "$id": "https://project-k.mydns.jp/safi/user-content.schema.json",
  *     "title": "UserContent",
- *     "description": "ID-Content of the User",
+ *     "description": "ID-Content of the User.",
  *     "type": "object",
  *     "properties": {
  *         "id": {
- *             "description": "User id",
+ *             "description": "User id.",
  *             "type": "string",
  *             "minLength": 1,
  *             "maxLength": 36
  *         },
  *         "enabled": {
- *             "description": "Validity state flag",
+ *             "description": "Validity state flag.",
  *             "type": "boolean"
  *         },
  *         "name": {
- *             "description": "User name",
+ *             "description": "User name.",
  *             "type": "string",
  *             "maxLength": 100
  *         },
  *         "attributes": {
- *             "description": "Attribute collection",
+ *             "description": "Attribute collection.",
  *             "type": "object",
  *             "properties": {
  *                 "att01": {
- *                     "description": "Attribute #2",
+ *                     "description": "Attribute #1.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att02": {
- *                     "description": "Attribute #1",
+ *                     "description": "Attribute #2.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att03": {
- *                     "description": "Attribute #3",
+ *                     "description": "Attribute #3.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att04": {
- *                     "description": "Attribute #4",
+ *                     "description": "Attribute #4.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att05": {
- *                     "description": "Attribute #5",
+ *                     "description": "Attribute #5.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att06": {
- *                     "description": "Attribute #6",
+ *                     "description": "Attribute #6.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att07": {
- *                     "description": "Attribute #7",
+ *                     "description": "Attribute #7.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att08": {
- *                     "description": "Attribute #8",
+ *                     "description": "Attribute #8.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att09": {
- *                     "description": "Attribute #9",
+ *                     "description": "Attribute #9.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 },
  *                 "att10": {
- *                     "description": "Attribute #10",
+ *                     "description": "Attribute #10.",
  *                     "type": "string",
  *                     "maxLength": 200
  *                 }
  *             },
  *             "validityPeriod": {
- *                 "description": "Validity period",
+ *                 "description": "Validity period.",
  *                 "$ref": "https://project-k.mydns.jp/safi/validity-period.schema.json"
  *             },
  *             "digest": {
- *                 "description": "Digest value",
+ *                 "description": "Digest value.",
  *                 "type": "string",
  *                 "minLength": 1,
  *                 "maxLength": 128
  *             },
  *             "note": {
- *                 "description": "Note for this content",
+ *                 "description": "Note for this content.",
  *                 "type": "string"
  *             },
  *             "version": {
