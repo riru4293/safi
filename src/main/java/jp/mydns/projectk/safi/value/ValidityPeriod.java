@@ -69,15 +69,18 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *         "properties": {
  *             "from": {
  *                 "description": "Begin date-time of validity period.",
- *                 "type": "date-time"
+ *                 "type": "date-time",
+ *                 "default": "2000-01-01T00:00:00Z"
  *             },
  *             "to": {
  *                 "description": "End date-time of validity period.",
- *                 "type": "date-time"
+ *                 "type": "date-time",
+ *                 "default": "2999-12-31T23:59:59Z"
  *             },
  *             "ban": {
  *                 "description": "Flag that forbidden to be valid.",
- *                 "type": "boolean"
+ *                 "type": "boolean",
+ *                 "default": false
  *             }
  *         }
  *     },
