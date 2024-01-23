@@ -40,8 +40,8 @@ import java.util.Map;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
- * Filtering definition. It has a transform definition and filtering condition, and is used to determine whether the
- * transform result matches the filtering condition.
+ * An information for filtering the contents. It has a transform definition and filtering condition, and is used to
+ * determine whether the transform result matches the filtering condition.
  *
  * <p>
  * Implementation requirements.
@@ -51,13 +51,28 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * </ul>
  *
  * <p>
- * JSON Format
+ * JSON format
  * <pre><code>
  * {
- *     "trnsdef": {
- *         "elementName": "element-value"
- *     },
- *     "condition": { "operation": "AND", "children": [] }
+ *     "$schema": "https://json-schema.org/draft/2020-12/schema",
+ *     "$id": "https://project-k.mydns.jp/safi/filtdef.schema.json",
+ *     "title": "Filtdef",
+ *     "description": "An information for filtering the contents.",
+ *     "type": "object",
+ *     "properties": {
+ *         "trnsdef": {
+ *             "description": "Configuration for transformation.",
+ *             "$ref": "https://project-k.mydns.jp/safi/trnsdef.schema.json"
+ *         },
+ *         "condition": {
+ *             "description": "Plugin execution arguments.",
+ *             "$ref": "https://project-k.mydns.jp/safi/condition.schema.json"
+ *         },
+ *         "required": [
+ *             "trnsdef",
+ *             "condition"
+ *         ]
+ *     }
  * }
  * </code></pre>
  *
@@ -66,7 +81,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @since 1.0.0
  */
 @JsonbTypeDeserializer(Filtdef.Deserializer.class)
-@Schema(name = "Filtdef", description = "Filtering setting.")
+@Schema(name = "Filtdef", description = "An information for filtering the contents.")
 public interface Filtdef {
 
     /**
@@ -140,37 +155,83 @@ public interface Filtdef {
             return ValidationUtils.requireValid(new Bean(this), validator, groups);
         }
 
+        /**
+         * Implements of the {@code Filtdef}.
+         *
+         * @author riru
+         * @version 1.0.0
+         * @since 1.0.0
+         */
         protected static class Bean implements Filtdef {
 
             private Map<String, String> trnsdef;
             private Condition condition;
 
+            /**
+             * Constructor. Used only for deserialization from JSON.
+             *
+             * @since 1.0.0
+             */
             protected Bean() {
             }
 
+            /**
+             * Constructor.
+             *
+             * @param builder the {@code Filtdef.Builder}
+             * @since 1.0.0
+             */
             protected Bean(Filtdef.Builder builder) {
                 this.trnsdef = builder.trnsdef;
                 this.condition = builder.condition;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public Map<String, String> getTrnsdef() {
                 return trnsdef != null ? unmodifiableMap(trnsdef) : null;
             }
 
+            /**
+             * Set transform definition for filtering.
+             *
+             * @param trnsdef transform definition for filtering
+             * @since 1.0.0
+             */
             public void setTrnsdef(Map<String, String> transformations) {
                 this.trnsdef = transformations;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
             @Override
             public Condition getCondition() {
                 return condition;
             }
 
+            /**
+             * Set filtering condition.
+             *
+             * @param condition filtering condition
+             * @since 1.0.0
+             */
             public void setCondition(Condition condition) {
                 this.condition = condition;
             }
 
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 1.0.0
+             */
             @Override
             public String toString() {
                 return "Filtdef{" + "trnsdef=" + trnsdef + ", condition=" + condition + '}';
@@ -187,6 +248,11 @@ public interface Filtdef {
      */
     class Deserializer implements JsonbDeserializer<Filtdef> {
 
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
         @Override
         public Filtdef deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return dc.deserialize(Builder.Bean.class, jp);
