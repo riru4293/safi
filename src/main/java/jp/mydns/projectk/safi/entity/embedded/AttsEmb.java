@@ -34,7 +34,6 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.AttKey;
-import jp.mydns.projectk.safi.validator.Strict;
 import jp.mydns.projectk.safi.value.ContentValue;
 
 /**
@@ -50,43 +49,43 @@ public class AttsEmb implements Serializable {
 
     private static final long serialVersionUID = 5106454913064640730L;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att01")
     private String att01;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att02")
     private String att02;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att03")
     private String att03;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att04")
     private String att04;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att05")
     private String att05;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att06")
     private String att06;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att07")
     private String att07;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att08")
     private String att08;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att09")
     private String att09;
 
-    @Size(max = 200, groups = {Strict.class})
+    @Size(max = 200)
     @Column(name = "att10")
     private String att10;
 

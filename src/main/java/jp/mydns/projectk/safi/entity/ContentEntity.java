@@ -41,7 +41,6 @@ import jp.mydns.projectk.safi.entity.embedded.AttsEmb;
 import jp.mydns.projectk.safi.entity.embedded.NoEmbedNull;
 import jp.mydns.projectk.safi.entity.embedded.TxtValidityPeriodEmb;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
-import jp.mydns.projectk.safi.validator.Strict;
 import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 import org.eclipse.persistence.annotations.Customizer;
@@ -72,13 +71,13 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
     @Column(name = "name", length = 100)
     protected String name;
 
-    @NotNull(groups = {Strict.class})
+    @NotNull
     @Valid
     @Embedded
     @SuppressWarnings("FieldMayBeFinal")
     protected AttsEmb attsEmb = new AttsEmb();
 
-    @NotNull(groups = {Strict.class})
+    @NotNull
     @Valid
     @Embedded
     protected ValidityPeriodEmb validityPeriod;
@@ -100,8 +99,8 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
      * @return content id
      * @since 1.0.0
      */
-    @NotBlank(groups = {Strict.class})
-    @Size(max = 36, groups = {Strict.class})
+    @NotBlank
+    @Size(max = 36)
     @Override
     public String getId() {
         return id;
@@ -144,7 +143,7 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
      * @return content name
      * @since 1.0.0
      */
-    @Size(max = 100, groups = {Strict.class})
+    @Size(max = 100)
     @Override
     public String getName() {
         return name;
@@ -209,8 +208,8 @@ public abstract class ContentEntity extends CommonEntity implements ContentValue
      * @return digest value
      * @since 1.0.0
      */
-    @NotBlank(groups = {Strict.class})
-    @Size(max = 128, groups = {Strict.class})
+    @NotBlank
+    @Size(max = 128)
     @Override
     public String getDigest() {
         return digest;

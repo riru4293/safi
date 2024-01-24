@@ -37,7 +37,6 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import jp.mydns.projectk.safi.validator.Strict;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.PersistableValue;
@@ -121,7 +120,7 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return entity version
      * @since 1.0.0
      */
-    @PositiveOrZero(groups = {Strict.class})
+    @PositiveOrZero
     @Override
     public int getVersion() {
         return version;
@@ -144,9 +143,9 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return persisted time. It time zone is UTC.
      * @since 1.0.0
      */
-    @NotNull(groups = {Strict.class})
-    @TimeRange(groups = {Strict.class})
-    @TimeAccuracy(groups = {Strict.class})
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
     public LocalDateTime getRegisterTime() {
         return registerTime;
     }
@@ -167,8 +166,8 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return persisted user id
      * @since 1.0.0
      */
-    @NotBlank(groups = {Strict.class})
-    @Size(max = 250, groups = {Strict.class})
+    @NotBlank
+    @Size(max = 250)
     public String getRegisterAccountId() {
         return registerAccountId;
     }
@@ -189,8 +188,8 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return persisted process name
      * @since 1.0.0
      */
-    @NotBlank(groups = {Strict.class})
-    @Size(max = 250, groups = {Strict.class})
+    @NotBlank
+    @Size(max = 250)
     public String getRegisterProcessName() {
         return registerProcessName;
     }
@@ -211,9 +210,9 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return last updated time. It time zone is UTC.
      * @since 1.0.0
      */
-    @NotNull(groups = {Strict.class})
-    @TimeRange(groups = {Strict.class})
-    @TimeAccuracy(groups = {Strict.class})
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
     public LocalDateTime getUpdateTime() {
         return updateTime;
     }
@@ -234,8 +233,8 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return last updated user id
      * @since 1.0.0
      */
-    @NotBlank(groups = {Strict.class})
-    @Size(max = 250, groups = {Strict.class})
+    @NotBlank
+    @Size(max = 250)
     public String getUpdateAccountId() {
         return updateAccountId;
     }
@@ -256,8 +255,8 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return last updated process name
      * @since 1.0.0
      */
-    @NotBlank(groups = {Strict.class})
-    @Size(max = 250, groups = {Strict.class})
+    @NotBlank
+    @Size(max = 250)
     public String getUpdateProcessName() {
         return updateProcessName;
     }

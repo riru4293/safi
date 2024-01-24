@@ -29,7 +29,6 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.groups.Default;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -101,9 +100,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      * @return begin date-time of validity period
      * @since 1.0.0
      */
-    @NotNull(groups = {Default.class})
-    @TimeRange(groups = {Default.class})
-    @TimeAccuracy(groups = {Default.class})
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
     public LocalDateTime getLocalFrom() {
         return localFrom;
     }
@@ -134,9 +133,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      * @return end date-time of validity period
      * @since 1.0.0
      */
-    @NotNull(groups = {Default.class})
-    @TimeRange(groups = {Default.class})
-    @TimeAccuracy(groups = {Default.class})
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
     public LocalDateTime getLocalTo() {
         return localTo;
     }
