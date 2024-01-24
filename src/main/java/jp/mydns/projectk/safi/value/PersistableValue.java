@@ -29,8 +29,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.groups.Default;
 import java.util.Objects;
-import jp.mydns.projectk.safi.validator.Strict;
 
 /**
  * Indicate that it can be persist.
@@ -64,7 +64,7 @@ public interface PersistableValue {
      * @since 1.0.0
      */
     @Schema(description = "Version number for this value.")
-    @PositiveOrZero(groups = {Strict.class})
+    @PositiveOrZero(groups = {Default.class})
     int getVersion();
 
     /**
