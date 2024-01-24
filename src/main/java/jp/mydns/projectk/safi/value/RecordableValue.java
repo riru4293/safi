@@ -27,7 +27,7 @@ package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
-import jp.mydns.projectk.safi.validator.Strict;
+import jakarta.validation.groups.Default;
 
 /**
  * Indicate that it can be converted to the {@link ContentRecord}.
@@ -52,6 +52,6 @@ public interface RecordableValue {
      * @since 1.0.0
      */
     @Schema(description = "ID for recording.")
-    @Size(max = 36, groups = {Strict.class})
+    @Size(max = 36, groups = {Default.class})
     String getId();
 }
