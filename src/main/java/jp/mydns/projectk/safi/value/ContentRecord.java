@@ -35,12 +35,13 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.List;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.util.ValidationUtils;
-import jp.mydns.projectk.safi.validator.Strict;
+import jp.mydns.projectk.safi.validator.Minimal;
 
 /**
  * A record of one processed content. It is a format for recording the value at the time when the process success or
@@ -143,7 +144,7 @@ public interface ContentRecord {
      * @since 1.0.0
      */
     @Schema(description = "Content id.")
-    @Size(min = 1, max = 36, groups = {Strict.class})
+    @Size(min = 1, max = 36, groups = {Default.class, Minimal.class})
     String getId();
 
     /**
@@ -153,7 +154,7 @@ public interface ContentRecord {
      * @since 1.0.0
      */
     @Schema(description = "Recording result kind.")
-    @NotNull(groups = {Strict.class})
+    @NotNull(groups = {Default.class})
     RecordKind getKind();
 
     /**
@@ -173,7 +174,7 @@ public interface ContentRecord {
      * @since 1.0.0
      */
     @Schema(description = "Content value.")
-    @NotNull(groups = {Strict.class})
+    @NotNull(groups = {Default.class})
     JsonObject getValue();
 
     /**
@@ -183,8 +184,8 @@ public interface ContentRecord {
      * @since 1.0.0
      */
     @Schema(description = "Result messages.")
-    @NotNull(groups = {Strict.class})
-    List<@NotNull(groups = {Strict.class}) String> getMessages();
+    @NotNull(groups = {Default.class})
+    List<@NotNull(groups = {Default.class}) String> getMessages();
 
     /**
      * Builder of the {@link ContentRecord}.
