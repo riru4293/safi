@@ -38,7 +38,6 @@ import java.util.Objects;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.service.AppTimeService;
-import jp.mydns.projectk.safi.validator.Minimal;
 
 /**
  * {@code ContentValue} is data that can be identified by ID and is the main content of this application, called
@@ -68,7 +67,7 @@ public interface ContentValue extends PersistableValue, RecordableValue {
      * @since 1.0.0
      */
     @Schema(description = "Content id.")
-    @NotBlank(groups = {Default.class, Minimal.class})
+    @NotBlank(groups = {Default.class})
     @Size(max = 36, groups = {Default.class})
     @Override
     String getId();
