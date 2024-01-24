@@ -31,13 +31,14 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.Objects;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.service.AppTimeService;
-import jp.mydns.projectk.safi.validator.Strict;
+import jp.mydns.projectk.safi.validator.Minimal;
 
 /**
  * {@code ContentValue} is data that can be identified by ID and is the main content of this application, called
@@ -67,8 +68,8 @@ public interface ContentValue extends PersistableValue, RecordableValue {
      * @since 1.0.0
      */
     @Schema(description = "Content id.")
-    @NotBlank(groups = {Strict.class})
-    @Size(max = 36, groups = {Strict.class})
+    @NotBlank(groups = {Default.class, Minimal.class})
+    @Size(max = 36, groups = {Default.class})
     @Override
     String getId();
 
@@ -88,7 +89,7 @@ public interface ContentValue extends PersistableValue, RecordableValue {
      * @return the {@code ValidityPeriod}
      * @since 1.0.0
      */
-    @NotNull(groups = {Strict.class})
+    @NotNull(groups = {Default.class})
     @Valid
     ValidityPeriod getValidityPeriod();
 
@@ -99,7 +100,7 @@ public interface ContentValue extends PersistableValue, RecordableValue {
      * @since 1.0.0
      */
     @Schema(description = "Content name.")
-    @Size(max = 100, groups = {Strict.class})
+    @Size(max = 100, groups = {Default.class})
     String getName();
 
     /**
@@ -110,8 +111,8 @@ public interface ContentValue extends PersistableValue, RecordableValue {
      * @since 1.0.0
      */
     @Schema(description = "Attribute values.")
-    @NotNull(groups = {Strict.class})
-    Map<AttKey, @Size(max = 200, groups = {Strict.class}) String> getAtts();
+    @NotNull(groups = {Default.class})
+    Map<AttKey, @Size(max = 200, groups = {Default.class}) String> getAtts();
 
     /**
      * Get digest value of this. If the contents match exactly, the same digest value can be obtained.
@@ -121,8 +122,8 @@ public interface ContentValue extends PersistableValue, RecordableValue {
      * @see DigestGenerator
      */
     @Schema(description = "Content digest value.")
-    @NotBlank(groups = {Strict.class})
-    @Size(max = 128, groups = {Strict.class})
+    @NotBlank(groups = {Default.class})
+    @Size(max = 128, groups = {Default.class})
     String getDigest();
 
     /**
