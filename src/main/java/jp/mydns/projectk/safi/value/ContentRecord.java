@@ -33,6 +33,7 @@ import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
@@ -185,7 +186,7 @@ public interface ContentRecord {
      */
     @Schema(description = "Result messages.")
     @NotNull(groups = {Default.class})
-    List<@NotNull(groups = {Default.class}) String> getMessages();
+    List<@NotBlank(groups = {Default.class}) String> getMessages();
 
     /**
      * Builder of the {@link ContentRecord}.
