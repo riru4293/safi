@@ -29,12 +29,12 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.validator.Strict;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
@@ -101,9 +101,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      * @return begin date-time of validity period
      * @since 1.0.0
      */
-    @NotNull(groups = {Strict.class})
-    @TimeRange(groups = {Strict.class})
-    @TimeAccuracy(groups = {Strict.class})
+    @NotNull(groups = {Default.class})
+    @TimeRange(groups = {Default.class})
+    @TimeAccuracy(groups = {Default.class})
     public LocalDateTime getLocalFrom() {
         return localFrom;
     }
@@ -134,9 +134,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      * @return end date-time of validity period
      * @since 1.0.0
      */
-    @NotNull(groups = {Strict.class})
-    @TimeRange(groups = {Strict.class})
-    @TimeAccuracy(groups = {Strict.class})
+    @NotNull(groups = {Default.class})
+    @TimeRange(groups = {Default.class})
+    @TimeAccuracy(groups = {Default.class})
     public LocalDateTime getLocalTo() {
         return localTo;
     }
