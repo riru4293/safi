@@ -141,11 +141,11 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *                 "maxLength": 128
  *             },
  *             "note": {
- *                 "description": "Note for this content.",
+ *                 "description": "Note for this entity.",
  *                 "type": "string"
  *             },
  *             "version": {
- *                 "description": "Content version stored in database. 0 if not yet stored.",
+ *                 "description": "Entity version stored in database. 0 if not yet stored.",
  *                 "type": "integer",
  *                 "minimum": 0
  *             }
