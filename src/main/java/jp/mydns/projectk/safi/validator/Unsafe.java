@@ -26,12 +26,12 @@
 package jp.mydns.projectk.safi.validator;
 
 /**
- * Indicate that strict verification.
+ * Indicate that no verification. Use only in situations where safety is guaranteed and performance is important.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface Strict {
+public interface Unsafe {
 
 }
