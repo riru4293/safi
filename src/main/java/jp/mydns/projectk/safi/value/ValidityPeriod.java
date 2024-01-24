@@ -34,13 +34,13 @@ import jakarta.json.stream.JsonParser;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.ValidationUtils;
-import jp.mydns.projectk.safi.validator.Strict;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -107,9 +107,9 @@ public interface ValidityPeriod {
      * @since 1.0.0
      */
     @Schema(example = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period.")
-    @NotNull(groups = {Strict.class})
-    @TimeRange(groups = {Strict.class})
-    @TimeAccuracy(groups = {Strict.class})
+    @NotNull(groups = {Default.class})
+    @TimeRange(groups = {Default.class})
+    @TimeAccuracy(groups = {Default.class})
     OffsetDateTime getFrom();
 
     /**
@@ -119,9 +119,9 @@ public interface ValidityPeriod {
      * @since 1.0.0
      */
     @Schema(example = "2999-12-31T23:59:59Z", description = "End date-time of validity period.")
-    @NotNull(groups = {Strict.class})
-    @TimeRange(groups = {Strict.class})
-    @TimeAccuracy(groups = {Strict.class})
+    @NotNull(groups = {Default.class})
+    @TimeRange(groups = {Default.class})
+    @TimeAccuracy(groups = {Default.class})
     OffsetDateTime getTo();
 
     /**
