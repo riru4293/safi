@@ -42,7 +42,6 @@ import java.util.List;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.util.ValidationUtils;
-import jp.mydns.projectk.safi.validator.Minimal;
 
 /**
  * A record of one processed content. It is a format for recording the value at the time when the process success or
@@ -145,7 +144,7 @@ public interface ContentRecord {
      * @since 1.0.0
      */
     @Schema(description = "Content id.")
-    @Size(min = 1, max = 36, groups = {Default.class, Minimal.class})
+    @Size(min = 1, max = 36, groups = {Default.class})
     String getId();
 
     /**
