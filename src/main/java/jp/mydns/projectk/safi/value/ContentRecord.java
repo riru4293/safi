@@ -274,6 +274,13 @@ public interface ContentRecord {
             return ValidationUtils.requireValid(new Bean(this), validator, groups);
         }
 
+        /**
+         * Implements of the {@code ContentRecord}.
+         *
+         * @author riru
+         * @version 1.0.0
+         * @since 1.0.0
+         */
         protected static class Bean implements ContentRecord {
 
             private String id;
@@ -282,9 +289,20 @@ public interface ContentRecord {
             private JsonObject value;
             private List<String> messages;
 
+            /**
+             * Constructor. Used only for deserialization from JSON.
+             *
+             * @since 1.0.0
+             */
             protected Bean() {
             }
 
+            /**
+             * Constructor.
+             *
+             * @param builder the {@code ContentRecord.Builder}
+             * @since 1.0.0
+             */
             protected Bean(Builder builder) {
                 this.id = builder.id;
                 this.kind = builder.kind;
