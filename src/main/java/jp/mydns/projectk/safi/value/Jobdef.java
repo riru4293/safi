@@ -487,7 +487,7 @@ public interface Jobdef extends PersistableValue {
                 this.filtdef = builder.filtdef;
                 this.trnsdef = builder.trnsdef;
                 this.options = builder.options;
-                this.validityPeriod = validityPeriod;
+                this.validityPeriod = builder.validityPeriod;
             }
 
             /**
