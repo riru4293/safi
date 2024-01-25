@@ -30,16 +30,13 @@ import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
-import jp.mydns.projectk.safi.constant.TimeKind;
-import jp.mydns.projectk.safi.dao.TimeDao;
-import jp.mydns.projectk.safi.entity.TimeEntity;
-import static jp.mydns.projectk.safi.util.LambdaUtils.p;
+import jp.mydns.projectk.safi.constant.TimeConfigKind;
+import jp.mydns.projectk.safi.dao.TimeConfigDao;
+import jp.mydns.projectk.safi.entity.TimeConfigEntity;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
- * Provides a time inside the application.
+ * Provides a date-time inside the application.
  *
  * @author riru
  * @version 1.0.0
@@ -55,7 +52,7 @@ public class AppTimeService {
     private RealTimeService realTimeSvc;
 
     @Inject
-    private TimeDao timeDao;
+    private TimeConfigDao timeDao;
 
     /**
      * Get current time. Accuracy is seconds. The retrieved value is cached for the life of this class. If a cached
@@ -112,12 +109,9 @@ public class AppTimeService {
     }
 
     private LocalDateTime calculateNow() {
-
         LocalDateTime realNow = realTimeSvc.getLocalNow();
-        Predicate<ValidityPeriod> validityTester = ValidityPeriod.containsWith(realNow);
 
-        return timeDao.getTimeEntity(TimeKind.APP_NOW).filter(p(validityTester, TimeEntity::getValidityPeriod))
-                .map(TimeEntity::getValue).orElse(realNow);
-
+        return timeDao.getTimeEntity(TimeConfigKind.APP_NOW).filter(p -> p.getValidityPeriod().isEnabled(realNow))
+                .map(TimeConfigEntity::getValue).orElse(realNow);
     }
 }
