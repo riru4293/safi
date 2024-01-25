@@ -46,7 +46,7 @@ import java.util.Objects;
 @Entity
 @Cacheable(false)
 @Table(name = "t_user")
-public class UserEntity extends ContentEntity {
+public class UserEntity extends ContentEntity<UserEntity> {
 
     private static final long serialVersionUID = 2711050439353117979L;
 
@@ -64,6 +64,26 @@ public class UserEntity extends ContentEntity {
     @JsonbTransient
     public ImportWorkEntity getImportWorkEntity() {
         return importWorkEntity;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
+    @Override
+    public UserEntity getValue() {
+        return this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
+    @Override
+    public UserEntity setValue(UserEntity unused) {
+        throw new UnsupportedOperationException();
     }
 
     /**

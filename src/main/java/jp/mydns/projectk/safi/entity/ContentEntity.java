@@ -48,6 +48,7 @@ import org.eclipse.persistence.annotations.Customizer;
 /**
  * An abstract implementation of the <i>ID-Content</i> entity.
  *
+ * @param <T> content type
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
@@ -55,7 +56,7 @@ import org.eclipse.persistence.annotations.Customizer;
  */
 @MappedSuperclass
 @Customizer(NoEmbedNull.class)
-public abstract class ContentEntity extends CommonEntity implements ContentValue {
+public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEntity implements ContentValue<T> {
 
     private static final long serialVersionUID = -1113513901343265409L;
 
