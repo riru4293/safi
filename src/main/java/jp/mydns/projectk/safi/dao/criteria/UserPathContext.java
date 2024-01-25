@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import static jp.mydns.projectk.safi.constant.AttKey.*;
+import jp.mydns.projectk.safi.constant.ContentPropName;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext.AbstractCriteriaPathContext;
 import jp.mydns.projectk.safi.entity.ContentEntity_;
 import jp.mydns.projectk.safi.entity.UserEntity;
@@ -56,11 +57,10 @@ public class UserPathContext extends AbstractCriteriaPathContext {
     }
 
     private static Map<String, Path<String>> buildMapping(Path<UserEntity> p) {
-
         Map<String, Path<String>> m = new LinkedHashMap<>();
 
-        m.put("id", p.get(ContentEntity_.id));
-        m.put("name", p.get(ContentEntity_.name));
+        m.put(ContentPropName.ID, p.get(ContentEntity_.id));
+        m.put(ContentPropName.NAME, p.get(ContentEntity_.name));
         m.put(ATT01.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att01));
         m.put(ATT02.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att02));
         m.put(ATT03.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att03));
