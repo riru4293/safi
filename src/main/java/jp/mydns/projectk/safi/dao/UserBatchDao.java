@@ -30,7 +30,6 @@ import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Selection;
 import jakarta.persistence.metamodel.SingularAttribute;
 import java.util.List;
-import java.util.stream.Stream;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.UserPathContext;
 import jp.mydns.projectk.safi.entity.ContentEntity_;
@@ -42,7 +41,7 @@ import jp.mydns.projectk.safi.entity.embedded.AttsEmb_;
 import jp.mydns.projectk.safi.entity.embedded.TxtValidityPeriodEmb_;
 
 /**
- * User data access object for batch processing.
+ * Data access processing to the <i>ID-Content</i> of the <i>User</i>.
  *
  * @author riru
  * @version 1.0.0
@@ -51,29 +50,54 @@ import jp.mydns.projectk.safi.entity.embedded.TxtValidityPeriodEmb_;
 @RequestScoped
 public class UserBatchDao extends ContentBatchDao<UserEntity> {
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
     @Override
     protected Class<UserEntity> getContentEntityClass() {
         return UserEntity.class;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
     @Override
     protected SingularAttribute<ImportWorkEntity, UserEntity> getPathToContentEntity() {
         return ImportWorkEntity_.userEntity;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
     @Override
     protected SingularAttribute<UserEntity, ImportWorkEntity> getPathToWrkEntity() {
         return UserEntity_.importWorkEntity;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
     @Override
     protected CriteriaPathContext getPathContext(Path<UserEntity> contentEntityPath) {
         return new UserPathContext(contentEntityPath);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
     @Override
     protected List<Selection<String>> getExportItems(Path<UserEntity> contentEntityPath) {
-        return Stream.of(
+        return List.of(
                 contentEntityPath.get(ContentEntity_.id).alias("id"),
                 contentEntityPath.get(ContentEntity_.txtEnabled).alias("enabled"),
                 contentEntityPath.get(ContentEntity_.name).alias("name"),
@@ -90,6 +114,6 @@ public class UserBatchDao extends ContentBatchDao<UserEntity> {
                 contentEntityPath.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.from).alias("from"),
                 contentEntityPath.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.to).alias("to"),
                 contentEntityPath.get(ContentEntity_.txtValidityPeriod).get(TxtValidityPeriodEmb_.ban).alias("ban")
-        ).toList();
+        );
     }
 }
