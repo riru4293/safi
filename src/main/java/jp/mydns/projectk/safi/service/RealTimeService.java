@@ -33,7 +33,7 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Provides a real time.
+ * Provides a real date-time.
  *
  * @author riru
  * @version 1.0.0
