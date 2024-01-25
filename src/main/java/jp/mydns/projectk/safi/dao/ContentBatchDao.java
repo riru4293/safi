@@ -315,7 +315,7 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Extract the export contents. It is a complex of one or more kinds of <i>ID-Content</i>.
+     * Extract the export contents. These are all <i>ID-Contents</i> that have already been registered.
      *
      * @return exportation contents
      * @throws PersistenceException if occurs an exception while access to database
