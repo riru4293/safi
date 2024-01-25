@@ -35,7 +35,7 @@ import jp.mydns.projectk.safi.entity.ImportWorkEntity;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer.ForBatch;
 
 /**
- * Data access object for import work.
+ * Data access processing to the import-work.
  *
  * @author riru
  * @version 1.0.0
@@ -52,7 +52,7 @@ public class ImportWorkDao {
     private EntityManager em;
 
     /**
-     * Clear import work. Finally call the {@link EntityManager#flush()} and the {@link EntityManager#clear()}.
+     * Clear the import-work. Finally call the {@link EntityManager#flush()} and the {@link EntityManager#clear()}.
      *
      * @throws TransactionRequiredException if there is no transaction
      * @throws PersistenceException if occurs an exception while access to database
@@ -64,7 +64,7 @@ public class ImportWorkDao {
     }
 
     /**
-     * Append contents to import work. Finally call the {@link EntityManager#flush()} and the
+     * Append contents to import-work. Finally call the {@link EntityManager#flush()} and the
      * {@link EntityManager#clear()}.
      *
      * @param works id and digest of importation content
