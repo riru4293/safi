@@ -61,9 +61,9 @@ import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
 import jp.mydns.projectk.safi.value.Condition;
 
 /**
- * Abstract identity content data access object for batch processing.
+ * Data access processing to the <i>ID-Content</i>.
  *
- * @param <C> content entity type
+ * @param <C> entity type of the <i>ID-Content</i>
  *
  * @author riru
  * @version 1.0.0
@@ -77,45 +77,46 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     private EntityManager em;
 
     /**
-     * Get entity class.
+     * Get entity class of the <i>ID-Content</i>.
      *
-     * @return entity class
+     * @return entity class of the <i>ID-Content</i>
      * @since 1.0.0
      */
     protected abstract Class<C> getContentEntityClass();
 
     /**
-     * Get relationship to content entity from work entity.
+     * Get the relationship to the <i>ID-Content</i> entity from import-work entity.
      *
-     * @return relationship to content entity from work entity
+     * @return relationship to the <i>ID-Content</i> entity from import-work entity
      * @since 1.0.0
      */
     protected abstract SingularAttribute<ImportWorkEntity, C> getPathToContentEntity();
 
     /**
-     * Get relationship to work entity from content entity.
+     * Get the relationship to the import-work entity from the <i>ID-Content</i> entity.
      *
-     * @return relationship to work entity from content entity
+     * @return relationship to the import-work entity from the <i>ID-Content</i> entity
      * @since 1.0.0
      */
     protected abstract SingularAttribute<C, ImportWorkEntity> getPathToWrkEntity();
 
     /**
-     * Get the {@code CriteriaPathContext} made from entity path.
+     * Get the {@code CriteriaPathContext} made from path of the <i>ID-Content</i> entity.
      *
      * @param contentEntityPath path of the content entity
-     * @return the {@code CriteriaPathContext} made from entity path
+     * @return the {@code CriteriaPathContext}
      * @throws NullPointerException if {@code contentEntityPath} is {@code null}
      * @since 1.0.0
      */
     protected abstract CriteriaPathContext getPathContext(Path<C> contentEntityPath);
 
     /**
-     * Get contents that will be added by import. They are id list that exist only in the import-work compared to the
-     * content entity.
+     * Get the id of the <i>ID-Content</i> that will be added by import processing. It exists for those that are about
+     * to be registered, but not for those that have already been registered.
      *
-     * @param targets target id list. Further refine the results with these id list.
-     * @return id list of to be added content
+     * @param targets the id for narrow down processing results. Anything not included in {@code target} will be
+     * excluded from the processing results.
+     * @return stream of id for the <i>ID-Content</i> collection to be added.
      * @throws NullPointerException if {@code targets} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
@@ -148,11 +149,12 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get contents that will be updated by import. They exist both in import-work and content entity, yet have
-     * different values.
+     * Get the <i>ID-Content</i> that will be updated by import. They exists in both already registered and will be
+     * registered, but with different values.
      *
-     * @param targets target id list. Further refine the results with these id list.
-     * @return to be updated content
+     * @param targets the id for narrow down processing results. Anything not included in {@code target} will be
+     * excluded from the processing results.
+     * @return stream for the <i>ID-Content</i> collection to be updated.
      * @throws NullPointerException if {@code targets} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
@@ -184,10 +186,10 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get the contents by specified id list.
+     * Get a stream of <i>ID-Content</i> collections with the specified id.
      *
-     * @param targets target id list. Further refine the results with these id list.
-     * @return extracted contents
+     * @param targets the id collection
+     * @return stream for the <i>ID-Content</i> collection
      * @throws NullPointerException if {@code targets} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
@@ -213,11 +215,11 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get count of contents that will be lost by import. They are exist only in the content entity compared to the
-     * import-work.
+     * Get count of <i>ID-Content</i> that will be lost by import. It exists for those that are already been registered,
+     * but not for those that have about to be registered.
      *
      * @param additional additional extract condition
-     * @return count of the lost contents
+     * @return count of the <i>ID-Content</i> that will be lost
      * @throws NullPointerException if {@code additional} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
@@ -227,7 +229,8 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get contents that will be lost by import. They are exist only in the content entity compared to the import-work.
+     * Get the <i>ID-Content</i> that will be lost by import. It exists for those that are already been registered, but
+     * not for those that have about to be registered.
      *
      * @param additional additional extract condition
      * @return lost contents
@@ -267,7 +270,7 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Do unique rebuild process. Default implements do nothing.
+     * Do unique rebuild process per content type. Default implements do nothing.
      *
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
@@ -277,8 +280,8 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get contents that require rebuilding. Extracts content that is invalid and has a refTime with in valid term, or
-     * versa.
+     * Get the <i>ID-Content</i> that require rebuilding. Extracts content that is invalid and has a {@code refTime}
+     * with in validity-period, or versa.
      *
      * @param refTime reference time for judging rebuild
      * @return contents that require rebuilding
@@ -312,7 +315,7 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Extract for exportation contents as chunked stream of {@code Map<String, String>}.
+     * Extract the export contents. It is a complex of one or more kinds of <i>ID-Content</i>.
      *
      * @return exportation contents
      * @throws PersistenceException if occurs an exception while access to database
