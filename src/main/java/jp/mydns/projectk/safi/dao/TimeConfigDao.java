@@ -47,7 +47,7 @@ import jp.mydns.projectk.safi.entity.TimeConfigEntity_;
  * @since 1.0.0
  */
 @RequestScoped
-public class TimeDao {
+public class TimeConfigDao {
 
     @Inject
     private EntityManager em;
