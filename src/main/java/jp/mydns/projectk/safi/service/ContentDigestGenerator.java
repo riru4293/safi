@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
-import jp.mydns.projectk.safi.constant.AttName;
+import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.util.JsonUtils;
 import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
- * Digest value generator for identity content.
+ * Digest value generator for the {@link ContentValue}.
  *
  * @author riru
  * @version 1.0.0
@@ -58,8 +58,8 @@ public class ContentDigestGenerator implements ContentValue.DigestGenerator {
         var builder = Json.createArrayBuilder();
 
         Stream.of(sources).forEachOrdered(v -> {
-
             switch (v) {
+
                 case null ->
                     builder.addNull();
 
@@ -75,8 +75,8 @@ public class ContentDigestGenerator implements ContentValue.DigestGenerator {
                     builder.add(p.isBan());
                 }
 
-                case Map<?, ?> m when m.keySet().stream().allMatch(k -> k instanceof AttName) -> {
-                    Stream.of(AttName.values()).map(m::get).forEachOrdered(a -> Optional.ofNullable(a)
+                case Map<?, ?> m when m.keySet().stream().allMatch(k -> k instanceof AttKey) -> {
+                    Stream.of(AttKey.values()).map(m::get).forEachOrdered(a -> Optional.ofNullable(a)
                             .map(Object::toString).ifPresentOrElse(builder::add, builder::addNull));
                 }
 
@@ -84,10 +84,8 @@ public class ContentDigestGenerator implements ContentValue.DigestGenerator {
                     throw new IllegalArgumentException("Unexpected type as digest source.");
 
             }
-
         });
 
-        return String.format("%040x", new BigInteger(1, sha256.digest(builder.build().toString().getBytes(
-                StandardCharsets.UTF_8))));
+        return String.format("%040x", new BigInteger(1, sha256.digest(builder.build().toString().getBytes(StandardCharsets.UTF_8))));
     }
 }
