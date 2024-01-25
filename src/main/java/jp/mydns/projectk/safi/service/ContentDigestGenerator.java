@@ -52,7 +52,6 @@ public class ContentDigestGenerator implements ContentValue.DigestGenerator {
      */
     @Override
     public String generate(Object... sources) {
-
         Objects.requireNonNull(sources);
 
         var builder = Json.createArrayBuilder();
