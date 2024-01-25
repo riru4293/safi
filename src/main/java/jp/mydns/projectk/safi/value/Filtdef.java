@@ -207,8 +207,8 @@ public interface Filtdef {
              * @param trnsdef transform definition for filtering
              * @since 1.0.0
              */
-            public void setTrnsdef(Map<String, String> transformations) {
-                this.trnsdef = transformations;
+            public void setTrnsdef(Map<String, String> trnsdef) {
+                this.trnsdef = trnsdef;
             }
 
             /**
