@@ -297,7 +297,7 @@ public interface JobCreationContext {
             /**
              * Set the {@code Filtdef}.
              *
-             * @param trnsdef the {@code Filtdef}
+             * @param filtdef the {@code Filtdef}
              * @since 1.0.0
              */
             public void setFiltdef(Filtdef filtdef) {
