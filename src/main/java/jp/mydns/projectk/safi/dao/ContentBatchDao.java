@@ -233,7 +233,9 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
      * not for those that have about to be registered.
      *
      * @param additional additional extract condition
-     * @return lost contents
+     * @return lost contents. A entities of {@value JpaUtils#CHUNK_SIZE} items is retrieved from the data source every
+     * time a element of stream is retrieved. Therefore, you can prevent memory from running out when there are a large
+     * number of items.
      * @throws NullPointerException if {@code additional} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
@@ -284,7 +286,9 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
      * with in validity-period, or versa.
      *
      * @param refTime reference time for judging rebuild
-     * @return contents that require rebuilding
+     * @return contents that require rebuilding. A entities of {@value JpaUtils#CHUNK_SIZE} items is retrieved from the
+     * data source every time a element of stream is retrieved. Therefore, you can prevent memory from running out when
+     * there are a large number of items.
      * @throws NullPointerException if {@code refTime} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
@@ -317,7 +321,9 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     /**
      * Extract the export contents. These are all <i>ID-Contents</i> that have already been registered.
      *
-     * @return exportation contents
+     * @return exportation contents. A entities of {@value JpaUtils#CHUNK_SIZE} items is retrieved from the data source
+     * every time a element of stream is retrieved. Therefore, you can prevent memory from running out when there are a
+     * large number of items.
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
