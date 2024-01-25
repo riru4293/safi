@@ -35,9 +35,9 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.Objects;
 import java.util.Optional;
-import jp.mydns.projectk.safi.constant.TimeKind;
-import jp.mydns.projectk.safi.entity.TimeEntity;
-import jp.mydns.projectk.safi.entity.TimeEntity_;
+import jp.mydns.projectk.safi.constant.TimeConfigKind;
+import jp.mydns.projectk.safi.entity.TimeConfigEntity;
+import jp.mydns.projectk.safi.entity.TimeConfigEntity_;
 
 /**
  * Time data access object.
@@ -53,28 +53,26 @@ public class TimeDao {
     private EntityManager em;
 
     /**
-     * Get the time value.
+     * Get the configuration value whose value is date-time.
      *
      * @param id the {@code TimeKind}
-     * @return time value
+     * @return configuration value whose value is date-time
      * @throws NullPointerException if {@code id} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public Optional<TimeEntity> getTimeEntity(TimeKind id) {
-
+    public Optional<TimeConfigEntity> getTimeEntity(TimeConfigKind id) {
         Objects.requireNonNull(id);
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<TimeEntity> cq = cb.createQuery(TimeEntity.class);
+        CriteriaQuery<TimeConfigEntity> cq = cb.createQuery(TimeConfigEntity.class);
 
         // FROM
-        Root<TimeEntity> e = cq.from(TimeEntity.class);
+        Root<TimeConfigEntity> e = cq.from(TimeConfigEntity.class);
 
         // WHERE
-        Predicate isTargetId = cb.equal(e.get(TimeEntity_.id), id);
+        Predicate isTargetId = cb.equal(e.get(TimeConfigEntity_.id), id);
 
         return em.createQuery(cq.where(isTargetId)).getResultStream().findFirst();
-
     }
 }
