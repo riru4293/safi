@@ -337,7 +337,7 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
     }
 
     /**
-     * Get export items for {@link #getExports()}
+     * Get export items for {@link #getExports()}.
      *
      * @param contentEntityPath path of the content entity
      * @return list of the {@code Selection}
