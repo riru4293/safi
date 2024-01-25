@@ -40,7 +40,7 @@ import jp.mydns.projectk.safi.entity.TimeConfigEntity;
 import jp.mydns.projectk.safi.entity.TimeConfigEntity_;
 
 /**
- * Time-configuration data access object.
+ * Data access processing to the time-configuration.
  *
  * @author riru
  * @version 1.0.0
