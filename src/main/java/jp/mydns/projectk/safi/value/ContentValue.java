@@ -58,7 +58,7 @@ import jp.mydns.projectk.safi.service.AppTimeService;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface ContentValue extends PersistableValue, RecordableValue {
+public interface ContentValue<T extends ContentValue<T>> extends PersistableValue, RecordableValue, Map.Entry<String, T> {
 
     /**
      * Get content id.
@@ -126,6 +126,40 @@ public interface ContentValue extends PersistableValue, RecordableValue {
     String getDigest();
 
     /**
+     * Get content id.
+     *
+     * @return content id
+     * @since 1.0.0
+     */
+    @JsonbTransient
+    @Override
+    default String getKey() {
+        return getId();
+    }
+
+    /**
+     * Get the this instance.
+     *
+     * @return the this instance
+     * @since 1.0.0
+     */
+    @JsonbTransient
+    @Override
+    T getValue();
+
+    /**
+     * Unsupported.
+     *
+     * @param unused unused-value
+     * @return none
+     * @throws UnsupportedOperationException always
+     * @since 1.0.0
+     */
+    @JsonbTransient
+    @Override
+    T setValue(T unused);
+
+    /**
      * Abstract builder of the {@link ContentValue}.
      *
      * @param <B> builder type
@@ -134,7 +168,7 @@ public interface ContentValue extends PersistableValue, RecordableValue {
      * @version 1.0.0
      * @since 1.0.0
      */
-    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ContentValue>
+    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ContentValue<V>>
             extends PersistableValue.AbstractBuilder<B, V> {
 
         protected String id;
@@ -241,8 +275,9 @@ public interface ContentValue extends PersistableValue, RecordableValue {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected abstract static class AbstractBean extends PersistableValue.AbstractBuilder.AbstractBean
-                implements ContentValue {
+        protected abstract static class AbstractBean<T extends ContentValue<T>>
+                extends PersistableValue.AbstractBuilder.AbstractBean
+                implements ContentValue<T> {
 
             protected String id;
             protected boolean enabled;

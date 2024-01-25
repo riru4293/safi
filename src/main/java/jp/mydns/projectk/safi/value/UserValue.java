@@ -167,7 +167,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  */
 @Schema(name = "UserValue", description = "ID-Content of the User.")
 @JsonbTypeDeserializer(UserValue.Deserializer.class)
-public interface UserValue extends ContentValue {
+public interface UserValue extends ContentValue<UserValue> {
 
     /**
      * Builder of the {@link UserValue}.
@@ -215,7 +215,7 @@ public interface UserValue extends ContentValue {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean implements UserValue {
+        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<UserValue> implements UserValue {
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -234,6 +234,26 @@ public interface UserValue extends ContentValue {
              */
             protected Bean(UserValue.Builder builder, String digest) {
                 super(builder, digest);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public UserValue getValue() {
+                return this;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public UserValue setValue(UserValue unused) {
+                throw new UnsupportedOperationException();
             }
 
             /**
