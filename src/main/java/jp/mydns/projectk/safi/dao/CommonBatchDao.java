@@ -27,11 +27,7 @@ package jp.mydns.projectk.safi.dao;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceException;
-import jakarta.persistence.TransactionRequiredException;
-import java.util.Objects;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 
 /**
@@ -42,59 +38,29 @@ import jp.mydns.projectk.safi.producer.EntityManagerProducer;
  * @since 1.0.0
  */
 @RequestScoped
-public class CommonBatchDao {
+public class CommonBatchDao extends CommonAppDao {
 
-    @Inject
-    @EntityManagerProducer.ForBatch
     private EntityManager em;
 
     /**
-     * Call both the {@link #flush} and the {@link #clear}.
+     * {@inheritDoc}
      *
-     * @throws TransactionRequiredException if there is no transaction
-     * @throws PersistenceException if the flush fails
      * @since 1.0.0
      */
-    public void flushAndClear() {
-        flush();
-        clear();
+    @Override
+    protected EntityManager getEntityManager() {
+        return em;
     }
 
     /**
-     * Synchronize the persistence context to the underlying database.
+     * {@inheritDoc}
      *
-     * @throws TransactionRequiredException if there is no transaction
-     * @throws PersistenceException if the flush fails
+     * @param em the {@code EntityManager} for batch processing.
      * @since 1.0.0
      */
-    public void flush() {
-        em.flush();
-    }
-
-    /**
-     * Clear the persistence context, causing all managed entities to become detached. Changes made to entities that
-     * have not been flushed to the database will not be persisted.
-     *
-     * @since 1.0.0
-     */
-    public void clear() {
-        em.clear();
-    }
-
-    /**
-     * Make an {@code entity} managed and persistent.
-     *
-     * @param <T> entity type
-     * @param entity an entity
-     * @return entity that persisted
-     * @throws NullPointerException if {@code entity} is {@code null}
-     * @throws EntityExistsException if the {@code entity} already exists
-     * @throws IllegalArgumentException if the {@code entity} is not entity
-     * @throws TransactionRequiredException if there is no transaction
-     * @since 1.0.0
-     */
-    public <T> T persist(T entity) {
-        em.persist(Objects.requireNonNull(entity));
-        return entity;
+    @Inject
+    @Override
+    protected void setEntityManager(@EntityManagerProducer.ForBatch EntityManager em) {
+        this.em = em;
     }
 }
