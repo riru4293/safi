@@ -29,6 +29,7 @@ import jakarta.persistence.criteria.Path;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import static jp.mydns.projectk.safi.constant.AttKey.*;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext.AbstractCriteriaPathContext;
 import jp.mydns.projectk.safi.entity.ContentEntity_;
 import jp.mydns.projectk.safi.entity.UserEntity;
@@ -60,16 +61,16 @@ public class UserPathContext extends AbstractCriteriaPathContext {
 
         m.put("id", p.get(ContentEntity_.id));
         m.put("name", p.get(ContentEntity_.name));
-        m.put("att01", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att01));
-        m.put("att02", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att02));
-        m.put("att03", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att03));
-        m.put("att04", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att04));
-        m.put("att05", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att05));
-        m.put("att06", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att06));
-        m.put("att07", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att07));
-        m.put("att08", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att08));
-        m.put("att09", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att09));
-        m.put("att10", p.get(ContentEntity_.attsEmb).get(AttsEmb_.att10));
+        m.put(ATT01.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att01));
+        m.put(ATT02.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att02));
+        m.put(ATT03.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att03));
+        m.put(ATT04.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att04));
+        m.put(ATT05.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att05));
+        m.put(ATT06.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att06));
+        m.put(ATT07.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att07));
+        m.put(ATT08.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att08));
+        m.put(ATT09.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att09));
+        m.put(ATT10.toString(), p.get(ContentEntity_.attsEmb).get(AttsEmb_.att10));
 
         return Collections.unmodifiableMap(m);
     }
