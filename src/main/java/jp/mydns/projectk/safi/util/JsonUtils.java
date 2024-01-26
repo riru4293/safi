@@ -147,7 +147,6 @@ public class JsonUtils {
      * @since 1.0.0
      */
     public static String toString(JsonValue json) {
-
         return switch (Objects.requireNonNull(json).getValueType()) {
 
             case NULL ->
@@ -160,7 +159,6 @@ public class JsonUtils {
                 json.toString();
 
         };
-
     }
 
     /**
