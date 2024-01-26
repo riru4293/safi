@@ -52,6 +52,20 @@ public class JsonService {
     private Jsonb jsonb;
 
     /**
+     * Merge two {@code JsonObject}. It is wrapper method of the
+     * {@link JsonUtils#merge(jakarta.json.JsonObject, jakarta.json.JsonObject)}.
+     *
+     * @param base base value
+     * @param ow overwrite value
+     * @return merged value
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 1.0.0
+     */
+    public JsonObject merge(JsonObject base, JsonObject ow) {
+        return JsonUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
+    }
+
+    /**
      * Conversion to the {@code Map<String, String>}.
      *
      * @param obj object that convertible to {@code JsonObject}
@@ -78,33 +92,7 @@ public class JsonService {
      * @since 1.0.0
      */
     public JsonObject toJsonObject(Object obj) {
-        return Objects.requireNonNull(obj) instanceof JsonValue jv ? jv.asJsonObject() : JsonUtils.toJsonObject(obj, jsonb);
-    }
-
-    /**
-     * Merge two {@code JsonObject}. It is wrapper method of the
-     * {@link JsonUtils#merge(jakarta.json.JsonObject, jakarta.json.JsonObject)}.
-     *
-     * @param base base value
-     * @param ow overwrite value
-     * @return merged value
-     * @throws NullPointerException if any argument is {@code null}
-     * @since 1.0.0
-     */
-    public JsonObject merge(JsonObject base, JsonObject ow) {
-        return JsonUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
-    }
-
-    /**
-     * Returns a {@code JsonObjectVo} representation of the {@code obj}.
-     *
-     * @param jsonObj the {@code JsonObject}
-     * @return {@code JsonObjectVo} representation of the {@code jsonObj}
-     * @throws NullPointerException if {@code jsonObj} is {@code null}
-     * @since 1.0.0
-     */
-    public JsonObjectVo toJsonObjectVo(JsonObject jsonObj) {
-        return new JsonObjectVo(Objects.requireNonNull(jsonObj));
+        return convertViaJson(Objects.requireNonNull(obj), JsonObject.class);
     }
 
     /**
@@ -119,26 +107,11 @@ public class JsonService {
      * @since 1.0.0
      */
     public JsonObjectVo toJsonObjectVo(Object obj) {
-        return toJsonObjectVo(toJsonObject(Objects.requireNonNull(obj)));
+        return new JsonObjectVo(toJsonObject(Objects.requireNonNull(obj)));
     }
 
     /**
-     * Deserialize to {@code T} from JSON.
-     *
-     * @param <T> destination type. It should support deserialization from JSON.
-     * @param json source value
-     * @param clazz destination type
-     * @return the value deserialized to the {@code T}
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @since 1.0.0
-     */
-    public <T> T fromJsonObject(JsonObject json, Class<T> clazz) {
-        return jsonb.fromJson(Objects.requireNonNull(json).toString(), Objects.requireNonNull(clazz));
-    }
-
-    /**
-     * Convert to type of {@code T} via JSON.
+     * Convert to type of the {@code T} via JSON.
      *
      * @param <T> destination type. It should support deserialization from JSON.
      * @param obj source value. It should support serialization to JSON.
@@ -149,6 +122,22 @@ public class JsonService {
      * @since 1.0.0
      */
     public <T> T convertViaJson(Object obj, Class<T> clazz) {
-        return jsonb.fromJson(toJsonObject(Objects.requireNonNull(obj)).toString(), Objects.requireNonNull(clazz));
+        Objects.requireNonNull(obj);
+        Objects.requireNonNull(clazz);
+
+        if (obj.getClass() == clazz) {
+            return clazz.cast(obj);
+        }
+
+        return switch (obj) {
+            case String s ->
+                jsonb.fromJson(s, clazz);
+
+            case JsonValue v ->
+                jsonb.fromJson(v.toString(), clazz);
+
+            default ->
+                jsonb.fromJson(jsonb.toJson(obj).toString(), clazz);
+        };
     }
 }
