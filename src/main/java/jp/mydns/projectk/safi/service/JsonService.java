@@ -52,20 +52,6 @@ public class JsonService {
     private Jsonb jsonb;
 
     /**
-     * Merge two {@code JsonObject}. It is wrapper method of the
-     * {@link JsonUtils#merge(jakarta.json.JsonObject, jakarta.json.JsonObject)}.
-     *
-     * @param base base value
-     * @param ow overwrite value
-     * @return merged value
-     * @throws NullPointerException if any argument is {@code null}
-     * @since 1.0.0
-     */
-    public JsonObject merge(JsonObject base, JsonObject ow) {
-        return JsonUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
-    }
-
-    /**
      * Conversion to the {@code Map<String, String>}.
      *
      * @param obj object that convertible to {@code JsonObject}
