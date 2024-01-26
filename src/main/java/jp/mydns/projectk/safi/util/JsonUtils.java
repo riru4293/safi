@@ -218,19 +218,14 @@ public class JsonUtils {
      * @since 1.0.0
      */
     public static Stream<JsonValue> toStream(InputStream jsonArray) {
-
         JsonParser jp = newJsonParser(Objects.requireNonNull(jsonArray));
 
         if (!jp.hasNext() || jp.next() != JsonParser.Event.START_ARRAY) {
-
             jp.close();
-
             throw new IllegalArgumentException("Malformed as JSON array.");
-
         }
 
         return jp.getArrayStream().onClose(jp::close);
-
     }
 
     private static JsonParser newJsonParser(InputStream is) {
@@ -249,7 +244,6 @@ public class JsonUtils {
      * @since 1.0.0
      */
     public static JsonObject merge(JsonObject base, JsonObject ow) {
-
         Objects.requireNonNull(base);
         Objects.requireNonNull(ow);
 
@@ -267,6 +261,5 @@ public class JsonUtils {
                 .filter(not(p(canMerge, Map.Entry::getKey))).filter(not(p(JsonValue.NULL::equals, Map.Entry::getValue)));
 
         return Stream.of(originEntries, mergedEntries, owEntries).flatMap(identity()).collect(JsonCollectors.toJsonObject());
-
     }
 }
