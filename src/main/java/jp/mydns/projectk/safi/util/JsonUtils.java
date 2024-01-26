@@ -30,8 +30,6 @@ import jakarta.json.JsonException;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbException;
 import jakarta.json.stream.JsonCollectors;
 import jakarta.json.stream.JsonParser;
 import java.io.InputStream;
@@ -68,25 +66,6 @@ public class JsonUtils {
     }
 
     /**
-     * Conversion to {@code JsonObject}.
-     *
-     * @param value conversion source. Must be a value convertible to {@code JsonObject}.
-     * @param jsonb the {@code Jsonb}
-     * @return {@code value} as {@code JsonObject}
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws JsonbException if failed conversion to {@code JsonObject}
-     * @since 1.0.0
-     */
-    public static JsonObject toJsonObject(Object value, Jsonb jsonb) {
-
-        Objects.requireNonNull(value);
-        Objects.requireNonNull(jsonb);
-
-        return jsonb.fromJson(jsonb.toJson(value), JsonObject.class);
-
-    }
-
-    /**
      * Returns a predicate that tests whether JSON value type is in specified type family.
      *
      * @param types type family
@@ -118,11 +97,8 @@ public class JsonUtils {
      * @since 1.0.0
      */
     public static Predicate<JsonValue> typeEquals(JsonValue.ValueType... types) {
-
         Stream.of(Objects.requireNonNull(types)).forEach(Objects::requireNonNull);
-
         return v -> Stream.of(types).anyMatch(v.getValueType()::equals);
-
     }
 
     /**
