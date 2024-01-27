@@ -47,7 +47,7 @@ import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.value.Job;
 
 /**
- * <i>Jakarta-Batch</i> execution management.
+ * Utilities for <i>Jakarta-Batch</i>.
  *
  * @author riru
  * @version 1.0.0
@@ -63,22 +63,22 @@ public class BatchService {
     private Jsonb jsonb;
 
     /**
-     * Get job ids from running jobs execute as batch process.
+     * Collect id of the {@link Job} from all the <i>Jakarta-Batch</i> executions. Anything other than those running as
+     * {@code Job} will be ignored.
      *
      * @return running job ids
      * @since 1.0.0
      */
     public Set<String> getRunningJobIds() {
+        return getRunningBatches().flatMap(this::extractJobIds).collect(toUnmodifiableSet());
+    }
 
-        Function<JobExecution, Stream<String>> extractJobIds
-                = e -> Optional.of(e).map(extractProperty(JobBatchlet.PropName.JOB_ID)).stream();
-
-        return getRunningBatches().flatMap(extractJobIds).collect(toUnmodifiableSet());
-
+    private Stream<String> extractJobIds(JobExecution jobExec) {
+        return Optional.of(jobExec).map(extractProperty(JobBatchlet.PropName.JOB_ID)).stream();
     }
 
     /**
-     * Start a job as an asynchronous batch process.
+     * Start a {@code job} as <i>Jakarta-Batch</i>.
      *
      * @param job the {@code Job}
      * @return batch execution id
@@ -87,7 +87,6 @@ public class BatchService {
      * @since 1.0.0
      */
     public long startBatchAsync(Job job) {
-
         if (Objects.requireNonNull(job).getStatus() != JobStatus.RUNNING) {
             throw new IllegalArgumentException("Illegal job state.");
         }
@@ -95,14 +94,13 @@ public class BatchService {
         Properties props = new Properties();
         props.setProperty(JobBatchlet.PropName.JOB_ID, job.getId());
         props.setProperty(JobBatchlet.PropName.JSON_JOB, jsonb.toJson(job));
-        props.setProperty(JobBatchlet.PropName.TIMEOUT, jsonb.toJson(job.getLimitTime().toLocalDateTime()));
+        props.setProperty(JobBatchlet.PropName.TIMEOUT, jsonb.toJson(TimeUtils.toLocalDateTime(job.getLimitTime())));
 
         return operator.start(job.getJobdef().getJobKind().name().toLowerCase(), props);
-
     }
 
     /**
-     * Interrupt the expired batches.
+     * Interrupt the expired batches. Execute {@link JobBatchlet#stop} of <i>Jakarta-Batch</i> which is timed out.
      *
      * @param refTime reference time
      * @throws NullPointerException if {@code refTime} is {@code null}
@@ -114,7 +112,6 @@ public class BatchService {
     }
 
     Predicate<JobExecution> isExpired(LocalDateTime refTime) {
-
         return b -> Optional.of(b).map(extractProperty(JobBatchlet.PropName.TIMEOUT)).flatMap(TimeUtils::tryToLocalDateTime)
                 .filter(refTime::isAfter).isPresent();
     }
