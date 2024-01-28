@@ -677,7 +677,7 @@ public interface Jobdef extends PersistableValue {
              */
             @Override
             public ValidityPeriod getValidityPeriod() {
-                throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                return validityPeriod;
             }
 
             /**
