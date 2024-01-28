@@ -46,7 +46,12 @@ import jp.mydns.projectk.safi.value.RequestContext;
 @SystemProcess
 public class SystemProcessAuthenticator {
 
-    private static final String SYS_ACCOUNT_ID = "SAFI";
+    /**
+     * Account name for background processing of the SAFI system.
+     *
+     * @since 1.0.0
+     */
+    public static final String SYS_ACCOUNT_ID = "SAFI";
 
     @Inject
     private RequestContext reqCtx;
