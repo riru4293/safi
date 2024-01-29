@@ -25,10 +25,6 @@
  */
 package jp.mydns.projectk.safi.value;
 
-import jakarta.enterprise.context.RequestScoped;
-import java.util.Optional;
-import static java.util.function.Predicate.not;
-
 /**
  * Current request information. A <i>Request</i> is a processing request, and there are processing requests via Web API
  * and background processing requests by the system.
@@ -37,11 +33,16 @@ import static java.util.function.Predicate.not;
  * @version 1.0.0
  * @since 1.0.0
  */
-@RequestScoped
-public class RequestContext {
+public interface RequestContext {
 
-    private String accountId;
-    private String processName;
+    /**
+     * Get account id.
+     *
+     * @return account id
+     * @throws IllegalStateException if value has not been set yet
+     * @since 1.0.0
+     */
+    String getAccountId();
 
     /**
      * Get process name.
@@ -50,71 +51,6 @@ public class RequestContext {
      * @throws IllegalStateException if value has not been set yet
      * @since 1.0.0
      */
-    public String getProcessName() {
-        return requireAlreadySet(processName);
-    }
+    String getProcessName();
 
-    /**
-     * Set process name.
-     *
-     * @param processName process name
-     * @throws IllegalArgumentException if {@code processName} is blank
-     * @throws IllegalStateException if value has already set
-     * @since 1.0.0
-     */
-    public void setProcessName(String processName) {
-        requireNotSetYet(this.processName);
-        this.processName = requireNotBlank(processName);
-    }
-
-    /**
-     * Get account id. {@code SAFI} if request is background processing by the system.
-     *
-     * @return account id
-     * @throws IllegalStateException if value has not been set yet
-     * @since 1.0.0
-     */
-    public String getAccountId() {
-        return requireAlreadySet(accountId);
-    }
-
-    /**
-     * Set account id.
-     *
-     * @param accountId account id
-     * @throws IllegalArgumentException if {@code accountId} is blank
-     * @throws IllegalStateException if value has already set
-     * @since 1.0.0
-     */
-    public void setAccountId(String accountId) {
-        requireNotSetYet(this.accountId);
-        this.accountId = requireNotBlank(accountId);
-    }
-
-    /**
-     * Returns a string representation.
-     *
-     * @return a string representation
-     * @since 1.0.0
-     */
-    @Override
-    public String toString() {
-        return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId + '}';
-    }
-
-    private void requireNotSetYet(String v) {
-        if (v != null) {
-            throw new IllegalStateException("Value has already set.");
-        }
-    }
-
-    private String requireNotBlank(String v) {
-        return Optional.ofNullable(v).filter(not(String::isBlank)).orElseThrow(
-                () -> new IllegalArgumentException("Set blank is not allowed."));
-    }
-
-    private String requireAlreadySet(String v) {
-        return Optional.ofNullable(v).orElseThrow(
-                () -> new IllegalStateException("Value has not been set yet."));
-    }
 }

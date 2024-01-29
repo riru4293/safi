@@ -31,6 +31,7 @@ import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
+import jp.mydns.projectk.safi.producer.RequestContextProducer;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
@@ -46,15 +47,8 @@ import jp.mydns.projectk.safi.value.RequestContext;
 @SystemProcess
 public class SystemProcessAuthenticator {
 
-    /**
-     * Account name for background processing of the SAFI system.
-     *
-     * @since 1.0.0
-     */
-    public static final String SYS_ACCOUNT_ID = "SAFI";
-
     @Inject
-    private RequestContext reqCtx;
+    private RequestContextProducer reqCtxProducer;
 
     /**
      * Extract the process name from {@link ProcessName} and set it to {@link RequestContext}.
@@ -73,8 +67,7 @@ public class SystemProcessAuthenticator {
                 .map(ProcessName::value).filter(not(String::isBlank))
                 .orElseThrow(() -> new IllegalStateException("No found valid process name."));
 
-        reqCtx.setProcessName(processName);
-        reqCtx.setAccountId(SYS_ACCOUNT_ID);
+        reqCtxProducer.setup(processName);
 
         return ic.proceed();
 
