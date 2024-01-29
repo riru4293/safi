@@ -36,6 +36,8 @@ import jakarta.json.bind.Jsonb;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import jp.mydns.projectk.safi.interceptor.ProcessName;
+import jp.mydns.projectk.safi.interceptor.SystemProcess;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
@@ -112,6 +114,8 @@ public abstract class JobBatchlet implements Batchlet {
      */
     @Override
     @ActivateRequestContext
+    @SystemProcess
+    @ProcessName("HO")
     public String process() throws InterruptedException, IOException {
         // Note: Require for stop the job.
         myThread = Thread.currentThread();
