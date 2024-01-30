@@ -34,6 +34,12 @@ package jp.mydns.projectk.safi.constant;
  */
 public enum JobPhase {
     /**
+     * Represents a phase of content fetching.
+     *
+     * @since 1.0.0
+     */
+    FETCHING,
+    /**
      * Represents a phase of content transformation.
      *
      * @since 1.0.0
