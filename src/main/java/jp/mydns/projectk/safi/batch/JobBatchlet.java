@@ -33,11 +33,10 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
 import jakarta.json.bind.Jsonb;
+import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import jp.mydns.projectk.safi.interceptor.ProcessName;
-import jp.mydns.projectk.safi.interceptor.SystemProcess;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
@@ -114,8 +113,7 @@ public abstract class JobBatchlet implements Batchlet {
      */
     @Override
     @ActivateRequestContext
-    @SystemProcess
-    @ProcessName("HO")
+    @Transactional(rollbackOn = {InterruptedException.class, IOException.class})
     public String process() throws InterruptedException, IOException {
         // Note: Require for stop the job.
         myThread = Thread.currentThread();
