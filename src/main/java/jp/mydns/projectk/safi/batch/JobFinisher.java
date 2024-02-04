@@ -58,7 +58,7 @@ public class JobFinisher implements StepListener {
     private StepContext stepCtx;
 
     @Inject
-    private RequestContextProducer reqCtxProducer;
+    private RequestContextProducer reqCtxPrd;
 
     @Inject
     private JobService jobSvc;
@@ -90,7 +90,7 @@ public class JobFinisher implements StepListener {
     @SuppressWarnings("ThrowableResultIgnored")
     public void afterStep() throws Exception {
 
-        reqCtxProducer.setup("JobFinisher");
+        reqCtxPrd.setup("JobFinisher");
 
         Optional<Exception> cause = Optional.ofNullable(stepCtx.getException());
 
