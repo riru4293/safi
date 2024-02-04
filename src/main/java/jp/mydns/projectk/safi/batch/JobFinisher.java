@@ -40,7 +40,7 @@ import trial.JobRecordingService;
 import trial.JobService;
 
 /**
- * Finisher for the job. Registers the processing record and updates the job status to finished status.
+ * Finisher for the <i>Job</i>. Registers the processing record and updates the job status to finished status.
  *
  * @author riru
  * @version 1.0.0
