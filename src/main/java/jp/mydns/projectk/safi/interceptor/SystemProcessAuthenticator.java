@@ -48,7 +48,7 @@ import jp.mydns.projectk.safi.value.RequestContext;
 public class SystemProcessAuthenticator {
 
     @Inject
-    private RequestContextProducer reqCtxProducer;
+    private RequestContextProducer reqCtxPrd;
 
     /**
      * Extract the process name from {@link ProcessName} and set it to {@link RequestContext}.
@@ -67,7 +67,7 @@ public class SystemProcessAuthenticator {
                 .map(ProcessName::value).filter(not(String::isBlank))
                 .orElseThrow(() -> new IllegalStateException("No found valid process name."));
 
-        reqCtxProducer.setup(processName);
+        reqCtxPrd.setup(processName);
 
         return ic.proceed();
 
