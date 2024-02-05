@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.batch;
 
+import trial.UncheckedInterruptedException;
 import jakarta.batch.api.BatchProperty;
 import jakarta.batch.api.listener.StepListener;
 import jakarta.batch.runtime.context.StepContext;
