@@ -32,7 +32,6 @@ import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
-import jakarta.json.bind.Jsonb;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -42,6 +41,7 @@ import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.TransformService;
 import jp.mydns.projectk.safi.service.TransformService.Transformer;
+import jp.mydns.projectk.safi.service.ValidationService;
 import jp.mydns.projectk.safi.util.JsonUtils;
 import static jp.mydns.projectk.safi.util.JsonUtils.toJsonValue;
 import jp.mydns.projectk.safi.value.Job;
@@ -66,9 +66,6 @@ public abstract class JobBatchlet implements Batchlet {
     private String jsonJob;
 
     @Inject
-    private Jsonb jsonb;
-
-    @Inject
     private AppTimeService appTimeSvc;
 
     @Inject
@@ -79,6 +76,9 @@ public abstract class JobBatchlet implements Batchlet {
 
     @Inject
     private TransformService transSvc;
+
+    @Inject
+    private ValidationService validSvc;
 
     /**
      * Stop the executing this.
@@ -119,8 +119,7 @@ public abstract class JobBatchlet implements Batchlet {
         myThread = Thread.currentThread();
 
         // Resolve a parameters.
-        job = jsonb.fromJson(jsonJob, Job.class);
-        jsonSvc.convertViaJson(jsonJob, Job.class);
+        job = validSvc.requireValid(jsonSvc.convertViaJson(jsonJob, Job.class));
 
         // Creates a work-directory for each job executions.
         Files.createDirectories(getJobVarDir());
