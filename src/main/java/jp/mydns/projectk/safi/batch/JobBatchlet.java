@@ -122,7 +122,7 @@ public abstract class JobBatchlet implements Batchlet {
         job = validSvc.requireValid(jsonSvc.convertViaJson(jsonJob, Job.class));
 
         // Creates a work-directory for each job executions.
-        Files.createDirectories(getJobVarDir());
+        Files.createDirectories(getWrkDir());
 
         final String result = mainProcess();
 
@@ -134,12 +134,12 @@ public abstract class JobBatchlet implements Batchlet {
     }
 
     /**
-     * Get my job dedicated variable data directory.
+     * Get work-directory for each job executions. It created at job start.
      *
-     * @return path of the var-directory
+     * @return work-directory
      * @since 1.0.0
      */
-    protected Path getJobVarDir() {
+    protected Path getWrkDir() {
         return confSvc.getJobDir().resolve(job.getId());
     }
 
@@ -166,17 +166,12 @@ public abstract class JobBatchlet implements Batchlet {
      * @since 1.0.0
      */
     protected JsonObject getPluginProps() {
-        return JsonUtils.merge(
-                // User defined values
-                getPlugdef().getArgs(),
+        return JsonUtils.merge(getPlugdef().getArgs(),
                 // Common values
                 Json.createObjectBuilder()
-                        .add("varDir", toJsonValue(getJobVarDir()))
-                        .add("tmpDir", toJsonValue(confSvc.getTmpDir()))
+                        .add("wrkDir", toJsonValue(getWrkDir()))
                         .add("appNow", toJsonValue(appTimeSvc.getLocalNow()))
-                        .add("jobOpts", job.getOptions().orElse(EMPTY_JSON_OBJECT))
-                        .build()
-        );
+                        .add("jobOpts", job.getOptions().orElse(EMPTY_JSON_OBJECT)).build());
     }
 
     /**
