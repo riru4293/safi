@@ -86,9 +86,9 @@ public class BatchLogger implements StepListener {
         Optional.ofNullable(stepCtx.getException()).ifPresentOrElse(ex -> {
 
             logger.log(ERROR, "Occurred an exception in batch.", ex);
-            logger.log(ERROR, "Batch execution failed. ExecutionId={0}", id);
+            logger.log(ERROR, "End a batch execution as failure. ExecutionId={0}", id);
 
-        }, () -> logger.log(INFO, "Batch execution successful. ExecutionId={0}.", id));
+        }, () -> logger.log(INFO, "End a batch execution as successful. ExecutionId={0}.", id));
 
     }
 }
