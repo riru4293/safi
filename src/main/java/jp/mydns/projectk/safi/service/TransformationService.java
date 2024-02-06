@@ -60,7 +60,7 @@ import jp.mydns.projectk.safi.value.TransResult;
  * @since 1.0.0
  */
 @RequestScoped
-public class TransformService {
+public class TransformationService {
 
     @Inject
     private PluginLoader<FunctionPlugin> plgLdr;
