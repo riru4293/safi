@@ -247,6 +247,61 @@ public interface Condition {
     }
 
     /**
+     * Get the {@code Condition} that have no effect
+     *
+     * @return empty condition
+     * @since 1.0.0
+     */
+    static Condition emptyCondition() {
+        return new Multi() {
+
+            /**
+             * {@inheritDoc}
+             *
+             * @return empty
+             * @since 1.0.0
+             */
+            @Override
+            public List<Condition> getChildren() {
+                return List.of();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@code true}
+             * @since 1.0.0
+             */
+            @Override
+            public boolean isMulti() {
+                return true;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @return the {@code FilteringOperation.Multi.AND}
+             * @since 1.0.0
+             */
+            @Override
+            public FilteringOperation getOperation() {
+                return FilteringOperation.Multi.AND;
+            }
+
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 1.0.0
+             */
+            @Override
+            public String toString() {
+                return "Condition.Empty{}";
+            }
+        };
+    }
+
+    /**
      * Combination of filtering conditions.
      *
      * <p>
@@ -331,7 +386,7 @@ public interface Condition {
             }
 
             if (tmp.isEmpty()) {
-                return new MultiBean(FilteringOperation.Multi.AND, List.of());
+                return emptyCondition();
             }
 
             return tmp.isMulti()
