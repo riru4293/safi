@@ -128,9 +128,5 @@ JNDI Name: jdbc/safi-batch
 cd ${dist}
 mkdir safi
 mkdir safi/tmp
-mkdir safi/var
-mkdir safi/var/job
-mkdir safi/var/plugin
-mkdir safi/var/plugin/function
-mkdir safi/var/plugin/importer
-
+mkdir safi/job
+mkdir safi/plugin
