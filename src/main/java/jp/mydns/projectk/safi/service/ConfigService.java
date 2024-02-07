@@ -57,18 +57,6 @@ public class ConfigService {
     }
 
     /**
-     * Get variable data directory. This directory is guaranteed to exist and be writable.
-     *
-     * @return variable data directory
-     * @throws NoSuchElementException if no value is found. If this exception occurs, the execution environment does not
-     * meet the prerequisites.
-     * @since 1.0.0
-     */
-    public Path getVarDir() {
-        return getValueAsPath("safi.var.dir").orElseThrow();
-    }
-
-    /**
      * Get jobs data directory. It is assumed that a folder will be created and used with the job ID for each job. This
      * directory is guaranteed to exist and be writable.
      *
