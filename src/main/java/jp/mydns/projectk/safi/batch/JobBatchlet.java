@@ -36,10 +36,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
-import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
-import jp.mydns.projectk.safi.service.TransformationService;
 import jp.mydns.projectk.safi.service.ValidationService;
 import jp.mydns.projectk.safi.value.Job;
 import jp.mydns.projectk.safi.value.JobOptions;
@@ -64,16 +62,10 @@ public abstract class JobBatchlet implements Batchlet {
     private String jsonJob;
 
     @Inject
-    private AppTimeService appTimeSvc;
-
-    @Inject
     private ConfigService confSvc;
 
     @Inject
     private JsonService jsonSvc;
-
-    @Inject
-    private TransformationService transSvc;
 
     @Inject
     private ValidationService validSvc;
@@ -138,9 +130,9 @@ public abstract class JobBatchlet implements Batchlet {
     }
 
     /**
-     * Get work-directory for each job executions. It created at job start.
+     * Get working directory for each job executions. It created at job start.
      *
-     * @return work-directory
+     * @return working directory
      * @since 1.0.0
      */
     protected Path getWrkDir() {
