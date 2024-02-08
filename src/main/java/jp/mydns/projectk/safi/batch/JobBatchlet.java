@@ -27,26 +27,24 @@ package jp.mydns.projectk.safi.batch;
 
 import jakarta.batch.api.BatchProperty;
 import jakarta.batch.api.Batchlet;
+import jakarta.batch.runtime.BatchStatus;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
 import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
-import jakarta.transaction.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
+import static java.util.function.Predicate.not;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
-import jp.mydns.projectk.safi.service.TransformService;
-import jp.mydns.projectk.safi.service.TransformService.Transformer;
+import jp.mydns.projectk.safi.service.TransformationService;
 import jp.mydns.projectk.safi.service.ValidationService;
-import jp.mydns.projectk.safi.util.JsonUtils;
-import static jp.mydns.projectk.safi.util.JsonUtils.toJsonValue;
 import jp.mydns.projectk.safi.value.Job;
 import jp.mydns.projectk.safi.value.JobOptions;
 import jp.mydns.projectk.safi.value.Plugdef;
+import trial.JobService;
 
 /**
  * Abstract implements of the <i>Jakarta-Batch</i> for the <i>Job</i> processing.
@@ -75,10 +73,13 @@ public abstract class JobBatchlet implements Batchlet {
     private JsonService jsonSvc;
 
     @Inject
-    private TransformService transSvc;
+    private TransformationService transSvc;
 
     @Inject
     private ValidationService validSvc;
+
+    @Inject
+    private JobService jobSvc;
 
     /**
      * Stop the executing this.
@@ -105,23 +106,26 @@ public abstract class JobBatchlet implements Batchlet {
 
     /**
      * Execute the job processing.
+     * <p>
+     * Creates a working directory. It will not be deleted after finished the job. It is a directory under the
+     * {@link ConfigService#getJobDir() job-directory} named after the job id.
      *
-     * @return exit status string
+     * @return exit status string. It does not assume anything other than {@link BatchStatus#COMPLETED COMPLETED}.
      * @throws IOException if occurs I/O error
      * @throws InterruptedException if interrupted
      * @since 1.0.0
+     * @see JobFinisher
+     * @see BatchLogger
      */
     @Override
     @ActivateRequestContext
-    @Transactional(rollbackOn = {InterruptedException.class, IOException.class})
     public String process() throws InterruptedException, IOException {
         // Note: Require for stop the job.
-        myThread = Thread.currentThread();
+        this.myThread = Optional.of(Thread.currentThread()).filter(not(Thread::isInterrupted))
+                .orElseThrow(() -> new InterruptedException());
 
-        // Resolve a parameters.
-        job = validSvc.requireValid(jsonSvc.convertViaJson(jsonJob, Job.class));
+        this.job = validSvc.requireValid(jsonSvc.convertViaJson(jsonJob, Job.class));
 
-        // Creates a work-directory for each job executions.
         Files.createDirectories(getWrkDir());
 
         final String result = mainProcess();
@@ -143,35 +147,25 @@ public abstract class JobBatchlet implements Batchlet {
         return confSvc.getJobDir().resolve(job.getId());
     }
 
-    Plugdef getPlugdef() {
+    /**
+     * Get the {@code Plugdef}.
+     *
+     * @return the {@code Plugdef}
+     * @throws IllegalStateException if no found a plug-in definition
+     * @since 1.0.0
+     */
+    protected Plugdef getPlugdef() {
         return job.getJobdef().getPlugdef().orElseThrow(() -> new IllegalStateException("No plug-in definition was found."));
     }
 
     /**
-     * Get the plug-in name.
+     * Get the {@code Job}.
      *
-     * @return plug-in name
-     * @throws IllegalStateException if no plug-in definition was found
+     * @return the {@code Job}
      * @since 1.0.0
      */
-    protected String getPluginName() {
-        return getPlugdef().getName();
-    }
-
-    /**
-     * Get the plug-in properties.
-     *
-     * @return plug-in properties
-     * @throws IllegalStateException if no plug-in definition was found
-     * @since 1.0.0
-     */
-    protected JsonObject getPluginProps() {
-        return JsonUtils.merge(getPlugdef().getArgs(),
-                // Common values
-                Json.createObjectBuilder()
-                        .add("wrkDir", toJsonValue(getWrkDir()))
-                        .add("appNow", toJsonValue(appTimeSvc.getLocalNow()))
-                        .add("jobOpts", job.getOptions().orElse(EMPTY_JSON_OBJECT)).build());
+    protected Job getJob() {
+        return job;
     }
 
     /**
@@ -181,31 +175,7 @@ public abstract class JobBatchlet implements Batchlet {
      * @since 1.0.0
      */
     protected JobOptions getJobOptions() {
-        return new JobOptions(job.getOptions().orElse(EMPTY_JSON_OBJECT));
-    }
-
-    /**
-     * Get the {@code Transformer}.
-     *
-     * @return the {@code Transformer}
-     * @throws IllegalStateException if no transform definition was found
-     * @since 1.0.0
-     */
-    public Transformer getTransformer() {
-        return transSvc.buildTransformer(job.getJobdef().getTrnsdef().orElseThrow(
-                () -> new IllegalStateException("No transform definition was found.")));
-    }
-
-    /**
-     * Throw {@code InterruptedException} if current thread is interrupted.
-     *
-     * @throws InterruptedException if current thread is interrupted
-     * @since 1.0.0
-     */
-    protected void throwIfInterrupted() throws InterruptedException {
-        if (Thread.currentThread().isInterrupted()) {
-            throw new InterruptedException();
-        }
+        return jobSvc.buildJobOptions(job.getOptions().orElse(EMPTY_JSON_OBJECT));
     }
 
     /**
