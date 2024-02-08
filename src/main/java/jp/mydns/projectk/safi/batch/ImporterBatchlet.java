@@ -29,12 +29,12 @@ import jakarta.batch.runtime.BatchStatus;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.json.JsonValue;
 import java.io.IOException;
-import java.lang.System.Logger;
-import jp.mydns.projectk.plugin.PluginLoader;
-import jp.mydns.projectk.safi.plugin.ImporterPlugin;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
+import jp.mydns.projectk.safi.service.ImporterService;
+import jp.mydns.projectk.safi.service.ImporterService.Importer;
+import trial.ImportationFacade;
+import trial.JobRecordingService;
 
 @Named
 @Dependent
@@ -44,19 +44,29 @@ public class ImporterBatchlet extends JobBatchlet {
     private RequestContextProducer reqCtxPrd;
 
     @Inject
-    private PluginLoader<ImporterPlugin> plgLdr;
+    private JobRecordingService recSvc;
 
     @Inject
-    private Logger logger;
+    private ImporterService importerSvc;
+
+    @Inject
+    private ImportationFacade importationFcd;
 
     @Override
     public String mainProcess() throws InterruptedException, IOException {
         reqCtxPrd.setup("Importer");
-        ImporterPlugin plugin = plgLdr.load("example");
-        plugin.setPluginProperties(JsonValue.EMPTY_JSON_OBJECT);
-        plugin.setReporter(s -> logger.log(Logger.Level.INFO, s));
-        plugin.fetch(m -> {
-        });
+
+        Importer importer = importerSvc.buildImporter(getWrkDir(), getPlugdef(), getJobOptions());
+
+        // Register the contents fetched by the import plug-in.
+        try (var s = importer.fetch();) {
+            importationFcd.importContents(ctx);
+        }
+
+        try (var r = recSvc.playRecords();) {
+            importer.doPostProcess(r);
+        }
+
         return BatchStatus.COMPLETED.name();
     }
 }
