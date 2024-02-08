@@ -25,12 +25,8 @@
  */
 package jp.mydns.projectk.safi.value;
 
-import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
-import jakarta.json.bind.Jsonb;
 import java.time.Period;
-import java.util.Objects;
 
 /**
  * Represents a job option values. Returns the default value if the option value is not set or malformed value. This
@@ -46,20 +42,15 @@ import java.util.Objects;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class JobOptions {
-
-    private final JsonObject opts;
+public interface JobOptions {
 
     /**
-     * Construct from job option values.
+     * Convert this instance to the {@code JsonObject}.
      *
-     * @param opts job option values
-     * @throws NullPointerException if {@code opts} is {@code null}
+     * @return the {@code JsonObject} representation of this instance
      * @since 1.0.0
      */
-    public JobOptions(JsonObject opts) {
-        this.opts = Objects.requireNonNull(opts);
-    }
+    JsonObject toJsonObject();
 
     /**
      * Return {@code true} to allow implicit deletion on import.
@@ -67,9 +58,15 @@ public class JobOptions {
      * @return {@code true} if allow implicit deletion on import. Default is {@code false}.
      * @since 1.0.0
      */
-    public boolean allowImplicitDeletion() {
-        return opts.getBoolean("allowImplicitDeletion", false);
-    }
+    boolean allowImplicitDeletion();
+
+    /**
+     * Provides a filtering condition for content to be implicitly deleted on import.
+     *
+     * @return filtering condition for content to be implicitly deleted on import. Default is no condition.
+     * @since 1.0.0
+     */
+    Condition conditionOfImplicitDeletion();
 
     /**
      * Return {@code true} if processing includes add content.
@@ -77,19 +74,7 @@ public class JobOptions {
      * @return {@code true} if processing includes add content. Default is {@code true}.
      * @since 1.0.0
      */
-    public boolean containAddition() {
-        return opts.getBoolean("containAddition", true);
-    }
-
-    /**
-     * Return {@code true} if processing includes update content.
-     *
-     * @return {@code true} if processing includes update content. Default is {@code true}.
-     * @since 1.0.0
-     */
-    public boolean containUpdate() {
-        return opts.getBoolean("containUpdate", true);
-    }
+    boolean containAddition();
 
     /**
      * Return {@code true} if processing includes delete content.
@@ -97,9 +82,7 @@ public class JobOptions {
      * @return {@code true} if processing includes delete content. Default is {@code false}.
      * @since 1.0.0
      */
-    public boolean containDeletion() {
-        return opts.getBoolean("containDeletion", false);
-    }
+    boolean containDeletion();
 
     /**
      * Return {@code true} if processing includes unchanged content.
@@ -107,9 +90,15 @@ public class JobOptions {
      * @return {@code true} if processing includes unchanged content. Default is {@code false}.
      * @since 1.0.0
      */
-    public boolean containUnchanging() {
-        return opts.getBoolean("containUnchanging", false);
-    }
+    boolean containUnchanging();
+
+    /**
+     * Return {@code true} if processing includes update content.
+     *
+     * @return {@code true} if processing includes update content. Default is {@code true}.
+     * @since 1.0.0
+     */
+    boolean containUpdate();
 
     /**
      * Provides a limit number of deletions.
@@ -117,40 +106,7 @@ public class JobOptions {
      * @return limit number of deletions. Default is {@value Long#MAX_VALUE}.
      * @since 1.0.0
      */
-    public long limitOfDeletion() {
-
-        JsonValue val = opts.get("limitOfDeletion");
-
-        try {
-
-            return JsonNumber.class.cast(val).longValueExact();
-
-        } catch (RuntimeException ignore) {
-
-            return Long.MAX_VALUE;  // Note: Means unlimited.
-        }
-
-    }
-
-    /**
-     * Provides a filtering condition for content to be implicitly deleted on import.
-     *
-     * @param jsonb the {@code Jsonb}
-     * @return filtering condition for content to be implicitly deleted on import. Default is no condition.
-     * @throws NullPointerException if {@code jsonb} is {@code null}
-     * @since 1.0.0
-     */
-    public Condition conditionOfImplicitDeletion(Jsonb jsonb) {
-
-        Objects.requireNonNull(jsonb);
-
-        try {
-            return jsonb.fromJson(opts.get("conditionOfImplicitDeletion").toString(), Condition.class);
-        } catch (RuntimeException ignore) {
-            return jsonb.fromJson(JsonValue.EMPTY_JSON_OBJECT.toString(), Condition.class);
-        }
-
-    }
+    long limitOfDeletion();
 
     /**
      * Provides a period until the deletion is executed on export.
@@ -158,11 +114,5 @@ public class JobOptions {
      * @return period until the deletion is executed on export. Default is no grace.
      * @since 1.0.0
      */
-    public Period periodOfUntilDeletion() {
-        try {
-            return Period.parse(opts.getString("periodOfUntilDeletion"));
-        } catch (RuntimeException ignore) {
-            return Period.ZERO;
-        }
-    }
+    Period periodOfUntilDeletion();
 }
