@@ -48,7 +48,7 @@ public enum ContentKind {
      */
     MEDIUM,
     /**
-     * Represents the <i>ID-Content</i> of the <i>Organization</i> #2.
+     * Represents the <i>ID-Content</i> of the <i>Organization</i> #1.
      *
      * @since 1.0.0
      */
