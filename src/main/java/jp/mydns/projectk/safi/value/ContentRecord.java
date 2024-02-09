@@ -40,6 +40,7 @@ import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
+import jp.mydns.projectk.safi.constant.RecordValueFormat;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
@@ -87,19 +88,30 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *                 "PROVISIONING"
  *             ]
  *         },
+ *         "format": {
+ *             "description": "Format of record value.",
+ *             "type": "string",
+ *             "enum": [
+ *                 "UNDEFINED",
+ *                 "USER",
+ *                 "MEDIUM",
+ *                 "ORG",
+ *                 "BELONG_ORG",
+ *                 "GROUP",
+ *                 "BELONG_GROUP"
+ *             ]
+ *         },
  *         "value": {
  *             "description": "Content value.",
  *             "type": "object"
  *         },
- *         "messages": {
- *             "description": "Result messages.",
- *             "type": "array",
- *             "items": {
- *                 "type": "string"
- *             }
+ *         "message": {
+ *             "description": "Result message.",
+ *             "type": "string"
  *         },
  *         "required": [
  *             "kind",
+ *             "format",
  *             "value",
  *             "messages"
  *         ],
@@ -166,6 +178,16 @@ public interface ContentRecord {
     JobPhase getFailurePhase();
 
     /**
+     * Get the format of record value.
+     *
+     * @return the {@code RecordValueFormat}
+     * @since 1.0.0
+     */
+    @Schema(description = "Format of record value.")
+    @NotNull(groups = {Default.class})
+    RecordValueFormat getFormat();
+
+    /**
      * Get content value. It is a value at the time of recording in KeyValue format, and the content depends on the
      * recording value.
      *
@@ -200,6 +222,7 @@ public interface ContentRecord {
         private JobPhase failurePhase;
         private JsonObject value;
         private String message;
+        private RecordValueFormat format;
 
         /**
          * Set content id.
@@ -234,6 +257,18 @@ public interface ContentRecord {
          */
         public Builder withFailurePhase(JobPhase failurePhase) {
             this.failurePhase = failurePhase;
+            return this;
+        }
+
+        /**
+         * Set format of record value.
+         *
+         * @param format format of record value
+         * @return updated this
+         * @since 1.0.0
+         */
+        public Builder withFormat(RecordValueFormat format) {
+            this.format = format;
             return this;
         }
 
@@ -287,6 +322,7 @@ public interface ContentRecord {
             private JobPhase failurePhase;
             private JsonObject value;
             private String message;
+            private RecordValueFormat format;
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -308,6 +344,7 @@ public interface ContentRecord {
                 this.failurePhase = builder.failurePhase;
                 this.value = builder.value;
                 this.message = builder.message;
+                this.format = builder.format;
             }
 
             /**
@@ -370,6 +407,26 @@ public interface ContentRecord {
              * @since 1.0.0
              */
             @Override
+            public RecordValueFormat getFormat() {
+                return format;
+            }
+
+            /**
+             * Set the format of processing result.
+             *
+             * @param format the {@code RecordValueFormat}
+             * @since 1.0.0
+             */
+            public void setFormat(RecordValueFormat format) {
+                this.format = format;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
             public JsonObject getValue() {
                 return value;
             }
@@ -413,7 +470,7 @@ public interface ContentRecord {
             @Override
             public String toString() {
                 return "ContentRecord{" + "id=" + id + ", kind=" + kind + ", failurePhase=" + failurePhase
-                        + ", value=" + value + ", message=" + message + '}';
+                        + ", format=" + format + ", value=" + value + ", message=" + message + '}';
             }
         }
     }
