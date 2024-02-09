@@ -38,7 +38,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
-import java.util.List;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.util.ValidationUtils;
@@ -178,14 +177,14 @@ public interface ContentRecord {
     JsonObject getValue();
 
     /**
-     * Get the result messages of processed content.
+     * Get the result message of processed content.
      *
-     * @return result messages
+     * @return result message
      * @since 1.0.0
      */
-    @Schema(description = "Result messages.")
-    @NotNull(groups = {Default.class})
-    List<@NotBlank(groups = {Default.class}) String> getMessages();
+    @Schema(description = "Result message.")
+    @NotBlank(groups = {Default.class})
+    String getMessage();
 
     /**
      * Builder of the {@link ContentRecord}.
@@ -200,7 +199,7 @@ public interface ContentRecord {
         private RecordKind kind;
         private JobPhase failurePhase;
         private JsonObject value;
-        private List<String> messages;
+        private String message;
 
         /**
          * Set content id.
@@ -250,13 +249,13 @@ public interface ContentRecord {
         }
 
         /**
-         * Set result messages.
+         * Set result message.
          *
-         * @param messages result messages
+         * @param message result message
          * @return updated this
          */
-        public Builder withMessages(List<String> messages) {
-            this.messages = messages;
+        public Builder withMessage(String message) {
+            this.message = message;
             return this;
         }
 
@@ -287,7 +286,7 @@ public interface ContentRecord {
             private RecordKind kind;
             private JobPhase failurePhase;
             private JsonObject value;
-            private List<String> messages;
+            private String message;
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -308,7 +307,7 @@ public interface ContentRecord {
                 this.kind = builder.kind;
                 this.failurePhase = builder.failurePhase;
                 this.value = builder.value;
-                this.messages = builder.messages;
+                this.message = builder.message;
             }
 
             /**
@@ -391,18 +390,18 @@ public interface ContentRecord {
              * @since 1.0.0
              */
             @Override
-            public List<String> getMessages() {
-                return messages;
+            public String getMessage() {
+                return message;
             }
 
             /**
-             * Set the result messages of processed content.
+             * Set the result message of processed content.
              *
-             * @param messages result messages
+             * @param message result message
              * @since 1.0.0
              */
-            public void setMessages(List<String> messages) {
-                this.messages = messages;
+            public void setMessage(String message) {
+                this.message = message;
             }
 
             /**
@@ -414,7 +413,7 @@ public interface ContentRecord {
             @Override
             public String toString() {
                 return "ContentRecord{" + "id=" + id + ", kind=" + kind + ", failurePhase=" + failurePhase
-                        + ", value=" + value + ", messages=" + messages + '}';
+                        + ", value=" + value + ", message=" + message + '}';
             }
         }
     }
