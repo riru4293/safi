@@ -34,6 +34,7 @@ import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
 import jp.mydns.projectk.safi.service.ConfigService;
@@ -151,16 +152,6 @@ public abstract class JobBatchlet implements Batchlet {
     }
 
     /**
-     * Get the {@code Job}.
-     *
-     * @return the {@code Job}
-     * @since 1.0.0
-     */
-    protected Job getJob() {
-        return job;
-    }
-
-    /**
      * Get the {@code JobOptions}.
      *
      * @return the {@code JobOptions}
@@ -168,6 +159,16 @@ public abstract class JobBatchlet implements Batchlet {
      */
     protected JobOptions getJobOptions() {
         return jobSvc.buildJobOptions(job.getOptions().orElse(EMPTY_JSON_OBJECT));
+    }
+
+    /**
+     * Get the transform definition.
+     *
+     * @return the transform definition
+     * @since 1.0.0
+     */
+    protected Map<String, String> getTrnsdef() {
+        return job.getJobdef().getTrnsdef().orElseGet(Map::of);
     }
 
     /**
