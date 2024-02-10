@@ -29,11 +29,18 @@ import jakarta.batch.runtime.BatchStatus;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.json.bind.Jsonb;
+import jakarta.validation.Validator;
 import java.io.IOException;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
+import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.ImporterService;
 import jp.mydns.projectk.safi.service.ImporterService.Importer;
+import jp.mydns.projectk.safi.service.TransformationService;
+import jp.mydns.projectk.safi.service.TransformationService.Transformer;
+import trial.ImportContext;
 import trial.ImportationFacade;
+import trial.ImportationRecordMap;
 import trial.JobRecordingService;
 
 @Named
@@ -52,19 +59,34 @@ public class ImporterBatchlet extends JobBatchlet {
     @Inject
     private ImportationFacade importationFcd;
 
+    @Inject
+    private Validator validator;
+
+    @Inject
+    private ConfigService confSvc;
+
+    @Inject
+    private Jsonb jsonb;
+
+    @Inject
+    private TransformationService transSvc;
+
     @Override
     public String mainProcess() throws InterruptedException, IOException {
         reqCtxPrd.setup("Importer");
 
         Importer importer = importerSvc.buildImporter(getWrkDir(), getPlugdef(), getJobOptions());
+        Transformer transformer = transSvc.buildTransformer(getTrnsdef());
 
-        // Register the contents fetched by the import plug-in.
+        ImportContext importCtx = new ImportContext.Builder().withImporter(importer).withTransformer(transformer)
+                .withJobOptions(getJobOptions()).build(validator);
+
         try (var s = importer.fetch();) {
-            importationFcd.importContents(ctx);
+            importationFcd.importContents(importCtx);
         }
 
         try (var r = recSvc.playRecords();) {
-            importer.doPostProcess(r);
+            importer.doPostProcess(new ImportationRecordMap(r, confSvc.getTmpDir(), jsonb));
         }
 
         return BatchStatus.COMPLETED.name();
