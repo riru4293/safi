@@ -28,8 +28,8 @@ package trial;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
-import java.util.Map;
 import jp.mydns.projectk.safi.service.ImporterService.Importer;
+import jp.mydns.projectk.safi.service.TransformationService.Transformer;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.JobOptions;
@@ -53,14 +53,14 @@ public interface ImportContext {
     Importer getImporter();
 
     /**
-     * Get content transform definition.
+     * Get the {@code Transformer}.
      *
      *
-     * @return transform definition
+     * @return the {@code Transformer}
      * @since 1.0.0
      */
     @NotNull
-    Map<String, String> getTrnsdef();
+    Transformer getTransformer();
 
     /**
      * Return {@code true} to allow implicit deletion on import.
@@ -68,7 +68,7 @@ public interface ImportContext {
      * @return {@code true} if allow implicit deletion on import. Default is {@code false}.
      * @since 1.0.0
      */
-    boolean allowImplicitDeletion();
+    boolean isAllowedImplicitDeletion();
 
     /**
      * Provides a filtering condition for content to be implicitly deleted on import.
@@ -76,47 +76,15 @@ public interface ImportContext {
      * @return filtering condition for content to be implicitly deleted on import. Default is no condition.
      * @since 1.0.0
      */
-    Condition conditionOfImplicitDeletion();
+    Condition getAdditionalConditionForExtractingImplicitDeletion();
 
     /**
-     * Return {@code true} if processing includes add content.
+     * Provides a limit number of implicit deletions.
      *
-     * @return {@code true} if processing includes add content. Default is {@code true}.
+     * @return limit number. Default is {@value Long#MAX_VALUE}.
      * @since 1.0.0
      */
-    boolean containAddition();
-
-    /**
-     * Return {@code true} if processing includes delete content.
-     *
-     * @return {@code true} if processing includes delete content. Default is {@code false}.
-     * @since 1.0.0
-     */
-    boolean containDeletion();
-
-    /**
-     * Return {@code true} if processing includes unchanged content.
-     *
-     * @return {@code true} if processing includes unchanged content. Default is {@code false}.
-     * @since 1.0.0
-     */
-    boolean containUnchanging();
-
-    /**
-     * Return {@code true} if processing includes update content.
-     *
-     * @return {@code true} if processing includes update content. Default is {@code true}.
-     * @since 1.0.0
-     */
-    boolean containUpdate();
-
-    /**
-     * Provides a limit number of deletions.
-     *
-     * @return limit number of deletions. Default is {@value Long#MAX_VALUE}.
-     * @since 1.0.0
-     */
-    long limitOfDeletion();
+    long getLimitNumberOfImplicitDeletion();
 
     /**
      * Builder of the {@link ImportContext}.
@@ -128,7 +96,7 @@ public interface ImportContext {
     class Builder {
 
         private Importer importer;
-        private Map<String, String> trnsdef;
+        private Transformer transformer;
         private JobOptions jobOptions;
 
         /**
@@ -144,14 +112,14 @@ public interface ImportContext {
         }
 
         /**
-         * Set the transform definition.
+         * Set the {@code Transformer}.
          *
-         * @param trnsdef the transform definition
+         * @param transformer the {@code Transformer}
          * @return updated this
          * @since 1.0.0
          */
-        public Builder withTrnsdef(Map<String, String> trnsdef) {
-            this.trnsdef = trnsdef;
+        public Builder withTransformer(Transformer transformer) {
+            this.transformer = transformer;
             return this;
         }
 
@@ -188,10 +156,10 @@ public interface ImportContext {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected static class ImportContextImpl implements ImportContext {
+        private class ImportContextImpl implements ImportContext {
 
             private final Importer importer;
-            private final Map<String, String> trnsdef;
+            private final Transformer transformer;
             private final JobOptions jobOptions;
 
             /**
@@ -200,9 +168,9 @@ public interface ImportContext {
              * @param builder the {@code ImportContext.Builder}
              * @since 1.0.0
              */
-            protected ImportContextImpl(Builder builder) {
+            private ImportContextImpl(Builder builder) {
                 this.importer = builder.importer;
-                this.trnsdef = builder.trnsdef;
+                this.transformer = builder.transformer;
                 this.jobOptions = builder.jobOptions;
             }
 
@@ -233,8 +201,8 @@ public interface ImportContext {
              * @since 1.0.0
              */
             @Override
-            public Map<String, String> getTrnsdef() {
-                return trnsdef;
+            public Transformer getTransformer() {
+                return transformer;
             }
 
             /**
@@ -243,7 +211,7 @@ public interface ImportContext {
              * @since 1.0.0
              */
             @Override
-            public boolean allowImplicitDeletion() {
+            public boolean isAllowedImplicitDeletion() {
                 return jobOptions.allowImplicitDeletion();
             }
 
@@ -253,7 +221,7 @@ public interface ImportContext {
              * @since 1.0.0
              */
             @Override
-            public Condition conditionOfImplicitDeletion() {
+            public Condition getAdditionalConditionForExtractingImplicitDeletion() {
                 return jobOptions.conditionOfImplicitDeletion();
             }
 
@@ -263,47 +231,7 @@ public interface ImportContext {
              * @since 1.0.0
              */
             @Override
-            public boolean containAddition() {
-                return jobOptions.containAddition();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 1.0.0
-             */
-            @Override
-            public boolean containDeletion() {
-                return jobOptions.containDeletion();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 1.0.0
-             */
-            @Override
-            public boolean containUnchanging() {
-                return jobOptions.containUnchanging();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 1.0.0
-             */
-            @Override
-            public boolean containUpdate() {
-                return jobOptions.containUpdate();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 1.0.0
-             */
-            @Override
-            public long limitOfDeletion() {
+            public long getLimitNumberOfImplicitDeletion() {
                 return jobOptions.limitOfDeletion();
             }
         }
