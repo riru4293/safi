@@ -25,6 +25,7 @@
  */
 package trial;
 
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -58,7 +59,6 @@ import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
-import jp.mydns.projectk.safi.service.ValidationService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
@@ -68,9 +68,8 @@ import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.UserValue;
 
 /**
- * Batch processing for content.
+ * Facade for the content import process.
  *
- * @param <E> entity type
  * @param <C> content type
  *
  * @author riru
@@ -79,6 +78,17 @@ import jp.mydns.projectk.safi.value.UserValue;
  */
 public interface ImportationService<C extends ContentValue> {
 
+    /**
+     * Abstract implements of the {@code ImportationService}.
+     *
+     * @param <E> entity type
+     * @param <C> content type
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    @Dependent
     abstract class AbstractImportationService<E extends ContentEntity, C extends ContentValue> {
 
         @Inject
@@ -105,10 +115,7 @@ public interface ImportationService<C extends ContentValue> {
         @Inject
         private Validator validator;
 
-        @Inject
-        private ValidationService validSvc;
-
-        protected abstract Class<C> getContentClass();
+        protected abstract Class<C> getContentType();
 
         protected abstract ContentBatchDxo<E, C> getDxo();
 
@@ -125,8 +132,7 @@ public interface ImportationService<C extends ContentValue> {
          * @throws NullPointerException if {@code values} is {@code null}
          * @throws PersistenceException if occurs problem in persistence provider
          */
-        public Stream<ImportationValue<C>> getToBeRegistered(
-                Map<String, ImportationValue<C>> values) {
+        public Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values) {
 
             Set<String> ids = unmodifiableSet(values.keySet());
             boolean allowAlways = ctx.allowUpdateAnotherLabel();
@@ -379,8 +385,7 @@ public interface ImportationService<C extends ContentValue> {
         }
 
         public void collectDuplicateAsFailure(ImportationValue<C> duplicate) {
-            d -> recSvc.rec(recDxo.toFailure(
-                    d, JobPhase.VALIDATION, List.of("Duplicate id.")));
+            d -> recSvc.rec(recDxo.toFailure(d, JobPhase.VALIDATION, List.of("Duplicate id.")));
         }
 
         public void collectDeniedDeletionAsFailure(ImportationValue<C>) {
