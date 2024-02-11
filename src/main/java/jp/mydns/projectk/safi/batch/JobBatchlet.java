@@ -30,18 +30,20 @@ import jakarta.batch.api.Batchlet;
 import jakarta.batch.runtime.BatchStatus;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
+import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
+import jp.mydns.projectk.safi.constant.ContentKind;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.ValidationService;
 import jp.mydns.projectk.safi.value.Job;
-import jp.mydns.projectk.safi.value.JobOptions;
 import jp.mydns.projectk.safi.value.Plugdef;
 import trial.JobService;
 
@@ -69,7 +71,7 @@ public abstract class JobBatchlet implements Batchlet {
     private JsonService jsonSvc;
 
     @Inject
-    private ValidationService validSvc;
+    private ValidationService validationSvc;
 
     @Inject
     private JobService jobSvc;
@@ -104,6 +106,8 @@ public abstract class JobBatchlet implements Batchlet {
      * {@link ConfigService#getJobDir() job-directory} named after the job id.
      *
      * @return exit status string. It does not assume anything other than {@link BatchStatus#COMPLETED COMPLETED}.
+     * @throws ConstraintViolationException if the {@link Job} specified with <i>Jakarta-Batch</i> properties violates
+     * constraints.
      * @throws IOException if occurs I/O error
      * @throws InterruptedException if interrupted
      * @since 1.0.0
@@ -117,7 +121,7 @@ public abstract class JobBatchlet implements Batchlet {
         this.myThread = Optional.of(Thread.currentThread()).filter(not(Thread::isInterrupted))
                 .orElseThrow(() -> new InterruptedException());
 
-        this.job = validSvc.requireValid(jsonSvc.convertViaJson(jsonJob, Job.class));
+        this.job = validationSvc.requireValid(jsonSvc.convertViaJson(jsonJob, Job.class));
 
         Files.createDirectories(getWrkDir());
 
@@ -141,6 +145,16 @@ public abstract class JobBatchlet implements Batchlet {
     }
 
     /**
+     * Get the {@code ContentKind}.
+     *
+     * @return the {@code ContentKind}
+     * @since 1.0.0
+     */
+    protected ContentKind getContentKind() {
+        return job.getJobdef().getContentKind();
+    }
+
+    /**
      * Get the {@code Plugdef}.
      *
      * @return the {@code Plugdef}
@@ -152,13 +166,13 @@ public abstract class JobBatchlet implements Batchlet {
     }
 
     /**
-     * Get the {@code JobOptions}.
+     * Get optional configurations at job execution.
      *
-     * @return the {@code JobOptions}
+     * @return optional configurations at job execution
      * @since 1.0.0
      */
-    protected JobOptions getJobOptions() {
-        return jobSvc.buildJobOptions(job.getOptions().orElse(EMPTY_JSON_OBJECT));
+    protected JsonObject getJobOptions() {
+        return job.getOptions().orElse(EMPTY_JSON_OBJECT);
     }
 
     /**
