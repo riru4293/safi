@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import jp.mydns.projectk.safi.service.TransformService;
+import jp.mydns.projectk.safi.service.TransformerService;
 
 /**
  * A result of the transform processing. If the transformation succeeded, contains a transformed content and a source
@@ -45,7 +45,7 @@ import jp.mydns.projectk.safi.service.TransformService;
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
- * @see TransformService.Transformer#transform(java.util.Map) Transform processing
+ * @see TransformerService.Transformer#transform(java.util.Map) Transform processing
  */
 public interface TransResult extends RecordableValue {
 
