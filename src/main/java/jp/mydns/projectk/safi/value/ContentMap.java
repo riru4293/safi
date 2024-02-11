@@ -205,6 +205,16 @@ public class ContentMap<T> implements Closeable {
     }
 
     /**
+     * Indicate that exists a duplicate value.
+     *
+     * @return {@code true} if exists a duplicate, otherwise {@code false}.
+     * @since 1.0.0
+     */
+    public boolean hasDuplicates() {
+        return !duplicates.isEmpty();
+    }
+
+    /**
      * Get duplicate values.
      *
      * @return duplicate values
