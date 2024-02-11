@@ -143,6 +143,39 @@ public interface ImportationService<C extends ContentValue> {
 
         protected abstract ContentImportationDao<E> getDao();
 
+        void initializeWork() {
+
+        }
+
+        void registerWork(Collection<ImportationValue<C>> values) {
+
+        }
+
+        Optional<ImportationValue<C>> toImportationValue(TransResult.Success transformed) {
+
+            List<String> failureReasons = new ArrayList<>();
+
+            try {
+
+                return Optional.of(getDxo().toValue(transformed));
+
+            } catch (ConstraintViolationException ex) {
+
+                ex.getConstraintViolations().stream()
+                        .map(ConstraintViolationUtils::toMessage)
+                        .forEach(failureReasons::add);
+
+            } catch (RuntimeException ex) {
+
+                failureReasons.addAll(ThrowableUtils.toMessages(ex));
+
+            }
+
+            recSvc.rec(recDxo.toFailure(transformed, JobPhase.VALIDATION, failureReasons));
+
+            return Optional.empty();
+        }
+
         /**
          * Get values that to be registered.
          * <p>
@@ -254,31 +287,6 @@ public interface ImportationService<C extends ContentValue> {
 //            return new ContentMap<>(it, confSvc.getWorkDirectoryPath(), newConverter());
 //        }
 //    }
-
-        private Optional<ImportationValue<C>> toImportationValue(TransResult.Success transformed) {
-
-            List<String> failureReasons = new ArrayList<>();
-
-            try {
-
-                return Optional.of(getDxo().toValue(transformed));
-
-            } catch (ConstraintViolationException ex) {
-
-                ex.getConstraintViolations().stream()
-                        .map(ConstraintViolationUtils::toMessage)
-                        .forEach(failureReasons::add);
-
-            } catch (RuntimeException ex) {
-
-                failureReasons.addAll(ThrowableUtils.toMessages(ex));
-
-            }
-
-            recSvc.rec(recDxo.toFailure(transformed, JobPhase.VALIDATION, failureReasons));
-
-            return Optional.empty();
-        }
 
         /**
          * Register value.
@@ -408,7 +416,8 @@ public interface ImportationService<C extends ContentValue> {
      * @since 1.0.0
      */
     @RequestScoped
-    class UserImportationService extends AbstractImportationService<UserEntity, UserValue> implements ImportationService<UserValue> {
+    class UserImportationService extends AbstractImportationService<UserEntity, UserValue> implements
+            ImportationService<UserValue> {
 
         @Inject
         private UserBatchDxo dxo;
