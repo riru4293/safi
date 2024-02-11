@@ -37,6 +37,7 @@ import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.ImportContext;
 import jp.mydns.projectk.safi.value.UserValue;
+import trial.ImportationService.UserImportationService;
 
 /**
  * The facade process of transform the content source data into content and the importing it into the <i>SAFI</i>
@@ -163,7 +164,7 @@ public interface ImportationFacade {
      * The {@code ImportationFacade} for the <i>User</i> content.
      */
     @RequestScoped
-    class UserImportationFacade extends AbstractImportationFacade<UserValue, UserImportationService<UserValue>> {
+    class UserImportationFacade extends AbstractImportationFacade<UserValue, UserImportationService> {
 
         @Inject
         private UserImportationService svc;

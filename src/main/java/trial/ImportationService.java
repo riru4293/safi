@@ -78,6 +78,36 @@ import jp.mydns.projectk.safi.value.UserValue;
  */
 public interface ImportationService<C extends ContentValue> {
 
+    void initializeImportationWork();
+
+    Stream<TransResult.Success> extractSuccessfulsAndCollectFailures(Stream<TransResult> values);
+
+    ContentMap<ImportationValue<C>> toContentMap(Stream<TransResult.Success> values) throws IOException;
+
+    Stream<Map<String, ImportationValue<C>>> toChunkedStream(Stream<ImportationValue<C>> values);
+
+    void collectDuplicateAsFailure(ImportationValue<C> value);
+
+    Stream<ImportationValue<C>> getToBeExplicitDeleted(Map<String, ImportationValue<C>> values);
+
+    void logicalDelete(ImportationValue<C> value);
+
+    void registerToImportationWork(Collection<ImportationValue<C>> values);
+
+    Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values);
+
+    void register(ImportationValue<C> value);
+
+    void rebuildDependent();
+
+    Condition buildConditionForExtractingImplicitDeletion(Condition additionalCondition);
+
+    void collectDeniedDeletionAsFailure(ImportationValue<C> value);
+
+    long getToBeImplicitDeleteCount(Condition additionalCondition);
+
+    Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition additionalCondition);
+
     /**
      * Abstract implements of the {@code ImportationService}.
      *
@@ -293,7 +323,7 @@ public interface ImportationService<C extends ContentValue> {
          * @throws UncheckedIOException if occurs I/O error
          */
         @Transactional
-        @RequireTenantDb
+
         public void rebuild(JobOptionsImpl opts) {
             Consumer<RecordableValue> record
                     = v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.REGISTER));
@@ -315,7 +345,6 @@ public interface ImportationService<C extends ContentValue> {
          * @throws PersistenceException if occurs problem in persistence provider
          */
         @Transactional(Transactional.TxType.MANDATORY)
-        @RequireTenantDb
         public void rebuildDependent() {
             getDao().doUniqueRebuilding();
         }
@@ -388,42 +417,42 @@ public interface ImportationService<C extends ContentValue> {
             d -> recSvc.rec(recDxo.toFailure(d, JobPhase.VALIDATION, List.of("Duplicate id.")));
         }
 
-        public void collectDeniedDeletionAsFailure(ImportationValue<C>) {
+        public void collectDeniedDeletionAsFailure(ImportationValue<C> value) {
             v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING,
                     List.of("Ignored because the limit was exceeded.")));
         }
 
-        /**
-         * Batch processing for user content.
-         *
-         * @author riru
-         * @version 1.0.0
-         * @since 1.0.0
-         */
-        @RequestScoped
-        public class UserImportationService extends ImportationService<UserEntity, UserValue> {
+    }
 
-            @Inject
-            private UserBatchDxo dxo;
+    /**
+     * Batch processing for user content.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    @RequestScoped
+    class UserImportationService extends AbstractImportationService<UserEntity, UserValue> implements ImportationService<UserValue> {
 
-            @Inject
-            private UserBatchDao dao;
+        @Inject
+        private UserBatchDxo dxo;
 
-            @Override
-            protected UserBatchDxo getDxo() {
-                return dxo;
-            }
+        @Inject
+        private UserBatchDao dao;
 
-            @Override
-            protected UserBatchDao getDao() {
-                return dao;
-            }
-
-            @Override
-            protected Class<UserValue> getContentClass() {
-                return UserValue.class;
-            }
+        @Override
+        protected UserBatchDxo getDxo() {
+            return dxo;
         }
 
+        @Override
+        protected UserBatchDao getDao() {
+            return dao;
+        }
+
+        @Override
+        protected Class<UserValue> getContentType() {
+            return UserValue.class;
+        }
     }
 }
