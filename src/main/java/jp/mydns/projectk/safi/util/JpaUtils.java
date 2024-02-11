@@ -29,24 +29,12 @@ import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.stream.JsonCollectors;
-import jakarta.persistence.PersistenceException;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TupleElement;
-import jakarta.persistence.TypedQuery;
 import java.io.StringReader;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.Spliterators;
 import static java.util.stream.Collectors.toUnmodifiableMap;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import org.eclipse.persistence.config.HintValues;
-import org.eclipse.persistence.config.QueryHints;
-import org.eclipse.persistence.queries.CursoredStream;
 
 /**
  * Utilities for JPA.
@@ -66,75 +54,7 @@ public class JpaUtils {
     public static final String PREFIX_JSONOBJECT = "jsonobject___";
     public static final String PREFIX_JSONARRAY = "jsonarray___";
 
-    private static final int CHUNK_SIZE = 1000;
-
     private JpaUtils() {
-    }
-
-    /**
-     * Build a chunked stream from query results. Implementation depends on the EclipseLink.
-     *
-     * @param <T> entity type
-     * @param query typed query
-     * @return chunked stream of query results
-     * @throws NullPointerException if {@code query} is {@code null}
-     * @throws PersistenceException if the query execution was failed
-     * @since 1.0.0
-     */
-    public static <T> Stream<List<T>> toChunkedStream(TypedQuery<T> query) {
-        return toChunkedStream(Objects.requireNonNull(query), Map.of());
-    }
-
-    /**
-     * Build a chunked stream from query results. Implementation depends on the EclipseLink.
-     *
-     * @param <T> entity type
-     * @param query typed query
-     * @param hints additional hints
-     * @return chunked stream of query results
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws ClassCastException if JPA implement is not EclipseLink
-     * @throws PersistenceException if the query execution was failed
-     * @see QueryHints
-     * @since 1.0.0
-     */
-    public static <T> Stream<List<T>> toChunkedStream(TypedQuery<T> query, Map<String, Object> hints) {
-
-        Objects.requireNonNull(query);
-        Objects.requireNonNull(hints);
-
-        query.setHint(QueryHints.CURSOR, HintValues.TRUE);
-        query.setHint(QueryHints.CURSOR_PAGE_SIZE, CHUNK_SIZE);
-        query.setHint(QueryHints.JDBC_FETCH_SIZE, CHUNK_SIZE);
-
-        hints.entrySet().forEach(e -> query.setHint(e.getKey(), e.getValue()));
-
-        CursoredStream cursor = CursoredStream.class.cast(query.getSingleResult());
-
-        Iterator<List<T>> iterator = new Iterator<>() {
-
-            @Override
-            public boolean hasNext() {
-                return cursor.hasNext();
-            }
-
-            @Override
-            @SuppressWarnings("unchecked")
-            public List<T> next() {
-
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-
-                cursor.clear();
-
-                return (List<T>) Collections.unmodifiableList(cursor.next(CHUNK_SIZE));
-
-            }
-        };
-
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(iterator, 0), false).onClose(cursor::close);
-
     }
 
     /**
