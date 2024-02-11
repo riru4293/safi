@@ -83,7 +83,10 @@ public class ImportationValue<T extends ContentValue> implements RecordableValue
     }
 
     /**
-     * {@inheritDoc}
+     * Get content id.
+     *
+     * @return content id
+     * @since 1.0.0
      */
     @Override
     @JsonbTransient
@@ -92,27 +95,50 @@ public class ImportationValue<T extends ContentValue> implements RecordableValue
     }
 
     /**
-     * todo
+     * Get content id.
      *
-     * @todo
+     * @return content id
+     * @since 1.0.0
      */
     @JsonbTransient
+    @Override
     public String getKey() {
         return getId();
     }
 
     /**
-     * todo
+     * Get content value.
      *
-     * @todo
+     * @return content value.
+     * @since 1.0.0
      */
     @JsonbTransient
+    @Override
     public ImportationValue<T> getValue() {
         return this;
     }
 
+    /**
+     * Unsupported.
+     *
+     * @param value no use
+     * @return nothing
+     * @throws UnsupportedOperationException always
+     * @since 1.0.0
+     */
+    @Override
     public ImportationValue<T> setValue(ImportationValue<T> value) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Get this as {@code Map.Entry<String, ImportationValue<T>>}.
+     *
+     * @return this
+     * @since 1.0.0
+     */
+    public Map.Entry<String, ImportationValue<T>> asEntry() {
+        return this;
     }
 
     /**
