@@ -40,7 +40,6 @@ import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.unmodifiableSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -82,6 +81,8 @@ public interface ImportationService<C extends ContentValue> {
     void registerWork(Collection<ImportationValue<C>> values);
 
     Optional<ImportationValue<C>> toImportationValue(TransResult.Success trunsResults, Consumer<String> failureReasonCollector);
+
+    ContentMap<ImportationValue<C>> toContentMap(Stream<ImportationValue<C>> values) throws IOException;
 
     Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values);
 
@@ -351,10 +352,7 @@ public interface ImportationService<C extends ContentValue> {
         }
 
         public ContentMap<ImportationValue<C>> toContentMap(Stream<ImportationValue<C>> values) throws IOException {
-            Iterator<Map.Entry<String, ImportationValue<C>>> iterator
-                    = values.map(v -> Map.entry(v.getId(), v)).iterator();
-
-            return new ContentMap<>(values.iterator(), confSvc.getTmpDir(), new ContentConvertor());
+            return new ContentMap<>(values.map(ImportationValue::asEntry).iterator(), confSvc.getTmpDir(), new ContentConvertor());
         }
 
         private class ContentConvertor implements ContentMap.Convertor<ImportationValue<C>> {

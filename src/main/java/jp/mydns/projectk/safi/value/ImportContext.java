@@ -68,7 +68,7 @@ public interface ImportContext {
      * @return additional filtering condition. Default is no condition.
      * @since 1.0.0
      */
-    Condition getAdditionalConditionForExtractingImplicitDeletion();
+    Condition getAdditionalConditionForImplicitDeletion();
 
     /**
      * Provides a limit number of implicit deletions. If the number of implicit deletes exceeds this limit, no implicit

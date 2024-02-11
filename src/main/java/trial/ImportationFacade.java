@@ -30,12 +30,23 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+import jp.mydns.projectk.safi.constant.JobPhase;
+import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
+import jp.mydns.projectk.safi.service.ConfigService;
+import static jp.mydns.projectk.safi.util.LambdaUtils.c;
+import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
+import jp.mydns.projectk.safi.util.StreamUtils;
 import jp.mydns.projectk.safi.value.Condition;
+import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.ImportContext;
+import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.UserValue;
 import trial.ImportationService.UserImportationService;
 
@@ -76,6 +87,12 @@ public interface ImportationFacade {
         @Inject
         private JobRecordingService recSvc;
 
+        @Inject
+        private RecordDxo recDxo;
+
+        @Inject
+        private ConfigService confSvc;
+
         /**
          * Get service of importation.
          *
@@ -87,6 +104,7 @@ public interface ImportationFacade {
          * {@inheritDoc}
          *
          * @throws NullPointerException if any argument is {@code null}
+         * @since 1.0.0
          */
         @Override
         @Transactional(rollbackOn = {InterruptedException.class, IOException.class})
@@ -94,68 +112,89 @@ public interface ImportationFacade {
             Objects.requireNonNull(ctx);
 
             S svc = getImportationService();
+            svc.initializeWork();
 
-            // Clear all the work-data of importation.
-            svc.initializeImportationWork();
-
-            try (var s = ctx.getImporter().fetch(); var t = ctx.getTransformer().transform(s);
-                    var x = svc.extractSuccessfulsAndCollectFailures(t); var m = svc.toContentMap(x);
-                    var h = svc.toChunkedStream(m.stream());) {
-
+            try (var s = ctx.getImporter().fetch(); var t = ctx.getTransformer().transform(s); var v = toImportationValues(t);
+                    var m = svc.toContentMap(v);) {
                 // Records duplicate content as a failure.
-                if (m.duplicates().findAny().isPresent()) {
-                    recSvc.rec("Duplicate content detected.");
-                    m.duplicates().forEach(svc::collectDuplicateAsFailure);
-                }
+                Optional.of(m).filter(ContentMap::hasDuplicates).map(ContentMap::duplicates).ifPresent(this::recordDuplicates);
 
-                // Register, update, and delete the contents.
-                h.forEachOrdered(c -> {
-                    // Deletes content that is explicitly instructed to be deleted.
-                    svc.getToBeExplicitDeleted(c).forEach(svc::logicalDelete);
-
-                    // Preparing the work-data for calculate difference.
-                    svc.registerToImportationWork(c.values());
-
-                    // Register the contents to database that are create and update.
-                    svc.getToBeRegistered(c).forEach(svc::register);
-
-                    comDao.flushAndClear();
-                });
-
+                // Process register, update and explicit delete the contents.
+                registerContents(m.stream());
             }
 
-            // Implicit delete the lost contents.
-            if (ctx.isAllowedImplicitDeletion()) {
-                deleteLosts(ctx);
-            }
+            // Process implicit delete the lost contents.
+            Optional.of(ctx).filter(ImportContext::isAllowedImplicitDeletion).ifPresent(this::deleteLosts);
 
-            svc.rebuildDependent();
+            svc.rebuildPersistedContents();
+        }
+
+        private void recordDuplicates(Stream<ImportationValue<C>> duplicates) {
+            recSvc.rec("Duplicate content detected.");
+            StreamUtils.toChunkedStream(duplicates).forEachOrdered(c -> {
+                c.forEach(d -> recSvc.rec(recDxo.toFailure(d, JobPhase.VALIDATION, "Duplicate id.")));
+                comDao.flushAndClear();
+            });
+        }
+
+        private void registerContents(Stream<ImportationValue<C>> contents) {
+            S svc = getImportationService();
+            Stream<Map<String, ImportationValue<C>>> chunks
+                    = StreamUtils.toChunkedStream(contents).map(c -> c.stream().collect(toLinkedHashMap()));
+
+            chunks.forEachOrdered(c -> {
+                // Deletes content that is explicitly instructed to be deleted.
+                svc.getToBeExplicitDeleted(c).forEach(c(svc::logicalDelete)
+                        .andThen(v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.DELETION))));
+
+                // Preparing the working data for calculate difference.
+                svc.registerWork(c.values());
+
+                // Register the contents to database that are create and update.
+                svc.getToBeRegistered(c).forEach(c(svc::register)
+                        .andThen(v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.REGISTER))));
+
+                comDao.flushAndClear();
+            });
         }
 
         private void deleteLosts(ImportContext ctx) {
-
             S svc = getImportationService();
-            Condition extractCondition = svc.buildConditionForExtractingImplicitDeletion(
-                    ctx.getAdditionalConditionForExtractingImplicitDeletion());
+            Condition cond = svc.buildConditionForImplicitDeletion(ctx.getAdditionalConditionForImplicitDeletion());
 
-            long count = svc.getToBeImplicitDeleteCount(extractCondition);
+            long count = svc.getToBeImplicitDeleteCount(cond);
             long limit = ctx.getLimitNumberOfImplicitDeletion();
             boolean isExceedLimit = count > limit;
 
-            Consumer<ImportationValue<C>> delete
-                    = !isExceedLimit ? svc::logicalDelete : svc::collectDeniedDeletionAsFailure;
+            Consumer<ImportationValue<C>> delete = !isExceedLimit
+                    ? c(svc::logicalDelete).andThen(v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.DELETION)))
+                    : v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING, "Ignored because the limit was exceeded."));
 
             if (isExceedLimit) {
                 recSvc.rec(String.format("Deletion limit count exceeded. %d/%d", count, limit));
             }
 
-            try (var toBeDeleted = svc.getToBeImplicitDeleted(extractCondition);) {
+            try (var toBeDeleted = svc.getToBeImplicitDeleted(cond);) {
                 toBeDeleted.forEachOrdered(c -> {
                     c.forEach(delete);
                     comDao.flushAndClear();
                 });
             }
+        }
 
+        private Stream<ImportationValue<C>> toImportationValues(Stream<TransResult> trunsResults) {
+            return trunsResults.map(this::toImportationValue).flatMap(Optional::stream);
+        }
+
+        private Optional<ImportationValue<C>> toImportationValue(TransResult transResult) {
+            if (!transResult.isSuccessful()) {
+                recSvc.rec(recDxo.toFailure(transResult, JobPhase.TRANSFORMATION, transResult.getReason()));
+                return Optional.empty();
+            }
+
+            Consumer<String> failureReasonCollector = r -> recSvc.rec(recDxo.toFailure(transResult, JobPhase.VALIDATION, r));
+
+            return getImportationService().toImportationValue(TransResult.Success.class.cast(transResult), failureReasonCollector);
         }
 
     }

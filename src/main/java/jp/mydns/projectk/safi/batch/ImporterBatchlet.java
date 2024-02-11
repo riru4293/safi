@@ -226,7 +226,7 @@ public class ImporterBatchlet extends JobBatchlet {
          * @since 1.0.0
          */
         @Override
-        public Condition getAdditionalConditionForExtractingImplicitDeletion() {
+        public Condition getAdditionalConditionForImplicitDeletion() {
             try {
                 return jsonSvc.convertViaJson(options.get("conditionOfImplicitDeletion"), Condition.class);
             } catch (RuntimeException ignore) {

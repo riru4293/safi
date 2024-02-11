@@ -45,4 +45,5 @@ public class RecordDxo {
     public ContentRecord toFailure(RecordableValue content, JobPhase phase, String reason) {
         return null;
     }
+
 }
