@@ -42,9 +42,6 @@ import jp.mydns.projectk.safi.value.UserValue;
  * The facade process of transform the content source data into content and the importing it into the <i>SAFI</i>
  * database.
  *
- * @param <C> content type
- * @param <S> importation service type
- *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
