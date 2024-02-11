@@ -59,6 +59,7 @@ import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 import jp.mydns.projectk.safi.util.JpaUtils;
 import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
 import jp.mydns.projectk.safi.value.Condition;
+import jp.mydns.projectk.safi.util.StreamUtils;
 
 /**
  * Data access processing to the <i>ID-Content</i>.
@@ -241,7 +242,7 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
      * @since 1.0.0
      */
     public Stream<List<C>> getLosts(Condition additional) {
-        return JpaUtils.toChunkedStream(buildGetLostQuery(getContentEntityClass(), Objects.requireNonNull(additional)));
+        return StreamUtils.toChunkedStream(buildGetLostQuery(getContentEntityClass(), Objects.requireNonNull(additional)));
     }
 
     @SuppressWarnings("unchecked")
@@ -313,7 +314,7 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
         Predicate withinRange = cb.between(cb.literal(refTime), from, to);
         Predicate isEnable = cb.equal(enabled, true);
 
-        return JpaUtils.toChunkedStream(em.createQuery(cq.where(cb.or(cb.and(withinRange, cb.not(isEnable)),
+        return StreamUtils.toChunkedStream(em.createQuery(cq.where(cb.or(cb.and(withinRange, cb.not(isEnable)),
                 cb.and(cb.not(withinRange), isEnable)))));
 
     }
@@ -331,7 +332,7 @@ public abstract class ContentBatchDao<C extends ContentEntity> {
 
         CriteriaQuery<Tuple> cq = em.getCriteriaBuilder().createTupleQuery();
 
-        return JpaUtils.toChunkedStream(em.createQuery(cq.multiselect(getExportItems(cq.from(getContentEntityClass()))
+        return StreamUtils.toChunkedStream(em.createQuery(cq.multiselect(getExportItems(cq.from(getContentEntityClass()))
                 .toArray(Selection<?>[]::new)))).map(convertElements(JpaUtils::toMap));
 
     }
