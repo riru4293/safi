@@ -195,7 +195,11 @@ public interface ImportationFacade {
     }
 
     /**
-     * The {@code ImportationFacade} for the <i>User</i> content.
+     * The {@link ImportationFacade} for <i>User</i> content.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
      */
     @RequestScoped
     class UserImportationFacade extends AbstractImportationFacade<UserValue, UserImportationService> {
