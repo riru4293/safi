@@ -29,17 +29,22 @@ import jakarta.batch.runtime.BatchStatus;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.json.JsonNumber;
+import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
 import jakarta.validation.Validator;
 import java.io.IOException;
+import java.util.Objects;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.ImporterService;
 import jp.mydns.projectk.safi.service.ImporterService.Importer;
-import jp.mydns.projectk.safi.service.TransformationService;
-import jp.mydns.projectk.safi.service.TransformationService.Transformer;
-import trial.ImportContext;
-import trial.ImportationFacade;
+import jp.mydns.projectk.safi.service.JsonService;
+import jp.mydns.projectk.safi.service.TransformerService;
+import jp.mydns.projectk.safi.service.TransformerService.Transformer;
+import jp.mydns.projectk.safi.value.Condition;
+import jp.mydns.projectk.safi.value.ImportContext;
+import trial.ImportationFacade.UserImportationFacade;
 import trial.ImportationRecordMap;
 import trial.JobRecordingService;
 
@@ -57,7 +62,7 @@ public class ImporterBatchlet extends JobBatchlet {
     private ImporterService importerSvc;
 
     @Inject
-    private ImportationFacade importationFcd;
+    private UserImportationFacade userImportFacade;
 
     @Inject
     private Validator validator;
@@ -69,7 +74,10 @@ public class ImporterBatchlet extends JobBatchlet {
     private Jsonb jsonb;
 
     @Inject
-    private TransformationService transSvc;
+    private JsonService jsonSvc;
+
+    @Inject
+    private TransformerService transSvc;
 
     @Override
     public String mainProcess() throws InterruptedException, IOException {
@@ -78,11 +86,13 @@ public class ImporterBatchlet extends JobBatchlet {
         Importer importer = importerSvc.buildImporter(getWrkDir(), getPlugdef(), getJobOptions());
         Transformer transformer = transSvc.buildTransformer(getTrnsdef());
 
-        ImportContext importCtx = new ImportContext.Builder().withImporter(importer).withTransformer(transformer)
-                .withJobOptions(getJobOptions()).build(validator);
+        ImportContext importCtx = new ImportContextImpl(importer, transformer, getJobOptions());
 
         try (var s = importer.fetch();) {
-            importationFcd.importContents(importCtx);
+            switch (getContentKind()) {
+                case USER ->
+                    userImportFacade.importContents(importCtx);
+            }
         }
 
         try (var r = recSvc.playRecords();) {
@@ -90,5 +100,92 @@ public class ImporterBatchlet extends JobBatchlet {
         }
 
         return BatchStatus.COMPLETED.name();
+    }
+
+    /**
+     * Implements of the {@code ImportContext}.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    private class ImportContextImpl implements ImportContext {
+
+        private final Importer importer;
+        private final Transformer transformer;
+        private final JsonObject options;
+
+        /**
+         * Constructor.
+         *
+         * @param importer the {@code Importer}
+         * @param transformer the {@code Transformer}
+         * @param options optional configurations for import process
+         * @throws NullPointerException if any argument is {@code null}
+         * @since 1.0.0
+         */
+        public ImportContextImpl(Importer importer, Transformer transformer, JsonObject options) {
+            this.importer = Objects.requireNonNull(importer);
+            this.transformer = Objects.requireNonNull(transformer);
+            this.options = Objects.requireNonNull(options);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public Importer getImporter() {
+            return importer;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public Transformer getTransformer() {
+            return transformer;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public boolean isAllowedImplicitDeletion() {
+            return options.getBoolean("allowImplicitDeletion", false);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public Condition getAdditionalConditionForExtractingImplicitDeletion() {
+            try {
+                return jsonSvc.convertViaJson(options.get("conditionOfImplicitDeletion"), Condition.class);
+            } catch (RuntimeException ignore) {
+                return Condition.emptyCondition();
+            }
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public long getLimitNumberOfImplicitDeletion() {
+            try {
+                return JsonNumber.class.cast(options.get("limitOfDeletion")).longValueExact();
+            } catch (RuntimeException ignore) {
+                return Long.MAX_VALUE;  // Note: Means unlimited.
+            }
+        }
     }
 }
