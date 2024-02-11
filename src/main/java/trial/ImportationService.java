@@ -78,35 +78,25 @@ import jp.mydns.projectk.safi.value.UserValue;
  */
 public interface ImportationService<C extends ContentValue> {
 
-    void initializeImportationWork();
+    void initializeWork();
 
-    Stream<TransResult.Success> extractSuccessfulsAndCollectFailures(Stream<TransResult> values);
-
-    ContentMap<ImportationValue<C>> toContentMap(Stream<TransResult.Success> values) throws IOException;
-
-    Stream<Map<String, ImportationValue<C>>> toChunkedStream(Stream<ImportationValue<C>> values);
-
-    void collectDuplicateAsFailure(ImportationValue<C> value);
-
-    Stream<ImportationValue<C>> getToBeExplicitDeleted(Map<String, ImportationValue<C>> values);
-
-    void logicalDelete(ImportationValue<C> value);
-
-    void registerToImportationWork(Collection<ImportationValue<C>> values);
+    void registerWork(Collection<ImportationValue<C>> values);
 
     Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values);
 
-    void register(ImportationValue<C> value);
-
-    void rebuildDependent();
-
     Condition buildConditionForExtractingImplicitDeletion(Condition additionalCondition);
-
-    void collectDeniedDeletionAsFailure(ImportationValue<C> value);
 
     long getToBeImplicitDeleteCount(Condition additionalCondition);
 
     Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition additionalCondition);
+
+    Stream<ImportationValue<C>> getToBeExplicitDeleted(Map<String, ImportationValue<C>> values);
+
+    void register(ImportationValue<C> value);
+
+    void logicalDelete(ImportationValue<C> value);
+
+    void rebuildPersistedContents();
 
     /**
      * Abstract implements of the {@code ImportationService}.
