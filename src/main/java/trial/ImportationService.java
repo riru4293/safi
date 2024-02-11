@@ -51,8 +51,8 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
-import jp.mydns.projectk.safi.dao.ContentBatchDao;
-import jp.mydns.projectk.safi.dao.UserBatchDao;
+import jp.mydns.projectk.safi.dao.ContentImportationDao;
+import jp.mydns.projectk.safi.dao.UserImportationDao;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
@@ -141,7 +141,7 @@ public interface ImportationService<C extends ContentValue> {
 
         protected abstract ContentBatchDxo<E, C> getDxo();
 
-        protected abstract ContentBatchDao<E> getDao();
+        protected abstract ContentImportationDao<E> getDao();
 
         /**
          * Get values that to be registered.
@@ -414,7 +414,7 @@ public interface ImportationService<C extends ContentValue> {
         private UserBatchDxo dxo;
 
         @Inject
-        private UserBatchDao dao;
+        private UserImportationDao dao;
 
         @Override
         protected UserBatchDxo getDxo() {
@@ -422,7 +422,7 @@ public interface ImportationService<C extends ContentValue> {
         }
 
         @Override
-        protected UserBatchDao getDao() {
+        protected UserImportationDao getDao() {
             return dao;
         }
 

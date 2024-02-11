@@ -48,7 +48,7 @@ import jp.mydns.projectk.safi.entity.embedded.TxtValidityPeriodEmb_;
  * @since 1.0.0
  */
 @RequestScoped
-public class UserBatchDao extends ContentBatchDao<UserEntity> {
+public class UserImportationDao extends ContentImportationDao<UserEntity> {
 
     /**
      * {@inheritDoc}

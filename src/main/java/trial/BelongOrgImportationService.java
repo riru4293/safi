@@ -26,12 +26,60 @@
 package trial;
 
 import jakarta.enterprise.context.RequestScoped;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.function.Consumer;
+import jp.mydns.projectk.safi.dao.ContentImportationDao;
+import jp.mydns.projectk.safi.value.Condition;
+import jp.mydns.projectk.safi.value.TransResult;
+import trial.ImportationService.AbstractImportationService;
 
 /**
  *
  * @author riru
  */
 @RequestScoped
-public class BelongOrgImportationService {
+public class BelongOrgImportationService extends AbstractImportationService<BelongOrgEntity, BelongOrgValue>
+        implements ImportationService<BelongOrgValue> {
+
+    @Override
+    protected Class<BelongOrgValue> getContentType() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    protected ContentBatchDxo<BelongOrgEntity, BelongOrgValue> getDxo() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    protected ContentImportationDao<BelongOrgEntity> getDao() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void initializeWork() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void registerWork(Collection<ImportationValue<BelongOrgValue>> values) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Optional<ImportationValue<BelongOrgValue>> toImportationValue(TransResult.Success trunsResults, Consumer<String> failureReasonCollector) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Condition buildConditionForImplicitDeletion(Condition additionalCondition) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void rebuildPersistedContents() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
 }

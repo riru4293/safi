@@ -13,7 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toSet;
 import jp.mydns.projectk.safi.dao.ImportWorkDao;
-import jp.mydns.projectk.safi.dao.UserBatchDao;
+import jp.mydns.projectk.safi.dao.UserImportationDao;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer.ForBatch;
@@ -32,7 +32,7 @@ public class TrialService {
     private EntityManager em;
 
     @Inject
-    private UserBatchDao userBatchDao;
+    private UserImportationDao userBatchDao;
 
     @Inject
     private ImportWorkDao importWorkDao;
