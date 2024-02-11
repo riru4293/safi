@@ -53,9 +53,23 @@ import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentRecord;
 import jp.mydns.projectk.safi.value.ImportContext;
+import trial.ImportationFacade;
+import trial.ImportationFacade.BelongGroupImportationFacade;
+import trial.ImportationFacade.BelongOrgImportationFacade;
+import trial.ImportationFacade.GroupImportationFacade;
+import trial.ImportationFacade.MediumImportationFacade;
+import trial.ImportationFacade.Org1ImportationFacade;
+import trial.ImportationFacade.Org2ImportationFacade;
 import trial.ImportationFacade.UserImportationFacade;
 import trial.JobRecordingService;
 
+/**
+ * Batch processing for content importation.
+ *
+ * @author riru
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 @Named
 @Dependent
 public class ImporterBatchlet extends JobBatchlet {
@@ -70,7 +84,7 @@ public class ImporterBatchlet extends JobBatchlet {
     private ImporterService importerSvc;
 
     @Inject
-    private UserImportationFacade userImportFacade;
+    private TransformerService transSvc;
 
     @Inject
     private ConfigService confSvc;
@@ -79,7 +93,25 @@ public class ImporterBatchlet extends JobBatchlet {
     private JsonService jsonSvc;
 
     @Inject
-    private TransformerService transSvc;
+    private UserImportationFacade userImportFcd;
+
+    @Inject
+    private MediumImportationFacade mediumImportFcd;
+
+    @Inject
+    private BelongOrgImportationFacade belongOrgImportFcd;
+
+    @Inject
+    private Org1ImportationFacade org1ImportFcd;
+
+    @Inject
+    private Org2ImportationFacade org2ImportFcd;
+
+    @Inject
+    private BelongGroupImportationFacade belongGroupImportFcd;
+
+    @Inject
+    private GroupImportationFacade groupImportFcd;
 
     /**
      * {@inheritDoc}
@@ -92,21 +124,36 @@ public class ImporterBatchlet extends JobBatchlet {
 
         Importer importer = importerSvc.buildImporter(getWrkDir(), getPlugdef(), getJobOptions());
         Transformer transformer = transSvc.buildTransformer(getTrnsdef());
-
         ImportContext importCtx = new ImportContextImpl(importer, transformer, getJobOptions());
 
-        try (var s = importer.fetch();) {
-            switch (getContentKind()) {
-                case USER ->
-                    userImportFacade.importContents(importCtx);
-            }
-        }
+        resolveFacade().importContents(importCtx);
 
         try (var r = recSvc.playRecords(); var m = toImportationRecordMap(r);) {
             importer.doPostProcess(m);
         }
 
         return BatchStatus.COMPLETED.name();
+    }
+
+    private ImportationFacade resolveFacade() {
+        return switch (getContentKind()) {
+            case USER ->
+                userImportFcd;
+            case MEDIUM ->
+                mediumImportFcd;
+            case BELONG_ORG ->
+                belongOrgImportFcd;
+            case ORG1 ->
+                org1ImportFcd;
+            case ORG2 ->
+                org2ImportFcd;
+            case BELONG_GROUP ->
+                belongGroupImportFcd;
+            case GROUP ->
+                groupImportFcd;
+            default ->
+                throw new IllegalStateException("Unexpected kind of the importation content.");
+        };
     }
 
     private ImportationRecordMap toImportationRecordMap(Stream<ContentRecord> r) throws IOException {
