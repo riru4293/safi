@@ -162,13 +162,13 @@ public interface ImportationFacade {
             long limit = ctx.getLimitNumberOfImplicitDeletion();
             boolean isExceedLimit = count > limit;
 
-            Consumer<ImportationValue<C>> delete = !isExceedLimit
-                    ? c(svc::logicalDelete).andThen(v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.DELETION)))
-                    : v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING, "Ignored because the limit was exceeded."));
-
             if (isExceedLimit) {
                 recSvc.rec(String.format("Deletion limit count exceeded. %d/%d", count, limit));
             }
+
+            Consumer<ImportationValue<C>> delete = !isExceedLimit
+                    ? c(svc::logicalDelete).andThen(v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.DELETION)))
+                    : v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING, "Ignored because the limit was exceeded."));
 
             try (var toBeDeleted = svc.getToBeImplicitDeleted(cond);) {
                 toBeDeleted.forEachOrdered(c -> {
@@ -192,7 +192,6 @@ public interface ImportationFacade {
 
             return getImportationService().toImportationValue(TransResult.Success.class.cast(transResult), failureReasonCollector);
         }
-
     }
 
     /**
@@ -214,7 +213,7 @@ public interface ImportationFacade {
      * Facade of import medium contents.
      */
     @RequestScoped
-    class MediumImportationFacade extends AbstractImportationFacade<Medium, MediumImportationService> {
+    class MediumImportationFacade extends AbstractImportationFacade<MediumValue, MediumImportationService> {
 
         @Inject
         private MediumImportationService svc;
@@ -229,7 +228,7 @@ public interface ImportationFacade {
      * Facade of import belong-organization contents.
      */
     @RequestScoped
-    class BelongOrgImportationFacade extends AbstractImportationFacade<BelongOrg, BelongOrgImportationService> {
+    class BelongOrgImportationFacade extends AbstractImportationFacade<BelongOrgValue, BelongOrgImportationService> {
 
         @Inject
         private BelongOrgImportationService svc;
@@ -244,7 +243,7 @@ public interface ImportationFacade {
      * Facade of import organization#1 contents.
      */
     @RequestScoped
-    class Org1ImportationFacade extends AbstractImportationFacade<Org, Org1ImportationService> {
+    class Org1ImportationFacade extends AbstractImportationFacade<OrgValue, Org1ImportationService> {
 
         @Inject
         private Org1ImportationService svc;
@@ -259,7 +258,7 @@ public interface ImportationFacade {
      * Facade of import organization#2 contents.
      */
     @RequestScoped
-    class Org2ImportationFacade extends AbstractImportationFacade<Org, Org2ImportationService> {
+    class Org2ImportationFacade extends AbstractImportationFacade<OrgValue, Org2ImportationService> {
 
         @Inject
         private Org2ImportationService svc;
@@ -274,7 +273,7 @@ public interface ImportationFacade {
      * Facade of import belong-group contents.
      */
     @RequestScoped
-    class BelongGroupImportationFacade extends AbstractImportationFacade<BelongGroup, BelongGroupImportationService> {
+    class BelongGroupImportationFacade extends AbstractImportationFacade<BelongGroupValue, BelongGroupImportationService> {
 
         @Inject
         private BelongGroupImportationService svc;
@@ -289,7 +288,7 @@ public interface ImportationFacade {
      * Facade of import group contents.
      */
     @RequestScoped
-    class GroupImportationFacade extends AbstractImportationFacade<Group, GroupImportationService> {
+    class GroupImportationFacade extends AbstractImportationFacade<GroupValue, GroupImportationService> {
 
         @Inject
         private GroupImportationService svc;
