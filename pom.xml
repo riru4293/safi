@@ -61,7 +61,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.bytebuddy>1.14.6</version.bytebuddy>
         <version.k-plugin-mechanism>1.0.0</version.k-plugin-mechanism>
         <version.k-formula-mechanism>1.0.0-M4</version.k-formula-mechanism>
-        <version.safi-pif>2.0.3</version.safi-pif>
+        <version.safi-pif>2.0.4</version.safi-pif>
     </properties>
 
     <licenses>

@@ -39,6 +39,7 @@ import java.util.TreeMap;
 import static java.util.function.Predicate.not;
 import java.util.function.Supplier;
 import static java.util.stream.Collectors.toMap;
+import java.util.stream.Stream;
 import jp.mydns.projectk.formula.Formula;
 import jp.mydns.projectk.formula.FormulaExecutionException;
 import jp.mydns.projectk.formula.Function;
@@ -60,7 +61,7 @@ import jp.mydns.projectk.safi.value.TransResult;
  * @since 1.0.0
  */
 @RequestScoped
-public class TransformationService {
+public class TransformerService {
 
     @Inject
     private PluginLoader<FunctionPlugin> plgLdr;
@@ -82,6 +83,15 @@ public class TransformationService {
          * @since 1.0.0
          */
         TransResult transform(Map<String, String> src);
+
+        /**
+         * Transform key-value content stream to another key-value content stream.
+         *
+         * @param sources source content stream
+         * @return transformed content stream
+         * @since 1.0.0
+         */
+        Stream<TransResult> transform(Stream<Map<String, String>> sources);
     }
 
     /**
@@ -108,6 +118,23 @@ public class TransformationService {
             var parser = new Parser(functions);
 
             formulas = transdef.entrySet().stream().map(compute(parser::parse)).collect(toLinkedHashMap());
+        }
+
+        /**
+         * Transform the import values by transform definition. Failed transform value is record as failure.
+         *
+         * @param sources import values
+         * @param transdef transform definition
+         * @return content values that was successfully transformed
+         * @throws NullPointerException if any argument is {@code null}
+         * @throws IllegalArgumentException if {@code values} is incorrect format
+         */
+        public Stream<TransResult> transform(Stream<Map<String, String>> sources, Map<String, String> transdef) {
+
+            Objects.requireNonNull(sources);
+            Objects.requireNonNull(transdef);
+
+            return sources.map(this::transform).onClose(sources::close);
         }
 
         /**
