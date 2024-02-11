@@ -29,12 +29,19 @@ import jakarta.batch.runtime.BatchStatus;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.json.Json;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
-import jakarta.json.bind.Jsonb;
-import jakarta.validation.Validator;
 import java.io.IOException;
+import java.io.StringReader;
+import java.nio.file.Path;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Stream;
+import jp.mydns.projectk.safi.plugin.ImportResult;
+import jp.mydns.projectk.safi.plugin.ImportResultContainer;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.ImporterService;
@@ -43,9 +50,10 @@ import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.TransformerService;
 import jp.mydns.projectk.safi.service.TransformerService.Transformer;
 import jp.mydns.projectk.safi.value.Condition;
+import jp.mydns.projectk.safi.value.ContentMap;
+import jp.mydns.projectk.safi.value.ContentRecord;
 import jp.mydns.projectk.safi.value.ImportContext;
 import trial.ImportationFacade.UserImportationFacade;
-import trial.ImportationRecordMap;
 import trial.JobRecordingService;
 
 @Named
@@ -65,13 +73,7 @@ public class ImporterBatchlet extends JobBatchlet {
     private UserImportationFacade userImportFacade;
 
     @Inject
-    private Validator validator;
-
-    @Inject
     private ConfigService confSvc;
-
-    @Inject
-    private Jsonb jsonb;
 
     @Inject
     private JsonService jsonSvc;
@@ -95,11 +97,17 @@ public class ImporterBatchlet extends JobBatchlet {
             }
         }
 
-        try (var r = recSvc.playRecords();) {
-            importer.doPostProcess(new ImportationRecordMap(r, confSvc.getTmpDir(), jsonb));
+        try (var r = recSvc.playRecords(); var m = toImportationRecordMap(r);) {
+            importer.doPostProcess(m);
         }
 
         return BatchStatus.COMPLETED.name();
+    }
+
+    private ImportationRecordMap toImportationRecordMap(Stream<ContentRecord> r) throws IOException {
+        Iterator<Map.Entry<String, ImportResult>> itr = r.map(ImportResultImpl::new).map(ImportResult.class::cast)
+                .map(v -> Map.entry(UUID.randomUUID().toString(), v)).iterator();
+        return new ImportationRecordMap(itr, confSvc.getTmpDir(), new ImportResultConvertorImpl());
     }
 
     /**
@@ -186,6 +194,169 @@ public class ImporterBatchlet extends JobBatchlet {
             } catch (RuntimeException ignore) {
                 return Long.MAX_VALUE;  // Note: Means unlimited.
             }
+        }
+    }
+
+    /**
+     * Implements of the {@code ContentMap.Convertor<ImportResult>}.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    private class ImportResultConvertorImpl implements ContentMap.Convertor<ImportResult> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public String serialize(ImportResult c) {
+            return jsonSvc.toJson(c);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public ImportResult deserialize(String s) {
+            try (var r = Json.createReader(new StringReader(s))) {
+                return new ImportResultImpl(r.readObject());
+            }
+        }
+
+    }
+
+    /**
+     * Implements of the {@code ImportResult}.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    private class ImportResultImpl implements ImportResult {
+
+        private final boolean success;
+        private final String kindName;
+        private final String formatName;
+        private final JsonObject value;
+        private final String message;
+
+        /**
+         * Constructor.
+         *
+         * @param o the {@code JsonObject} representation of the {@code ImportResult}
+         * @since 1.0.0
+         */
+        private ImportResultImpl(JsonObject o) {
+            this.success = o.getBoolean("success");
+            this.kindName = o.getString("kindName");
+            this.formatName = o.getString("formatName");
+            this.value = o.getJsonObject("value");
+            this.message = o.getString("message", null);
+        }
+
+        /**
+         * Constructor.
+         *
+         * @param rec the {@code ContentRecord}
+         * @since 1.0.0
+         */
+        private ImportResultImpl(ContentRecord rec) {
+            this.success = rec.getKind().isSuccessful();
+            this.kindName = rec.getKind().name();
+            this.formatName = rec.getFormat().name();
+            this.value = rec.getValue();
+            this.message = rec.getMessage();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public boolean isSuccess() {
+            return success;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public String getKindName() {
+            return kindName;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public String getFormatName() {
+            return formatName;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public JsonObject getValue() {
+            return value;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public String getMessage() {
+            return message;
+        }
+
+        /**
+         * Returns a string representation.
+         *
+         * @return a string representation
+         * @since 1.0.0
+         */
+        @Override
+        public String toString() {
+            return "ImportResult{" + "success=" + success + ", kindName=" + kindName + ", formatName=" + formatName
+                    + ", value=" + value + ", message=" + message + '}';
+        }
+    }
+
+    /**
+     * Collection of the {@code ImportResult}.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    private class ImportationRecordMap extends ContentMap<ImportResult> implements ImportResultContainer {
+
+        /**
+         * Constructor.
+         *
+         * @param results stream of the {@code ImportResult}
+         * @param tmpDir temporary directory
+         * @param valueConvertor the {@code ContentMap.Convertor<>ImportResult}
+         * @throws IOException if occurs I/O error
+         * @since 1.0.0
+         */
+        private ImportationRecordMap(Iterator<Map.Entry<String, ImportResult>> results, Path tmpDir,
+                ContentMap.Convertor<ImportResult> valueConvertor) throws IOException {
+            super(Objects.requireNonNull(results), Objects.requireNonNull(tmpDir), valueConvertor);
         }
     }
 }
