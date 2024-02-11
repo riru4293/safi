@@ -52,6 +52,18 @@ public class JsonService {
     private Jsonb jsonb;
 
     /**
+     * Writes the Java object tree with root object object to a String instance as JSON.
+     *
+     * @param obj the root object of the object content tree to be serialized
+     * @return String instance with serialized JSON data
+     * @throws NullPointerException if {@code obj} is {@code null}
+     * @since 1.0.0
+     */
+    public String toJson(Object obj) {
+        return jsonb.toJson(Objects.requireNonNull(obj));
+    }
+
+    /**
      * Conversion to the {@code Map<String, String>}.
      *
      * @param obj object that convertible to {@code JsonObject}
