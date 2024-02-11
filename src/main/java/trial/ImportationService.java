@@ -25,7 +25,6 @@
  */
 package trial;
 
-import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -110,7 +109,6 @@ public interface ImportationService<C extends ContentValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    @Dependent
     abstract class AbstractImportationService<E extends ContentEntity, C extends ContentValue> {
 
         @Inject

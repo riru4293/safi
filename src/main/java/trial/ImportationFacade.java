@@ -25,7 +25,6 @@
  */
 package trial;
 
-import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -76,7 +75,6 @@ public interface ImportationFacade {
      * @param <C> content value type
      * @param <S> importation service type
      */
-    @Dependent
     abstract class AbstractImportationFacade<C extends ContentValue, S extends ImportationService<C>>
             implements ImportationFacade {
 
