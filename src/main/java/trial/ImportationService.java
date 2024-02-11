@@ -59,7 +59,6 @@ import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
-import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentValue;
@@ -82,15 +81,17 @@ public interface ImportationService<C extends ContentValue> {
 
     void registerWork(Collection<ImportationValue<C>> values);
 
+    Optional<ImportationValue<C>> toImportationValue(TransResult.Success trunsResults, Consumer<String> failureReasonCollector);
+
     Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values);
 
-    Condition buildConditionForExtractingImplicitDeletion(Condition additionalCondition);
-
-    long getToBeImplicitDeleteCount(Condition additionalCondition);
-
-    Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition additionalCondition);
-
     Stream<ImportationValue<C>> getToBeExplicitDeleted(Map<String, ImportationValue<C>> values);
+
+    Condition buildConditionForImplicitDeletion(Condition additionalCondition);
+
+    long getToBeImplicitDeleteCount(Condition condition);
+
+    Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition condition);
 
     void register(ImportationValue<C> value);
 
@@ -349,13 +350,11 @@ public interface ImportationService<C extends ContentValue> {
 
         }
 
-        public ContentMap<ImportationValue<C>> toContentMap(Stream<TransResult.Success> values) throws IOException {
-            try (var c = values) {
-                Iterator<Map.Entry<String, ImportationValue<C>>> iterator
-                        = c.flatMap(tr -> toImportationValue(tr).stream()).map(v -> Map.entry(v.getId(), v)).iterator();
+        public ContentMap<ImportationValue<C>> toContentMap(Stream<ImportationValue<C>> values) throws IOException {
+            Iterator<Map.Entry<String, ImportationValue<C>>> iterator
+                    = values.map(v -> Map.entry(v.getId(), v)).iterator();
 
-                return new ContentMap<>(iterator, confSvc.getTmpDir(), new ContentConvertor());
-            }
+            return new ContentMap<>(values.iterator(), confSvc.getTmpDir(), new ContentConvertor());
         }
 
         private class ContentConvertor implements ContentMap.Convertor<ImportationValue<C>> {
@@ -382,17 +381,6 @@ public interface ImportationService<C extends ContentValue> {
                         jsonSvc.convertViaJson(j.get("content"), getContentClass()),
                         jsonSvc.toStringMap(j.getJsonObject("source")));
             }
-        }
-
-        /**
-         * Make a chunked stream from a stream.
-         *
-         * @param values stream of the {@code ImportationValue}
-         * @return chunked stream
-         * @throws NullPointerException if {@code values} is {@code null}
-         */
-        public Stream<Map<String, ImportationValue<C>>> toChunkedStream(Stream<ImportationValue<C>> values) {
-            return StreamUtils.toChunkedStream(values).map(h -> h.stream().collect(toLinkedHashMap()));
         }
 
         public void registerToImportationWork(Collection<ImportationValue<C>> contents) {
