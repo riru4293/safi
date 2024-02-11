@@ -38,7 +38,6 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
-import jp.mydns.projectk.safi.service.ConfigService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
 import jp.mydns.projectk.safi.util.StreamUtils;
@@ -89,9 +88,6 @@ public interface ImportationFacade {
 
         @Inject
         private RecordDxo recDxo;
-
-        @Inject
-        private ConfigService confSvc;
 
         /**
          * Get service of importation.
