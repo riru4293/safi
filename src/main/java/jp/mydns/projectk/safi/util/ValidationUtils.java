@@ -29,7 +29,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Path;
 import jakarta.validation.Validator;
-import java.util.Map;
+import java.util.AbstractMap;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
@@ -100,6 +100,6 @@ public class ValidationUtils {
                 .filter(p(Objects::nonNull, Path.Node::getName))
                 .map(Path.Node::getName).collect(joining("."));
 
-        return Map.entry(name, violation.getMessage());
+        return new AbstractMap.SimpleImmutableEntry<>(name, violation.getMessage());
     }
 }
