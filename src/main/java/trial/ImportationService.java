@@ -36,7 +36,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import static java.util.Collections.unmodifiableSet;
 import java.util.List;
@@ -57,6 +56,7 @@ import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
+import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentValue;
@@ -109,16 +109,11 @@ public interface ImportationService<C extends ContentValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    abstract class AbstractImportationService<E extends ContentEntity, C extends ContentValue> {
-
-        @Inject
-        private RecordDxo recDxo;
+    abstract class AbstractImportationService<E extends ContentEntity, C extends ContentValue>
+            implements ImportationService<C> {
 
         @Inject
         private CommonBatchDao comDao;
-
-        @Inject
-        private JobRecordingService recSvc;
 
         @Inject
         private Jsonb jsonb;
@@ -149,27 +144,23 @@ public interface ImportationService<C extends ContentValue> {
 
         }
 
-        Optional<ImportationValue<C>> toImportationValue(TransResult.Success transformed) {
-
-            List<String> failureReasons = new ArrayList<>();
-
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public Optional<ImportationValue<C>> toImportationValue(
+                TransResult.Success transformed, Consumer<String> failureReasonCollector) {
             try {
-
                 return Optional.of(getDxo().toValue(transformed));
-
             } catch (ConstraintViolationException ex) {
-
-                ex.getConstraintViolations().stream()
-                        .map(ConstraintViolationUtils::toMessage)
-                        .forEach(failureReasons::add);
-
+                failureReasonCollector.accept(ex.getConstraintViolations().stream()
+                        .map(ValidationUtils::toMessageEntry).toList().toString());
             } catch (RuntimeException ex) {
-
-                failureReasons.addAll(ThrowableUtils.toMessages(ex));
-
+                failureReasonCollector.accept(Optional.ofNullable(ex.getMessage())
+                        .orElse("Occurs unexpected error while build an importation content."));
             }
-
-            recSvc.rec(recDxo.toFailure(transformed, JobPhase.VALIDATION, failureReasons));
 
             return Optional.empty();
         }
