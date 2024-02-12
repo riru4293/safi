@@ -49,7 +49,7 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
-import jp.mydns.projectk.safi.dao.ContentImportationDao;
+import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.dao.UserImportationDao;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.UserEntity;
@@ -65,7 +65,7 @@ import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.UserValue;
 
 /**
- * Facade for the content import process.
+ * Processes for importation content.
  *
  * @param <C> content type
  *
@@ -75,6 +75,11 @@ import jp.mydns.projectk.safi.value.UserValue;
  */
 public interface ImportationService<C extends ContentValue> {
 
+    /**
+     * Initialize the importation working area. All data in working area will be erased.
+     *
+     * @since 1.0.0
+     */
     void initializeWork();
 
     void registerWork(Collection<ImportationValue<C>> values);
@@ -132,9 +137,9 @@ public interface ImportationService<C extends ContentValue> {
 
         protected abstract Class<C> getContentType();
 
-        protected abstract ContentBatchDxo<E, C> getDxo();
+        protected abstract ImportationDxo<E, C> getDxo();
 
-        protected abstract ContentImportationDao<E> getDao();
+        protected abstract ImportationDao<E> getDao();
 
         void initializeWork() {
 
