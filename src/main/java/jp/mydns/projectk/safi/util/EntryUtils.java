@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.util;
 
+import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
@@ -75,6 +76,6 @@ public final class EntryUtils {
      */
     public static <K, I, O> Function<Map.Entry<K, I>, Map.Entry<K, O>> compute(Function<I, O> f) {
         Objects.requireNonNull(f);
-        return e -> Map.entry(e.getKey(), f.apply(e.getValue()));
+        return e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), f.apply(e.getValue()));
     }
 }
