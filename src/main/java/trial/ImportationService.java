@@ -37,14 +37,14 @@ import jakarta.validation.Validator;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Collection;
-import static java.util.Collections.unmodifiableSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
@@ -56,6 +56,7 @@ import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
+import static jp.mydns.projectk.safi.util.LambdaUtils.p;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
@@ -82,26 +83,102 @@ public interface ImportationService<C extends ContentValue> {
      */
     void initializeWork();
 
+    /**
+     * Register import content collection to working area.
+     *
+     * @param values import content collection
+     * @since 1.0.0
+     */
     void registerWork(Collection<ImportationValue<C>> values);
 
-    Optional<ImportationValue<C>> toImportationValue(TransResult.Success trunsResults, Consumer<String> failureReasonCollector);
+    /**
+     * Convert to the {@code ImportationValue}. Values that fail the conversion are excluded from the return value and
+     * the failure reason is logged via {@code failureReasonCollector}.
+     *
+     * @param trunsResult conversion source data
+     * @param failureReasonCollector function to collect reason for conversion failure
+     * @return converted data
+     * @since 1.0.0
+     */
+    Optional<ImportationValue<C>> toImportationValue(TransResult.Success trunsResult, Consumer<String> failureReasonCollector);
 
+    /**
+     * Convert to the {@code ContentMap}. The purpose of conversion is to eliminate duplicate content.
+     *
+     * @param values collection of the importation content
+     * @return collection of the importation content as the {@code ContentMap}
+     * @throws IOException if occurs I/O error
+     * @since 1.0.0
+     */
     ContentMap<ImportationValue<C>> toContentMap(Stream<ImportationValue<C>> values) throws IOException;
 
+    /**
+     * Returns the content to be registered from the difference of content between the will be imported and the
+     * registered in the database. Registration means creation and updating.
+     *
+     * @param values collection of the importation content
+     * @return content collection of the to be registered
+     * @since 1.0.0
+     */
     Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values);
 
+    /**
+     * Returns the content to be explicit deleted.
+     *
+     * @param values collection of the importation content
+     * @return content collection of the to be registered
+     * @since 1.0.0
+     */
     Stream<ImportationValue<C>> getToBeExplicitDeleted(Map<String, ImportationValue<C>> values);
 
+    /**
+     * Build an implicit deletion content extraction condition using additional conditions.
+     *
+     * @param additionalCondition additional conditions for extract lost content
+     * @return implicit deletion content extraction condition
+     * @since 1.0.0
+     */
     Condition buildConditionForImplicitDeletion(Condition additionalCondition);
 
+    /**
+     * Get a count of the implicit deletion content.
+     *
+     * @param condition implicit deletion content extraction condition
+     * @return count of the implicit deletion content
+     * @since 1.0.0
+     */
     long getToBeImplicitDeleteCount(Condition condition);
 
+    /**
+     * Gets a chunked collection of implicitly deleted content.
+     *
+     * @param condition implicit deletion content extraction condition
+     * @return implicit deletion content
+     * @since 1.0.0
+     */
     Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition condition);
 
+    /**
+     * Register content to database. Create or update is automatically determined.
+     *
+     * @param value content
+     * @since 1.0.0
+     */
     void register(ImportationValue<C> value);
 
+    /**
+     * Logically delete content registered in the database.
+     *
+     * @param value content
+     * @since 1.0.0
+     */
     void logicalDelete(ImportationValue<C> value);
 
+    /**
+     * Rebuild the content registered in the database. For example, updating derived database tables etc.
+     *
+     * @since 1.0.0
+     */
     void rebuildPersistedContents();
 
     /**
@@ -183,20 +260,12 @@ public interface ImportationService<C extends ContentValue> {
          */
         public Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values) {
 
-            Set<String> ids = unmodifiableSet(values.keySet());
-            boolean allowAlways = ctx.allowUpdateAnotherLabel();
-
-            Function<E, Stream<ImportationValue<C>>> buildRegisterValue = e -> {
-                ImportationValue<C> v = values.get(e.getId());
-
-                return allowAlways || sameLabel(v, e)
-                        ? Stream.of(getDxo().toValue(v, e))
-                        : Stream.empty();
-            };
+            Set<String> ids = values.entrySet().stream().filter(p(not(ImportationValue::doDelete), Map.Entry::getValue))
+                    .map(Map.Entry::getKey).collect(toUnmodifiableSet());
 
             return Stream.concat(
                     getDao().getAdditions(ids).map(values::get),
-                    getDao().getUpdates(ids).flatMap(buildRegisterValue)
+                    getDao().getUpdates(ids).flatMap(e -> Stream.of(getDxo().toValue(values.get(e.getId()), e)))
             ).map(this::validate).flatMap(Optional::stream);
         }
 
