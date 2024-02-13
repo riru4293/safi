@@ -31,7 +31,6 @@ import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
 import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.io.IOException;
@@ -44,11 +43,11 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 import static java.util.function.Predicate.not;
-import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
+import jp.mydns.projectk.safi.dao.CommonImportationDao;
 import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.dao.UserImportationDao;
 import jp.mydns.projectk.safi.entity.ContentEntity;
@@ -56,7 +55,7 @@ import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
-import static jp.mydns.projectk.safi.util.LambdaUtils.p;
+import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
@@ -212,35 +211,61 @@ public interface ImportationService<C extends ContentValue> {
         @Inject
         private Validator validator;
 
+        @Inject
+        private CommonImportationDao comImportDao;
+
+        @Inject
+        private CommonImportationDxo comImportDxo;
+
         protected abstract Class<C> getContentType();
 
         protected abstract ImportationDxo<E, C> getDxo();
 
         protected abstract ImportationDao<E> getDao();
 
-        void initializeWork() {
-
-        }
-
-        void registerWork(Collection<ImportationValue<C>> values) {
-
+        /**
+         * {@inheritDoc}
+         *
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public void initializeWork() {
+            comImportDao.clearWrk();
         }
 
         /**
          * {@inheritDoc}
          *
+         * @throws NullPointerException if {@code values} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public void registerWork(Collection<ImportationValue<C>> values) {
+            comImportDao.appendWrk(Objects.requireNonNull(values).stream().filter(not(ImportationValue::doDelete))
+                    .map(ImportationValue::getContent).map(comImportDxo::toWrkEntity));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if any argument is {@code null}
          * @since 1.0.0
          */
         @Override
         public Optional<ImportationValue<C>> toImportationValue(
                 TransResult.Success transformed, Consumer<String> failureReasonCollector) {
+            Objects.requireNonNull(transformed);
+            Objects.requireNonNull(failureReasonCollector);
+
             try {
                 return Optional.of(getDxo().toValue(transformed));
             } catch (ConstraintViolationException ex) {
                 failureReasonCollector.accept(ex.getConstraintViolations().stream()
                         .map(ValidationUtils::toMessageEntry).toList().toString());
             } catch (RuntimeException ex) {
-                failureReasonCollector.accept(Optional.ofNullable(ex.getMessage())
+                failureReasonCollector.accept(Optional.ofNullable(ex.getMessage()).filter(not(String::isBlank))
                         .orElse("Occurs unexpected error while build an importation content."));
             }
 
@@ -248,62 +273,70 @@ public interface ImportationService<C extends ContentValue> {
         }
 
         /**
-         * Get values that to be registered.
-         * <p>
-         * Returns a fully validated value. Constraint violations are excluded and recorded.
+         * {@inheritDoc}
          *
-         * @param values collection of the {@code ImportationValue}
-         * @param opts job options
-         * @return values that to be registered.
          * @throws NullPointerException if {@code values} is {@code null}
-         * @throws PersistenceException if occurs problem in persistence provider
+         * @since 1.0.0
          */
-        public Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values) {
-
-            Set<String> ids = values.entrySet().stream().filter(p(not(ImportationValue::doDelete), Map.Entry::getValue))
-                    .map(Map.Entry::getKey).collect(toUnmodifiableSet());
-
-            return Stream.concat(
-                    getDao().getAdditions(ids).map(values::get),
-                    getDao().getUpdates(ids).flatMap(e -> Stream.of(getDxo().toValue(values.get(e.getId()), e)))
-            ).map(this::validate).flatMap(Optional::stream);
+        @Override
+        public ContentMap<ImportationValue<C>> toContentMap(Stream<ImportationValue<C>> values) throws IOException {
+            return new ContentMap<>(Objects.requireNonNull(values).map(ImportationValue::asEntry).iterator(),
+                    confSvc.getTmpDir(), new ContentConvertor());
         }
 
-        private boolean sameLabel(ImportationValue<C> v, E e) {
-            return Objects.equals(v.getContent().getLabel(), e.getLabel());
-        }
+        private class ContentConvertor implements ContentMap.Convertor<ImportationValue<C>> {
 
-        private Optional<ImportationValue<C>> validate(ImportationValue<C> value) {
-
-            Set<ConstraintViolation<C>> cv = validator.validate(value.getContent());
-
-            if (cv.isEmpty()) {
-                return Optional.of(value);
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public String serialize(ImportationValue<C> c) {
+                return jsonb.toJson(c);
             }
 
-            List<String> failureReasons = cv.stream()
-                    .map(ConstraintViolationUtils::toMessage).toList();
-
-            recSvc.rec(recDxo.toFailure(value, JobPhase.VALIDATION, failureReasons));
-
-            return Optional.empty();
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public ImportationValue<C> deserialize(String s) {
+                JsonObject jo = jsonSvc.toJsonObject(Objects.requireNonNull(s));
+                return new ImportationValue<>(jsonSvc.convertViaJson(jo.get("content"), getContentClass()),
+                        jsonSvc.toStringMap(jo.getJsonObject("source")));
+            }
         }
 
         /**
-         * Get values that to be explicit deleted.
+         * {@inheritDoc}
          *
-         * @param values collection of the {@code ImportationValue}
-         * @return values that to be explicit deleted
          * @throws NullPointerException if {@code values} is {@code null}
-         * @throws PersistenceException if occurs problem in persistence provider
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
          */
-        public Stream<ImportationValue<C>> getToBeExplicitDeleted(Map<String, ImportationValue<C>> values) {
+        @Override
+        public Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values) {
+            Set<String> targetIds = Set.of(values.keySet());
+            ImportationDxo<E, C> dxo = getDxo();
 
-            List<String> ids = values.values().stream().filter(ImportationValue::doDelete)
-                    .map(ImportationValue::getId).toList();
+            return Stream.concat(getDao().getAdditions(targetIds).map(values::get),
+                    getDao().getUpdates(targetIds).flatMap(e -> Stream.of(dxo.toValue(values.get(e.getId()), e))));
+        }
 
-            return getDao().getContents(ids).map(e -> new ImportationValue<>(
-                    getDxo().toLogicalDeletion(e), values.get(e.getId()).getSource(), e));
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code values} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public Stream<ImportationValue<C>> getToBeExplicitDeleted(Collection<ImportationValue<C>> values) {
+            return getDao().getContents(Objects.requireNonNull(values).stream()
+                    .filter(ImportationValue::doDelete).map(ImportationValue::getId).toList()
+            ).map(e -> new ImportationValue<>(getDxo().toLogicalDeletion(e), values.get(e.getId()).getSource(), e));
         }
 
         /**
