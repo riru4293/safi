@@ -163,7 +163,7 @@ public interface ImportationFacade {
 
             StreamUtils.toChunkedStream(contents).map(c -> c.stream().collect(toLinkedHashMap())).forEachOrdered(c -> {
                 // Deletes content that is explicitly instructed to be deleted.
-                svc.getToBeExplicitDeleted(c).forEach(c(svc::logicalDelete)
+                svc.getToBeExplicitDeleted(c.values()).forEach(c(svc::logicalDelete)
                         .andThen(v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.DELETION))));
 
                 // Preparing the working data for calculate difference.
