@@ -26,7 +26,10 @@
 package trial;
 
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
+import jakarta.persistence.PersistenceException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.io.IOException;
@@ -34,10 +37,24 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
+import static java.util.function.Predicate.not;
 import java.util.stream.Stream;
+import jp.mydns.projectk.safi.constant.JobPhase;
+import jp.mydns.projectk.safi.constant.RecordKind;
+import jp.mydns.projectk.safi.dao.CommonBatchDao;
+import jp.mydns.projectk.safi.service.ConfigService;
+import static jp.mydns.projectk.safi.util.LambdaUtils.c;
+import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
+import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.value.Condition;
+import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentValue;
+import jp.mydns.projectk.safi.value.RecordableValue;
+import jp.mydns.projectk.safi.value.TransResult;
 
 /**
  * Processes for importation content.
@@ -217,8 +234,7 @@ public interface ImportationService<C extends ContentValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    abstract class AbstractImportationService<E extends ContentEntity, C extends ContentValue>
-            implements ImportationService<C> {
+    abstract class AbstractImportationService<E extends ContentEntity, C extends ContentValue> implements ImportationService<C> {
 
         @Inject
         private CommonBatchDao comDao;
@@ -244,10 +260,28 @@ public interface ImportationService<C extends ContentValue> {
         @Inject
         private CommonImportationDxo comImportDxo;
 
+        /**
+         * Get content type.
+         *
+         * @return content type
+         * @since 1.0.0
+         */
         protected abstract Class<C> getContentType();
 
+        /**
+         * Get data exchange object for content.
+         *
+         * @return the {@code ImportationDxo}
+         * @since 1.0.0
+         */
         protected abstract ImportationDxo<E, C> getDxo();
 
+        /**
+         * Get data access object for content.
+         *
+         * @return the {@code ImportationDao}
+         * @since 1.0.0
+         */
         protected abstract ImportationDao<E> getDao();
 
         /**
