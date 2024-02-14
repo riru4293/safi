@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package stock;
 
 import jakarta.enterprise.context.RequestScoped;
 import java.util.Collection;
@@ -33,27 +33,28 @@ import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.TransResult;
 import trial.ImportationService.AbstractImportationService;
+import trial.ImportationValue;
 
 /**
  *
  * @author riru
  */
 @RequestScoped
-public class Org1ImportationService extends AbstractImportationService<Org1Entity, OrgValue>
-        implements ImportationService<OrgValue> {
+public class BelongGroupImportationService extends AbstractImportationService<BelongGroupEntity, BelongGroupValue>
+        implements ImportationService<BelongGroupValue> {
 
     @Override
-    protected Class<OrgValue> getContentType() {
+    protected Class<BelongGroupValue> getContentType() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    protected ImportationDxo<Org1Entity, OrgValue> getDxo() {
+    protected ImportationDxo<BelongGroupEntity, BelongGroupValue> getDxo() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    protected ImportationDao<Org1Entity> getDao() {
+    protected ImportationDao<BelongGroupEntity> getDao() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -63,12 +64,12 @@ public class Org1ImportationService extends AbstractImportationService<Org1Entit
     }
 
     @Override
-    public void registerWork(Collection<ImportationValue<OrgValue>> values) {
+    public void registerWork(Collection<ImportationValue<BelongGroupValue>> values) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Optional<ImportationValue<OrgValue>> toImportationValue(TransResult.Success trunsResults, Consumer<String> failureReasonCollector) {
+    public Optional<ImportationValue<BelongGroupValue>> toImportationValue(TransResult.Success trunsResults, Consumer<String> failureReasonCollector) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

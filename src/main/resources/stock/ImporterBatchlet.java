@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.batch;
+package stock;
 
 import jakarta.batch.runtime.BatchStatus;
 import jakarta.enterprise.context.Dependent;
@@ -47,21 +47,14 @@ import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.ImporterService;
 import jp.mydns.projectk.safi.service.ImporterService.Importer;
 import jp.mydns.projectk.safi.service.JsonService;
-import jp.mydns.projectk.safi.service.TransformerService;
-import jp.mydns.projectk.safi.service.TransformerService.Transformer;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentRecord;
 import jp.mydns.projectk.safi.value.ImportContext;
-import trial.ImportationFacade;
-import trial.ImportationFacade.BelongGroupImportationFacade;
-import trial.ImportationFacade.BelongOrgImportationFacade;
-import trial.ImportationFacade.GroupImportationFacade;
-import trial.ImportationFacade.MediumImportationFacade;
-import trial.ImportationFacade.Org1ImportationFacade;
-import trial.ImportationFacade.Org2ImportationFacade;
-import trial.ImportationFacade.UserImportationFacade;
+import trial.JobBatchlet;
 import trial.JobRecordingService;
+import trial.TransformerService;
+import trial.TransformerService.Transformer;
 
 /**
  * Batch processing for content importation.
@@ -91,27 +84,27 @@ public class ImporterBatchlet extends JobBatchlet {
 
     @Inject
     private JsonService jsonSvc;
-
-    @Inject
-    private UserImportationFacade userImportFcd;
-
-    @Inject
-    private MediumImportationFacade mediumImportFcd;
-
-    @Inject
-    private BelongOrgImportationFacade belongOrgImportFcd;
-
-    @Inject
-    private Org1ImportationFacade org1ImportFcd;
-
-    @Inject
-    private Org2ImportationFacade org2ImportFcd;
-
-    @Inject
-    private BelongGroupImportationFacade belongGroupImportFcd;
-
-    @Inject
-    private GroupImportationFacade groupImportFcd;
+//
+//    @Inject
+//    private UserImportationFacade userImportFcd;
+//
+//    @Inject
+//    private MediumImportationFacade mediumImportFcd;
+//
+//    @Inject
+//    private BelongOrgImportationFacade belongOrgImportFcd;
+//
+//    @Inject
+//    private Org1ImportationFacade org1ImportFcd;
+//
+//    @Inject
+//    private Org2ImportationFacade org2ImportFcd;
+//
+//    @Inject
+//    private BelongGroupImportationFacade belongGroupImportFcd;
+//
+//    @Inject
+//    private GroupImportationFacade groupImportFcd;
 
     /**
      * {@inheritDoc}
@@ -138,19 +131,21 @@ public class ImporterBatchlet extends JobBatchlet {
     private ImportationFacade resolveFacade() {
         return switch (getContentKind()) {
             case USER ->
-                userImportFcd;
-            case MEDIUM ->
-                mediumImportFcd;
-            case BELONG_ORG ->
-                belongOrgImportFcd;
-            case ORG1 ->
-                org1ImportFcd;
-            case ORG2 ->
-                org2ImportFcd;
-            case BELONG_GROUP ->
-                belongGroupImportFcd;
-            case GROUP ->
-                groupImportFcd;
+                null;
+//            case USER ->
+//                userImportFcd;
+//            case MEDIUM ->
+//                mediumImportFcd;
+//            case BELONG_ORG ->
+//                belongOrgImportFcd;
+//            case ORG1 ->
+//                org1ImportFcd;
+//            case ORG2 ->
+//                org2ImportFcd;
+//            case BELONG_GROUP ->
+//                belongGroupImportFcd;
+//            case GROUP ->
+//                groupImportFcd;
             default ->
                 throw new IllegalStateException("Unexpected kind of the importation content.");
         };

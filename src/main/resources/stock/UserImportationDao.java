@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.dao;
+package stock;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.criteria.Path;
@@ -32,12 +32,10 @@ import jakarta.persistence.metamodel.SingularAttribute;
 import java.util.List;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.UserPathContext;
-import jp.mydns.projectk.safi.entity.ContentEntity_;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity_;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.entity.UserEntity_;
-import jp.mydns.projectk.safi.entity.embedded.AttsEmb_;
 import jp.mydns.projectk.safi.entity.embedded.TxtValidityPeriodEmb_;
 
 /**

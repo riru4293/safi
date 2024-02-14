@@ -26,7 +26,7 @@
 package jp.mydns.projectk.safi.value;
 
 import jp.mydns.projectk.safi.service.ImporterService.Importer;
-import jp.mydns.projectk.safi.service.TransformerService.Transformer;
+import trial.TransformerService.Transformer;
 
 /**
  * Provides information used in the content import process.

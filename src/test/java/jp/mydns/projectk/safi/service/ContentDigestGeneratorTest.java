@@ -53,9 +53,6 @@ import test.ValidatorParameterResolver;
 @ExtendWith(ValidatorParameterResolver.class)
 class ContentDigestGeneratorTest {
 
-    ContentDigestGeneratorTest() {
-    }
-
     /**
      * Test of generate method.
      *

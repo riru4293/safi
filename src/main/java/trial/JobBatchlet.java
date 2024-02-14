@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.batch;
+package trial;
 
 import jakarta.batch.api.BatchProperty;
 import jakarta.batch.api.Batchlet;

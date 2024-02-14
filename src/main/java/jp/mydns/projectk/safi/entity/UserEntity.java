@@ -35,6 +35,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * JPA entity for the <i>t_user</i> table.
@@ -84,6 +85,16 @@ public class UserEntity extends ContentEntity<UserEntity> {
     @Override
     public UserEntity setValue(UserEntity unused) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
+    @Override
+    public Optional<UserEntity> getEntity() {
+        return Optional.of(this);
     }
 
     /**

@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
-import jp.mydns.projectk.safi.service.TransformerService;
+import trial.TransformerService;
 
 /**
  * A result of the transform processing. If the transformation succeeded, contains a transformed content and a source

@@ -37,12 +37,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
-import trial.BelongGroupEntity;
-import trial.BelongOrgEntity;
-import trial.GroupEntity;
-import trial.MediumEntity;
-import trial.Org1Entity;
-import trial.Org2Entity;
 
 /**
  * JPA entity for the <i>w_import</i> table. Used only to compare ingested content with registered content. Updates are
@@ -61,24 +55,23 @@ public class ImportWorkEntity implements Serializable {
     @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
     private UserEntity userEntity;
 
-    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
-    private MediumEntity mediumEntity;
-
-    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
-    private BelongOrgEntity belongOrgEntity;
-
-    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
-    private Org1Entity org1Entity;
-
-    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
-    private Org2Entity org2Entity;
-
-    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
-    private BelongGroupEntity belongGroupEntity;
-
-    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
-    private GroupEntity groupEntity;
-
+//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    private MediumEntity mediumEntity;
+//
+//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    private BelongOrgEntity belongOrgEntity;
+//
+//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    private Org1Entity org1Entity;
+//
+//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    private Org2Entity org2Entity;
+//
+//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    private BelongGroupEntity belongGroupEntity;
+//
+//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    private GroupEntity groupEntity;
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
@@ -143,72 +136,71 @@ public class ImportWorkEntity implements Serializable {
         return userEntity;
     }
 
-    /**
-     * Get the {@code MediumEntity}.
-     *
-     * @return the {@code MediumEntity}
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    public MediumEntity getMediumEntity() {
-        return mediumEntity;
-    }
-
-    /**
-     * Get the {@code BelongOrgEntity}.
-     *
-     * @return the {@code BelongOrgEntity}
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    public BelongOrgEntity getBelongOrgEntity() {
-        return belongOrgEntity;
-    }
-
-    /**
-     * Get the {@code Org1Entity}.
-     *
-     * @return the {@code Org1Entity}
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    public Org1Entity getOrg1Entity() {
-        return org1Entity;
-    }
-
-    /**
-     * Get the {@code Org2Entity}.
-     *
-     * @return the {@code Org2Entity}
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    public Org2Entity getOrg2Entity() {
-        return org2Entity;
-    }
-
-    /**
-     * Get the {@code BelongGroupEntity}.
-     *
-     * @return the {@code BelongGroupEntity}
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    public BelongGroupEntity getBelongGroupEntity() {
-        return belongGroupEntity;
-    }
-
-    /**
-     * Get the {@code GroupEntity}.
-     *
-     * @return the {@code GroupEntity}
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    public GroupEntity getGroupEntity() {
-        return groupEntity;
-    }
-
+//    /**
+//     * Get the {@code MediumEntity}.
+//     *
+//     * @return the {@code MediumEntity}
+//     * @since 1.0.0
+//     */
+//    @JsonbTransient
+//    public MediumEntity getMediumEntity() {
+//        return mediumEntity;
+//    }
+//
+//    /**
+//     * Get the {@code BelongOrgEntity}.
+//     *
+//     * @return the {@code BelongOrgEntity}
+//     * @since 1.0.0
+//     */
+//    @JsonbTransient
+//    public BelongOrgEntity getBelongOrgEntity() {
+//        return belongOrgEntity;
+//    }
+//
+//    /**
+//     * Get the {@code Org1Entity}.
+//     *
+//     * @return the {@code Org1Entity}
+//     * @since 1.0.0
+//     */
+//    @JsonbTransient
+//    public Org1Entity getOrg1Entity() {
+//        return org1Entity;
+//    }
+//
+//    /**
+//     * Get the {@code Org2Entity}.
+//     *
+//     * @return the {@code Org2Entity}
+//     * @since 1.0.0
+//     */
+//    @JsonbTransient
+//    public Org2Entity getOrg2Entity() {
+//        return org2Entity;
+//    }
+//
+//    /**
+//     * Get the {@code BelongGroupEntity}.
+//     *
+//     * @return the {@code BelongGroupEntity}
+//     * @since 1.0.0
+//     */
+//    @JsonbTransient
+//    public BelongGroupEntity getBelongGroupEntity() {
+//        return belongGroupEntity;
+//    }
+//
+//    /**
+//     * Get the {@code GroupEntity}.
+//     *
+//     * @return the {@code GroupEntity}
+//     * @since 1.0.0
+//     */
+//    @JsonbTransient
+//    public GroupEntity getGroupEntity() {
+//        return groupEntity;
+//    }
     /**
      * Returns a hash code value.
      *

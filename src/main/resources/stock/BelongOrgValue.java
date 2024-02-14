@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package stock;
 
 import jp.mydns.projectk.safi.value.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -167,8 +167,8 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @since 1.0.0
  */
 @Schema(name = "UserValue", description = "ID-Content of the User.")
-@JsonbTypeDeserializer(MediumValue.Deserializer.class)
-public interface MediumValue extends ContentValue<MediumValue> {
+@JsonbTypeDeserializer(BelongOrgValue.Deserializer.class)
+public interface BelongOrgValue extends ContentValue<BelongOrgValue> {
 
     /**
      * Builder of the {@link UserValue}.
@@ -177,7 +177,7 @@ public interface MediumValue extends ContentValue<MediumValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    class Builder extends ContentValue.AbstractBuilder<Builder, MediumValue> {
+    class Builder extends ContentValue.AbstractBuilder<Builder, BelongOrgValue> {
 
         private final DigestGenerator digestGenerator;
 
@@ -204,7 +204,7 @@ public interface MediumValue extends ContentValue<MediumValue> {
          * @since 1.0.0
          */
         @Override
-        public MediumValue build(Validator validator, Class<?>... groups) {
+        public BelongOrgValue build(Validator validator, Class<?>... groups) {
             final String digest = digestGenerator.generate(id, enabled, name, atts, validityPeriod);
             return ValidationUtils.requireValid(new Bean(this, digest), validator, groups);
         }
@@ -216,7 +216,7 @@ public interface MediumValue extends ContentValue<MediumValue> {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<MediumValue> implements MediumValue {
+        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<BelongOrgValue> implements BelongOrgValue {
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -233,7 +233,7 @@ public interface MediumValue extends ContentValue<MediumValue> {
              * @param digest digest value. It must be provided by {@code builder}.
              * @since 1.0.0
              */
-            protected Bean(MediumValue.Builder builder, String digest) {
+            protected Bean(BelongOrgValue.Builder builder, String digest) {
                 super(builder, digest);
             }
 
@@ -243,7 +243,7 @@ public interface MediumValue extends ContentValue<MediumValue> {
              * @since 1.0.0
              */
             @Override
-            public MediumValue getValue() {
+            public BelongOrgValue getValue() {
                 return this;
             }
 
@@ -253,7 +253,7 @@ public interface MediumValue extends ContentValue<MediumValue> {
              * @since 1.0.0
              */
             @Override
-            public MediumValue setValue(MediumValue unused) {
+            public BelongOrgValue setValue(BelongOrgValue unused) {
                 throw new UnsupportedOperationException();
             }
 
@@ -278,7 +278,7 @@ public interface MediumValue extends ContentValue<MediumValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    class Deserializer implements JsonbDeserializer<MediumValue> {
+    class Deserializer implements JsonbDeserializer<BelongOrgValue> {
 
         /**
          * {@inheritDoc}
@@ -286,7 +286,7 @@ public interface MediumValue extends ContentValue<MediumValue> {
          * @since 1.0.0
          */
         @Override
-        public MediumValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public BelongOrgValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return dc.deserialize(Builder.Bean.class, jp);
         }
     }

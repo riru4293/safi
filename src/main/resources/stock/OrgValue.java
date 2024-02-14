@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package stock;
 
 import jp.mydns.projectk.safi.value.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -167,8 +167,8 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @since 1.0.0
  */
 @Schema(name = "UserValue", description = "ID-Content of the User.")
-@JsonbTypeDeserializer(GroupValue.Deserializer.class)
-public interface GroupValue extends ContentValue<GroupValue> {
+@JsonbTypeDeserializer(OrgValue.Deserializer.class)
+public interface OrgValue extends ContentValue<OrgValue> {
 
     /**
      * Builder of the {@link UserValue}.
@@ -177,7 +177,7 @@ public interface GroupValue extends ContentValue<GroupValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    class Builder extends ContentValue.AbstractBuilder<Builder, GroupValue> {
+    class Builder extends ContentValue.AbstractBuilder<Builder, OrgValue> {
 
         private final DigestGenerator digestGenerator;
 
@@ -204,7 +204,7 @@ public interface GroupValue extends ContentValue<GroupValue> {
          * @since 1.0.0
          */
         @Override
-        public GroupValue build(Validator validator, Class<?>... groups) {
+        public OrgValue build(Validator validator, Class<?>... groups) {
             final String digest = digestGenerator.generate(id, enabled, name, atts, validityPeriod);
             return ValidationUtils.requireValid(new Bean(this, digest), validator, groups);
         }
@@ -216,7 +216,7 @@ public interface GroupValue extends ContentValue<GroupValue> {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<GroupValue> implements GroupValue {
+        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<OrgValue> implements OrgValue {
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -233,7 +233,7 @@ public interface GroupValue extends ContentValue<GroupValue> {
              * @param digest digest value. It must be provided by {@code builder}.
              * @since 1.0.0
              */
-            protected Bean(GroupValue.Builder builder, String digest) {
+            protected Bean(OrgValue.Builder builder, String digest) {
                 super(builder, digest);
             }
 
@@ -243,7 +243,7 @@ public interface GroupValue extends ContentValue<GroupValue> {
              * @since 1.0.0
              */
             @Override
-            public GroupValue getValue() {
+            public OrgValue getValue() {
                 return this;
             }
 
@@ -253,7 +253,7 @@ public interface GroupValue extends ContentValue<GroupValue> {
              * @since 1.0.0
              */
             @Override
-            public GroupValue setValue(GroupValue unused) {
+            public OrgValue setValue(OrgValue unused) {
                 throw new UnsupportedOperationException();
             }
 
@@ -278,7 +278,7 @@ public interface GroupValue extends ContentValue<GroupValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    class Deserializer implements JsonbDeserializer<GroupValue> {
+    class Deserializer implements JsonbDeserializer<OrgValue> {
 
         /**
          * {@inheritDoc}
@@ -286,7 +286,7 @@ public interface GroupValue extends ContentValue<GroupValue> {
          * @since 1.0.0
          */
         @Override
-        public GroupValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public OrgValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return dc.deserialize(Builder.Bean.class, jp);
         }
     }

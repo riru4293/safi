@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.facade;
+package stock;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -38,7 +38,6 @@ import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
 import jp.mydns.projectk.safi.service.AppTimeService;
-import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
 import jp.mydns.projectk.safi.util.StreamUtils;
 import jp.mydns.projectk.safi.value.Condition;
@@ -47,21 +46,8 @@ import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.ImportContext;
 import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.UserValue;
-import trial.BelongGroupImportationService;
-import trial.BelongGroupValue;
-import trial.BelongOrgImportationService;
-import trial.BelongOrgValue;
-import trial.GroupImportationService;
-import trial.GroupValue;
-import trial.ImportationService;
-import trial.ImportationService.UserImportationService;
 import trial.ImportationValue;
 import trial.JobRecordingService;
-import trial.MediumImportationService;
-import trial.MediumValue;
-import trial.Org1ImportationService;
-import trial.Org2ImportationService;
-import trial.OrgValue;
 import trial.RecordingDxo;
 
 /**

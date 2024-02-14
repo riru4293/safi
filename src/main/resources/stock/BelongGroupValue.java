@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package stock;
 
 import jp.mydns.projectk.safi.value.*;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -167,8 +167,8 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @since 1.0.0
  */
 @Schema(name = "UserValue", description = "ID-Content of the User.")
-@JsonbTypeDeserializer(OrgValue.Deserializer.class)
-public interface OrgValue extends ContentValue<OrgValue> {
+@JsonbTypeDeserializer(BelongGroupValue.Deserializer.class)
+public interface BelongGroupValue extends ContentValue<BelongGroupValue> {
 
     /**
      * Builder of the {@link UserValue}.
@@ -177,7 +177,7 @@ public interface OrgValue extends ContentValue<OrgValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    class Builder extends ContentValue.AbstractBuilder<Builder, OrgValue> {
+    class Builder extends ContentValue.AbstractBuilder<Builder, BelongGroupValue> {
 
         private final DigestGenerator digestGenerator;
 
@@ -204,7 +204,7 @@ public interface OrgValue extends ContentValue<OrgValue> {
          * @since 1.0.0
          */
         @Override
-        public OrgValue build(Validator validator, Class<?>... groups) {
+        public BelongGroupValue build(Validator validator, Class<?>... groups) {
             final String digest = digestGenerator.generate(id, enabled, name, atts, validityPeriod);
             return ValidationUtils.requireValid(new Bean(this, digest), validator, groups);
         }
@@ -216,7 +216,7 @@ public interface OrgValue extends ContentValue<OrgValue> {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<OrgValue> implements OrgValue {
+        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<BelongGroupValue> implements BelongGroupValue {
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -233,7 +233,7 @@ public interface OrgValue extends ContentValue<OrgValue> {
              * @param digest digest value. It must be provided by {@code builder}.
              * @since 1.0.0
              */
-            protected Bean(OrgValue.Builder builder, String digest) {
+            protected Bean(BelongGroupValue.Builder builder, String digest) {
                 super(builder, digest);
             }
 
@@ -243,7 +243,7 @@ public interface OrgValue extends ContentValue<OrgValue> {
              * @since 1.0.0
              */
             @Override
-            public OrgValue getValue() {
+            public BelongGroupValue getValue() {
                 return this;
             }
 
@@ -253,7 +253,7 @@ public interface OrgValue extends ContentValue<OrgValue> {
              * @since 1.0.0
              */
             @Override
-            public OrgValue setValue(OrgValue unused) {
+            public BelongGroupValue setValue(BelongGroupValue unused) {
                 throw new UnsupportedOperationException();
             }
 
@@ -278,7 +278,7 @@ public interface OrgValue extends ContentValue<OrgValue> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    class Deserializer implements JsonbDeserializer<OrgValue> {
+    class Deserializer implements JsonbDeserializer<BelongGroupValue> {
 
         /**
          * {@inheritDoc}
@@ -286,7 +286,7 @@ public interface OrgValue extends ContentValue<OrgValue> {
          * @since 1.0.0
          */
         @Override
-        public OrgValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public BelongGroupValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return dc.deserialize(Builder.Bean.class, jp);
         }
     }

@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package stock;
 
 import jakarta.enterprise.context.RequestScoped;
 import java.util.Collection;
@@ -33,27 +33,28 @@ import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.TransResult;
 import trial.ImportationService.AbstractImportationService;
+import trial.ImportationValue;
 
 /**
  *
  * @author riru
  */
 @RequestScoped
-public class MediumImportationService extends AbstractImportationService<MediumEntity, MediumValue>
-        implements ImportationService<MediumValue> {
+public class GroupImportationService extends AbstractImportationService<GroupEntity, GroupValue>
+        implements ImportationService<GroupValue> {
 
     @Override
-    protected Class<MediumValue> getContentType() {
+    protected Class<GroupValue> getContentType() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    protected ImportationDxo<MediumEntity, MediumValue> getDxo() {
+    protected ImportationDxo<GroupEntity, GroupValue> getDxo() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    protected ImportationDao<MediumEntity> getDao() {
+    protected ImportationDao<GroupEntity> getDao() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -63,12 +64,12 @@ public class MediumImportationService extends AbstractImportationService<MediumE
     }
 
     @Override
-    public void registerWork(Collection<ImportationValue<MediumValue>> values) {
+    public void registerWork(Collection<ImportationValue<GroupValue>> values) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Optional<ImportationValue<MediumValue>> toImportationValue(TransResult.Success trunsResults, Consumer<String> failureReasonCollector) {
+    public Optional<ImportationValue<GroupValue>> toImportationValue(TransResult.Success trunsResults, Consumer<String> failureReasonCollector) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

@@ -40,11 +40,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
-import jp.mydns.projectk.safi.batch.JobBatchlet;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.value.Job;
+import trial.JobBatchlet;
 
 /**
  * Utilities for <i>Jakarta-Batch</i>.

@@ -23,13 +23,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package stock;
 
-import hm.orz.denken.newapp9._interface.content.Content;
-import hm.orz.denken.newapp9.entity.tenant.content.ContentEntity;
-import hm.orz.denken.newapp9.server.bean.ImportationValue;
-import hm.orz.denken.newapp9.server.bean.TransResult;
 import jakarta.validation.ConstraintViolationException;
+import trial.ImportationValue;
 
 /**
  * Data exchange interface for batch processing.
@@ -40,7 +37,7 @@ import jakarta.validation.ConstraintViolationException;
  * @author riru
  * @since 9.0
  */
-public interface ImportationDxo<E extends ContentEntity, V extends Content> {
+public interface ImportationDxo<E extends ContentEntity, V extends ContentValue> {
 
     /**
      * Exchange to entity from value. If create a new persistence.
@@ -66,8 +63,7 @@ public interface ImportationDxo<E extends ContentEntity, V extends Content> {
      *
      * @param entity entity
      * @return value that is logical deletion
-     * @throws NullPointerException if {@code entity} is {@code null} when
-     * building
+     * @throws NullPointerException if {@code entity} is {@code null} when building
      */
     V toLogicalDeletion(E entity);
 
@@ -77,14 +73,13 @@ public interface ImportationDxo<E extends ContentEntity, V extends Content> {
      * @param transformed transform result
      * @return value. Please note that it has been minimally validated
      * @throws NullPointerException if {@code transformed} is {@code null}
-     * @throws ConstraintViolationException if occurred constraint violations
-     * when building
+     * @throws ConstraintViolationException if occurred constraint violations when building
      */
     ImportationValue<V> toValue(TransResult.Success transformed);
 
     /**
-     * Exchange to value from next value and current entity. Only the version is
-     * inherited from the current entity to the next value.
+     * Exchange to value from next value and current entity. Only the version is inherited from the current entity to
+     * the next value.
      *
      * @param next next value
      * @param current current entity
@@ -94,9 +89,8 @@ public interface ImportationDxo<E extends ContentEntity, V extends Content> {
     ImportationValue<V> toValue(ImportationValue<V> next, E current);
 
     /**
-     * Rebuild content using the current application time.
-     * {@code RangePermission} and digest value are subject to change, and
-     * footer values are lost, but others are immutable.
+     * Rebuild content using the current application time. {@code RangePermission} and digest value are subject to
+     * change, and footer values are lost, but others are immutable.
      *
      * @param entity before rebuilding
      * @return after rebuilding. It is a separate instance from {@code entity}.

@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.service;
+package trial;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -158,6 +158,16 @@ public class TransformerService {
 
                 return new TransResult.Failure(reason, src);
             }
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public Stream<TransResult> transform(Stream<Map<String, String>> sources) {
+            return Objects.requireNonNull(sources).map(this::transform);
         }
 
         private boolean isExpectedException(Throwable t) {

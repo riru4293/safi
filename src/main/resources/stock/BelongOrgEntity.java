@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package stock;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.persistence.Cacheable;
@@ -47,7 +47,7 @@ import jp.mydns.projectk.safi.entity.*;
 @Entity
 @Cacheable(false)
 @Table(name = "t_medium")
-public class GroupEntity extends ContentEntity<GroupEntity> {
+public class BelongOrgEntity extends ContentEntity<BelongOrgEntity> {
 
     private static final long serialVersionUID = 2711050439353117979L;
 
@@ -73,7 +73,7 @@ public class GroupEntity extends ContentEntity<GroupEntity> {
      * @since 1.0.0
      */
     @Override
-    public GroupEntity getValue() {
+    public BelongOrgEntity getValue() {
         return this;
     }
 
@@ -83,7 +83,7 @@ public class GroupEntity extends ContentEntity<GroupEntity> {
      * @since 1.0.0
      */
     @Override
-    public GroupEntity setValue(GroupEntity unused) {
+    public BelongOrgEntity setValue(BelongOrgEntity unused) {
         throw new UnsupportedOperationException();
     }
 
@@ -107,7 +107,7 @@ public class GroupEntity extends ContentEntity<GroupEntity> {
      */
     @Override
     public boolean equals(Object other) {
-        return this == other || other instanceof GroupEntity o && Objects.equals(id, o.id);
+        return this == other || other instanceof BelongOrgEntity o && Objects.equals(id, o.id);
     }
 
     /**

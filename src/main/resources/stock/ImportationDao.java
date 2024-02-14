@@ -23,9 +23,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.dao;
+package stock;
 
-import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
@@ -49,10 +48,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
+import jp.mydns.projectk.safi.dao.CommonBatchDao;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.PredicateBuilder;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity;
+import jp.mydns.projectk.safi.entity.ImportWorkEntity_;
+import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb_;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 import jp.mydns.projectk.safi.util.JpaUtils;
 import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
@@ -68,7 +70,6 @@ import jp.mydns.projectk.safi.value.Condition;
  * @version 1.0.0
  * @since 1.0.0
  */
-@Dependent
 public abstract class ImportationDao<C extends ContentEntity> {
 
     @Inject
