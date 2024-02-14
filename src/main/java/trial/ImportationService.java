@@ -25,12 +25,8 @@
  */
 package trial;
 
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
-import jakarta.persistence.PersistenceException;
-import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.io.IOException;
@@ -38,31 +34,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Consumer;
-import static java.util.function.Predicate.not;
 import java.util.stream.Stream;
-import jp.mydns.projectk.safi.constant.JobPhase;
-import jp.mydns.projectk.safi.constant.RecordKind;
-import jp.mydns.projectk.safi.dao.CommonBatchDao;
-import jp.mydns.projectk.safi.dao.CommonImportationDao;
-import jp.mydns.projectk.safi.dao.ImportationDao;
-import jp.mydns.projectk.safi.dao.UserImportationDao;
-import jp.mydns.projectk.safi.entity.ContentEntity;
-import jp.mydns.projectk.safi.entity.UserEntity;
-import jp.mydns.projectk.safi.service.ConfigService;
-import jp.mydns.projectk.safi.service.JsonService;
-import static jp.mydns.projectk.safi.util.LambdaUtils.c;
-import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
-import jp.mydns.projectk.safi.util.ValidationUtils;
-import jp.mydns.projectk.safi.value.Condition;
-import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentValue;
-import jp.mydns.projectk.safi.value.RecordableValue;
-import jp.mydns.projectk.safi.value.TransResult;
-import jp.mydns.projectk.safi.value.UserValue;
 
 /**
  * Processes for importation content.
@@ -78,6 +53,7 @@ public interface ImportationService<C extends ContentValue> {
     /**
      * Initialize the importation working area. All data in working area will be erased.
      *
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
     void initializeWork();
@@ -86,6 +62,8 @@ public interface ImportationService<C extends ContentValue> {
      * Register import content collection to working area.
      *
      * @param values import content collection
+     * @throws NullPointerException if {@code values} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
     void registerWork(Collection<ImportationValue<C>> values);
@@ -95,17 +73,19 @@ public interface ImportationService<C extends ContentValue> {
      * the failure reason is logged via {@code failureReasonCollector}.
      *
      * @param trunsResult conversion source data
-     * @param failureReasonCollector function to collect reason for conversion failure
+     * @param failureCollector function to collect failure content
+     * @throws NullPointerException if any argument is {@code null}
      * @return converted data
      * @since 1.0.0
      */
-    Optional<ImportationValue<C>> toImportationValue(TransResult.Success trunsResult, Consumer<String> failureReasonCollector);
+    Optional<ImportationValue<C>> toImportationValue(TransResult.Success trunsResult, Consumer<ContentRecord> failureCollector);
 
     /**
      * Convert to the {@code ContentMap}. The purpose of conversion is to eliminate duplicate content.
      *
      * @param values collection of the importation content
      * @return collection of the importation content as the {@code ContentMap}
+     * @throws NullPointerException if {@code values} is {@code null}
      * @throws IOException if occurs I/O error
      * @since 1.0.0
      */
@@ -117,6 +97,8 @@ public interface ImportationService<C extends ContentValue> {
      *
      * @param values collection of the importation content
      * @return content collection of the to be registered
+     * @throws NullPointerException if {@code values} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
     Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values);
@@ -126,6 +108,8 @@ public interface ImportationService<C extends ContentValue> {
      *
      * @param values collection of the importation content
      * @return content collection of the to be registered
+     * @throws NullPointerException if {@code values} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
     Stream<ImportationValue<C>> getToBeExplicitDeleted(Collection<ImportationValue<C>> values);
@@ -135,6 +119,7 @@ public interface ImportationService<C extends ContentValue> {
      *
      * @param additionalCondition additional conditions for extract lost content
      * @return implicit deletion content extraction condition
+     * @throws NullPointerException if {@code additionalCondition} is {@code null}
      * @since 1.0.0
      */
     Condition buildConditionForImplicitDeletion(Condition additionalCondition);
@@ -144,6 +129,8 @@ public interface ImportationService<C extends ContentValue> {
      *
      * @param condition implicit deletion content extraction condition
      * @return count of the implicit deletion content
+     * @throws NullPointerException if {@code condition} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
     long getToBeImplicitDeleteCount(Condition condition);
@@ -153,32 +140,72 @@ public interface ImportationService<C extends ContentValue> {
      *
      * @param condition implicit deletion content extraction condition
      * @return implicit deletion content
+     * @throws NullPointerException if {@code condition} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
     Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition condition);
 
     /**
+     * Gets a chunked collection of to be rebuilt content.
+     *
+     * @param refTime reference time of rebuilding
+     * @return to be rebuilt content
+     * @throws NullPointerException if {@code refTime} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    Stream<List<C>> getToBeRebuilt(LocalDateTime refTime);
+
+    /**
      * Register content to database. Create or update is automatically determined.
      *
      * @param value content
+     * @return result recording
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    void register(ImportationValue<C> value);
+    ContentRecord register(ImportationValue<C> value);
+
+    /**
+     * Register content to database. Create or update is automatically determined.
+     *
+     * @param value content
+     * @return result recording
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    ContentRecord register(C value);
 
     /**
      * Logically delete content registered in the database.
      *
      * @param value content
+     * @return result recording
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    void logicalDelete(ImportationValue<C> value);
+    ContentRecord logicalDelete(ImportationValue<C> value);
 
     /**
-     * Rebuild the content registered in the database. For example, updating derived database tables etc.
+     * Rebuild the content.
      *
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws IllegalArgumentException if {@code value} does not have paired entity
      * @since 1.0.0
      */
-    void rebuildPersistedContents();
+    C rebuild(C value);
+
+    /**
+     * Update the content-dependent data in the database. For example, updating derived database tables etc.
+     *
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    void updateDependents();
 
     /**
      * Abstract implements of the {@code ImportationService}.
@@ -210,6 +237,9 @@ public interface ImportationService<C extends ContentValue> {
 
         @Inject
         private CommonImportationDao comImportDao;
+
+        @Inject
+        private RecordingDxo recDxo;
 
         @Inject
         private CommonImportationDxo comImportDxo;
@@ -397,6 +427,18 @@ public interface ImportationService<C extends ContentValue> {
          * @since 1.0.0
          */
         @Override
+        public void register(C value) {
+            comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value)));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
         public void logicalDelete(ImportationValue<C> value) {
             comDao.persistOrMerge(getDxo().toEntity(value));
         }
@@ -489,39 +531,38 @@ public interface ImportationService<C extends ContentValue> {
             v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING,
                     List.of("Ignored because the limit was exceeded.")));
         }
-
     }
 
-    /**
-     * Batch processing for user content.
-     *
-     * @author riru
-     * @version 1.0.0
-     * @since 1.0.0
-     */
-    @RequestScoped
-    class UserImportationService extends AbstractImportationService<UserEntity, UserValue> implements
-            ImportationService<UserValue> {
-
-        @Inject
-        private UserBatchDxo dxo;
-
-        @Inject
-        private UserImportationDao dao;
-
-        @Override
-        protected UserBatchDxo getDxo() {
-            return dxo;
-        }
-
-        @Override
-        protected UserImportationDao getDao() {
-            return dao;
-        }
-
-        @Override
-        protected Class<UserValue> getContentType() {
-            return UserValue.class;
-        }
-    }
+//    /**
+//     * Batch processing for user content.
+//     *
+//     * @author riru
+//     * @version 1.0.0
+//     * @since 1.0.0
+//     */
+//    @RequestScoped
+//    class UserImportationService extends AbstractImportationService<UserEntity, UserValue>
+//            implements ImportationService<UserValue> {
+//
+//        @Inject
+//        private UserImportationDxo dxo;
+//
+//        @Inject
+//        private UserImportationDao dao;
+//
+//        @Override
+//        protected UserImportationDxo getDxo() {
+//            return dxo;
+//        }
+//
+//        @Override
+//        protected UserImportationDao getDao() {
+//            return dao;
+//        }
+//
+//        @Override
+//        protected Class<UserValue> getContentType() {
+//            return UserValue.class;
+//        }
+//    }
 }
