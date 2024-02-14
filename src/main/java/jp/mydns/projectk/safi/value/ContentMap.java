@@ -265,7 +265,14 @@ public class ContentMap<T> implements Closeable {
         T deserialize(String s);
     }
 
-    private record Point(long from, long to) {
+    private class Point {
 
+        private final long from;
+        private final long to;
+
+        private Point(long from, long to) {
+            this.from = from;
+            this.to = to;
+        }
     }
 }
