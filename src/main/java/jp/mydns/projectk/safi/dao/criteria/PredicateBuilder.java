@@ -44,7 +44,7 @@ import jp.mydns.projectk.safi.value.FilteringOperation;
  */
 public class PredicateBuilder {
 
-    private final CriteriaBuilder cb;
+    private final CriteriaBuilder criteriaBuilder;
     private final CriteriaPathContext pathCtx;
 
     /**
@@ -56,7 +56,7 @@ public class PredicateBuilder {
      * @since 1.0.0
      */
     public PredicateBuilder(CriteriaBuilder cb, CriteriaPathContext pathCtx) {
-        this.cb = Objects.requireNonNull(cb);
+        this.criteriaBuilder = Objects.requireNonNull(cb);
         this.pathCtx = Objects.requireNonNull(pathCtx);
     }
 
@@ -88,16 +88,16 @@ public class PredicateBuilder {
         Predicate[] preds = Stream.concat(singlePreds, multiPreds).toArray(Predicate[]::new);
 
         if (preds.length < 1) {
-            return cb.and(preds); // Note: if zero predicate, "and" becomes true.
+            return criteriaBuilder.and(preds); // Note: if zero predicate, "and" becomes true.
         }
 
         return switch (operation) {
             case OR ->
-                cb.or(preds);
+                criteriaBuilder.or(preds);
             case NOT_OR ->
-                cb.or(preds).not();
+                criteriaBuilder.or(preds).not();
             case AND ->
-                cb.and(preds);
+                criteriaBuilder.and(preds);
         };
     }
 
@@ -109,19 +109,19 @@ public class PredicateBuilder {
 
         return switch (op) {
             case EQUAL ->
-                cb.equal(p, v);
+                criteriaBuilder.equal(p, v);
             case FORWARD_MATCH ->
-                cb.like(p, escapeWildcard(v) + "%");
+                criteriaBuilder.like(p, escapeWildcard(v) + "%");
             case PARTIAL_MATCH ->
-                cb.like(p, "%" + escapeWildcard(v) + "%");
+                criteriaBuilder.like(p, "%" + escapeWildcard(v) + "%");
             case BACKWARD_MATCH ->
-                cb.like(p, "%" + escapeWildcard(v));
+                criteriaBuilder.like(p, "%" + escapeWildcard(v));
             case LESS_THAN ->
-                cb.lessThan(p, v);
+                criteriaBuilder.lessThan(p, v);
             case GRATER_THAN ->
-                cb.greaterThan(p, v);
+                criteriaBuilder.greaterThan(p, v);
             case IS_NULL ->
-                cb.isNull(p);
+                criteriaBuilder.isNull(p);
         };
     }
 
