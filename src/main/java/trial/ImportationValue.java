@@ -42,7 +42,7 @@ import jp.mydns.projectk.safi.value.RecordableValue;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class ImportationValue<T extends ContentValue> implements RecordableValue, Map.Entry<String, ImportationValue<T>> {
+public class ImportationValue<T extends ContentValue<T>> implements RecordableValue, Map.Entry<String, ImportationValue<T>> {
 
     private final T content;
     private final Map<String, String> source;
