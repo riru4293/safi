@@ -35,10 +35,8 @@ import jakarta.validation.groups.Default;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import jp.mydns.projectk.safi.constant.AttKey;
-import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
 
 /**
@@ -56,6 +54,7 @@ import jp.mydns.projectk.safi.service.AppTimeService;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
+ * @param <T> content type
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
@@ -160,16 +159,6 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
     @JsonbTransient
     @Override
     T setValue(T unused);
-
-    /**
-     * Get the paired entity to this. It provide only when this made from entity.
-     *
-     * @param <E> entity type
-     * @return entity
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    <E extends ContentEntity> Optional<E> getEntity();
 
     /**
      * Abstract builder of the {@link ContentValue}.
@@ -283,6 +272,7 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
         /**
          * Abstract implements of the {@code ContentValue}.
          *
+         * @param <T> content type
          * @author riru
          * @version 1.0.0
          * @since 1.0.0

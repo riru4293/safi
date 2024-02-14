@@ -175,7 +175,6 @@ public interface UserValue extends ContentValue<UserValue> {
      *
      * @since 1.0.0
      */
-    @Override
     Optional<UserEntity> getEntity();
 
     /**
