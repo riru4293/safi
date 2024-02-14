@@ -38,6 +38,7 @@ import java.util.Objects;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.service.AppTimeService;
+import static jp.mydns.projectk.safi.util.LambdaUtils.p;
 
 /**
  * {@code ContentValue} is data that can be identified by ID and is the main content of this application, called
@@ -392,8 +393,8 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
              */
             public Map<String, String> getAttributes() {
                 return atts != null
-                        ? atts.entrySet().stream().collect(toUnmodifiableMap(
-                                e -> e.getKey().toString(), Map.Entry::getValue))
+                        ? atts.entrySet().stream().filter(p(Objects::nonNull, Map.Entry::getValue))
+                                .collect(toUnmodifiableMap(e -> e.getKey().toString(), Map.Entry::getValue))
                         : null;
             }
 
@@ -405,8 +406,8 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
              */
             public void setAttributes(Map<String, String> atts) {
                 this.atts = atts != null
-                        ? atts.entrySet().stream().collect(toUnmodifiableMap(
-                                e -> AttKey.of(e.getKey()), Map.Entry::getValue))
+                        ? atts.entrySet().stream().filter(p(Objects::nonNull, Map.Entry::getValue))
+                                .collect(toUnmodifiableMap(e -> AttKey.of(e.getKey()), Map.Entry::getValue))
                         : null;
             }
 
