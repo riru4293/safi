@@ -239,7 +239,12 @@ public class ContentMap<T> implements Closeable {
     /**
      * Content serialize and de-serialize.
      *
-     * @implSpec This class is immutable and thread-safe.
+     * <p>
+     * Implementation requirements.
+     * <ul>
+     * <li>This class is immutable and thread-safe.</li>
+     * </ul>
+     *
      * @param <T> Content type
      * @version 1.0.0
      * @since 1.0.0
