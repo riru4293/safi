@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toSet;
-import jp.mydns.projectk.safi.dao.ImportWorkDao;
+import jp.mydns.projectk.safi.dao.CommonImportationDao;
 import jp.mydns.projectk.safi.dao.UserImportationDao;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity;
 import jp.mydns.projectk.safi.entity.UserEntity;
@@ -35,7 +35,7 @@ public class TrialService {
     private UserImportationDao userBatchDao;
 
     @Inject
-    private ImportWorkDao importWorkDao;
+    private CommonImportationDao importWorkDao;
 
     @Inject
     private Validator validator;
@@ -77,8 +77,8 @@ public class TrialService {
         final boolean isSecond = !isFirst || u1.map(UserEntity::getDigest).filter("x"::equals).isPresent();
         final boolean isThird = !isSecond;
 
-        importWorkDao.clear();
-        importWorkDao.appends(users.stream().map(u -> {
+        importWorkDao.clearWrk();
+        importWorkDao.appendWrk(users.stream().map(u -> {
             var e = new ImportWorkEntity();
             e.setId(u.getId());
             e.setDigest(u.getDigest());

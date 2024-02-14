@@ -40,7 +40,7 @@ import jakarta.validation.ConstraintViolationException;
  * @author riru
  * @since 9.0
  */
-public interface ContentBatchDxo<E extends ContentEntity, V extends Content> {
+public interface ImportationDxo<E extends ContentEntity, V extends Content> {
 
     /**
      * Exchange to entity from value. If create a new persistence.

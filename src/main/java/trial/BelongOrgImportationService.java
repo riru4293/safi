@@ -29,7 +29,7 @@ import jakarta.enterprise.context.RequestScoped;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
-import jp.mydns.projectk.safi.dao.ContentImportationDao;
+import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.TransResult;
 import trial.ImportationService.AbstractImportationService;
@@ -48,12 +48,12 @@ public class BelongOrgImportationService extends AbstractImportationService<Belo
     }
 
     @Override
-    protected ContentBatchDxo<BelongOrgEntity, BelongOrgValue> getDxo() {
+    protected ImportationDxo<BelongOrgEntity, BelongOrgValue> getDxo() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    protected ContentImportationDao<BelongOrgEntity> getDao() {
+    protected ImportationDao<BelongOrgEntity> getDao() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

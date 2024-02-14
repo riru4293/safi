@@ -29,6 +29,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
+import jp.mydns.projectk.safi.service.AppTimeService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
 import jp.mydns.projectk.safi.util.StreamUtils;
@@ -114,6 +116,9 @@ public interface ImportationFacade {
         @Inject
         private RecordingDxo recDxo;
 
+        @Inject
+        private AppTimeService appTimeSvc;
+
         /**
          * Get service of importation.
          *
@@ -138,16 +143,19 @@ public interface ImportationFacade {
             try (var s = ctx.getImporter().fetch(); var t = ctx.getTransformer().transform(s); var v = toImportationValues(t);
                     var m = svc.toContentMap(v);) {
                 // Records duplicate content as a failure.
-                Optional.of(m).filter(ContentMap::hasDuplicates).map(ContentMap::duplicates).ifPresent(this::recordDuplicates);
+                Optional.of(m).filter(ContentMap::hasDuplicates).map(ContentMap::duplicates)
+                        .ifPresent(this::recordDuplicates);
 
                 // Process register, update and explicit delete the contents.
                 registerContents(m.stream());
             }
 
             // Process implicit delete the lost contents.
-            Optional.of(ctx).filter(ImportContext::isAllowedImplicitDeletion).ifPresent(this::deleteLosts);
+            Optional.of(ctx).filter(ImportContext::isAllowedImplicitDeletion)
+                    .ifPresent(this::deleteLostContents);
 
-            svc.rebuildPersistedContents();
+            // Rebuild the persisted contents.
+            rebuildContents(appTimeSvc.getLocalNow());
         }
 
         private void recordDuplicates(Stream<ImportationValue<C>> duplicates) {
@@ -177,7 +185,7 @@ public interface ImportationFacade {
             });
         }
 
-        private void deleteLosts(ImportContext ctx) {
+        private void deleteLostContents(ImportContext ctx) {
             S svc = getImportationService();
             Condition cond = svc.buildConditionForImplicitDeletion(ctx.getAdditionalConditionForImplicitDeletion());
 
@@ -196,6 +204,17 @@ public interface ImportationFacade {
             try (var toBeDeleted = svc.getToBeImplicitDeleted(cond);) {
                 toBeDeleted.forEachOrdered(c -> {
                     c.forEach(delete);
+                    comDao.flushAndClear();
+                });
+            }
+        }
+
+        private void rebuildContents(LocalDateTime refTime) {
+            S svc = getImportationService();
+
+            try (var toBeRebuilt = svc.getToBeRebuilt(appTimeSvc.getLocalNow());) {
+                toBeRebuilt.forEachOrdered(c -> {
+                    c.forEach(rebuild);
                     comDao.flushAndClear();
                 });
             }

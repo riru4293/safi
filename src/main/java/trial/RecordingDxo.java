@@ -36,7 +36,7 @@ import jp.mydns.projectk.safi.value.RecordableValue;
  * @author riru
  */
 @RequestScoped
-public class RecordDxo {
+public class RecordingDxo {
 
     public ContentRecord toSuccess(RecordableValue content, RecordKind kind) {
         return null;

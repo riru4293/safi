@@ -34,7 +34,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -52,10 +52,10 @@ import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.dao.UserImportationDao;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.UserEntity;
-import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
+import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
@@ -128,7 +128,7 @@ public interface ImportationService<C extends ContentValue> {
      * @return content collection of the to be registered
      * @since 1.0.0
      */
-    Stream<ImportationValue<C>> getToBeExplicitDeleted(Map<String, ImportationValue<C>> values);
+    Stream<ImportationValue<C>> getToBeExplicitDeleted(Collection<ImportationValue<C>> values);
 
     /**
      * Build an implicit deletion content extraction condition using additional conditions.
@@ -204,9 +204,6 @@ public interface ImportationService<C extends ContentValue> {
 
         @Inject
         private ConfigService confSvc;
-
-        @Inject
-        private AppTimeService appTimeSvc;
 
         @Inject
         private Validator validator;
@@ -340,87 +337,78 @@ public interface ImportationService<C extends ContentValue> {
         }
 
         /**
-         * Get count of values that to be implicit deleted.
+         * {@inheritDoc}
          *
-         * @param additional additional extract condition
-         * @return count of values that to be implicit deleted
-         * @throws NullPointerException if {@code additional} is {@code null}
-         * @throws PersistenceException if occurs problem in persistence provider
+         * @throws NullPointerException if {@code condition} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
          */
-        public long getToBeImplicitDeleteCount(Condition additional) {
-            return getDao().getCountOfLost(additional);
+        @Override
+        public long getToBeImplicitDeleteCount(Condition condition) {
+            return getDao().getCountOfLosts(condition);
         }
 
         /**
-         * Get values that to be implicit deleted.
+         * {@inheritDoc}
          *
-         * @param additional additional extract condition
-         * @return values that to be explicit deleted
-         * @throws NullPointerException if {@code additional} is {@code null}
-         * @throws PersistenceException if occurs problem in persistence provider
+         * @throws NullPointerException if {@code condition} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
          */
-        public Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition additional) {
-            return getDao().getLosts(additional).map(applyToList(
+        @Override
+        public Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition condition) {
+            return getDao().getLosts(additional).map(convertElements(
                     e -> new ImportationValue<>(getDxo().toLogicalDeletion(e), Map.of(), e)));
         }
-//
-//    /**
-//     * Validate of minimal for subsequent processing.
-//     *
-//     * @param transformed transform results
-//     * @return valid values
-//     * @throws IOException if occurs I/O error
-//     * @throws NullPointerException if {@code transformed} is {@code null}
-//     */
-//    public ContentMap<ImportationValue<C>> minimalValidate(Stream<TransResult.Success> transformed) throws IOException {
-//
-//        try (var trs = transformed) {
-//
-//            Iterator<Map.Entry<String, ImportationValue<C>>> it
-//                    = trs.flatMap(tr -> toImportationValue(tr).stream())
-//                            .map(v -> Map.entry(v.getId(), v)).iterator();
-//
-//            return new ContentMap<>(it, confSvc.getWorkDirectoryPath(), newConverter());
-//        }
-//    }
 
         /**
-         * Register value.
+         * {@inheritDoc}
          *
-         * @param value the {@code ImportationValue}
-         * @throws NullPointerException if {@code value} is {@code null}
-         * @throws UncheckedIOException if occurs I/O error
-         * @throws PersistenceException if occurs problem in persistence provider
+         * @param refTime reference time of the rebuild
+         * @param resultCollector recording result kind collector
+         * @throws NullPointerException if {@code refTime} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
          */
-        public void register(ImportationValue<C> value) {
-            comDao.persistOrMerge(getDxo().toEntity(value));
-            recSvc.rec(recDxo.toSuccess(value, RecordKind.REGISTER));
+        @Override
+        public void rebuildPersistedContents(LocalDateTime refTime, Consumer<ContentValue> recorder) {
+            Dxo dxo = getDxo();
+            return getDao().getToBeRebuilts(refTime).map(convertElements(dxo::rebuild))
+                    .map(dxo.toValue()).forEach(recorder::accept);
         }
 
         /**
-         * Delete(logically) value.
+         * {@inheritDoc}
          *
-         * @param value the {@code ImportationValue}
          * @throws NullPointerException if {@code value} is {@code null}
-         * @throws UncheckedIOException if occurs I/O error
-         * @throws PersistenceException if occurs problem in persistence provider
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
          */
+        @Override
+        public void register(ImportationValue<C> value) {
+            comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value)));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
         public void logicalDelete(ImportationValue<C> value) {
             comDao.persistOrMerge(getDxo().toEntity(value));
-            recSvc.rec(recDxo.toSuccess(value, RecordKind.DELETION));
         }
 
         /**
-         * Rebuilds content with the current time of application, and also rebuilds content-dependent database tables.
+         * {@inheritDoc}
          *
-         * @param opts job options
-         *
-         * @throws PersistenceException if occurs problem in persistence provider
-         * @throws UncheckedIOException if occurs I/O error
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
          */
-        @Transactional
-
-        public void rebuild(JobOptionsImpl opts) {
+        @Override
+        public void rebuildPersistedContents() {
             Consumer<RecordableValue> record
                     = v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.REGISTER));
 

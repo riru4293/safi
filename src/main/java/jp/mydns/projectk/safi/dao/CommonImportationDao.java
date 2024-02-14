@@ -35,14 +35,14 @@ import jp.mydns.projectk.safi.entity.ImportWorkEntity;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer.ForBatch;
 
 /**
- * Data access processing to the import-work.
+ * Common data access processing for import processing.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
  */
 @RequestScoped
-public class ImportWorkDao {
+public class CommonImportationDao {
 
     @Inject
     private CommonBatchDao comDao;
@@ -58,7 +58,7 @@ public class ImportWorkDao {
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public void clear() {
+    public void clearWrk() {
         em.createQuery(em.getCriteriaBuilder().createCriteriaDelete(ImportWorkEntity.class)).executeUpdate();
         comDao.flushAndClear();
     }
@@ -73,7 +73,7 @@ public class ImportWorkDao {
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public void appends(Stream<ImportWorkEntity> works) {
+    public void appendWrk(Stream<ImportWorkEntity> works) {
         works.forEach(comDao::persist);
         comDao.flushAndClear();
     }

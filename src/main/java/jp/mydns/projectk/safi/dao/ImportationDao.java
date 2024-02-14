@@ -71,7 +71,7 @@ import jp.mydns.projectk.safi.util.StreamUtils;
  * @since 1.0.0
  */
 @Dependent
-public abstract class ContentImportationDao<C extends ContentEntity> {
+public abstract class ImportationDao<C extends ContentEntity> {
 
     @Inject
     @EntityManagerProducer.ForBatch
