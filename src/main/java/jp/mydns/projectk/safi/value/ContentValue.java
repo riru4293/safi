@@ -405,7 +405,8 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
              */
             public void setAttributes(Map<String, String> atts) {
                 this.atts = atts != null
-                        ? atts.entrySet().stream().collect(toUnmodifiableMap(e -> AttKey.of(e.getKey()), Map.Entry::getValue))
+                        ? atts.entrySet().stream().collect(toUnmodifiableMap(
+                                e -> AttKey.of(e.getKey()), Map.Entry::getValue))
                         : null;
             }
 
