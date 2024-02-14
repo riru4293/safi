@@ -30,6 +30,7 @@ import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TransactionRequiredException;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -51,15 +52,12 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.PredicateBuilder;
 import jp.mydns.projectk.safi.entity.ContentEntity;
-import jp.mydns.projectk.safi.entity.ContentEntity_;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity;
-import jp.mydns.projectk.safi.entity.ImportWorkEntity_;
-import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb_;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 import jp.mydns.projectk.safi.util.JpaUtils;
 import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
-import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.util.StreamUtils;
+import jp.mydns.projectk.safi.value.Condition;
 
 /**
  * Data access processing to the <i>ID-Content</i>.
@@ -76,6 +74,36 @@ public abstract class ImportationDao<C extends ContentEntity> {
     @Inject
     @EntityManagerProducer.ForBatch
     private EntityManager em;
+
+    @Inject
+    private CommonBatchDao comDao;
+
+    /**
+     * Clear the import-work. Finally call the {@link EntityManager#flush()} and the {@link EntityManager#clear()}.
+     *
+     * @throws TransactionRequiredException if there is no transaction
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    public void clearWrk() {
+        em.createQuery(em.getCriteriaBuilder().createCriteriaDelete(ImportWorkEntity.class)).executeUpdate();
+        comDao.flushAndClear();
+    }
+
+    /**
+     * Append contents to import-work. Finally call the {@link EntityManager#flush()} and the
+     * {@link EntityManager#clear()}.
+     *
+     * @param works id and digest of importation content
+     * @throws NullPointerException if {@code works} is {@code null}, or if contains {@code null} in the {@code works}.
+     * @throws TransactionRequiredException if there is no transaction
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    public void appendWrk(Stream<ImportWorkEntity> works) {
+        works.forEach(comDao::persist);
+        comDao.flushAndClear();
+    }
 
     /**
      * Get entity class of the <i>ID-Content</i>.
@@ -273,12 +301,12 @@ public abstract class ImportationDao<C extends ContentEntity> {
     }
 
     /**
-     * Do unique rebuild process per content type. Default implements do nothing.
+     * Update content-dependent data. Default implements do nothing.
      *
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public void doUniqueRebuilding() {
+    public void updateDepentents() {
         // Do nothing
     }
 
@@ -294,7 +322,7 @@ public abstract class ImportationDao<C extends ContentEntity> {
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public Stream<List<C>> getRebuilds(LocalDateTime refTime) {
+    public Stream<List<C>> getRequireRebuilts(LocalDateTime refTime) {
 
         Objects.requireNonNull(refTime);
 

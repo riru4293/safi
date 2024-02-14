@@ -211,13 +211,18 @@ public interface ImportationFacade {
 
         private void rebuildContents(LocalDateTime refTime) {
             S svc = getImportationService();
+            Consumer<C> register = svc::register;
+            Consumer<C> record = r -> recSvc.rec(recDxo.toSuccess(r,
+                    r.isEnabled() ? RecordKind.REGISTER : RecordKind.DELETION));
 
             try (var toBeRebuilt = svc.getToBeRebuilt(appTimeSvc.getLocalNow());) {
                 toBeRebuilt.forEachOrdered(c -> {
-                    c.forEach(rebuild);
+                    c.stream().map(svc::rebuild).forEach(register.andThen(record));
                     comDao.flushAndClear();
                 });
             }
+
+            svc.rebuildPersistedContents();
         }
 
         private Stream<ImportationValue<C>> toImportationValues(Stream<TransResult> trunsResults) {
