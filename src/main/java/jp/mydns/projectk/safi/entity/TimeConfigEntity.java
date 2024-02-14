@@ -41,7 +41,6 @@ import jp.mydns.projectk.safi.constant.TimeConfigKind;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.TimeConfigValue;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
@@ -53,16 +52,19 @@ import jp.mydns.projectk.safi.value.ValidityPeriod;
  */
 @Entity
 @Table(name = "m_time")
-public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
+public class TimeConfigEntity extends CommonEntity {
 
     private static final long serialVersionUID = -8634128441967110929L;
 
+    @NotNull
     @Id
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     @Column(name = "kind", nullable = false, length = 20)
     private TimeConfigKind id;
 
+    @TimeAccuracy
+    @TimeRange
     @Basic(optional = false)
     @Column(name = "value", nullable = false)
     private LocalDateTime value;
@@ -77,8 +79,6 @@ public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
      *
      * @since 1.0.0
      */
-    @NotNull
-    @Override
     public TimeConfigKind getId() {
         return id;
     }
@@ -98,9 +98,6 @@ public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
      *
      * @since 1.0.0
      */
-    @TimeAccuracy
-    @TimeRange
-    @Override
     public LocalDateTime getValue() {
         return value;
     }
@@ -120,9 +117,6 @@ public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
      *
      * @since 1.0.0
      */
-    @NotNull
-    @Valid
-    @Override
     public ValidityPeriod getValidityPeriod() {
         return validityPeriod;
     }
@@ -130,11 +124,11 @@ public class TimeConfigEntity extends CommonEntity implements TimeConfigValue {
     /**
      * Set the validity-period of the configuration.
      *
-     * @param validityPeriod the {@code ValidityPeriod}
+     * @param vp the {@code ValidityPeriod}
      * @since 1.0.0
      */
-    public void setValidityPeriod(ValidityPeriod validityPeriod) {
-        this.validityPeriod = validityPeriod != null ? new ValidityPeriodEmb(validityPeriod) : null;
+    public void setValidityPeriod(ValidityPeriod vp) {
+        this.validityPeriod = vp != null ? new ValidityPeriodEmb(vp) : null;
     }
 
     /**

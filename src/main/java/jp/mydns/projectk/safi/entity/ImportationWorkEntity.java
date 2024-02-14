@@ -48,35 +48,40 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "w_import")
-public class ImportWorkEntity implements Serializable {
+public class ImportationWorkEntity implements Serializable {
 
     private static final long serialVersionUID = 7862710634490210812L;
 
-    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
     private UserEntity userEntity;
 
-//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+    //ToDo: コンテンツEntity作成次第、実装すること
+//    @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
 //    private MediumEntity mediumEntity;
 //
-//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
 //    private BelongOrgEntity belongOrgEntity;
 //
-//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
 //    private Org1Entity org1Entity;
 //
-//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
 //    private Org2Entity org2Entity;
 //
-//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
 //    private BelongGroupEntity belongGroupEntity;
 //
-//    @OneToOne(mappedBy = "importWorkEntity", fetch = FetchType.LAZY)
+//    @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
 //    private GroupEntity groupEntity;
+    @NotBlank
+    @Size(max = 36)
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
 
+    @NotBlank
+    @Size(max = 128)
     @Basic(optional = false)
     @Column(nullable = false, updatable = false, length = 128)
     private String digest;
@@ -87,8 +92,6 @@ public class ImportWorkEntity implements Serializable {
      * @return content id
      * @since 1.0.0
      */
-    @NotBlank
-    @Size(max = 36)
     public String getId() {
         return id;
     }
@@ -109,8 +112,6 @@ public class ImportWorkEntity implements Serializable {
      * @return content digest value
      * @since 1.0.0
      */
-    @NotBlank
-    @Size(max = 128)
     public String getDigest() {
         return digest;
     }
@@ -136,6 +137,7 @@ public class ImportWorkEntity implements Serializable {
         return userEntity;
     }
 
+    //ToDo: コンテンツEntity作成次第、実装すること
 //    /**
 //     * Get the {@code MediumEntity}.
 //     *
@@ -222,7 +224,7 @@ public class ImportWorkEntity implements Serializable {
      */
     @Override
     public boolean equals(Object other) {
-        return this == other || other instanceof ImportWorkEntity o && Objects.equals(id, o.id);
+        return this == other || other instanceof ImportationWorkEntity o && Objects.equals(id, o.id);
     }
 
     /**

@@ -98,6 +98,7 @@ public class AttsEmb implements Serializable {
      * @since 1.0.0
      */
     public Map<AttKey, String> update(Map<AttKey, String> atts) {
+        Objects.requireNonNull(atts);
 
         Map<AttKey, String> previous = toMap();
 
@@ -113,7 +114,6 @@ public class AttsEmb implements Serializable {
         att10 = atts.get(AttKey.ATT10);
 
         return previous;
-
     }
 
     /**
@@ -123,7 +123,6 @@ public class AttsEmb implements Serializable {
      * @since 1.0.0
      */
     public Map<AttKey, String> toMap() {
-
         Map<AttKey, String> atts = new EnumMap<>(AttKey.class);
 
         atts.put(AttKey.ATT01, att01);
@@ -140,7 +139,6 @@ public class AttsEmb implements Serializable {
         atts.values().removeIf(Objects::isNull);
 
         return Collections.unmodifiableMap(atts);
-
     }
 
     /**

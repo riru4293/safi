@@ -53,7 +53,7 @@ public class UserEntity extends ContentEntity<UserEntity> {
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id",
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private ImportWorkEntity importWorkEntity;
+    private ImportationWorkEntity wrkEntity;
 
     /**
      * Get the {@code ImportWorkEntity}.
@@ -62,34 +62,14 @@ public class UserEntity extends ContentEntity<UserEntity> {
      * @since 1.0.0
      */
     @JsonbTransient
-    public ImportWorkEntity getImportWorkEntity() {
-        return importWorkEntity;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 1.0.0
-     */
-    @Override
-    public UserEntity getValue() {
-        return this;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 1.0.0
-     */
-    @Override
-    public UserEntity setValue(UserEntity unused) {
-        throw new UnsupportedOperationException();
+    public ImportationWorkEntity getWrkEntity() {
+        return wrkEntity;
     }
 
     /**
      * Returns a hash code value.
      *
-     * @return a hash code value
+     * @return a hash code value. It is generated from the primary key value.
      * @since 1.0.0
      */
     @Override
@@ -98,7 +78,8 @@ public class UserEntity extends ContentEntity<UserEntity> {
     }
 
     /**
-     * Indicates that other object is equal to this instance. Equal if primary keys are equal in the same class
+     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
+     * key is match.
      *
      * @param other an any object
      * @return {@code true} if equals, otherwise {@code false}.

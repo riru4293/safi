@@ -28,14 +28,13 @@ package jp.mydns.projectk.safi.entity.embedded;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.validator.TimeAccuracy;
-import jp.mydns.projectk.safi.validator.TimeRange;
+import static jp.mydns.projectk.safi.util.TimeUtils.toLocalDateTime;
+import static jp.mydns.projectk.safi.util.TimeUtils.toOffsetDateTime;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
@@ -100,9 +99,6 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      * @return begin date-time of validity period
      * @since 1.0.0
      */
-    @NotNull
-    @TimeRange
-    @TimeAccuracy
     public LocalDateTime getLocalFrom() {
         return localFrom;
     }
@@ -110,11 +106,11 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     /**
      * Set begin date-time of validity period.
      *
-     * @param localFrom begin date-time of validity period
+     * @param from begin date-time of validity period
      * @since 1.0.0
      */
-    public void setLocalFrom(LocalDateTime localFrom) {
-        this.localFrom = localFrom;
+    public void setLocalFrom(LocalDateTime from) {
+        this.localFrom = from;
     }
 
     /**
@@ -133,9 +129,6 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      * @return end date-time of validity period
      * @since 1.0.0
      */
-    @NotNull
-    @TimeRange
-    @TimeAccuracy
     public LocalDateTime getLocalTo() {
         return localTo;
     }
@@ -143,11 +136,11 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     /**
      * Set end date-time of validity period.
      *
-     * @param localTo end date-time of validity period
+     * @param to end date-time of validity period
      * @since 1.0.0
      */
-    public void setLocalTo(LocalDateTime localTo) {
-        this.localTo = localTo;
+    public void setLocalTo(LocalDateTime to) {
+        this.localTo = to;
     }
 
     /**
@@ -191,8 +184,9 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     @Override
     public boolean equals(Object other) {
         return this == other || other instanceof ValidityPeriod o
-                && Objects.equals(localFrom, TimeUtils.toLocalDateTime(o.getFrom()))
-                && Objects.equals(localTo, TimeUtils.toLocalDateTime(o.getTo())) && Objects.equals(ban, o.isBan());
+                && Objects.equals(localFrom, toLocalDateTime(o.getFrom()))
+                && Objects.equals(localTo, toLocalDateTime(o.getTo()))
+                && Objects.equals(ban, o.isBan());
     }
 
     /**
@@ -203,7 +197,7 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      */
     @Override
     public String toString() {
-        return "ValidityPeriod{" + "from=" + TimeUtils.toOffsetDateTime(localFrom)
-                + ", to=" + TimeUtils.toOffsetDateTime(localTo) + ", ban=" + ban + '}';
+        return "ValidityPeriod{" + "from=" + toOffsetDateTime(localFrom)
+                + ", to=" + toOffsetDateTime(localTo) + ", ban=" + ban + '}';
     }
 }

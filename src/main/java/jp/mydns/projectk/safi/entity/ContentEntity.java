@@ -56,10 +56,12 @@ import org.eclipse.persistence.annotations.Customizer;
  */
 @MappedSuperclass
 @Customizer(NoEmbedNull.class)
-public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEntity implements ContentValue<T> {
+public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEntity {
 
     private static final long serialVersionUID = -1113513901343265409L;
 
+    @NotBlank
+    @Size(max = 36)
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
@@ -68,6 +70,7 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
     @Column(name = "enabled", nullable = false)
     protected boolean enabled;
 
+    @Size(max = 100)
     @Basic(optional = false)
     @Column(name = "name", length = 100)
     protected String name;
@@ -83,6 +86,8 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
     @Embedded
     protected ValidityPeriodEmb validityPeriod;
 
+    @NotBlank
+    @Size(max = 128)
     @Basic(optional = false)
     @Column(name = "digest", nullable = false, length = 128)
     protected String digest;
@@ -100,9 +105,6 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
      * @return content id
      * @since 1.0.0
      */
-    @NotBlank
-    @Size(max = 36)
-    @Override
     public String getId() {
         return id;
     }
@@ -120,10 +122,9 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
     /**
      * Get the valid state.
      *
-     * @return {@code true} if enabled, otherwise {@code false}.
+     * @return {@code true} if valid, otherwise {@code false}.
      * @since 1.0.0
      */
-    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -131,7 +132,7 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
     /**
      * Set the valid state.
      *
-     * @param enabled {@code true} if enabled, otherwise {@code false}.
+     * @param enabled {@code true} if valid, otherwise {@code false}.
      * @since 1.0.0
      */
     public void setEnabled(boolean enabled) {
@@ -144,8 +145,6 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
      * @return content name
      * @since 1.0.0
      */
-    @Size(max = 100)
-    @Override
     public String getName() {
         return name;
     }
@@ -166,7 +165,6 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
      * @return <i>Attribute</i> collection
      * @since 1.0.0
      */
-    @Override
     public Map<AttKey, String> getAtts() {
         return attsEmb.toMap();
     }
@@ -188,7 +186,6 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
      * @return the {@code ValidityPeriod}
      * @since 1.0.0
      */
-    @Override
     public ValidityPeriod getValidityPeriod() {
         return validityPeriod;
     }
@@ -196,11 +193,11 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
     /**
      * Set the {@code ValidityPeriod}.
      *
-     * @param validityPeriod the {@code ValidityPeriod}
+     * @param vp the {@code ValidityPeriod}
      * @since 1.0.0
      */
-    public void setValidityPeriod(ValidityPeriod validityPeriod) {
-        this.validityPeriod = validityPeriod != null ? new ValidityPeriodEmb(validityPeriod) : null;
+    public void setValidityPeriod(ValidityPeriod vp) {
+        this.validityPeriod = vp != null ? new ValidityPeriodEmb(vp) : null;
     }
 
     /**
@@ -209,9 +206,6 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
      * @return digest value
      * @since 1.0.0
      */
-    @NotBlank
-    @Size(max = 128)
-    @Override
     public String getDigest() {
         return digest;
     }

@@ -41,18 +41,6 @@ import java.util.function.Supplier;
 public interface CriteriaPathContext {
 
     /**
-     * Returns a {@code Supplier} that throw {@code IllegalArgumentException}. Using when specified undefined element
-     * name.
-     *
-     * @param name element name
-     * @return {@code Supplier} that throw {@code IllegalArgumentException}
-     * @since 1.0.0
-     */
-    static Supplier<IllegalArgumentException> undefinedPath(String name) {
-        return () -> new IllegalArgumentException("Undefined element name: " + name);
-    }
-
-    /**
      * Resolve the element path from element name.
      *
      * @param name element name
@@ -94,6 +82,10 @@ public interface CriteriaPathContext {
         @Override
         public Path<String> of(String name) {
             return Optional.ofNullable(name).map(mapping::get).orElseThrow(undefinedPath(name));
+        }
+
+        private Supplier<IllegalArgumentException> undefinedPath(String name) {
+            return () -> new IllegalArgumentException("Undefined element name: " + name);
         }
     }
 }

@@ -39,7 +39,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.PersistableValue;
 
 /**
  * Common JPA entity. This class has one version number field qualified with {@link Version}. Thereby realizing an
@@ -52,7 +51,7 @@ import jp.mydns.projectk.safi.value.PersistableValue;
  */
 @MappedSuperclass
 @EntityListeners({FooterUpdater.class})
-public abstract class CommonEntity implements Serializable, PersistableValue {
+public abstract class CommonEntity implements Serializable {
 
     private static final long serialVersionUID = 7002393193138803696L;
 
@@ -60,30 +59,45 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
     @Column(name = "note")
     protected String note;
 
+    @PositiveOrZero
     @Version
     @Column(name = "version", nullable = false)
     protected int version;
 
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
     @Basic(optional = false)
     @Column(name = "reg_ts", updatable = false, nullable = false)
     protected LocalDateTime registerTime;
 
+    @NotBlank
+    @Size(max = 250)
     @Basic(optional = false)
     @Column(name = "reg_id", updatable = false, nullable = false, length = 250)
     protected String registerAccountId;
 
+    @NotBlank
+    @Size(max = 250)
     @Basic(optional = false)
     @Column(name = "reg_ap", updatable = false, nullable = false, length = 250)
     protected String registerProcessName;
 
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
     @Basic(optional = false)
     @Column(name = "upd_ts", nullable = false)
     protected LocalDateTime updateTime;
 
+    @NotBlank
+    @Size(max = 250)
     @Basic(optional = false)
     @Column(name = "upd_id", nullable = false, length = 250)
     protected String updateAccountId;
 
+    @NotBlank
+    @Size(max = 250)
     @Basic(optional = false)
     @Column(name = "upd_ap", nullable = false, length = 250)
     protected String updateProcessName;
@@ -95,14 +109,12 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return note. It may be {@code null}.
      * @since 1.0.0
      */
-    @Override
     public String getNote() {
         return note;
     }
 
     /**
-     * Set a note for this entity. This value is only used to record notes about the data records represented by the
-     * entity and is never used to process.
+     * Set a note for this entity.
      *
      * @param note note. It can be set {@code null}.
      * @see #getNote() Note is explained in {@code #getNote()}
@@ -120,8 +132,6 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return entity version
      * @since 1.0.0
      */
-    @PositiveOrZero
-    @Override
     public int getVersion() {
         return version;
     }
@@ -143,9 +153,6 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return persisted time. It time zone is UTC.
      * @since 1.0.0
      */
-    @NotNull
-    @TimeRange
-    @TimeAccuracy
     public LocalDateTime getRegisterTime() {
         return registerTime;
     }
@@ -166,8 +173,6 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return persisted user id
      * @since 1.0.0
      */
-    @NotBlank
-    @Size(max = 250)
     public String getRegisterAccountId() {
         return registerAccountId;
     }
@@ -188,8 +193,6 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return persisted process name
      * @since 1.0.0
      */
-    @NotBlank
-    @Size(max = 250)
     public String getRegisterProcessName() {
         return registerProcessName;
     }
@@ -210,9 +213,6 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return last updated time. It time zone is UTC.
      * @since 1.0.0
      */
-    @NotNull
-    @TimeRange
-    @TimeAccuracy
     public LocalDateTime getUpdateTime() {
         return updateTime;
     }
@@ -233,8 +233,6 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return last updated user id
      * @since 1.0.0
      */
-    @NotBlank
-    @Size(max = 250)
     public String getUpdateAccountId() {
         return updateAccountId;
     }
@@ -255,8 +253,6 @@ public abstract class CommonEntity implements Serializable, PersistableValue {
      * @return last updated process name
      * @since 1.0.0
      */
-    @NotBlank
-    @Size(max = 250)
     public String getUpdateProcessName() {
         return updateProcessName;
     }

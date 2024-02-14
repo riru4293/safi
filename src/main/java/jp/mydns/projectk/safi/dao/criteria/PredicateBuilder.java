@@ -69,7 +69,9 @@ public class PredicateBuilder {
      * @since 1.0.0
      */
     public Predicate build(Condition condition) {
-        return Objects.requireNonNull(condition).isMulti() ? buildMulti(condition.asMulti()) : buildSingle(condition.asSingle());
+        return Objects.requireNonNull(condition).isMulti()
+                ? buildMulti(condition.asMulti())
+                : buildSingle(condition.asSingle());
     }
 
     Predicate buildMulti(Condition.Multi condition) {
@@ -77,17 +79,13 @@ public class PredicateBuilder {
     }
 
     Predicate buildMulti(FilteringOperation.Multi operation, List<Condition> conditions) {
+        Stream<Predicate> singlePreds = conditions.stream().filter(not(Condition::isMulti))
+                .map(Condition::asSingle).map(this::buildSingle);
 
-        Stream<Predicate> singlePreds = conditions.stream()
-                .filter(not(Condition::isMulti)).map(Condition::asSingle)
-                .map(this::buildSingle);
+        Stream<Predicate> multiPreds = conditions.stream().filter(Condition::isMulti)
+                .map(Condition::asMulti).map(this::buildMulti);
 
-        Stream<Predicate> multiPreds = conditions.stream()
-                .filter(Condition::isMulti).map(Condition::asMulti)
-                .map(this::buildMulti);
-
-        Predicate[] preds = Stream.concat(singlePreds, multiPreds).toArray(
-                Predicate[]::new);
+        Predicate[] preds = Stream.concat(singlePreds, multiPreds).toArray(Predicate[]::new);
 
         if (preds.length < 1) {
             return cb.and(preds); // Note: if zero predicate, "and" becomes true.
