@@ -29,8 +29,6 @@ import jakarta.json.bind.annotation.JsonbTransient;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.RecordableValue;
 
@@ -46,31 +44,17 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
 
     private final T content;
     private final Map<String, String> source;
-    private final ContentEntity entity;
 
     /**
      * Constructor.
      *
      * @param content content value
      * @param source source of content
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    public ImportationValue(T content, Map<String, String> source) {
-        this(content, source, null);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param content content value
-     * @param source source of content
-     * @param entity managed original entity. It can be set {@code null}.
      * @throws NullPointerException if {@code content} or {@code source} is {@code null}
      */
-    public ImportationValue(T content, Map<String, String> source, ContentEntity entity) {
+    public ImportationValue(T content, Map<String, String> source) {
         this.content = Objects.requireNonNull(content);
         this.source = Objects.requireNonNull(source);
-        this.entity = entity;
     }
 
     /**
@@ -145,6 +129,7 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
      * Get source of content.
      *
      * @return source of content
+     * @since 1.0.0
      */
     public T getContent() {
         return content;
@@ -154,18 +139,9 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
      * Get source of content.
      *
      * @return source of content
+     * @since 1.0.0
      */
     public Map<String, String> getSource() {
         return Collections.unmodifiableMap(source);
-    }
-
-    /**
-     * Get the managed original entity.
-     *
-     * @return managed original entity
-     */
-    @JsonbTransient
-    public Optional<ContentEntity> getEntity() {
-        return Optional.ofNullable(entity);
     }
 }
