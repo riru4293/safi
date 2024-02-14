@@ -34,6 +34,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.lang.reflect.Type;
 import java.util.Objects;
+import java.util.Optional;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
@@ -170,6 +171,14 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
 public interface UserValue extends ContentValue<UserValue> {
 
     /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
+    @Override
+    Optional<UserEntity> getEntity();
+
+    /**
      * Builder of the {@link UserValue}.
      *
      * @author riru
@@ -179,6 +188,7 @@ public interface UserValue extends ContentValue<UserValue> {
     class Builder extends ContentValue.AbstractBuilder<Builder, UserValue> {
 
         private final DigestGenerator digestGenerator;
+        private UserEntity entity;
 
         /**
          * Constructor.
@@ -190,6 +200,31 @@ public interface UserValue extends ContentValue<UserValue> {
         public Builder(DigestGenerator digestGenerator) {
             super(Builder.class);
             this.digestGenerator = Objects.requireNonNull(digestGenerator);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code src} is {@code null}
+         * @since 1.0.0
+         */
+        @Override
+        public Builder with(UserValue src) {
+            super.with(Objects.requireNonNull(src));
+            this.entity = src.getEntity().orElse(null);
+            return this;
+        }
+
+        /**
+         * Set the paired entity.
+         *
+         * @param entity paired entity
+         * @return updated this
+         * @since 1.0.0
+         */
+        public Builder withEntity(UserEntity entity) {
+            this.entity = entity;
+            return this;
         }
 
         /**
@@ -217,6 +252,8 @@ public interface UserValue extends ContentValue<UserValue> {
          */
         protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<UserValue> implements UserValue {
 
+            private UserEntity entity;
+
             /**
              * Constructor. Used only for deserialization from JSON.
              *
@@ -234,6 +271,7 @@ public interface UserValue extends ContentValue<UserValue> {
              */
             protected Bean(UserValue.Builder builder, String digest) {
                 super(builder, digest);
+                this.entity = builder.entity;
             }
 
             /**
@@ -254,6 +292,16 @@ public interface UserValue extends ContentValue<UserValue> {
             @Override
             public UserValue setValue(UserValue unused) {
                 throw new UnsupportedOperationException();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public Optional<UserEntity> getEntity() {
+                return Optional.ofNullable(entity);
             }
 
             /**

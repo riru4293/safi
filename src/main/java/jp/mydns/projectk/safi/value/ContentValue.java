@@ -160,6 +160,16 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
     T setValue(T unused);
 
     /**
+     * Get the paired entity to this. It provide only when this made from entity.
+     *
+     * @param <E> entity type
+     * @return entity
+     * @since 1.0.0
+     */
+    @JsonbTransient
+    <E extends ContentEntity> Optional<E> getEntity();
+
+    /**
      * Abstract builder of the {@link ContentValue}.
      *
      * @param <B> builder type
@@ -276,8 +286,7 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
          * @since 1.0.0
          */
         protected abstract static class AbstractBean<T extends ContentValue<T>>
-                extends PersistableValue.AbstractBuilder.AbstractBean
-                implements ContentValue<T> {
+                extends PersistableValue.AbstractBuilder.AbstractBean implements ContentValue<T> {
 
             protected String id;
             protected boolean enabled;
