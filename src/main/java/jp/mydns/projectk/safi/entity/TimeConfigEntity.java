@@ -56,7 +56,6 @@ public class TimeConfigEntity extends CommonEntity {
 
     private static final long serialVersionUID = -8634128441967110929L;
 
-    @NotNull
     @Id
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
