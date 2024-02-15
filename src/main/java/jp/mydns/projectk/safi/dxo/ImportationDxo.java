@@ -105,14 +105,15 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
     /**
      * Convert to entity from value.
      * <p>
-     * If contains a paired entity instance in {@code value}, returns the entity constructed based on that instance.
+     * If contains a paired entity instance in {@code importValue}, returns the entity constructed based on that
+     * instance.
      *
-     * @param value the {@code ImportationValue}
+     * @param importValue the {@code ImportationValue}
      * @return the {@code ContentEntity}
-     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws NullPointerException if {@code importValue} is {@code null}
      * @since 1.0.0
      */
-    E toEntity(ImportationValue<V> value);
+    E toEntity(ImportationValue<V> importValue);
 
     abstract class AbstractImportationDxo<E extends ContentEntity, V extends ContentValue<V>>
             implements ImportationDxo<E, V> {
