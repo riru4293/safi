@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.dxo;
 
 import jakarta.validation.ConstraintViolationException;
+import java.util.Objects;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
 import jp.mydns.projectk.safi.value.ContentValue;
@@ -53,7 +54,15 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
      * @throws IllegalArgumentException if {@code importValue} represents an explicit deletion
      * @since 1.0.0
      */
-    ImportationWorkEntity toImportationWorkEntity(ImportationValue<V> importValue);
+    default ImportationWorkEntity toImportationWorkEntity(ImportationValue<V> importValue) {
+        Objects.requireNonNull(importValue);
+
+        var e = new ImportationWorkEntity();
+        e.setId(importValue.getId());
+        e.setDigest(importValue.getContent().getDigest());
+
+        return e;
+    }
 
     /**
      * Build an importation value from the transform result.
@@ -62,6 +71,7 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
      * @return the {@code ImportationWorkEntity}
      * @throws NullPointerException if {@code transResult} is {@code null}
      * @throws ConstraintViolationException if occurred constraint violations when building
+     * @since 1.0.0
      */
     ImportationValue<V> toImportationValue(TransResult.Success transResult);
 
@@ -90,6 +100,7 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
      * @param value the {@code ImportationValue}
      * @return the {@code ContentEntity}
      * @throws NullPointerException if {@code value} is {@code null}
+     * @since 1.0.0
      */
     E toEntity(ImportationValue<V> value);
 }
