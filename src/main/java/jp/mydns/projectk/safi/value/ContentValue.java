@@ -32,12 +32,18 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
+import java.util.Collections;
 import static java.util.Collections.unmodifiableMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toUnmodifiableMap;
 import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.service.AppTimeService;
+import static jp.mydns.projectk.safi.util.LambdaUtils.alwaysThrow;
+import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import static jp.mydns.projectk.safi.util.LambdaUtils.p;
 
 /**
@@ -407,7 +413,8 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
             public void setAttributes(Map<String, String> atts) {
                 this.atts = atts != null
                         ? atts.entrySet().stream().filter(p(Objects::nonNull, Map.Entry::getValue))
-                                .collect(toUnmodifiableMap(e -> AttKey.of(e.getKey()), Map.Entry::getValue))
+                                .collect(collectingAndThen(toMap(f(AttKey::of).compose(Map.Entry::getKey), Map.Entry::getValue,
+                                        alwaysThrow(), () -> new EnumMap<>(AttKey.class)), Collections::unmodifiableMap))
                         : null;
             }
 
