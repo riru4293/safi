@@ -394,7 +394,7 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
             /**
              * Get the <i>Attribute</i> collection for serialization to JSON.
              *
-             * @return <i>Attribute</i> collection for serialization to JSON
+             * @return <i>Attribute</i> collection
              * @since 1.0.0
              */
             public Map<String, String> getAttributes() {
@@ -405,9 +405,9 @@ public interface ContentValue<T extends ContentValue<T>> extends PersistableValu
             }
 
             /**
-             * Set the <i>Attribute</i> collection for serialization to JSON.
+             * Set the <i>Attribute</i> collection for de-serialization from JSON.
              *
-             * @param atts <i>Attribute</i> collection for serialization to JSON
+             * @param atts <i>Attribute</i> collection
              * @since 1.0.0
              */
             public void setAttributes(Map<String, String> atts) {
