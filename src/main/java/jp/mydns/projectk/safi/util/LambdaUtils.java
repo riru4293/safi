@@ -375,29 +375,31 @@ public final class LambdaUtils {
     }
 
     /**
-     * Returns a supplier received as is. Use when you want to chain suppliers. This method is alias of
-     * {@link #supplier(Supplier)}.
+     * Returns a supplier with post conversion. This method is alias of
+     * {@link #supplier(java.util.function.Supplier, java.util.function.Function)}.
      *
+     * @param <O> origin value type
      * @param <T> value type
-     * @param toBeReturned supplier to be returned as is
-     * @return a supplier received as is
-     * @throws NullPointerException if {@code toBeReturned} is {@code null}
+     * @param origin origin supplier
+     * @return a supplier with post conversion
+     * @throws NullPointerException if any argument is {@code null}
      * @since 1.0.0
      */
-    public static <T> Supplier<T> s(Supplier<T> toBeReturned) {
-        return supplier(toBeReturned);
+    public static <O, T> Supplier<T> s(Supplier<O> origin, Function<O, T> postConversion) {
+        return supplier(origin, postConversion);
     }
 
     /**
-     * Returns a supplier received as is. Use when you want to chain suppliers.
+     * Returns a supplier with post conversion.
      *
+     * @param <O> origin value type
      * @param <T> value type
-     * @param toBeReturned supplier to be returned as is
-     * @return a supplier received as is
-     * @throws NullPointerException if {@code toBeReturned} is {@code null}
+     * @param origin origin supplier
+     * @return a supplier with post conversion
+     * @throws NullPointerException if any argument is {@code null}
      * @since 1.0.0
      */
-    public static <T> Supplier<T> supplier(Supplier<T> toBeReturned) {
-        return Objects.requireNonNull(toBeReturned);
+    public static <O, T> Supplier<T> supplier(Supplier<O> origin, Function<O, T> postConversion) {
+        return () -> postConversion.apply(origin.get());
     }
 }
