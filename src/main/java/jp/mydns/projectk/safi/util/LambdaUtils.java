@@ -35,6 +35,7 @@ import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -371,5 +372,32 @@ public final class LambdaUtils {
     public static <V> Collector<Map.Entry<String, V>, ?, Map<String, V>> toCaseInsensitiveMap(BinaryOperator<V> mergeFunc) {
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue, Objects.requireNonNull(mergeFunc),
                 () -> new TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER)), Collections::unmodifiableMap);
+    }
+
+    /**
+     * Returns a supplier received as is. Use when you want to chain suppliers. This method is alias of
+     * {@link #supplier(Supplier)}.
+     *
+     * @param <T> value type
+     * @param toBeReturned supplier to be returned as is
+     * @return a supplier received as is
+     * @throws NullPointerException if {@code toBeReturned} is {@code null}
+     * @since 1.0.0
+     */
+    public static <T> Supplier<T> s(Supplier<T> toBeReturned) {
+        return supplier(toBeReturned);
+    }
+
+    /**
+     * Returns a supplier received as is. Use when you want to chain suppliers.
+     *
+     * @param <T> value type
+     * @param toBeReturned supplier to be returned as is
+     * @return a supplier received as is
+     * @throws NullPointerException if {@code toBeReturned} is {@code null}
+     * @since 1.0.0
+     */
+    public static <T> Supplier<T> supplier(Supplier<T> toBeReturned) {
+        return Objects.requireNonNull(toBeReturned);
     }
 }
