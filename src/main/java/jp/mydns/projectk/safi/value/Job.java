@@ -717,7 +717,6 @@ public interface Job extends Map.Entry<String, Job>, PersistableValue {
     /**
      * JSON deserializer for {@code Job}.
      *
-     * @implSpec This class is immutable and thread-safe.
      * @author riru
      * @version 1.0.0
      * @since 1.0.0
