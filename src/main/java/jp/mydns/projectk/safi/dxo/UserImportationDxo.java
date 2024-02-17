@@ -38,7 +38,7 @@ import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.UserValue;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
-import trial.ImportationValue;
+import jp.mydns.projectk.safi.value.ImportationValue;
 
 /**
  * Data exchange interface for <i>User</i> content importation processing.
