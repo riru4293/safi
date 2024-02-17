@@ -149,18 +149,6 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
     /**
      * {@inheritDoc}
      *
-     * @throws NullPointerException if {@code importValue} is {@code null}
-     */
-    @Override
-    public UserEntity toEntity(ImportationValue<UserValue> importValue) {
-        Objects.requireNonNull(importValue);
-
-        return toEntity(importValue.getContent());
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @throws NullPointerException if {@code value} is {@code null}
      * @since 1.0.0
      */

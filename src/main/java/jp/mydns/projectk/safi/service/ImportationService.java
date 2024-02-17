@@ -379,8 +379,8 @@ public interface ImportationService<V extends ContentValue<V>> {
          */
         @Override
         public ContentRecord register(ImportationValue<V> value) {
-            comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value)));
-            return recDxo.toSuccess(value, value.getContent().isEnabled() ? RecordKind.REGISTER : RecordKind.DELETION);
+            comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value).getContent()));
+            return recDxo.toSuccess(value, resolveRecordKind(value.getContent().isEnabled()));
         }
 
         /**
@@ -393,7 +393,11 @@ public interface ImportationService<V extends ContentValue<V>> {
         @Override
         public ContentRecord register(V value) {
             comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value)));
-            return recDxo.toSuccess(value, value.isEnabled() ? RecordKind.REGISTER : RecordKind.DELETION);
+            return recDxo.toSuccess(value, resolveRecordKind(value.isEnabled()));
+        }
+
+        private RecordKind resolveRecordKind(boolean isEnabled) {
+            return isEnabled ? RecordKind.REGISTER : RecordKind.DELETION;
         }
 //
 //        /**
