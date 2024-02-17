@@ -381,6 +381,7 @@ public final class LambdaUtils {
      * @param <O> origin value type
      * @param <T> value type
      * @param origin origin supplier
+     * @param postConversion post conversion process
      * @return a supplier with post conversion
      * @throws NullPointerException if any argument is {@code null}
      * @since 1.0.0
@@ -395,6 +396,7 @@ public final class LambdaUtils {
      * @param <O> origin value type
      * @param <T> value type
      * @param origin origin supplier
+     * @param postConversion post conversion process
      * @return a supplier with post conversion
      * @throws NullPointerException if any argument is {@code null}
      * @since 1.0.0
