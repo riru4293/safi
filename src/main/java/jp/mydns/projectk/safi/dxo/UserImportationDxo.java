@@ -113,24 +113,37 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
      * @since 1.0.0
      */
     @Override
+    public UserValue toValue(UserEntity entity) {
+        return toValue(Objects.requireNonNull(entity), entity.getValidityPeriod());
+    }
+
+    private UserValue toValue(UserEntity entity, ValidityPeriod newVp) {
+        return new UserValue.Builder(digestGen)
+                .withId(entity.getId())
+                .withName(entity.getName())
+                .withAtts(entity.getAtts())
+                .withValidityPeriod(newVp)
+                .withEnabled(newVp.isEnabled(appTimeSvc.getLocalNow()))
+                .withNote(entity.getNote())
+                .withVersion(entity.getVersion())
+                .withEntity(entity)
+                .build(validator, Unsafe.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @since 1.0.0
+     */
+    @Override
     public ImportationValue<UserValue> toLogicalDeletion(UserEntity entity) {
         Objects.requireNonNull(entity);
 
         ValidityPeriod vp = new ValidityPeriod.Builder().with(entity.getValidityPeriod())
                 .withTo(getExpiredTimeOnNow()).build(validator, Unsafe.class);
 
-        return new ImportationValue<>(
-                new UserValue.Builder(digestGen)
-                        .withId(entity.getId())
-                        .withName(entity.getName())
-                        .withAtts(entity.getAtts())
-                        .withValidityPeriod(vp)
-                        .withEnabled(vp.isEnabled(appTimeSvc.getLocalNow()))
-                        .withNote(entity.getNote())
-                        .withVersion(entity.getVersion())
-                        .withEntity(entity)
-                        .build(validator, Unsafe.class),
-                Map.of());
+        return new ImportationValue<>(toValue(entity, vp), Map.of());
     }
 
     /**
@@ -142,7 +155,17 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
     public UserEntity toEntity(ImportationValue<UserValue> importValue) {
         Objects.requireNonNull(importValue);
 
-        UserValue value = importValue.getContent();
+        return toEntity(importValue.getContent());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @since 1.0.0
+     */
+    @Override
+    public UserEntity toEntity(UserValue value) {
         UserEntity entity = value.getEntity().orElseGet(UserEntity::new);
 
         entity.setId(value.getId());

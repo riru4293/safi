@@ -30,6 +30,7 @@ import jakarta.json.JsonObject;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -139,17 +140,17 @@ public interface ImportationService<V extends ContentValue<V>> {
      * @since 1.0.0
      */
     Stream<List<ImportationValue<V>>> getToBeImplicitDeleted(Condition condition);
-//
-//    /**
-//     * Gets a chunked collection of to be rebuilt content.
-//     *
-//     * @param refTime reference time of rebuilding
-//     * @return to be rebuilt content
-//     * @throws NullPointerException if {@code refTime} is {@code null}
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    Stream<List<C>> getToBeRebuilt(LocalDateTime refTime);
+
+    /**
+     * Gets a chunked collection of to be rebuilt content.
+     *
+     * @param refTime reference time of rebuilding
+     * @return to be rebuilt content
+     * @throws NullPointerException if {@code refTime} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    Stream<List<V>> getToBeRebuilt(LocalDateTime refTime);
 //
 //    /**
 //     * Register content to database. Create or update is automatically determined.
@@ -352,6 +353,18 @@ public interface ImportationService<V extends ContentValue<V>> {
         @Override
         public Stream<List<ImportationValue<V>>> getToBeImplicitDeleted(Condition condition) {
             return getDao().getDeletionDifference(condition).map(convertElements(getDxo()::toLogicalDeletion));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code refTime} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public Stream<List<V>> getToBeRebuilt(LocalDateTime refTime) {
+            return getDao().getRequireRebuilding(refTime).map(convertElements(getDxo()::toValue));
         }
 //
 //        /**
