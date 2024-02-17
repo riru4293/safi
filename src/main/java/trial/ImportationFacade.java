@@ -62,6 +62,7 @@ import jp.mydns.projectk.safi.value.UserValue;
  * <li>Reflect additions/updates/explicit deletions to the database.</li>
  * <li>If allowed, propagates implicit deletions to the database. However, if the number exceeds the limit, it will not
  * be processed.</li>
+ * <li>Restructure the content and its derived data on the database.</li>
  * </ul>
  *
  * @author riru
