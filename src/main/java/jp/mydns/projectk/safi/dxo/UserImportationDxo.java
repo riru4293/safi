@@ -35,10 +35,10 @@ import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.validator.Unsafe;
 import jp.mydns.projectk.safi.value.ContentValue;
+import jp.mydns.projectk.safi.value.ImportationValue;
 import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.UserValue;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
-import jp.mydns.projectk.safi.value.ImportationValue;
 
 /**
  * Data exchange interface for <i>User</i> content importation processing.
@@ -100,9 +100,37 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
                 new UserValue.Builder(digestGen)
                         .with(importValue.getContent())
                         .withEnabled(importValue.getContent().getValidityPeriod().isEnabled(appTimeSvc.getLocalNow()))
+                        .withVersion(entity.getVersion())
                         .withEntity(entity)
                         .build(validator, Unsafe.class),
                 importValue.getSource());
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @since 1.0.0
+     */
+    @Override
+    public ImportationValue<UserValue> toLogicalDeletion(UserEntity entity) {
+        Objects.requireNonNull(entity);
+
+        ValidityPeriod vp = new ValidityPeriod.Builder().with(entity.getValidityPeriod())
+                .withTo(getExpiredTimeOnNow()).build(validator, Unsafe.class);
+
+        return new ImportationValue<>(
+                new UserValue.Builder(digestGen)
+                        .withId(entity.getId())
+                        .withName(entity.getName())
+                        .withAtts(entity.getAtts())
+                        .withValidityPeriod(vp)
+                        .withEnabled(vp.isEnabled(appTimeSvc.getLocalNow()))
+                        .withNote(entity.getNote())
+                        .withVersion(entity.getVersion())
+                        .withEntity(entity)
+                        .build(validator, Unsafe.class),
+                Map.of());
     }
 
     /**
