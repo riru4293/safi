@@ -41,6 +41,8 @@ import java.util.function.Consumer;
 import static java.util.function.Predicate.not;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
+import jp.mydns.projectk.safi.constant.RecordKind;
+import jp.mydns.projectk.safi.dao.CommonBatchDao;
 import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.dxo.ImportationDxo;
 import jp.mydns.projectk.safi.entity.ContentEntity;
@@ -151,28 +153,28 @@ public interface ImportationService<V extends ContentValue<V>> {
      * @since 1.0.0
      */
     Stream<List<V>> getToBeRebuilt(LocalDateTime refTime);
-//
-//    /**
-//     * Register content to database. Create or update is automatically determined.
-//     *
-//     * @param value content
-//     * @return result recording
-//     * @throws NullPointerException if {@code value} is {@code null}
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    ContentRecord register(ImportationValue<C> value);
-//
-//    /**
-//     * Register content to database. Create or update is automatically determined.
-//     *
-//     * @param value content
-//     * @return result recording
-//     * @throws NullPointerException if {@code value} is {@code null}
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    ContentRecord register(C value);
+
+    /**
+     * Register content to database. Create or update is automatically determined.
+     *
+     * @param value content
+     * @return result recording
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    ContentRecord register(ImportationValue<V> value);
+
+    /**
+     * Register content to database. Create or update is automatically determined.
+     *
+     * @param value content
+     * @return result recording
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    ContentRecord register(V value);
 //
 //    /**
 //     * Logically delete content registered in the database.
@@ -214,8 +216,9 @@ public interface ImportationService<V extends ContentValue<V>> {
      */
     abstract class AbstractImportationService<E extends ContentEntity<E>, V extends ContentValue<V>> implements ImportationService<V> {
 
-//        @Inject
-//        private CommonBatchDao comDao;
+        @Inject
+        private CommonBatchDao comDao;
+
         @Inject
         private JsonService jsonSvc;
 
@@ -366,46 +369,32 @@ public interface ImportationService<V extends ContentValue<V>> {
         public Stream<List<V>> getToBeRebuilt(LocalDateTime refTime) {
             return getDao().getRequireRebuilding(refTime).map(convertElements(getDxo()::toValue));
         }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @param refTime reference time of the rebuild
-//         * @param resultCollector recording result kind collector
-//         * @throws NullPointerException if {@code refTime} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public void rebuildPersistedContents(LocalDateTime refTime, Consumer<ContentValue> recorder) {
-//            Dxo dxo = getDxo();
-//            return getDao().getToBeRebuilts(refTime).map(convertElements(dxo::rebuild))
-//                    .map(dxo.toValue()).forEach(recorder::accept);
-//        }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws NullPointerException if {@code value} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public void register(ImportationValue<C> value) {
-//            comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value)));
-//        }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws NullPointerException if {@code value} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public void register(C value) {
-//            comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value)));
-//        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public ContentRecord register(ImportationValue<V> value) {
+            comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value)));
+            return recDxo.toSuccess(value, value.getContent().isEnabled() ? RecordKind.REGISTER : RecordKind.DELETION);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public ContentRecord register(V value) {
+            comDao.persistOrMerge(getDxo().toEntity(Objects.requireNonNull(value)));
+            return recDxo.toSuccess(value, value.isEnabled() ? RecordKind.REGISTER : RecordKind.DELETION);
+        }
 //
 //        /**
 //         * {@inheritDoc}
@@ -439,6 +428,22 @@ public interface ImportationService<V extends ContentValue<V>> {
 //            }
 //
 //            rebuildDependent();
+//        }
+//
+//        /**
+//         * {@inheritDoc}
+//         *
+//         * @param refTime reference time of the rebuild
+//         * @param resultCollector recording result kind collector
+//         * @throws NullPointerException if {@code refTime} is {@code null}
+//         * @throws PersistenceException if occurs an exception while access to database
+//         * @since 1.0.0
+//         */
+//        @Override
+//        public void rebuildPersistedContents(LocalDateTime refTime, Consumer<ContentValue> recorder) {
+//            Dxo dxo = getDxo();
+//            return getDao().getToBeRebuilts(refTime).map(convertElements(dxo::rebuild))
+//                    .map(dxo.toValue()).forEach(recorder::accept);
 //        }
 //
 //        /**
