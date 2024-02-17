@@ -40,7 +40,6 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
-import jp.mydns.projectk.safi.service.AppTimeService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.alwaysThrow;
 import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import static jp.mydns.projectk.safi.util.LambdaUtils.p;
@@ -121,9 +120,6 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
         @Inject
         private Validator validator;
 
-        @Inject
-        private AppTimeService appTimeSvc;
-
         /**
          * {@inheritDoc}
          *
@@ -156,6 +152,7 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
          */
         protected ValidityPeriod toValidityPeriod(Map<String, String> value) {
             Objects.requireNonNull(value);
+
             return new ValidityPeriod.Builder()
                     .withFrom(TimeUtils.tryToLocalDateTime(
                             value.get("from")).map(TimeUtils::toOffsetDateTime).orElseGet(ValidityPeriod::defaultFrom))
@@ -176,21 +173,10 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
          */
         protected Map<AttKey, String> toAtts(Map<String, String> value) {
             Objects.requireNonNull(value);
+
             return Stream.of(AttKey.values()).filter(p(value::containsKey, AttKey::toString))
                     .collect(collectingAndThen(toMap(identity(), f(value::get).compose(AttKey::toString),
                             alwaysThrow(), () -> new EnumMap<>(AttKey.class)), Collections::unmodifiableMap));
-        }
-
-        /**
-         * Resolve validity based on current time in this application.
-         *
-         * @param vp the {@code ValidityPeriod}
-         * @return {@code true} if valid
-         * @throws NullPointerException if {@code vp} is {@code null}
-         * @since 1.0.0
-         */
-        protected boolean resolveValidityBasedOnAppNow(ValidityPeriod vp) {
-            return Objects.requireNonNull(vp).isEnabled(appTimeSvc.getLocalNow());
         }
     }
 }
