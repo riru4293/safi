@@ -100,6 +100,18 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
     ImportationValue<V> toImportationValue(E entity, ImportationValue<V> importValue);
 
     /**
+     * Build an importation value of logical deletion.
+     * <p>
+     * Used to logical delete the persisted content if lost.
+     *
+     * @param entity the {@code ContentEntity}
+     * @return the {@code ImportationValue} that built
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @since 1.0.0
+     */
+    ImportationValue<V> toLogicalDeletion(E entity);
+
+    /**
      * Convert to entity from value.
      * <p>
      * If contains a paired entity instance in {@code importValue}, returns the entity constructed based on that
