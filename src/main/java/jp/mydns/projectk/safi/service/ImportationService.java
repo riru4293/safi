@@ -26,23 +26,29 @@
 package jp.mydns.projectk.safi.service;
 
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import static java.util.function.Predicate.not;
+import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.dxo.ImportationDxo;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.util.ThrowableUtils;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentRecord;
 import jp.mydns.projectk.safi.value.ContentValue;
+import jp.mydns.projectk.safi.value.ImportationValue;
 import jp.mydns.projectk.safi.value.TransResult;
-import trial.ImportationValue;
 import trial.RecordingDxo;
 
 /**
@@ -85,29 +91,29 @@ public interface ImportationService<V extends ContentValue<V>> {
      * @since 1.0.0
      */
     Optional<ImportationValue<V>> toImportationValue(TransResult.Success trunsResult, Consumer<ContentRecord> failRecorder);
-//
-//    /**
-//     * Convert to the {@code ContentMap}. The purpose of conversion is to eliminate duplicate content.
-//     *
-//     * @param values collection of the importation content
-//     * @return collection of the importation content as the {@code ContentMap}
-//     * @throws NullPointerException if {@code values} is {@code null}
-//     * @throws IOException if occurs I/O error
-//     * @since 1.0.0
-//     */
-//    ContentMap<ImportationValue<C>> toContentMap(Stream<ImportationValue<C>> values) throws IOException;
-//
-//    /**
-//     * Returns the content to be registered from the difference of content between the will be imported and the
-//     * registered in the database. Registration means creation and updating.
-//     *
-//     * @param values collection of the importation content
-//     * @return content collection of the to be registered
-//     * @throws NullPointerException if {@code values} is {@code null}
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values);
+
+    /**
+     * Convert to the {@code ContentMap}. The purpose of conversion is to eliminate duplicate content.
+     *
+     * @param values collection of the importation content
+     * @return collection of the importation content as the {@code ContentMap}
+     * @throws NullPointerException if {@code values} is {@code null}
+     * @throws IOException if occurs I/O error
+     * @since 1.0.0
+     */
+    ContentMap<ImportationValue<V>> toContentMap(Stream<ImportationValue<V>> values) throws IOException;
+
+    /**
+     * Returns the content to be registered from the difference of content between the will be imported and the
+     * registered in the database. Registration means creation and updating.
+     *
+     * @param values collection of the importation content
+     * @return content collection of the to be registered
+     * @throws NullPointerException if {@code values} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    Stream<ImportationValue<V>> getToBeRegistered(Map<String, ImportationValue<V>> values);
 //
 //    /**
 //     * Returns the content to be explicit deleted.
@@ -227,15 +233,11 @@ public interface ImportationService<V extends ContentValue<V>> {
 
 //        @Inject
 //        private CommonBatchDao comDao;
-//
-//        @Inject
-//        private Jsonb jsonb;
-//
-//        @Inject
-//        private JsonService jsonSvc;
-//
-//        @Inject
-//        private ConfigService confSvc;
+        @Inject
+        private JsonService jsonSvc;
+
+        @Inject
+        private ConfigService confSvc;
 //
 //        @Inject
 //        private Validator validator;
@@ -316,60 +318,36 @@ public interface ImportationService<V extends ContentValue<V>> {
 
             return Optional.empty();
         }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws NullPointerException if {@code values} is {@code null}
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public ContentMap<ImportationValue<C>> toContentMap(Stream<ImportationValue<C>> values) throws IOException {
-//            return new ContentMap<>(Objects.requireNonNull(values).map(ImportationValue::asEntry).iterator(),
-//                    confSvc.getTmpDir(), new ContentConvertor());
-//        }
-//
-//        private class ContentConvertor implements ContentMap.Convertor<ImportationValue<C>> {
-//
-//            /**
-//             * {@inheritDoc}
-//             *
-//             * @since 1.0.0
-//             */
-//            @Override
-//            public String serialize(ImportationValue<C> c) {
-//                return jsonb.toJson(c);
-//            }
-//
-//            /**
-//             * {@inheritDoc}
-//             *
-//             * @since 1.0.0
-//             */
-//            @Override
-//            public ImportationValue<C> deserialize(String s) {
-//                JsonObject jo = jsonSvc.toJsonObject(Objects.requireNonNull(s));
-//                return new ImportationValue<>(jsonSvc.convertViaJson(jo.get("content"), getContentClass()),
-//                        jsonSvc.toStringMap(jo.getJsonObject("source")));
-//            }
-//        }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws NullPointerException if {@code values} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public Stream<ImportationValue<C>> getToBeRegistered(Map<String, ImportationValue<C>> values) {
-//            Set<String> targetIds = Set.of(values.keySet());
-//            ImportationDxo<E, C> dxo = getDxo();
-//
-//            return Stream.concat(getDao().getAdditions(targetIds).map(values::get),
-//                    getDao().getUpdates(targetIds).flatMap(e -> Stream.of(dxo.toValue(values.get(e.getId()), e))));
-//        }
-//
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code values} is {@code null}
+         * @since 1.0.0
+         */
+        @Override
+        public ContentMap<ImportationValue<V>> toContentMap(Stream<ImportationValue<V>> values) throws IOException {
+            return new ContentMap<>(Objects.requireNonNull(values).map(ImportationValue::asEntry).iterator(),
+                    confSvc.getTmpDir(), new ImportationValueSerializer());
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code values} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public Stream<ImportationValue<V>> getToBeRegistered(Map<String, ImportationValue<V>> values) {
+            Set<String> targetIds = Set.copyOf(values.keySet());
+
+            return Stream.concat(
+                    getDao().getAdditionalDiferrence(targetIds).map(values::get),
+                    getDao().getUpdateDifference(targetIds).map(e -> getDxo().toImportationValue(e, values.get(e.getId())))
+            );
+        }
+
 //        /**
 //         * {@inheritDoc}
 //         *
@@ -549,6 +527,30 @@ public interface ImportationService<V extends ContentValue<V>> {
 //            v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING,
 //                    List.of("Ignored because the limit was exceeded.")));
 //        }
+        private class ImportationValueSerializer implements ContentMap.Convertor<ImportationValue<V>> {
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public String serialize(ImportationValue<V> value) {
+                return jsonSvc.toJson(value);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public ImportationValue<V> deserialize(String value) {
+                JsonObject jo = jsonSvc.toJsonObject(Objects.requireNonNull(value));
+                return new ImportationValue<>(jsonSvc.convertViaJson(jo.get("content"), getContentType()),
+                        jsonSvc.toStringMap(jo.getJsonObject("source")));
+            }
+        }
     }
 
 //    /**
