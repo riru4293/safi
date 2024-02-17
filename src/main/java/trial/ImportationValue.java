@@ -26,6 +26,8 @@
 package trial;
 
 import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -73,6 +75,7 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
      * @since 1.0.0
      */
     @Override
+    @NotBlank
     @JsonbTransient
     public String getId() {
         return content.getId();
@@ -131,6 +134,7 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
      * @return source of content
      * @since 1.0.0
      */
+    @Valid
     public T getContent() {
         return content;
     }
