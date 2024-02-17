@@ -44,7 +44,6 @@ import jp.mydns.projectk.safi.value.RecordableValue;
  */
 public class ImportationValue<T extends ContentValue<T>> implements RecordableValue, Map.Entry<String, ImportationValue<T>> {
 
-    private final boolean explicitDeletion;
     private final T content;
     private final Map<String, String> source;
 
@@ -57,32 +56,8 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
      * @since 1.0.0
      */
     public ImportationValue(T content, Map<String, String> source) {
-        this(false, content, source);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param explicitDeletion {@code true} if explicit deletion, otherwise {@code false}
-     * @param content content value
-     * @param source source of content
-     * @throws NullPointerException if any argument is {@code null}
-     * @since 1.0.0
-     */
-    public ImportationValue(boolean explicitDeletion, T content, Map<String, String> source) {
-        this.explicitDeletion = explicitDeletion;
         this.content = Objects.requireNonNull(content);
         this.source = Objects.requireNonNull(source);
-    }
-
-    /**
-     * Indicate that explicit deletion.
-     *
-     * @return {@code true} if do force delete, otherwise {@code false}.
-     * @since 1.0.0
-     */
-    public boolean isExplicitDeletion() {
-        return explicitDeletion;
     }
 
     /**
