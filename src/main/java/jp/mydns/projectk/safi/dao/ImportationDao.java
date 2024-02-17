@@ -87,18 +87,16 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     }
 
     /**
-     * Append content to working area. Finally call the {@link EntityManager#flush()} and the
-     * {@link EntityManager#clear()}.
+     * Append content to working area.
      *
-     * @param wrks collection of the {@code ImportationWorkEntity}
-     * @throws NullPointerException if {@code wrks} is {@code null}, or if contains {@code null} in the {@code wrks}.
+     * @param wrk the {@code ImportationWorkEntity}
+     * @throws NullPointerException if {@code wrk} is {@code null}
      * @throws TransactionRequiredException if there is no transaction
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public void appendsWrk(Collection<ImportationWorkEntity> wrks) {
-        List.copyOf(wrks).forEach(comDao::persist);
-        comDao.flushAndClear();
+    public void appendWrk(ImportationWorkEntity wrk) {
+        comDao.persist(wrk);
     }
 
     /**
