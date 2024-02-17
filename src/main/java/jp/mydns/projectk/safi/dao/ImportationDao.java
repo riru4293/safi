@@ -95,7 +95,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * {@link EntityManager#clear()}.
      *
      * @param wrks collection of the {@code ImportationWorkEntity}
-     * @throws NullPointerException if {@code wrks} is {@code null}, or if contains {@code null} in the {@code works}.
+     * @throws NullPointerException if {@code wrks} is {@code null}, or if contains {@code null} in the {@code wrks}.
      * @throws TransactionRequiredException if there is no transaction
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
