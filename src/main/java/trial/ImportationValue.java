@@ -35,7 +35,7 @@ import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.RecordableValue;
 
 /**
- * Value of importation.
+ * Value of importation. Wrapped content and source value. And also represents whether content is explicitly removed.
  *
  * @param <T> content type
  * @author riru
@@ -52,7 +52,8 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
      *
      * @param content content value
      * @param source source of content
-     * @throws NullPointerException if {@code content} or {@code source} is {@code null}
+     * @throws NullPointerException if any argument is {@code null}
+     * @since 1.0.0
      */
     public ImportationValue(T content, Map<String, String> source) {
         this.content = Objects.requireNonNull(content);
