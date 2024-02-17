@@ -54,7 +54,7 @@ public class MediumEntity extends ContentEntity<MediumEntity> {
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id",
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private ImportWorkEntity importWorkEntity;
+    private ImportationWorkEntity importWorkEntity;
 
     /**
      * Get the {@code ImportWorkEntity}.
@@ -63,7 +63,7 @@ public class MediumEntity extends ContentEntity<MediumEntity> {
      * @since 1.0.0
      */
     @JsonbTransient
-    public ImportWorkEntity getImportWorkEntity() {
+    public ImportationWorkEntity getImportWorkEntity() {
         return importWorkEntity;
     }
 

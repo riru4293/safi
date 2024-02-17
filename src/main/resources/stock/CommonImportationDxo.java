@@ -26,7 +26,7 @@
 package stock;
 
 import jakarta.enterprise.context.RequestScoped;
-import jp.mydns.projectk.safi.entity.ImportWorkEntity;
+import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
 import jp.mydns.projectk.safi.value.ContentValue;
 
 /**
@@ -36,7 +36,7 @@ import jp.mydns.projectk.safi.value.ContentValue;
 @RequestScoped
 public class CommonImportationDxo {
 
-    public ImportWorkEntity toWrkEntity(ContentValue value) {
+    public ImportationWorkEntity toWrkEntity(ContentValue value) {
 
     }
 

@@ -25,6 +25,7 @@
  */
 package stock;
 
+import jp.mydns.projectk.safi.dao.ImportationDao;
 import jakarta.persistence.PersistenceException;
 import jp.mydns.projectk.safi.value.ContentValue;
 

@@ -54,7 +54,7 @@ public class Org2Entity extends ContentEntity<Org2Entity> {
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id",
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private ImportWorkEntity importWorkEntity;
+    private ImportationWorkEntity importWorkEntity;
 
     /**
      * Get the {@code ImportWorkEntity}.
@@ -63,7 +63,7 @@ public class Org2Entity extends ContentEntity<Org2Entity> {
      * @since 1.0.0
      */
     @JsonbTransient
-    public ImportWorkEntity getImportWorkEntity() {
+    public ImportationWorkEntity getImportWorkEntity() {
         return importWorkEntity;
     }
 

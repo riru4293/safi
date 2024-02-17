@@ -25,6 +25,7 @@
  */
 package stock;
 
+import jp.mydns.projectk.safi.dao.ImportationDao;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Selection;
@@ -32,7 +33,7 @@ import jakarta.persistence.metamodel.SingularAttribute;
 import java.util.List;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.UserPathContext;
-import jp.mydns.projectk.safi.entity.ImportWorkEntity;
+import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
 import jp.mydns.projectk.safi.entity.ImportWorkEntity_;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.entity.UserEntity_;
@@ -64,7 +65,7 @@ public class UserImportationDao extends ImportationDao<UserEntity> {
      * @since 1.0.0
      */
     @Override
-    protected SingularAttribute<ImportWorkEntity, UserEntity> getPathToContentEntity() {
+    protected SingularAttribute<ImportationWorkEntity, UserEntity> getPathToContentEntity() {
         return ImportWorkEntity_.userEntity;
     }
 
@@ -74,7 +75,7 @@ public class UserImportationDao extends ImportationDao<UserEntity> {
      * @since 1.0.0
      */
     @Override
-    protected SingularAttribute<UserEntity, ImportWorkEntity> getPathToWrkEntity() {
+    protected SingularAttribute<UserEntity, ImportationWorkEntity> getPathToWrkEntity() {
         return UserEntity_.importWorkEntity;
     }
 

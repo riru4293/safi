@@ -54,7 +54,7 @@ public class BelongOrgEntity extends ContentEntity<BelongOrgEntity> {
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id",
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private ImportWorkEntity importWorkEntity;
+    private ImportationWorkEntity importWorkEntity;
 
     /**
      * Get the {@code ImportWorkEntity}.
@@ -63,7 +63,7 @@ public class BelongOrgEntity extends ContentEntity<BelongOrgEntity> {
      * @since 1.0.0
      */
     @JsonbTransient
-    public ImportWorkEntity getImportWorkEntity() {
+    public ImportationWorkEntity getImportWorkEntity() {
         return importWorkEntity;
     }
 
