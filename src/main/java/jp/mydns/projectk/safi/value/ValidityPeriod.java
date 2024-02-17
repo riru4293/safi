@@ -40,6 +40,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
+import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
@@ -144,8 +145,21 @@ public interface ValidityPeriod {
      */
     @JsonbTransient
     default boolean isEnabled(LocalDateTime refTime) {
-        OffsetDateTime r = OffsetDateTime.of(Objects.requireNonNull(refTime), ZoneOffset.UTC);
-        return !isBan() && !r.isBefore(getFrom()) && !r.isAfter(getTo());
+        return isEnabled(TimeUtils.toOffsetDateTime(refTime));
+    }
+
+    /**
+     * Returns {@code true} if {@code refTime} is within the validity period and not forbidden to be valid.
+     *
+     * @param refTime reference date-time
+     * @return {@code true} if {@code refTime} is within the validity period and not forbidden to be valid, otherwise
+     * {@code false}.
+     * @throws NullPointerException if {@code refTime} is {@code null}
+     * @since 1.0.0
+     */
+    @JsonbTransient
+    default boolean isEnabled(OffsetDateTime refTime) {
+        return !isBan() && !refTime.isBefore(getFrom()) && !refTime.isAfter(getTo());
     }
 
     /**
