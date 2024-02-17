@@ -76,7 +76,7 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
 
     /**
      * Build an importation value from the transform result. If {@code transResult} indicates an explicit deletion, the
-     * expiration date is rewritten in the past, resulting in deleted content.
+     * expiration date-time is rewritten in the past, resulting in deleted content.
      *
      * @param transResult the {@code TransResult.Success}
      * @return the {@code ImportationWorkEntity}
