@@ -114,7 +114,7 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
      */
     E toEntity(ImportationValue<V> importValue);
 
-    abstract class AbstractImportationDxo<E extends ContentEntity, V extends ContentValue<V>>
+    abstract class AbstractImportationDxo<E extends ContentEntity<E>, V extends ContentValue<V>>
             implements ImportationDxo<E, V> {
 
         @Inject
@@ -139,12 +139,24 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
         }
 
         /**
+         * Determine explicit deletion. Use key values ​​from {@code doDelete}.
+         *
+         * @param value key-value content
+         * @return {@code true} if means explicit deletion, otherwise {@code false}.
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @since 1.0.0
+         */
+        protected boolean toDoDelete(Map<String, String> value) {
+            return Boolean.parseBoolean(Objects.requireNonNull(value).get("doDelete"));
+        }
+
+        /**
          * Build the {@code ValidityPeriod} from key-value content. Use key values ​​from {@code from}, {@code to},
          * {@code ban}. Use the default value if not exists a value in key-value content.
          *
          * @param value key-value content
          * @return the {@code ValidityPeriod}. Please note, it has not been verified.
-         * @throws NullPointerException if {@code content} is {@code null}
+         * @throws NullPointerException if {@code value} is {@code null}
          * @see ValidityPeriod#defaultFrom()
          * @see ValidityPeriod#defaultTo()
          * @see ValidityPeriod#defaultBan()
@@ -168,7 +180,7 @@ public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<
          *
          * @param value key-value content
          * @return attributes
-         * @throws NullPointerException if {@code content} is {@code null}
+         * @throws NullPointerException if {@code value} is {@code null}
          * @since 1.0.0
          */
         protected Map<AttKey, String> toAtts(Map<String, String> value) {
