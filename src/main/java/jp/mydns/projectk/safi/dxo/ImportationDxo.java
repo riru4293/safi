@@ -28,6 +28,7 @@ package jp.mydns.projectk.safi.dxo;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -173,10 +174,21 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
                     .withTo(!isExplicitDeletion(value)
                             ? TimeUtils.tryToLocalDateTime(value.get("to")).map(TimeUtils::toOffsetDateTime)
                                     .orElseGet(ValidityPeriod::defaultFrom)
-                            : appTimeSvc.getOffsetNow().minusSeconds(1))
+                            : getExpiredTimeOnNow())
                     .withBan(Optional.ofNullable(
                             value.get("ban")).map(Boolean::valueOf).orElseGet(ValidityPeriod::defaultBan))
                     .build(validator, Unsafe.class);
+        }
+
+        /**
+         * Get the expired time on now.
+         *
+         * @return 1 second ago
+         * @since 1.0.0
+         * @see AppTimeService#getOffsetNow() reference time
+         */
+        protected OffsetDateTime getExpiredTimeOnNow() {
+            return appTimeSvc.getOffsetNow().minusSeconds(1);
         }
 
         /**
