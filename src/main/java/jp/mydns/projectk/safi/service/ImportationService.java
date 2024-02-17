@@ -31,6 +31,7 @@ import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,8 +43,10 @@ import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.dxo.ImportationDxo;
 import jp.mydns.projectk.safi.entity.ContentEntity;
+import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
 import jp.mydns.projectk.safi.util.ThrowableUtils;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentRecord;
 import jp.mydns.projectk.safi.value.ContentValue;
@@ -114,49 +117,28 @@ public interface ImportationService<V extends ContentValue<V>> {
      * @since 1.0.0
      */
     Stream<ImportationValue<V>> getToBeRegistered(Map<String, ImportationValue<V>> values);
-//
-//    /**
-//     * Returns the content to be explicit deleted.
-//     *
-//     * @param values collection of the importation content
-//     * @return content collection of the to be registered
-//     * @throws NullPointerException if {@code values} is {@code null}
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    Stream<ImportationValue<C>> getToBeExplicitDeleted(Collection<ImportationValue<C>> values);
-//
-//    /**
-//     * Build an implicit deletion content extraction condition using additional conditions.
-//     *
-//     * @param additionalCondition additional conditions for extract lost content
-//     * @return implicit deletion content extraction condition
-//     * @throws NullPointerException if {@code additionalCondition} is {@code null}
-//     * @since 1.0.0
-//     */
-//    Condition buildConditionForImplicitDeletion(Condition additionalCondition);
-//
-//    /**
-//     * Get a count of the implicit deletion content.
-//     *
-//     * @param condition implicit deletion content extraction condition
-//     * @return count of the implicit deletion content
-//     * @throws NullPointerException if {@code condition} is {@code null}
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    long getToBeImplicitDeleteCount(Condition condition);
-//
-//    /**
-//     * Gets a chunked collection of implicitly deleted content.
-//     *
-//     * @param condition implicit deletion content extraction condition
-//     * @return implicit deletion content
-//     * @throws NullPointerException if {@code condition} is {@code null}
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition condition);
+
+    /**
+     * Get a count of the implicit deletion content.
+     *
+     * @param condition implicit deletion content narrow down condition
+     * @return count of the implicit deletion content
+     * @throws NullPointerException if {@code condition} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    long getCountOfToBeImplicitDelete(Condition condition);
+
+    /**
+     * Gets a chunked collection of implicitly deleted content.
+     *
+     * @param condition implicit deletion content narrow down condition
+     * @return implicit deletion content
+     * @throws NullPointerException if {@code condition} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    Stream<List<ImportationValue<V>>> getToBeImplicitDeleted(Condition condition);
 //
 //    /**
 //     * Gets a chunked collection of to be rebuilt content.
@@ -348,44 +330,29 @@ public interface ImportationService<V extends ContentValue<V>> {
             );
         }
 
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws NullPointerException if {@code values} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public Stream<ImportationValue<C>> getToBeExplicitDeleted(Collection<ImportationValue<C>> values) {
-//            return getDao().getContents(Objects.requireNonNull(values).stream()
-//                    .filter(ImportationValue::doDelete).map(ImportationValue::getId).toList()
-//            ).map(e -> new ImportationValue<>(getDxo().toLogicalDeletion(e), values.get(e.getId()).getSource(), e));
-//        }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws NullPointerException if {@code condition} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public long getToBeImplicitDeleteCount(Condition condition) {
-//            return getDao().getCountOfLosts(condition);
-//        }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws NullPointerException if {@code condition} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public Stream<List<ImportationValue<C>>> getToBeImplicitDeleted(Condition condition) {
-//            return getDao().getLosts(additional).map(convertElements(
-//                    e -> new ImportationValue<>(getDxo().toLogicalDeletion(e), Map.of(), e)));
-//        }
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code condition} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public long getCountOfToBeImplicitDelete(Condition condition) {
+            return getDao().getCountOfDeletionDifference(condition);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code condition} is {@code null}
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        public Stream<List<ImportationValue<V>>> getToBeImplicitDeleted(Condition condition) {
+            return getDao().getDeletionDifference(condition).map(convertElements(getDxo()::toLogicalDeletion));
+        }
 //
 //        /**
 //         * {@inheritDoc}
@@ -527,6 +494,7 @@ public interface ImportationService<V extends ContentValue<V>> {
 //            v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING,
 //                    List.of("Ignored because the limit was exceeded.")));
 //        }
+
         private class ImportationValueSerializer implements ContentMap.Convertor<ImportationValue<V>> {
 
             /**
