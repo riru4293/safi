@@ -79,8 +79,7 @@ public class JsonService {
     }
 
     /**
-     * Conversion to {@code JsonObject}. It is wrapper method of the
-     * {@link JsonbUtils#toJsonObject(java.lang.Object, jakarta.json.bind.Jsonb)}.
+     * Conversion to {@code JsonObject}.
      *
      * @param obj source value
      * @return the value converted to the {@code JsonObject}
@@ -135,7 +134,7 @@ public class JsonService {
                 jsonb.fromJson(v.toString(), clazz);
 
             default ->
-                jsonb.fromJson(jsonb.toJson(obj).toString(), clazz);
+                jsonb.fromJson(jsonb.toJson(obj), clazz);
         };
     }
 }
