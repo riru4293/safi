@@ -39,13 +39,14 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
+import jp.mydns.projectk.safi.batch.BatchLogger;
+import jp.mydns.projectk.safi.batch.JobFinisher;
 import jp.mydns.projectk.safi.constant.ContentKind;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.ValidationService;
 import jp.mydns.projectk.safi.value.Job;
 import jp.mydns.projectk.safi.value.Plugdef;
-import trial.JobService;
 
 /**
  * Abstract implements of the <i>Jakarta-Batch</i> for the <i>Job</i> processing.
