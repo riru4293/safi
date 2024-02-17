@@ -25,9 +25,11 @@
  */
 package jp.mydns.projectk.safi.service;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.TransactionRequiredException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
@@ -46,7 +48,9 @@ import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
 import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.dxo.ImportationDxo;
+import jp.mydns.projectk.safi.dxo.UserImportationDxo;
 import jp.mydns.projectk.safi.entity.ContentEntity;
+import jp.mydns.projectk.safi.entity.UserEntity;
 import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
 import jp.mydns.projectk.safi.util.ThrowableUtils;
 import jp.mydns.projectk.safi.util.ValidationUtils;
@@ -56,6 +60,8 @@ import jp.mydns.projectk.safi.value.ContentRecord;
 import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.ImportationValue;
 import jp.mydns.projectk.safi.value.TransResult;
+import jp.mydns.projectk.safi.value.UserValue;
+import stock.UserImportationDao;
 import trial.RecordingDxo;
 
 /**
@@ -70,22 +76,24 @@ import trial.RecordingDxo;
 public interface ImportationService<V extends ContentValue<V>> {
 
     /**
-     * Initialize the importation working area. All data in working area will be erased.
+     * Initialize the importation working area. All data in working area will be erased. Finally call the
+     * {@link CommonBatchDao#flushAndClear()}.
      *
      * @throws PersistenceException if occurs an exception while access to database
+     * @throws TransactionRequiredException if there is no transaction
      * @since 1.0.0
      */
     void initializeWork();
 
     /**
-     * Register import content collection to working area.
+     * Register import content to working area.
      *
-     * @param values import content collection
-     * @throws NullPointerException if {@code values} is {@code null}
+     * @param value import content
+     * @throws NullPointerException if {@code value} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    void registerWork(Collection<ImportationValue<V>> values);
+    void registerWork(ImportationValue<V> value);
 
     /**
      * Convert to the {@code ImportationValue}. Values that fail the conversion are excluded from the return value and
@@ -120,6 +128,7 @@ public interface ImportationService<V extends ContentValue<V>> {
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
+    @Transactional
     Stream<ImportationValue<V>> getToBeRegistered(Map<String, ImportationValue<V>> values);
 
     /**
@@ -195,7 +204,8 @@ public interface ImportationService<V extends ContentValue<V>> {
      * @version 1.0.0
      * @since 1.0.0
      */
-    abstract class AbstractImportationService<E extends ContentEntity<E>, V extends ContentValue<V>> implements ImportationService<V> {
+    abstract class AbstractImportationService<E extends ContentEntity<E>, V extends ContentValue<V>> implements
+            ImportationService<V> {
 
         @Inject
         private CommonBatchDao comDao;
@@ -237,23 +247,26 @@ public interface ImportationService<V extends ContentValue<V>> {
          * {@inheritDoc}
          *
          * @throws PersistenceException if occurs an exception while access to database
+         * @throws TransactionRequiredException if there is no transaction
          * @since 1.0.0
          */
         @Override
         public void initializeWork() {
             getDao().clearWrk();
+            comDao.flushAndClear();
         }
 
         /**
          * {@inheritDoc}
          *
-         * @throws NullPointerException if {@code values} is {@code null}
+         * @throws NullPointerException if {@code value} is {@code null}
          * @throws PersistenceException if occurs an exception while access to database
+         * @throws TransactionRequiredException if there is no transaction
          * @since 1.0.0
          */
         @Override
-        public void registerWork(Collection<ImportationValue<V>> values) {
-            getDao().appendsWrk(Objects.requireNonNull(values).stream().map(getDxo()::toImportationWorkEntity).toList());
+        public void registerWork(ImportationValue<V> value) {
+            getDao().appendWrk(getDxo().toImportationWorkEntity(Objects.requireNonNull(value)));
         }
 
         /**
@@ -390,102 +403,7 @@ public interface ImportationService<V extends ContentValue<V>> {
         public void updateContentDerivedData() {
             getDao().updateDerivedData();
         }
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public void rebuildPersistedContents() {
-//            Consumer<RecordableValue> record
-//                    = v -> recSvc.rec(recDxo.toSuccess(v, RecordKind.REGISTER));
-//
-//            try (var rebuilds = getDao().getRebuilds(appTimeSvc.getNow())) {
-//                rebuilds.forEach(chunk -> {
-//                    chunk.stream().map(getDxo()::rebuild)
-//                            .forEach(c(record).andThen(comDao::merge));
-//                    comDao.flushAndClear();
-//                });
-//            }
-//
-//            rebuildDependent();
-//        }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @param refTime reference time of the rebuild
-//         * @param resultCollector recording result kind collector
-//         * @throws NullPointerException if {@code refTime} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public void rebuildPersistedContents(LocalDateTime refTime, Consumer<ContentValue> recorder) {
-//            Dxo dxo = getDxo();
-//            return getDao().getToBeRebuilts(refTime).map(convertElements(dxo::rebuild))
-//                    .map(dxo.toValue()).forEach(recorder::accept);
-//        }
-//
 
-//
-//        @Transactional(Transactional.TxType.MANDATORY)
-//        public void initializeImportationWork() {
-//
-//        }
-//
-//        @Transactional(Transactional.TxType.MANDATORY)
-//        public Stream<TransResult.Success> extractSuccessfulsAndCollectFailures(Stream<TransResult> transformed) {
-//
-//        }
-//
-//        public ContentMap<ImportationValue<C>> toContentMap(Stream<ImportationValue<C>> values) throws IOException {
-//            return new ContentMap<>(values.map(ImportationValue::asEntry).iterator(), confSvc.getTmpDir(), new ContentConvertor());
-//        }
-//
-//        private class ContentConvertor implements ContentMap.Convertor<ImportationValue<C>> {
-//
-//            /**
-//             * {@inheritDoc}
-//             *
-//             * @since 1.0.0
-//             */
-//            @Override
-//            public String serialize(ImportationValue<C> c) {
-//                return jsonb.toJson(c);
-//            }
-//
-//            /**
-//             * {@inheritDoc}
-//             *
-//             * @since 1.0.0
-//             */
-//            @Override
-//            public ImportationValue<C> deserialize(String s) {
-//                JsonObject j = jsonSvc.toJsonObject(Objects.requireNonNull(s));
-//                return new ImportationValue<>(
-//                        jsonSvc.convertViaJson(j.get("content"), getContentClass()),
-//                        jsonSvc.toStringMap(j.getJsonObject("source")));
-//            }
-//        }
-//
-//        public void registerToImportationWork(Collection<ImportationValue<C>> contents) {
-//
-//        }
-//
-//        public Condition buildConditionForExtractingImplicitDeletion(Condition additionalCondition) {
-//
-//        }
-//
-//        public void collectDuplicateAsFailure(ImportationValue<C> duplicate) {
-//            d -> recSvc.rec(recDxo.toFailure(d, JobPhase.VALIDATION, List.of("Duplicate id.")));
-//        }
-//
-//        public void collectDeniedDeletionAsFailure(ImportationValue<C> value) {
-//            v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING,
-//                    List.of("Ignored because the limit was exceeded.")));
-//        }
         private class ImportationValueSerializer implements ContentMap.Convertor<ImportationValue<V>> {
 
             /**
@@ -512,36 +430,35 @@ public interface ImportationService<V extends ContentValue<V>> {
         }
     }
 
-//    /**
-//     * Batch processing for user content.
-//     *
-//     * @author riru
-//     * @version 1.0.0
-//     * @since 1.0.0
-//     */
-//    @RequestScoped
-//    class UserImportationService extends AbstractImportationService<UserEntity, UserValue>
-//            implements ImportationService<UserValue> {
-//
-//        @Inject
-//        private UserImportationDxo dxo;
-//
-//        @Inject
-//        private UserImportationDao dao;
-//
-//        @Override
-//        protected UserImportationDxo getDxo() {
-//            return dxo;
-//        }
-//
-//        @Override
-//        protected UserImportationDao getDao() {
-//            return dao;
-//        }
-//
-//        @Override
-//        protected Class<UserValue> getContentType() {
-//            return UserValue.class;
-//        }
-//    }
+    /**
+     * Batch processing for for <i>User</i> content.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
+    @RequestScoped
+    class UserImportationService extends AbstractImportationService<UserEntity, UserValue> {
+
+        @Inject
+        private UserImportationDxo dxo;
+
+        @Inject
+        private UserImportationDao dao;
+
+        @Override
+        protected UserImportationDxo getDxo() {
+            return dxo;
+        }
+
+        @Override
+        protected UserImportationDao getDao() {
+            return dao;
+        }
+
+        @Override
+        protected Class<UserValue> getContentType() {
+            return UserValue.class;
+        }
+    }
 }
