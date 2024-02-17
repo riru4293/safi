@@ -47,9 +47,9 @@ import static jp.mydns.projectk.safi.util.LambdaUtils.p;
 import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.validator.Unsafe;
 import jp.mydns.projectk.safi.value.ContentValue;
+import jp.mydns.projectk.safi.value.ImportationValue;
 import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
-import trial.ImportationValue;
 
 /**
  * Data exchange interface for importation processing.
