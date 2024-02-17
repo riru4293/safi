@@ -60,7 +60,7 @@ import trial.ImportationValue;
  * @version 1.0.0
  * @since 1.0.0
  */
-public interface ImportationDxo<E extends ContentEntity, V extends ContentValue<V>> {
+public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentValue<V>> {
 
     /**
      * Build a working entity from importation value.
