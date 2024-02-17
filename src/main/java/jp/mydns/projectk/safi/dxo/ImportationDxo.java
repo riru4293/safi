@@ -40,6 +40,7 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
+import jp.mydns.projectk.safi.service.AppTimeService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.alwaysThrow;
 import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import static jp.mydns.projectk.safi.util.LambdaUtils.p;
@@ -74,7 +75,8 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
     ImportationWorkEntity toImportationWorkEntity(ImportationValue<V> importValue);
 
     /**
-     * Build an importation value from the transform result.
+     * Build an importation value from the transform result. If {@code transResult} indicates an explicit deletion, the
+     * expiration date is rewritten in the past, resulting in deleted content.
      *
      * @param transResult the {@code TransResult.Success}
      * @return the {@code ImportationWorkEntity}
@@ -120,6 +122,9 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
         @Inject
         private Validator validator;
 
+        @Inject
+        private AppTimeService appTimeSvc;
+
         /**
          * {@inheritDoc}
          *
@@ -139,20 +144,9 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
         }
 
         /**
-         * Determine explicit deletion. Use key values ​​from {@code doDelete}.
-         *
-         * @param value key-value content
-         * @return {@code true} if means explicit deletion, otherwise {@code false}.
-         * @throws NullPointerException if {@code value} is {@code null}
-         * @since 1.0.0
-         */
-        protected boolean isExplicitDeletion(Map<String, String> value) {
-            return Boolean.parseBoolean(Objects.requireNonNull(value).get("doDelete"));
-        }
-
-        /**
          * Build the {@code ValidityPeriod} from key-value content. Use key values ​​from {@code from}, {@code to},
-         * {@code ban}. Use the default value if not exists a value in key-value content.
+         * {@code ban}. Use the default value if not exists a value in key-value content. If {@code value} indicates an
+         * explicit deletion, the expiration date-time is rewritten in the past.
          *
          * @param value key-value content
          * @return the {@code ValidityPeriod}. Please note, it has not been verified.
@@ -168,11 +162,24 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
             return new ValidityPeriod.Builder()
                     .withFrom(TimeUtils.tryToLocalDateTime(
                             value.get("from")).map(TimeUtils::toOffsetDateTime).orElseGet(ValidityPeriod::defaultFrom))
-                    .withTo(TimeUtils.tryToLocalDateTime(
-                            value.get("to")).map(TimeUtils::toOffsetDateTime).orElseGet(ValidityPeriod::defaultFrom))
+                    .withTo(!isExplicitDeletion(value)
+                            ? TimeUtils.tryToLocalDateTime(value.get("to")).map(TimeUtils::toOffsetDateTime)
+                                    .orElseGet(ValidityPeriod::defaultFrom)
+                            : appTimeSvc.getOffsetNow().minusSeconds(1))
                     .withBan(Optional.ofNullable(
                             value.get("ban")).map(Boolean::valueOf).orElseGet(ValidityPeriod::defaultBan))
                     .build(validator, Unsafe.class);
+        }
+
+        /**
+         * Determine explicit deletion. Use key values ​​from {@code doDelete}.
+         *
+         * @param value key-value content
+         * @return {@code true} if means explicit deletion, otherwise {@code false}.
+         * @since 1.0.0
+         */
+        private boolean isExplicitDeletion(Map<String, String> value) {
+            return Boolean.parseBoolean(value.get("doDelete"));
         }
 
         /**
