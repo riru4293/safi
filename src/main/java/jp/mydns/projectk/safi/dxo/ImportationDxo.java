@@ -146,7 +146,7 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
          * @throws NullPointerException if {@code value} is {@code null}
          * @since 1.0.0
          */
-        protected boolean toDoDelete(Map<String, String> value) {
+        protected boolean toIsExplicitDeletion(Map<String, String> value) {
             return Boolean.parseBoolean(Objects.requireNonNull(value).get("doDelete"));
         }
 
