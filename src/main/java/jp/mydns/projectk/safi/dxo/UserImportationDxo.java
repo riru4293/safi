@@ -73,7 +73,7 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
         Map<String, String> value = transResult.getContent();
         ValidityPeriod vp = toValidityPeriod(value);
 
-        return new ImportationValue<>(isExplicitDeletion(value),
+        return new ImportationValue<>(
                 new UserValue.Builder(digestGen)
                         .withId(value.get("id"))
                         .withEnabled(vp.isEnabled(appTimeSvc.getLocalNow()))
@@ -96,12 +96,10 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
         Objects.requireNonNull(entity);
         Objects.requireNonNull(importValue);
 
-        UserValue value = importValue.getContent();
-
-        return new ImportationValue<>(importValue.isExplicitDeletion(),
+        return new ImportationValue<>(
                 new UserValue.Builder(digestGen)
-                        .with(value)
-                        .withEnabled(value.getValidityPeriod().isEnabled(appTimeSvc.getLocalNow()))
+                        .with(importValue.getContent())
+                        .withEnabled(importValue.getContent().getValidityPeriod().isEnabled(appTimeSvc.getLocalNow()))
                         .withEntity(entity)
                         .build(validator, Unsafe.class),
                 importValue.getSource());
