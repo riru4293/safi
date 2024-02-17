@@ -40,7 +40,6 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Subquery;
 import jakarta.persistence.metamodel.SingularAttribute;
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -77,17 +76,14 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     private CommonBatchDao comDao;
 
     /**
-     * Clear the working area for importation. Finally call the {@link EntityManager#flush()} and the
-     * {@link EntityManager#clear()}.
+     * Clear the working area for importation.
      *
      * @throws TransactionRequiredException if there is no transaction
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    @Transactional(Transactional.TxType.MANDATORY)
     public void clearWrk() {
         em.createQuery(em.getCriteriaBuilder().createCriteriaDelete(ImportationWorkEntity.class)).executeUpdate();
-        comDao.flushAndClear();
     }
 
     /**
@@ -100,7 +96,6 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    @Transactional(Transactional.TxType.MANDATORY)
     public void appendsWrk(Collection<ImportationWorkEntity> wrks) {
         List.copyOf(wrks).forEach(comDao::persist);
         comDao.flushAndClear();
