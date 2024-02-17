@@ -81,7 +81,8 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
                         .withAtts(toAtts(value))
                         .withValidityPeriod(vp)
                         .withNote(value.get("note"))
-                        .build(validator), transResult.getSource());
+                        .build(validator),
+                transResult.getSource());
     }
 
     /**
