@@ -30,7 +30,6 @@ import jakarta.persistence.EntityManager;
 import static jakarta.persistence.LockModeType.PESSIMISTIC_WRITE;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TransactionRequiredException;
-import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -39,14 +38,12 @@ import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Selection;
 import jakarta.persistence.criteria.Subquery;
 import jakarta.persistence.metamodel.SingularAttribute;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -58,8 +55,6 @@ import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
 import jp.mydns.projectk.safi.entity.ImportationWorkEntity_;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb_;
 import jp.mydns.projectk.safi.producer.EntityManagerProducer;
-import jp.mydns.projectk.safi.util.JpaUtils;
-import static jp.mydns.projectk.safi.util.LambdaUtils.convertElements;
 import jp.mydns.projectk.safi.util.StreamUtils;
 import jp.mydns.projectk.safi.value.Condition;
 
@@ -72,7 +67,7 @@ import jp.mydns.projectk.safi.value.Condition;
  * @version 1.0.0
  * @since 1.0.0
  */
-public abstract class ImportationDao<E extends ContentEntity> {
+public abstract class ImportationDao<E extends ContentEntity<E>> {
 
     @Inject
     @EntityManagerProducer.ForBatch
@@ -82,7 +77,7 @@ public abstract class ImportationDao<E extends ContentEntity> {
     private CommonBatchDao comDao;
 
     /**
-     * Clear the importation working area. Finally call the {@link EntityManager#flush()} and the
+     * Clear the working area for importation. Finally call the {@link EntityManager#flush()} and the
      * {@link EntityManager#clear()}.
      *
      * @throws TransactionRequiredException if there is no transaction
@@ -96,18 +91,18 @@ public abstract class ImportationDao<E extends ContentEntity> {
     }
 
     /**
-     * Append contents the importation working area. Finally call the {@link EntityManager#flush()} and the
+     * Append content to working area. Finally call the {@link EntityManager#flush()} and the
      * {@link EntityManager#clear()}.
      *
      * @param wrks collection of the {@code ImportationWorkEntity}
-     * @throws NullPointerException if {@code works} is {@code null}, or if contains {@code null} in the {@code works}.
+     * @throws NullPointerException if {@code wrks} is {@code null}, or if contains {@code null} in the {@code works}.
      * @throws TransactionRequiredException if there is no transaction
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
     @Transactional(Transactional.TxType.MANDATORY)
     public void appendsWrk(Collection<ImportationWorkEntity> wrks) {
-        wrks.forEach(comDao::persist);
+        List.copyOf(wrks).forEach(comDao::persist);
         comDao.flushAndClear();
     }
 
@@ -120,17 +115,17 @@ public abstract class ImportationDao<E extends ContentEntity> {
     protected abstract Class<E> getContentEntityClass();
 
     /**
-     * Get the relationship to the <i>ID-Content</i> entity from import-work entity.
+     * Get the relationship to the <i>ID-Content</i> entity from the {@code ImportationWorkEntity}.
      *
-     * @return relationship to content
+     * @return relationship to the <i>ID-Content</i> entity
      * @since 1.0.0
      */
     protected abstract SingularAttribute<ImportationWorkEntity, E> getPathToContentEntity();
 
     /**
-     * Get the relationship to the import-work entity from the <i>ID-Content</i> entity.
+     * Get the relationship to the {@code ImportationWorkEntity} from the <i>ID-Content</i> entity.
      *
-     * @return relationship to import-work
+     * @return relationship to the {@code ImportationWorkEntity}
      * @since 1.0.0
      */
     protected abstract SingularAttribute<E, ImportationWorkEntity> getPathToWrkEntity();
@@ -138,7 +133,7 @@ public abstract class ImportationDao<E extends ContentEntity> {
     /**
      * Get the {@code CriteriaPathContext} made from path of the <i>ID-Content</i> entity.
      *
-     * @param path path of the content entity
+     * @param path path of the <i>ID-Content</i> entity
      * @return the {@code CriteriaPathContext}
      * @throws NullPointerException if {@code path} is {@code null}
      * @since 1.0.0
@@ -146,21 +141,45 @@ public abstract class ImportationDao<E extends ContentEntity> {
     protected abstract CriteriaPathContext getPathContext(Path<E> path);
 
     /**
-     * Get the id of the <i>ID-Content</i> that will be added by import processing. It exists for those that are about
-     * to be registered, but not for those that have already been registered.
+     * Get the <i>ID-Content</i> with the specified id.
      *
-     * @param extractionTargetIds the id for narrow down processing results. Anything not included in
-     * {@code extractionTargetIds} will be excluded from the processing results.
-     * @return stream of id for the <i>ID-Content</i> collection to be added.
-     * @throws NullPointerException if {@code extractionTargetIds} is {@code null}
+     * @param targetIds id for narrow down processing results
+     * @return stream of the <i>ID-Content</i>
+     * @throws NullPointerException if {@code targetIds} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public Stream<String> getAdditions(Collection<String> extractionTargetIds) {
-        // Note: Throw NullPointerException if coll is null, or if it contains any nulls.
-        Set<String> targets = Set.copyOf(extractionTargetIds);
+    public Stream<E> getContents(List<String> targetIds) {
+        if (Set.copyOf(targetIds).isEmpty()) {
+            return Stream.empty();
+        }
 
-        if (targets.isEmpty()) {
+        Class<E> eClass = getContentEntityClass();
+        CriteriaQuery<E> cq = em.getCriteriaBuilder().createQuery(eClass);
+
+        return em.createQuery(cq.where(cq.from(eClass).get(ContentEntity_.id).in(targetIds)))
+                .setLockMode(PESSIMISTIC_WRITE).getResultStream();
+    }
+
+    /**
+     * Get the id of the <i>ID-Content</i> that will be added by import processing. It exists for those that are about
+     * to be registered, but not for those that have already been registered.
+     *
+     * <p>
+     * Notes.
+     * <ul>
+     * <li>Must run {@link #appendsWrk(java.util.Collection) registration to working area} beforehand</li>
+     * </ul>
+     *
+     * @param targetIds id for narrow down processing results. Anything not included in {@code targetIds} will be
+     * excluded from the processing results.
+     * @return id of the <i>ID-Content</i> to be added
+     * @throws NullPointerException if {@code targetIds} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    public Stream<String> getAdditionalDiferrence(Collection<String> targetIds) {
+        if (Set.copyOf(targetIds).isEmpty()) {
             return Stream.empty();
         }
 
@@ -177,28 +196,31 @@ public abstract class ImportationDao<E extends ContentEntity> {
 
         // WHERE
         Predicate noExists = cb.isNull(e.get(ContentEntity_.id));
-        Predicate isTarget = wId.in(extractionTargetIds);
+        Predicate isTarget = wId.in(targetIds);
 
         return em.createQuery(cq.select(cb.construct(String.class, wId))
                 .where(noExists, isTarget)).setLockMode(PESSIMISTIC_WRITE).getResultStream();
     }
 
     /**
-     * Get the <i>ID-Content</i> that will be updated by import. They exists in both already registered and will be
-     * registered, but with different values.
+     * Get the <i>ID-Content</i> that will be updated by import processing. They exists in both already registered and
+     * will be registered, but with different values.
      *
-     * @param extractionTargetIds the id for narrow down processing results. Anything not included in {@code target}
-     * will be excluded from the processing results.
-     * @return stream for the <i>ID-Content</i> collection to be updated.
-     * @throws NullPointerException if {@code extractionTargetIds} is {@code null}
+     * <p>
+     * Notes.
+     * <ul>
+     * <li>Must run {@link #appendsWrk(java.util.Collection) registration to working area} beforehand</li>
+     * </ul>
+     *
+     * @param targetIds id for narrow down processing results. Anything not included in {@code targetIds} will be
+     * excluded from the processing results.
+     * @return the <i>ID-Content</i> to be updated
+     * @throws NullPointerException if {@code targetIds} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public Stream<E> getUpdates(Collection<String> extractionTargetIds) {
-        // Note: Throw NullPointerException if coll is null, or if it contains any nulls.
-        Set<String> targets = Set.copyOf(extractionTargetIds);
-
-        if (targets.isEmpty()) {
+    public Stream<E> getUpdateDifference(Collection<String> targetIds) {
+        if (Set.copyOf(targetIds).isEmpty()) {
             return Stream.empty();
         }
 
@@ -216,129 +238,99 @@ public abstract class ImportationDao<E extends ContentEntity> {
 
         // WHERE
         Predicate hasDiff = cb.notEqual(cDigest, wDigest);
-        Predicate isTarget = e.get(ContentEntity_.id).in(targets);
+        Predicate isTarget = e.get(ContentEntity_.id).in(targetIds);
 
         return em.createQuery(cq.where(hasDiff, isTarget)).setLockMode(PESSIMISTIC_WRITE).getResultStream();
     }
 
     /**
-     * Get a stream of <i>ID-Content</i> collections with the specified id.
+     * Get count of <i>ID-Content</i> that will be lost by import processing. It exists for those that are already been
+     * registered, but not for those that have about to be registered.
      *
-     * @param targets the id collection
-     * @return stream for the <i>ID-Content</i> collection
-     * @throws NullPointerException if {@code targets} is {@code null}
-     * @throws PersistenceException if occurs an exception while access to database
-     * @since 1.0.0
-     */
-    public Stream<E> getContents(List<String> targets) {
-
-        if (Objects.requireNonNull(targets).isEmpty()) {
-            return Stream.empty();
-        }
-
-        Class<E> cClass = getContentEntityClass();
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<E> cq = cb.createQuery(cClass);
-
-        // FROM
-        Root<E> c = cq.from(cClass);
-
-        // WHERE
-        Predicate isTarget = c.get(ContentEntity_.id).in(targets);
-
-        return em.createQuery(cq.where(isTarget)).setLockMode(PESSIMISTIC_WRITE).getResultStream();
-
-    }
-
-    /**
-     * Get count of <i>ID-Content</i> that will be lost by import. It exists for those that are already been registered,
-     * but not for those that have about to be registered.
+     * <p>
+     * Notes.
+     * <ul>
+     * <li>Must run {@link #appendsWrk(java.util.Collection) registration to working area} beforehand</li>
+     * </ul>
      *
-     * @param additional additional extract condition
+     * @param condition filtering condition
      * @return count of the <i>ID-Content</i> that will be lost
-     * @throws NullPointerException if {@code additional} is {@code null}
+     * @throws NullPointerException if {@code condition} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public long getCountOfLosts(Condition additional) {
-        return buildGetLostQuery(Long.class, Objects.requireNonNull(additional)).getSingleResult();
+    public long getCountOfDeletionDifference(Condition condition) {
+        return buildQueryForGetLosts(Long.class, Objects.requireNonNull(condition)).getSingleResult();
     }
 
     /**
-     * Get the <i>ID-Content</i> that will be lost by import. It exists for those that are already been registered, but
-     * not for those that have about to be registered.
+     * Get the <i>ID-Content</i> that will be lost by import processing. It exists for those that are already been
+     * registered, but not for those that have about to be registered.
      *
-     * @param additional additional extract condition
-     * @return lost contents. A entities of {@value JpaUtils#CHUNK_SIZE} items is retrieved from the data source every
-     * time a element of stream is retrieved. Therefore, you can prevent memory from running out when there are a large
-     * number of items.
-     * @throws NullPointerException if {@code additional} is {@code null}
+     * <p>
+     * Notes.
+     * <ul>
+     * <li>Must run {@link #appendsWrk(java.util.Collection) registration to working area} beforehand</li>
+     * </ul>
+     *
+     * @param condition filtering condition
+     * @return the <i>ID-Content</i> to be deleted. A entities of {@value StreamUtils#CHUNK_SIZE} items is retrieved
+     * from the data source every time a element of stream is retrieved. Therefore, you can prevent memory from running
+     * out when there are a large number of items.
+     * @throws NullPointerException if {@code condition} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public Stream<List<E>> getLosts(Condition additional) {
-        return StreamUtils.toChunkedStream(buildGetLostQuery(getContentEntityClass(), Objects.requireNonNull(additional)));
+    public Stream<List<E>> getDeletionDifference(Condition condition) {
+        return StreamUtils.toChunkedStream(buildQueryForGetLosts(getContentEntityClass(), Objects.requireNonNull(condition)));
     }
 
     @SuppressWarnings("unchecked")
-    <Q> TypedQuery<Q> buildGetLostQuery(Class<Q> clazz, Condition additional) {
-
+    <Q> TypedQuery<Q> buildQueryForGetLosts(Class<Q> clazz, Condition condition) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Q> cq = cb.createQuery(clazz);
 
         // FROM
-        Root<E> c = cq.from(getContentEntityClass());
+        Root<E> e = cq.from(getContentEntityClass());
 
         // SubQuery
         Subquery<ImportationWorkEntity> sub = cq.subquery(ImportationWorkEntity.class);
         Root<ImportationWorkEntity> w = sub.from(ImportationWorkEntity.class);
 
         // WHERE
-        Predicate isExistsInWork = cb.equal(w.get(ImportationWorkEntity_.id), c.get(ContentEntity_.id));
+        Predicate isExistsInWork = cb.equal(w.get(ImportationWorkEntity_.id), e.get(ContentEntity_.id));
         Predicate isLost = cb.not(cb.exists(sub.where(isExistsInWork)));
-        Predicate withEnabled = cb.isTrue(c.get(ContentEntity_.enabled));
-        Predicate additionalFiltering = new PredicateBuilder(cb, getPathContext(c)).build(additional);
+        Predicate withEnabled = cb.isTrue(e.get(ContentEntity_.enabled));
+        Predicate additionalFiltering = new PredicateBuilder(cb, getPathContext(e)).build(condition);
 
         if (clazz == Long.class) {
-            cq = (CriteriaQuery<Q>) ((CriteriaQuery<Long>) cq).select(cb.count(c));
+            cq = (CriteriaQuery<Q>) ((CriteriaQuery<Long>) cq).select(cb.count(e));
         }
 
         return em.createQuery(cq.where(isLost, withEnabled, additionalFiltering)).setLockMode(PESSIMISTIC_WRITE);
-
-    }
-
-    /**
-     * Update content-dependent data. Default implements do nothing.
-     *
-     * @throws PersistenceException if occurs an exception while access to database
-     * @since 1.0.0
-     */
-    public void updateDepentents() {
-        // Do nothing
     }
 
     /**
      * Get the <i>ID-Content</i> that require rebuilding. Extracts content that is invalid and has a {@code refTime}
      * with in validity-period, or versa.
      *
-     * @param refTime reference time for judging rebuild
-     * @return contents that require rebuilding. A entities of {@value JpaUtils#CHUNK_SIZE} items is retrieved from the
-     * data source every time a element of stream is retrieved. Therefore, you can prevent memory from running out when
-     * there are a large number of items.
+     * @param refTime reference time for rebuild
+     * @return content that require rebuilding. A entities of {@value StreamUtils#CHUNK_SIZE} items is retrieved from
+     * the data source every time a element of stream is retrieved. Therefore, you can prevent memory from running out
+     * when there are a large number of items.
      * @throws NullPointerException if {@code refTime} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public Stream<List<E>> getRequireRebuilts(LocalDateTime refTime) {
-
+    public Stream<List<E>> getRequireRebuilding(LocalDateTime refTime) {
         Objects.requireNonNull(refTime);
 
-        Class<E> cClass = getContentEntityClass();
+        Class<E> eClass = getContentEntityClass();
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<E> cq = cb.createQuery(cClass);
+        CriteriaQuery<E> cq = cb.createQuery(eClass);
 
         // FROM
-        Root<E> c = cq.from(cClass);
+        Root<E> c = cq.from(eClass);
 
         // Path
         Path<LocalDateTime> from = c.get(ContentEntity_.validityPeriod).get(ValidityPeriodEmb_.localFrom);
@@ -351,33 +343,15 @@ public abstract class ImportationDao<E extends ContentEntity> {
 
         return StreamUtils.toChunkedStream(em.createQuery(cq.where(cb.or(cb.and(withinRange, cb.not(isEnable)),
                 cb.and(cb.not(withinRange), isEnable)))));
-
     }
 
     /**
-     * Extract the export contents. These are all <i>ID-Contents</i> that have already been registered.
+     * Update derived data for <i>ID content</i>. Default implements do nothing.
      *
-     * @return exportation contents. A entities of {@value JpaUtils#CHUNK_SIZE} items is retrieved from the data source
-     * every time a element of stream is retrieved. Therefore, you can prevent memory from running out when there are a
-     * large number of items.
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public Stream<List<Map<String, String>>> getExports() {
-
-        CriteriaQuery<Tuple> cq = em.getCriteriaBuilder().createTupleQuery();
-
-        return StreamUtils.toChunkedStream(em.createQuery(cq.multiselect(getExportItems(cq.from(getContentEntityClass()))
-                .toArray(Selection<?>[]::new)))).map(convertElements(JpaUtils::toMap));
-
+    public void updateDerivedData() {
+        // Do nothing
     }
-
-    /**
-     * Get export items for {@link #getExports()}.
-     *
-     * @param contentEntityPath path of the content entity
-     * @return list of the {@code Selection}
-     * @since 1.0.0
-     */
-    protected abstract List<Selection<String>> getExportItems(Path<E> contentEntityPath);
 }
