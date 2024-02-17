@@ -98,11 +98,13 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
 
         UserValue value = importValue.getContent();
 
-        return new ImportationValue<>(new UserValue.Builder(digestGen)
-                .with(value)
-                .withEnabled(value.getValidityPeriod().isEnabled(appTimeSvc.getLocalNow()))
-                .withEntity(entity)
-                .build(validator, Unsafe.class), importValue.getSource());
+        return new ImportationValue<>(importValue.isExplicitDeletion(),
+                new UserValue.Builder(digestGen)
+                        .with(value)
+                        .withEnabled(value.getValidityPeriod().isEnabled(appTimeSvc.getLocalNow()))
+                        .withEntity(entity)
+                        .build(validator, Unsafe.class),
+                importValue.getSource());
     }
 
     /**
