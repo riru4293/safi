@@ -89,10 +89,6 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
     /**
      * Build an importation value by overwriting the importation value based on the entity.
      * <p>
-     * If {@code ImportationValue} represents an explicit delete, then the built one will be in the state of a logical
-     * delete. Specifically, if the end date-time of the validity period is after the current time, it will be changed
-     * to the past.
-     * <p>
      * Used to update persisted content with imported values.
      *
      * @param entity the {@code ContentEntity}
