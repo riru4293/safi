@@ -28,6 +28,7 @@ package jp.mydns.projectk.safi.service;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.persistence.PersistenceException;
+import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -175,34 +176,14 @@ public interface ImportationService<V extends ContentValue<V>> {
      * @since 1.0.0
      */
     ContentRecord register(V value);
-//
-//    /**
-//     * Logically delete content registered in the database.
-//     *
-//     * @param value content
-//     * @return result recording
-//     * @throws NullPointerException if {@code value} is {@code null}
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    ContentRecord logicalDelete(ImportationValue<C> value);
-//
-//    /**
-//     * Rebuild the content.
-//     *
-//     * @throws NullPointerException if {@code value} is {@code null}
-//     * @throws IllegalArgumentException if {@code value} does not have paired entity
-//     * @since 1.0.0
-//     */
-//    C rebuild(C value);
-//
-//    /**
-//     * Update the content-dependent data in the database. For example, updating derived database tables etc.
-//     *
-//     * @throws PersistenceException if occurs an exception while access to database
-//     * @since 1.0.0
-//     */
-//    void updateDependents();
+
+    /**
+     * Update the content-derived data in the database. For example, updating derived database tables etc.
+     *
+     * @throws PersistenceException if occurs an exception while access to database
+     * @since 1.0.0
+     */
+    void updateContentDerivedData();
 
     /**
      * Abstract implements of the {@code ImportationService}.
@@ -224,9 +205,7 @@ public interface ImportationService<V extends ContentValue<V>> {
 
         @Inject
         private ConfigService confSvc;
-//
-//        @Inject
-//        private Validator validator;
+
         @Inject
         private RecordingDxo recDxo;
 
@@ -399,19 +378,18 @@ public interface ImportationService<V extends ContentValue<V>> {
         private RecordKind resolveRecordKind(boolean isEnabled) {
             return isEnabled ? RecordKind.REGISTER : RecordKind.DELETION;
         }
-//
-//        /**
-//         * {@inheritDoc}
-//         *
-//         * @throws NullPointerException if {@code value} is {@code null}
-//         * @throws PersistenceException if occurs an exception while access to database
-//         * @since 1.0.0
-//         */
-//        @Override
-//        public void logicalDelete(ImportationValue<C> value) {
-//            comDao.persistOrMerge(getDxo().toEntity(value));
-//        }
-//
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws PersistenceException if occurs an exception while access to database
+         * @since 1.0.0
+         */
+        @Override
+        @Transactional(Transactional.TxType.MANDATORY)
+        public void updateContentDerivedData() {
+            getDao().updateDerivedData();
+        }
 //        /**
 //         * {@inheritDoc}
 //         *
@@ -450,15 +428,7 @@ public interface ImportationService<V extends ContentValue<V>> {
 //                    .map(dxo.toValue()).forEach(recorder::accept);
 //        }
 //
-//        /**
-//         * Rebuilds content-dependent database tables.
-//         *
-//         * @throws PersistenceException if occurs problem in persistence provider
-//         */
-//        @Transactional(Transactional.TxType.MANDATORY)
-//        public void rebuildDependent() {
-//            getDao().doUniqueRebuilding();
-//        }
+
 //
 //        @Transactional(Transactional.TxType.MANDATORY)
 //        public void initializeImportationWork() {
@@ -516,7 +486,6 @@ public interface ImportationService<V extends ContentValue<V>> {
 //            v -> recSvc.rec(recDxo.toFailure(v, JobPhase.PROVISIONING,
 //                    List.of("Ignored because the limit was exceeded.")));
 //        }
-
         private class ImportationValueSerializer implements ContentMap.Convertor<ImportationValue<V>> {
 
             /**
