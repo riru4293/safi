@@ -32,6 +32,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TransactionRequiredException;
 import java.util.Objects;
+import jp.mydns.projectk.safi.entity.CommonEntity;
 
 /**
  * Common data access object.
@@ -114,5 +115,40 @@ public class CommonAppDao {
     public <T> T persist(T entity) {
         getEntityManager().persist(Objects.requireNonNull(entity));
         return entity;
+    }
+
+    /**
+     * Make an {@code entity} merge.
+     *
+     * @param <T> entity type
+     * @param entity an entity
+     * @return entity that merged
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @throws IllegalArgumentException if the instance is not an entity
+     * @throws TransactionRequiredException if there is no transaction
+     * @since 1.0.0
+     */
+    public <T> T merge(T entity) {
+        if (getEntityManager().contains(Objects.requireNonNull(entity))) {
+            return entity;
+        }
+
+        return getEntityManager().merge(entity);
+    }
+
+    /**
+     * Make an {@code entity} persistent or merge. Persist if version is less than 1, merge otherwise.
+     *
+     * @param <T> entity type
+     * @param entity an entity
+     * @return entity that persisted or merged
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @throws EntityExistsException if the entity already exists when persist
+     * @throws IllegalArgumentException if the instance is not an entity
+     * @throws TransactionRequiredException if there is no transaction
+     * @since 1.0.0
+     */
+    public <T extends CommonEntity> T persistOrMerge(T entity) {
+        return entity.getVersion() < 1 ? persist(entity) : merge(entity);
     }
 }
