@@ -25,6 +25,8 @@
  */
 package jp.mydns.projectk.safi.constant;
 
+import jp.mydns.projectk.safi.value.ContentRecord;
+
 /**
  * Record value format for {@link ContentRecord}.
  *
