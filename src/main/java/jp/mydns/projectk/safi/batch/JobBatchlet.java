@@ -39,8 +39,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
-import jp.mydns.projectk.safi.batch.BatchLogger;
-import jp.mydns.projectk.safi.batch.JobFinisher;
 import jp.mydns.projectk.safi.constant.ContentKind;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
