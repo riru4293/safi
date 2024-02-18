@@ -51,7 +51,7 @@ import jp.mydns.projectk.safi.value.Condition;
 import jp.mydns.projectk.safi.value.ContentMap;
 import jp.mydns.projectk.safi.value.ContentRecord;
 import jp.mydns.projectk.safi.value.ImportContext;
-import trial.JobBatchlet;
+import jp.mydns.projectk.safi.batch.JobBatchlet;
 import trial.JobRecordingService;
 import trial.TransformerService;
 import trial.TransformerService.Transformer;

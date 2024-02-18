@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package jp.mydns.projectk.safi.facade;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -48,6 +48,9 @@ import jp.mydns.projectk.safi.value.ImportContext;
 import jp.mydns.projectk.safi.value.ImportationValue;
 import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.UserValue;
+import trial.JobRecordingService;
+import trial.RecordingDxo;
+import trial.UncheckedInterruptedException;
 
 /**
  * The facade process for the content import process.

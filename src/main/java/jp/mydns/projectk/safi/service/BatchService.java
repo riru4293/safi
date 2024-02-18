@@ -44,7 +44,7 @@ import jp.mydns.projectk.safi.constant.JobStatus;
 import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.value.Job;
-import trial.JobBatchlet;
+import jp.mydns.projectk.safi.batch.JobBatchlet;
 
 /**
  * Utilities for <i>Jakarta-Batch</i>.

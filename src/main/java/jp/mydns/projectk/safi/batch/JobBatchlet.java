@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package trial;
+package jp.mydns.projectk.safi.batch;
 
 import jakarta.batch.api.BatchProperty;
 import jakarta.batch.api.Batchlet;
@@ -47,6 +47,7 @@ import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.ValidationService;
 import jp.mydns.projectk.safi.value.Job;
 import jp.mydns.projectk.safi.value.Plugdef;
+import trial.JobService;
 
 /**
  * Abstract implements of the <i>Jakarta-Batch</i> for the <i>Job</i> processing.
