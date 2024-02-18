@@ -41,8 +41,8 @@ import trial.JobService;
 import trial.UncheckedInterruptedException;
 
 /**
- * Finisher for the <i>Job</i> processing. Registers the processing record and updates the job status to finished
- * status.
+ * Finisher for the <i>Job</i> processing. Registers the processing record and updates the job status to finished status
+ * when after batch processing, . Do nothing when before batch processing.
  *
  * @author riru
  * @version 1.0.0
