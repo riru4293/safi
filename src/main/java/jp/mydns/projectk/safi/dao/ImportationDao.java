@@ -111,23 +111,23 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     /**
      * Get the relationship to the <i>ID-Content</i> entity from the {@code ImportationWorkEntity}.
      *
-     * @return relationship to the <i>ID-Content</i> entity
+     * @return relationship to entity
      * @since 1.0.0
      */
-    protected abstract SingularAttribute<ImportationWorkEntity, E> getPathToContentEntity();
+    protected abstract SingularAttribute<ImportationWorkEntity, E> getRelationToEntity();
 
     /**
      * Get the relationship to the {@code ImportationWorkEntity} from the <i>ID-Content</i> entity.
      *
-     * @return relationship to the {@code ImportationWorkEntity}
+     * @return relationship to working entity
      * @since 1.0.0
      */
-    protected abstract SingularAttribute<E, ImportationWorkEntity> getPathToWrkEntity();
+    protected abstract SingularAttribute<E, ImportationWorkEntity> getRelationToWorkEntity();
 
     /**
      * Get the {@code CriteriaPathContext} made from path of the <i>ID-Content</i> entity.
      *
-     * @param path path of the <i>ID-Content</i> entity
+     * @param path path to the <i>ID-Content</i> entity
      * @return the {@code CriteriaPathContext}
      * @throws NullPointerException if {@code path} is {@code null}
      * @since 1.0.0
@@ -135,29 +135,8 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     protected abstract CriteriaPathContext getPathContext(Path<E> path);
 
     /**
-     * Get the <i>ID-Content</i> with the specified id.
-     *
-     * @param targetIds id for narrow down processing results
-     * @return stream of the <i>ID-Content</i>
-     * @throws NullPointerException if {@code targetIds} is {@code null}
-     * @throws PersistenceException if occurs an exception while access to database
-     * @since 1.0.0
-     */
-    public Stream<E> getContents(List<String> targetIds) {
-        if (Set.copyOf(targetIds).isEmpty()) {
-            return Stream.empty();
-        }
-
-        Class<E> eClass = getEntityType();
-        CriteriaQuery<E> cq = em.getCriteriaBuilder().createQuery(eClass);
-
-        return em.createQuery(cq.where(cq.from(eClass).get(ContentEntity_.id).in(targetIds)))
-                .setLockMode(PESSIMISTIC_WRITE).getResultStream();
-    }
-
-    /**
-     * Get the id of the <i>ID-Content</i> that will be added by import processing. It exists for those that are about
-     * to be registered, but not for those that have already been registered.
+     * Get the <i>ID-Content</i> id that will be added by import processing. It exists for those that are about to be
+     * registered, but not for those that have already been registered.
      *
      * <p>
      * Notes.
@@ -165,10 +144,10 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * <li>Must run registration to working area beforehand.</li>
      * </ul>
      *
-     * @param targetIds id for narrow down processing results. Anything not included in {@code targetIds} will be
-     * excluded from the processing results.
+     * @param targetIds specifying the <i>ID-Content</i>. Anything not included in {@code targetIds} will be excluded
+     * from the processing results.
      * @return id of the <i>ID-Content</i> to be added
-     * @throws NullPointerException if {@code targetIds} is {@code null}
+     * @throws NullPointerException if {@code targetIds} is {@code null}, or contains {@code null}.
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
@@ -182,8 +161,8 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
 
         // FROM
         Root<ImportationWorkEntity> w = cq.from(ImportationWorkEntity.class);
-        Join<ImportationWorkEntity, E> e = w.join(getPathToContentEntity(), JoinType.LEFT);
-        w.fetch(getPathToContentEntity(), JoinType.LEFT);
+        Join<ImportationWorkEntity, E> e = w.join(getRelationToEntity(), JoinType.LEFT);
+        w.fetch(getRelationToEntity(), JoinType.LEFT);
 
         // PATH
         Path<String> wId = w.get(ImportationWorkEntity_.id);
@@ -206,10 +185,10 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * <li>Must run registration to working area beforehand.</li>
      * </ul>
      *
-     * @param targetIds id for narrow down processing results. Anything not included in {@code targetIds} will be
-     * excluded from the processing results.
+     * @param targetIds specifying the <i>ID-Content</i>. Anything not included in {@code targetIds} will be excluded
+     * from the processing results.
      * @return the <i>ID-Content</i> to be updated
-     * @throws NullPointerException if {@code targetIds} is {@code null}
+     * @throws NullPointerException if {@code targetIds} is {@code null}, or contains {@code null}.
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
@@ -218,16 +197,16 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
             return Stream.empty();
         }
 
-        Class<E> eClass = getEntityType();
+        Class<E> eType = getEntityType();
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<E> cq = cb.createQuery(eClass);
+        CriteriaQuery<E> cq = cb.createQuery(eType);
 
         // FROM
-        Root<E> e = cq.from(eClass);
-        e.fetch(getPathToWrkEntity(), JoinType.INNER);
+        Root<E> e = cq.from(eType);
+        e.fetch(getRelationToWorkEntity(), JoinType.INNER);
 
         // PATH
-        Path<String> wDigest = e.get(getPathToWrkEntity()).get(ImportationWorkEntity_.digest);
+        Path<String> wDigest = e.get(getRelationToWorkEntity()).get(ImportationWorkEntity_.digest);
         Path<String> cDigest = e.get(ContentEntity_.digest);
 
         // WHERE
@@ -319,12 +298,12 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     public Stream<List<E>> getRequireRebuilding(LocalDateTime refTime) {
         Objects.requireNonNull(refTime);
 
-        Class<E> eClass = getEntityType();
+        Class<E> eType = getEntityType();
         CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<E> cq = cb.createQuery(eClass);
+        CriteriaQuery<E> cq = cb.createQuery(eType);
 
         // FROM
-        Root<E> c = cq.from(eClass);
+        Root<E> c = cq.from(eType);
 
         // Path
         Path<LocalDateTime> from = c.get(ContentEntity_.validityPeriod).get(ValidityPeriodEmb_.localFrom);

@@ -61,7 +61,7 @@ public class UserImportationDao extends ImportationDao<UserEntity> {
      * @since 1.0.0
      */
     @Override
-    protected SingularAttribute<ImportationWorkEntity, UserEntity> getPathToContentEntity() {
+    protected SingularAttribute<ImportationWorkEntity, UserEntity> getRelationToEntity() {
         return ImportationWorkEntity_.userEntity;
     }
 
@@ -71,7 +71,7 @@ public class UserImportationDao extends ImportationDao<UserEntity> {
      * @since 1.0.0
      */
     @Override
-    protected SingularAttribute<UserEntity, ImportationWorkEntity> getPathToWrkEntity() {
+    protected SingularAttribute<UserEntity, ImportationWorkEntity> getRelationToWorkEntity() {
         return UserEntity_.wrkEntity;
     }
 
