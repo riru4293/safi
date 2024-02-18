@@ -36,7 +36,7 @@ import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
 /**
- * Configures Jakarta RESTful web services for SAFI.
+ * Configures Jakarta RESTful web services for <i>SAFI</i>.
  *
  * @author riru
  * @version 1.0.0
