@@ -37,7 +37,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 /**
- * Logger for the begin and end of a batch process.
+ * Logs the begin and end of batch processes.
  *
  * @author riru
  * @version 1.0.0
@@ -57,7 +57,7 @@ public class BatchLogger implements StepListener {
     private JobOperator operator;
 
     /**
-     * Output log on begin processing.
+     * Output log on begin processing. Logs a job execution id and job parameters.
      *
      * @throws Exception throw if an error occurs
      * @since 1.0.0
