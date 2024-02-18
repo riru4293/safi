@@ -25,7 +25,6 @@
  */
 package jp.mydns.projectk.safi.batch;
 
-import trial.UncheckedInterruptedException;
 import jakarta.batch.api.BatchProperty;
 import jakarta.batch.api.listener.StepListener;
 import jakarta.batch.runtime.context.StepContext;
@@ -39,9 +38,11 @@ import static java.util.function.Predicate.not;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
 import trial.JobRecordingService;
 import trial.JobService;
+import trial.UncheckedInterruptedException;
 
 /**
- * Finisher for the <i>Job</i>. Registers the processing record and updates the job status to finished status.
+ * Finisher for the <i>Job</i> processing. Registers the processing record and updates the job status to finished
+ * status.
  *
  * @author riru
  * @version 1.0.0
@@ -59,13 +60,13 @@ public class JobFinisher implements StepListener {
     private StepContext stepCtx;
 
     @Inject
-    private RequestContextProducer reqCtxPrd;
-
-    @Inject
     private JobService jobSvc;
 
     @Inject
     private JobRecordingService recSvc;
+
+    @Inject
+    private RequestContextProducer reqCtxPrd;
 
     /**
      * Do nothing.
@@ -90,7 +91,6 @@ public class JobFinisher implements StepListener {
     @ActivateRequestContext
     @SuppressWarnings("ThrowableResultIgnored")
     public void afterStep() throws Exception {
-
         reqCtxPrd.setup("JobFinisher");
 
         Optional<Exception> cause = Optional.ofNullable(stepCtx.getException());
