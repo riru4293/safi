@@ -76,7 +76,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     private CommonBatchDao comDao;
 
     /**
-     * Clear the working area for importation.
+     * Clear the working area for importation. Needs to be run only once at the beginning of the importation process.
      *
      * @throws TransactionRequiredException if there is no transaction
      * @throws PersistenceException if occurs an exception while access to database
@@ -87,16 +87,17 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     }
 
     /**
-     * Append content to working area.
+     * Append content to working area. The work area is used to determine how to process (add/update/delete) the to be
+     * imported content. Therefore, it must be run before the content is processed on the importation process.
      *
-     * @param wrk the {@code ImportationWorkEntity}
-     * @throws NullPointerException if {@code wrk} is {@code null}
+     * @param wrkEntity the {@code ImportationWorkEntity}
+     * @throws NullPointerException if {@code wrkEntity} is {@code null}
      * @throws TransactionRequiredException if there is no transaction
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    public void appendWrk(ImportationWorkEntity wrk) {
-        comDao.persist(wrk);
+    public void appendWrk(ImportationWorkEntity wrkEntity) {
+        comDao.persist(wrkEntity);
     }
 
     /**
