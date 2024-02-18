@@ -103,10 +103,10 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     /**
      * Get entity type of the <i>ID-Content</i>.
      *
-     * @return entity type of the <i>ID-Content</i>
+     * @return entity type
      * @since 1.0.0
      */
-    protected abstract Class<E> getContentEntityClass();
+    protected abstract Class<E> getEntityType();
 
     /**
      * Get the relationship to the <i>ID-Content</i> entity from the {@code ImportationWorkEntity}.
@@ -148,7 +148,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
             return Stream.empty();
         }
 
-        Class<E> eClass = getContentEntityClass();
+        Class<E> eClass = getEntityType();
         CriteriaQuery<E> cq = em.getCriteriaBuilder().createQuery(eClass);
 
         return em.createQuery(cq.where(cq.from(eClass).get(ContentEntity_.id).in(targetIds)))
@@ -218,7 +218,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
             return Stream.empty();
         }
 
-        Class<E> eClass = getContentEntityClass();
+        Class<E> eClass = getEntityType();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<E> cq = cb.createQuery(eClass);
 
@@ -276,7 +276,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * @since 1.0.0
      */
     public Stream<List<E>> getDeletionDifference(Condition condition) {
-        return StreamUtils.toChunkedStream(buildQueryForGetLosts(getContentEntityClass(), Objects.requireNonNull(condition)));
+        return StreamUtils.toChunkedStream(buildQueryForGetLosts(getEntityType(), Objects.requireNonNull(condition)));
     }
 
     @SuppressWarnings("unchecked")
@@ -285,7 +285,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
         CriteriaQuery<Q> cq = cb.createQuery(clazz);
 
         // FROM
-        Root<E> e = cq.from(getContentEntityClass());
+        Root<E> e = cq.from(getEntityType());
 
         // SubQuery
         Subquery<ImportationWorkEntity> sub = cq.subquery(ImportationWorkEntity.class);
@@ -319,7 +319,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
     public Stream<List<E>> getRequireRebuilding(LocalDateTime refTime) {
         Objects.requireNonNull(refTime);
 
-        Class<E> eClass = getContentEntityClass();
+        Class<E> eClass = getEntityType();
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<E> cq = cb.createQuery(eClass);
 

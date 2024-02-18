@@ -51,7 +51,7 @@ public class UserImportationDao extends ImportationDao<UserEntity> {
      * @since 1.0.0
      */
     @Override
-    protected Class<UserEntity> getContentEntityClass() {
+    protected Class<UserEntity> getEntityType() {
         return UserEntity.class;
     }
 
