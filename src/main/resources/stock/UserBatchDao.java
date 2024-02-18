@@ -1,3 +1,4 @@
+// Exportのための実装を残している
 /*
  * Copyright (c) 2024, Project-K
  * All rights reserved.
@@ -23,9 +24,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package stock;
+package jp.mydns.projectk.safi.dao;
 
-import jp.mydns.projectk.safi.dao.ImportationDao;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Selection;
@@ -33,10 +33,12 @@ import jakarta.persistence.metamodel.SingularAttribute;
 import java.util.List;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.UserPathContext;
+import jp.mydns.projectk.safi.entity.ContentEntity_;
 import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
-import jp.mydns.projectk.safi.entity.ImportWorkEntity_;
+import jp.mydns.projectk.safi.entity.ImportationWorkEntity_;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.entity.UserEntity_;
+import jp.mydns.projectk.safi.entity.embedded.AttsEmb_;
 import jp.mydns.projectk.safi.entity.embedded.TxtValidityPeriodEmb_;
 
 /**
@@ -66,7 +68,7 @@ public class UserImportationDao extends ImportationDao<UserEntity> {
      */
     @Override
     protected SingularAttribute<ImportationWorkEntity, UserEntity> getPathToContentEntity() {
-        return ImportWorkEntity_.userEntity;
+        return ImportationWorkEntity_.userEntity;
     }
 
     /**
@@ -76,7 +78,7 @@ public class UserImportationDao extends ImportationDao<UserEntity> {
      */
     @Override
     protected SingularAttribute<UserEntity, ImportationWorkEntity> getPathToWrkEntity() {
-        return UserEntity_.importWorkEntity;
+        return UserEntity_.wrkEntity;
     }
 
     /**
