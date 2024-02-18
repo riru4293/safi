@@ -29,6 +29,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -37,6 +38,7 @@ import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ImportationService;
+import jp.mydns.projectk.safi.service.ImportationService.UserImportationService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
 import jp.mydns.projectk.safi.util.StreamUtils;
 import jp.mydns.projectk.safi.value.ContentMap;
@@ -76,11 +78,11 @@ public interface ImportationFacade {
      *
      * @param ctx the {@code ImportContext}
      * @throws NullPointerException if {@code ctx} is {@code null}
-     * @throws InterruptedException if interrupted
-     * @throws IOException if occurs I/O error
+     * @throws UncheckedInterruptedException if interrupted
+     * @throws UncheckedIOException if occurs I/O error
      * @since 1.0.0
      */
-    void importContents(ImportContext ctx) throws IOException, InterruptedException;
+    void importContents(ImportContext ctx);
 
     /**
      * Abstract implements of the {@code ImportationFacade}.
@@ -114,27 +116,45 @@ public interface ImportationFacade {
          * {@inheritDoc}
          *
          * @throws NullPointerException if any argument is {@code null}
+         * @throws UncheckedInterruptedException if interrupted
+         * @throws UncheckedIOException if occurs I/O error
          * @since 1.0.0
          */
         @Override
-        @Transactional(rollbackOn = {InterruptedException.class, IOException.class})
-        public void importContents(ImportContext ctx) throws IOException, InterruptedException {
+        @Transactional(rollbackOn = {IOException.class})
+        public void importContents(ImportContext ctx) {
             Objects.requireNonNull(ctx);
 
             S svc = getImportationService();
             svc.initializeWork();
+            throwIfInterrupted();
 
             try (var s = ctx.getImporter().fetch(); var t = ctx.getTransformer().transform(s); var v = toImportationValues(t);
                     var m = svc.toContentMap(v);) {
-                // Records duplicate content as a failure.
-                Optional.of(m).filter(ContentMap::hasDuplicates).map(ContentMap::duplicates).ifPresent(this::recordDuplicates);
+
+                Optional.of(m).filter(ContentMap::hasDuplicates).map(ContentMap::duplicates).ifPresent(p -> {
+                    recSvc.rec("Duplicate content detected.");
+                    StreamUtils.toChunkedStream(p).forEachOrdered(c -> {
+                        c.forEach(d -> recSvc.rec(recDxo.toFailure(d, JobPhase.VALIDATION, "Duplicate id.")));
+                        comDao.flushAndClear();
+                        throwIfInterrupted();
+                    });
+                });
 
                 // Process register, update and explicit delete the contents.
                 StreamUtils.toChunkedStream(m.stream()).map(c -> c.stream().collect(toLinkedHashMap())).forEachOrdered(c -> {
-                    svc.registerWork(c.values());
+                    c.values().stream().forEach(svc::registerWork);
+                    comDao.flushAndClear();
+                    throwIfInterrupted();
+
                     svc.getToBeRegistered(c).map(svc::register).forEach(recSvc::rec);
                     comDao.flushAndClear();
+                    throwIfInterrupted();
                 });
+            } catch (InterruptedException ex) {
+                throw new UncheckedInterruptedException(ex);
+            } catch (IOException ex) {
+                throw new UncheckedIOException(ex);
             }
 
             // Process implicit delete the lost contents.
@@ -142,6 +162,7 @@ public interface ImportationFacade {
                 long delCount = svc.getCountOfToBeImplicitDelete(ctx.getAdditionalConditionForImplicitDeletion());
                 long delLimit = ctx.getLimitNumberOfImplicitDeletion();
                 boolean isExceedDelLimit = delCount > delLimit;
+                throwIfInterrupted();
 
                 if (isExceedDelLimit) {
                     recSvc.rec(String.format("Deletion limit count exceeded. %d/%d", delCount, delLimit));
@@ -154,6 +175,7 @@ public interface ImportationFacade {
                     toBeDeleted.forEachOrdered(c -> {
                         c.stream().map(delete).forEach(recSvc::rec);
                         comDao.flushAndClear();
+                        throwIfInterrupted();
                     });
                 }
             }
@@ -163,18 +185,11 @@ public interface ImportationFacade {
                 toBeRebuilt.forEachOrdered(c -> {
                     c.stream().map(svc::register).forEach(recSvc::rec);
                     comDao.flushAndClear();
+                    throwIfInterrupted();
                 });
             }
 
             svc.updateContentDerivedData();
-        }
-
-        private void recordDuplicates(Stream<ImportationValue<V>> duplicates) {
-            recSvc.rec("Duplicate content detected.");
-            StreamUtils.toChunkedStream(duplicates).forEachOrdered(c -> {
-                c.forEach(d -> recSvc.rec(recDxo.toFailure(d, JobPhase.VALIDATION, "Duplicate id.")));
-                comDao.flushAndClear();
-            });
         }
 
         private Stream<ImportationValue<V>> toImportationValues(Stream<TransResult> trunsResults) {
@@ -188,6 +203,12 @@ public interface ImportationFacade {
             }
 
             return getImportationService().toImportationValue(TransResult.Success.class.cast(transResult), recSvc::rec);
+        }
+
+        private void throwIfInterrupted() {
+            if (Thread.currentThread().isInterrupted()) {
+                throw new UncheckedInterruptedException(new InterruptedException());
+            }
         }
     }
 
