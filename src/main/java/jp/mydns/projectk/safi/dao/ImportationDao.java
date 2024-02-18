@@ -161,7 +161,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * <p>
      * Notes.
      * <ul>
-     * <li>Must run {@link #appendsWrk(java.util.Collection) registration to working area} beforehand</li>
+     * <li>Must run registration to working area beforehand.</li>
      * </ul>
      *
      * @param targetIds id for narrow down processing results. Anything not included in {@code targetIds} will be
@@ -202,7 +202,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * <p>
      * Notes.
      * <ul>
-     * <li>Must run {@link #appendsWrk(java.util.Collection) registration to working area} beforehand</li>
+     * <li>Must run registration to working area beforehand.</li>
      * </ul>
      *
      * @param targetIds id for narrow down processing results. Anything not included in {@code targetIds} will be
@@ -243,7 +243,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * <p>
      * Notes.
      * <ul>
-     * <li>Must run {@link #appendsWrk(java.util.Collection) registration to working area} beforehand</li>
+     * <li>Must run registration to working area beforehand.</li>
      * </ul>
      *
      * @param condition filtering condition
@@ -263,7 +263,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * <p>
      * Notes.
      * <ul>
-     * <li>Must run {@link #appendsWrk(java.util.Collection) registration to working area} beforehand</li>
+     * <li>Must run registration to working area beforehand.</li>
      * </ul>
      *
      * @param condition filtering condition

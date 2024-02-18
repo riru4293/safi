@@ -47,6 +47,7 @@ import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
 import jp.mydns.projectk.safi.dao.CommonBatchDao;
 import jp.mydns.projectk.safi.dao.ImportationDao;
+import jp.mydns.projectk.safi.dao.UserImportationDao;
 import jp.mydns.projectk.safi.dxo.ImportationDxo;
 import jp.mydns.projectk.safi.dxo.UserImportationDxo;
 import jp.mydns.projectk.safi.entity.ContentEntity;
@@ -61,7 +62,6 @@ import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.ImportationValue;
 import jp.mydns.projectk.safi.value.TransResult;
 import jp.mydns.projectk.safi.value.UserValue;
-import stock.UserImportationDao;
 import trial.RecordingDxo;
 
 /**
