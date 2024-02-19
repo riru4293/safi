@@ -58,7 +58,7 @@ import jp.mydns.projectk.safi.util.StreamUtils;
 import jp.mydns.projectk.safi.value.Condition;
 
 /**
- * Data access processing to the <i>ID-Content</i>.
+ * Data access processing to import the <i>ID-Content</i>.
  *
  * @param <E> entity type of the <i>ID-Content</i>
  *

@@ -36,7 +36,7 @@ import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.entity.UserEntity_;
 
 /**
- * Data access processing to the <i>ID-Content</i> of the <i>User</i>.
+ * Data access processing to import the <i>ID-Content</i> of the <i>User</i>.
  *
  * @author riru
  * @version 1.0.0
