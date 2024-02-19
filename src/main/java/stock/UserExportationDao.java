@@ -23,13 +23,14 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.dao;
+package stock;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Selection;
 import java.util.List;
+import jp.mydns.projectk.safi.dao.CommonBatchDao;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.UserPathContext;
 import jp.mydns.projectk.safi.entity.ContentEntity_;

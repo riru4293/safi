@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.dao;
+package stock;
 
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
@@ -38,6 +38,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.ContentKind;
+import jp.mydns.projectk.safi.dao.CommonBatchDao;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.ContentEntity_;
