@@ -37,8 +37,12 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.Objects;
+import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.value.PersistenceContext;
 
 /**
  * Common JPA entity. This class has one version number field qualified with {@link Version}. Thereby realizing an
@@ -55,15 +59,30 @@ public abstract class CommonEntity implements Serializable {
 
     private static final long serialVersionUID = 7002393193138803696L;
 
+    /**
+     * Note.
+     *
+     * @since 1.0.0
+     */
     @Basic(optional = false)
     @Column(name = "note")
     protected String note;
 
+    /**
+     * Version number.
+     *
+     * @since 1.0.0
+     */
     @PositiveOrZero
     @Version
     @Column(name = "version", nullable = false)
     protected int version;
 
+    /**
+     * Registration time.
+     *
+     * @since 1.0.0
+     */
     @NotNull
     @TimeRange
     @TimeAccuracy
@@ -71,18 +90,33 @@ public abstract class CommonEntity implements Serializable {
     @Column(name = "reg_ts", updatable = false, nullable = false)
     protected LocalDateTime registerTime;
 
+    /**
+     * Registration account id.
+     *
+     * @since 1.0.0
+     */
     @NotBlank
-    @Size(max = 250)
+    @Size(max = 255)
     @Basic(optional = false)
-    @Column(name = "reg_id", updatable = false, nullable = false, length = 250)
+    @Column(name = "reg_id", updatable = false, nullable = false, length = 255)
     protected String registerAccountId;
 
+    /**
+     * Registration process name.
+     *
+     * @since 1.0.0
+     */
     @NotBlank
-    @Size(max = 250)
+    @Size(max = 255)
     @Basic(optional = false)
-    @Column(name = "reg_ap", updatable = false, nullable = false, length = 250)
+    @Column(name = "reg_ap", updatable = false, nullable = false, length = 255)
     protected String registerProcessName;
 
+    /**
+     * Update time.
+     *
+     * @since 1.0.0
+     */
     @NotNull
     @TimeRange
     @TimeAccuracy
@@ -90,21 +124,38 @@ public abstract class CommonEntity implements Serializable {
     @Column(name = "upd_ts", nullable = false)
     protected LocalDateTime updateTime;
 
+    /**
+     * Update account id.
+     *
+     * @since 1.0.0
+     */
     @NotBlank
-    @Size(max = 250)
+    @Size(max = 255)
     @Basic(optional = false)
-    @Column(name = "upd_id", nullable = false, length = 250)
+    @Column(name = "upd_id", nullable = false, length = 255)
     protected String updateAccountId;
 
+    /**
+     * Update process name.
+     *
+     * @since 1.0.0
+     */
     @NotBlank
-    @Size(max = 250)
+    @Size(max = 255)
     @Basic(optional = false)
-    @Column(name = "upd_ap", nullable = false, length = 250)
+    @Column(name = "upd_ap", nullable = false, length = 255)
     protected String updateProcessName;
 
     /**
-     * Get a note for this entity. This value is only used to record notes about the data records represented by the
-     * entity and is never used to process.
+     * Constructs a new entity with all properties are default value.
+     *
+     * @since 1.0.0
+     */
+    public CommonEntity() {
+    }
+
+    /**
+     * Get note.
      *
      * @return note. It may be {@code null}.
      * @since 1.0.0
@@ -114,10 +165,9 @@ public abstract class CommonEntity implements Serializable {
     }
 
     /**
-     * Set a note for this entity.
+     * Set note.
      *
      * @param note note. It can be set {@code null}.
-     * @see #getNote() Note is explained in {@code #getNote()}
      * @since 1.0.0
      */
     public void setNote(String note) {
@@ -160,7 +210,7 @@ public abstract class CommonEntity implements Serializable {
     /**
      * Set time the entity was persisted.
      *
-     * @param registerTime persisted time. It time zone is UTC.
+     * @param registerTime persisted time. It time zone is UTC. It is impossible to update an already persisted value.
      * @since 1.0.0
      */
     public void setRegisterTime(LocalDateTime registerTime) {
@@ -180,7 +230,7 @@ public abstract class CommonEntity implements Serializable {
     /**
      * Set id of the user who made the entity persistent.
      *
-     * @param registerAccountId persisted user id
+     * @param registerAccountId persisted user id. It is impossible to update an already persisted value.
      * @since 1.0.0
      */
     public void setRegisterAccountId(String registerAccountId) {
@@ -200,7 +250,7 @@ public abstract class CommonEntity implements Serializable {
     /**
      * Set name of the process who made the entity persistent.
      *
-     * @param registerProcessName persisted process name
+     * @param registerProcessName persisted process name. It is impossible to update an already persisted value.
      * @since 1.0.0
      */
     public void setRegisterProcessName(String registerProcessName) {
@@ -265,5 +315,139 @@ public abstract class CommonEntity implements Serializable {
      */
     public void setUpdateProcessName(String updateProcessName) {
         this.updateProcessName = updateProcessName;
+    }
+
+    /**
+     * Get the {@code PersistenceContext}.
+     *
+     * @return persistence information
+     * @since 1.0.0
+     */
+    public PersistenceContext toPersistenceContext() {
+        return new PersistenceContextImpl(this);
+    }
+
+    /**
+     * Apply {@code PersistenceContext} to all properties in {@link CommonEntity}.
+     *
+     * @param persistenceContext the {@code PersistenceContext}
+     * @throws NullPointerException if {@code persistenceContext} is {@code null}
+     * @since 1.0.0
+     */
+    public void applyPersistenceContext(PersistenceContext persistenceContext) {
+        Objects.requireNonNull(persistenceContext);
+
+        this.version = persistenceContext.getVersion();
+        this.registerTime = TimeUtils.toLocalDateTime(persistenceContext.getRegisterTime());
+        this.registerAccountId = persistenceContext.getRegisterAccountId();
+        this.registerProcessName = persistenceContext.getRegisterProcessName();
+        this.updateTime = TimeUtils.toLocalDateTime(persistenceContext.getUpdateTime());
+        this.updateAccountId = persistenceContext.getUpdateAccountId();
+        this.updateProcessName = persistenceContext.getUpdateProcessName();
+    }
+
+    private class PersistenceContextImpl implements PersistenceContext {
+
+        private final int version;
+        private final OffsetDateTime registerTime;
+        private final String registerAccountId;
+        private final String registerProcessName;
+        private final OffsetDateTime updateTime;
+        private final String updateAccountId;
+        private final String updateProcessName;
+
+        private PersistenceContextImpl(CommonEntity entity) {
+            this.version = entity.version;
+            this.registerTime = TimeUtils.toOffsetDateTime(entity.updateTime);
+            this.registerAccountId = entity.registerAccountId;
+            this.registerProcessName = entity.registerProcessName;
+            this.updateTime = TimeUtils.toOffsetDateTime(entity.updateTime);
+            this.updateAccountId = entity.updateAccountId;
+            this.updateProcessName = entity.updateProcessName;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public int getVersion() {
+            return version;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public OffsetDateTime getRegisterTime() {
+            return registerTime;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public String getRegisterAccountId() {
+            return registerAccountId;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public String getRegisterProcessName() {
+            return registerProcessName;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public OffsetDateTime getUpdateTime() {
+            return updateTime;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public String getUpdateAccountId() {
+            return updateAccountId;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public String getUpdateProcessName() {
+            return updateProcessName;
+        }
+
+        /**
+         * Returns a string representation.
+         *
+         * @return a string representation
+         * @since 1.0.0
+         */
+        @Override
+        public String toString() {
+            return "PersistenceContext{" + "version=" + version + ", registerTime=" + registerTime
+                    + ", registerAccountId=" + registerAccountId + ", registerProcessName=" + registerProcessName
+                    + ", updateTime=" + updateTime + ", updateAccountId=" + updateAccountId
+                    + ", updateProcessName=" + updateProcessName + '}';
+        }
     }
 }
