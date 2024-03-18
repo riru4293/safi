@@ -38,6 +38,8 @@ import jp.mydns.projectk.safi.value.RequestContext;
  *
  * @author riru
  * @version 1.0.0
+ * @see #setup(java.lang.String) Setup processing for system request
+ * @see #setup(java.lang.String, java.lang.String) Setup processing for user request
  * @since 1.0.0
  */
 @RequestScoped
@@ -59,9 +61,8 @@ public class RequestContextProducer {
     /**
      * Produce the {@code RequestContext}.
      *
-     * @return the {@code RequestContext}. If not already set up, an invalid {@code RequestContext} will be provided.
-     * @see #setup(java.lang.String) Setup processing for system request
-     * @see #setup(java.lang.String, java.lang.String) Setup processing for user request
+     * @return the {@code RequestContext}. If not already set up this producer, an invalid {@code RequestContext} will
+     * be provided.
      * @since 1.0.0
      */
     @Produces

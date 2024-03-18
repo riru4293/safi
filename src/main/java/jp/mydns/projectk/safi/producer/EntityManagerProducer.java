@@ -27,17 +27,13 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Qualifier;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- * Producer for the {@link EntityManager}.
+ * Producer for the {@link EntityManager}. Must be set up the {@link RequestContextProducer} in advance.
  *
  * @author riru
  * @version 1.0.0
@@ -47,51 +43,36 @@ import java.lang.annotation.Target;
 public class EntityManagerProducer {
 
     @PersistenceContext(unitName = "safi_persistence_unit")
-    EntityManager em;
+    EntityManager userEm;
 
     @PersistenceContext(unitName = "safi_batch_persistence_unit")
     EntityManager batchEm;
 
+    @Inject
+    private RequestContext reqCtx;
+
+    /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected EntityManagerProducer() {
+    }
+
     /**
      * Produce the {@code EntityManager}.
      *
-     * @return the {@code EntityManager}
+     * @return the {@code EntityManager}. Different instance per {@link RequestContext#getRequestKind() request kind}.
      * @since 1.0.0
      */
     @Produces
     @RequestScoped
     public EntityManager produce() {
-
-        return em;
+        return switch (reqCtx.getRequestKind()) {
+            case USER ->
+                userEm;
+            case SYSTEM ->
+                batchEm;
+        };
     }
-
-    /**
-     * Produce the {@code EntityManager} for batch processing.
-     *
-     * @return the {@code EntityManager} for batch processing
-     * @since 1.0.0
-     */
-    @ForBatch
-    @Produces
-    @RequestScoped
-    public EntityManager produceForBatch() {
-
-        return batchEm;
-    }
-
-    /**
-     * Indicates used for batch processing.
-     *
-     * @author riru
-     * @version 1.0.0
-     * @since 1.0.0
-     */
-    @Qualifier
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
-    @Documented
-    public static @interface ForBatch {
-
-    }
-
 }
