@@ -51,6 +51,14 @@ public class PluginLoaderProducer {
     private ConfigService confSvc;
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected PluginLoaderProducer() {
+    }
+
+    /**
      * Produce the {@code PluginLoader<FunctionPlugin>}.
      *
      * @return the {@code PluginLoader<FunctionPlugin>}

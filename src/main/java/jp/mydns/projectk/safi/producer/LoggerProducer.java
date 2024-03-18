@@ -41,6 +41,14 @@ import java.lang.System.Logger;
 public class LoggerProducer {
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected LoggerProducer() {
+    }
+
+    /**
      * Produce the {@code Logger}. The logger name will be the class name of the injection destination.
      *
      * @param ip the {@code InjectionPoint}
