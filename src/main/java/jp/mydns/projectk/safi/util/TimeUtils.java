@@ -61,6 +61,7 @@ public class TimeUtils {
      *
      * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
      * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
+     * @since 1.0.0
      */
     public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
 
