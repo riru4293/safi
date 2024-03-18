@@ -57,17 +57,48 @@ import java.time.ZoneOffset;
 @Constraint(validatedBy = {TimeRange.LocalDateTimeValidator.class, TimeRange.OffsetDateTimeValidator.class})
 public @interface TimeRange {
 
+    /**
+     * Get a validation message. It value is {@code {jp.mydns.projectk.safi.validator.TimeRange.message}}.
+     *
+     * @return message validation message
+     * @since 1.0.0
+     */
     String message() default "{jp.mydns.projectk.safi.validator.TimeRange.message}";
 
+    /**
+     * Get a validation group. Grouping is used to order constraints.
+     *
+     * @return validation group
+     * @since 1.0.0
+     */
     Class<?>[] groups() default {};
 
+    /**
+     * Get a validation category. Category is some any meta information.
+     *
+     * @return validation category
+     * @since 1.0.0
+     */
     Class<? extends Payload>[] payload() default {};
 
+    /**
+     * Allows multiple enumerations of this annotation.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
     @interface List {
 
+        /**
+         * Get included annotations.
+         *
+         * @return annotations
+         * @since 1.0.0
+         */
         TimeRange[] value();
     }
 
@@ -80,8 +111,23 @@ public @interface TimeRange {
      */
     abstract class AbstractValidator {
 
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         */
+        public AbstractValidator() {
+        }
+
+        /**
+         * Verify that {@code epochSecond} is between {@code 946_684_800L} and {@code 32_503_679_999L}.
+         *
+         * @param epochSecond time as epoch seconds
+         * @return {@code true} if {@code epochSecond} is between, otherwise {@code false}.
+         * @since 1.0.0
+         */
         protected boolean isValid(long epochSecond) {
-            return epochSecond >= 946684800L && epochSecond <= 32503679999L;
+            return epochSecond >= 946_684_800L && epochSecond <= 32_503_679_999L;
         }
     }
 
@@ -93,6 +139,14 @@ public @interface TimeRange {
      * @since 1.0.0
      */
     class LocalDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, LocalDateTime> {
+
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         */
+        public LocalDateTimeValidator() {
+        }
 
         /**
          * {@inheritDoc}
@@ -119,6 +173,14 @@ public @interface TimeRange {
      * @since 1.0.0
      */
     class OffsetDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, OffsetDateTime> {
+
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         */
+        public OffsetDateTimeValidator() {
+        }
 
         /**
          * {@inheritDoc}

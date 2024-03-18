@@ -56,17 +56,48 @@ import java.time.temporal.ChronoUnit;
 @Constraint(validatedBy = {TimeAccuracy.LocalDateTimeValidator.class, TimeAccuracy.OffsetDateTimeValidator.class})
 public @interface TimeAccuracy {
 
+    /**
+     * Get a validation message. It value is {@code {jp.mydns.projectk.safi.validator.TimeAccuracy.message}}.
+     *
+     * @return message validation message
+     * @since 1.0.0
+     */
     String message() default "{jp.mydns.projectk.safi.validator.TimeAccuracy.message}";
 
+    /**
+     * Get a validation group. Grouping is used to order constraints.
+     *
+     * @return validation group
+     * @since 1.0.0
+     */
     Class<?>[] groups() default {};
 
+    /**
+     * Get a validation category. Category is some any meta information.
+     *
+     * @return validation category
+     * @since 1.0.0
+     */
     Class<? extends Payload>[] payload() default {};
 
+    /**
+     * Allows multiple enumerations of this annotation.
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
     @interface List {
 
+        /**
+         * Get included annotations.
+         *
+         * @return annotations
+         * @since 1.0.0
+         */
         TimeAccuracy[] value();
     }
 
@@ -78,6 +109,14 @@ public @interface TimeAccuracy {
      * @since 1.0.0
      */
     class LocalDateTimeValidator implements ConstraintValidator<TimeAccuracy, LocalDateTime> {
+
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         */
+        public LocalDateTimeValidator() {
+        }
 
         /**
          * {@inheritDoc}
@@ -104,6 +143,14 @@ public @interface TimeAccuracy {
      * @since 1.0.0
      */
     class OffsetDateTimeValidator implements ConstraintValidator<TimeAccuracy, OffsetDateTime> {
+
+        /**
+         * Constructor.
+         *
+         * @since 1.0.0
+         */
+        public OffsetDateTimeValidator() {
+        }
 
         /**
          * {@inheritDoc}
