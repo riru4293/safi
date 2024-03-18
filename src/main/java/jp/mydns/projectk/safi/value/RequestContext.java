@@ -25,6 +25,11 @@
  */
 package jp.mydns.projectk.safi.value;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jp.mydns.projectk.safi.constant.RequestKind;
+
 /**
  * Current request information. A <i>Request</i> is a processing request, and there are processing requests via Web API
  * and background processing requests by the system.
@@ -42,6 +47,8 @@ public interface RequestContext {
      * @throws IllegalStateException if value has not been set yet
      * @since 1.0.0
      */
+    @NotBlank
+    @Size(max = 255)
     String getAccountId();
 
     /**
@@ -51,6 +58,16 @@ public interface RequestContext {
      * @throws IllegalStateException if value has not been set yet
      * @since 1.0.0
      */
+    @NotBlank
+    @Size(max = 255)
     String getProcessName();
 
+    /**
+     * Get the {@code RequestKind}.
+     *
+     * @return the {@code RequestKind}
+     * @since 1.0.0
+     */
+    @NotNull
+    RequestKind getRequestKind();
 }
