@@ -27,9 +27,10 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jp.mydns.projectk.safi.constant.RequestKind;
+import jp.mydns.projectk.safi.service.ValidationService;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
@@ -44,10 +45,23 @@ public class RequestContextProducer {
 
     private RequestContext reqCtx = new IllegalRequestContext();
 
+    @Inject
+    private ValidationService validSvc;
+
+    /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected RequestContextProducer() {
+    }
+
     /**
      * Produce the {@code RequestContext}.
      *
-     * @return the {@code RequestContext}
+     * @return the {@code RequestContext}. If not already set up, an invalid {@code RequestContext} will be provided.
+     * @see #setup(java.lang.String) Setup processing for system request
+     * @see #setup(java.lang.String, java.lang.String) Setup processing for user request
      * @since 1.0.0
      */
     @Produces
@@ -61,30 +75,38 @@ public class RequestContextProducer {
      *
      * @param processName name of the processing requested to be performed
      * @throws ConstraintViolationException if any argument violates the constraint
+     * @since 1.0.0
      */
-    public void setup(@NotBlank @Size(max = 250) String processName) {
-        setup("SAFI", processName);
+    public void setup(String processName) {
+        setup("SAFI", processName, RequestKind.SYSTEM);
     }
 
     /**
-     * Setup the request context.
+     * Setup the request context by user request that performed via Web API.
      *
      * @param accountId id of the account that requested the processing to be performed
      * @param processName name of the processing requested to be performed
      * @throws ConstraintViolationException if any argument violates the constraint
+     * @since 1.0.0
      */
-    public void setup(@NotBlank @Size(max = 250) String accountId, @NotBlank @Size(max = 250) String processName) {
-        this.reqCtx = new RequestContextImpl(accountId, processName);
+    public void setup(String accountId, String processName) {
+        setup(accountId, processName, RequestKind.USER);
+    }
+
+    private void setup(String accountId, String processName, RequestKind requestKind) {
+        this.reqCtx = validSvc.requireValid(new RequestContextImpl(accountId, processName, requestKind));
     }
 
     private class RequestContextImpl implements RequestContext {
 
         private final String accountId;
         private final String processName;
+        private final RequestKind requestKind;
 
-        public RequestContextImpl(String accountId, String processName) {
+        public RequestContextImpl(String accountId, String processName, RequestKind requestKind) {
             this.accountId = accountId;
             this.processName = processName;
+            this.requestKind = requestKind;
         }
 
         /**
@@ -108,6 +130,16 @@ public class RequestContextProducer {
         }
 
         /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public RequestKind getRequestKind() {
+            return requestKind;
+        }
+
+        /**
          * Returns a string representation.
          *
          * @return a string representation
@@ -115,7 +147,8 @@ public class RequestContextProducer {
          */
         @Override
         public String toString() {
-            return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId + '}';
+            return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId
+                    + ", requestKind=" + requestKind + '}';
         }
     }
 
@@ -142,6 +175,17 @@ public class RequestContextProducer {
          */
         @Override
         public String getProcessName() {
+            throw new IllegalStateException(REASON);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws IllegalStateException always
+         * @since 1.0.0
+         */
+        @Override
+        public RequestKind getRequestKind() {
             throw new IllegalStateException(REASON);
         }
     }
