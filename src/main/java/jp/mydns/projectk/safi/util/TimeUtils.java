@@ -25,11 +25,15 @@
  */
 package jp.mydns.projectk.safi.util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_TIME;
 import java.time.format.DateTimeParseException;
 import java.util.Objects;
 import java.util.Optional;
@@ -82,6 +86,34 @@ public class TimeUtils {
     }
 
     /**
+     * Parse to the {@code LocalDate}.
+     *
+     * @param localDate string representation of the {@code LocalDate}
+     * @return the {@code LocalDate}
+     * @throws NullPointerException if {@code localDate} is {@code null}
+     * @throws DateTimeParseException if failed parse to the {@code LocalDate}
+     * @see DateTimeFormatter#ISO_LOCAL_DATE
+     * @since 1.0.0
+     */
+    public static LocalDate toLocalDate(String localDate) {
+        return LocalDate.parse(Objects.requireNonNull(localDate), ISO_LOCAL_DATE);
+    }
+
+    /**
+     * Parse to the {@code LocalTime}.
+     *
+     * @param localTime string representation of the {@code LocalTime}
+     * @return the {@code LocalTime}
+     * @throws NullPointerException if {@code localTime} is {@code null}
+     * @throws DateTimeParseException if failed parse to the {@code LocalTime}
+     * @see DateTimeFormatter#ISO_LOCAL_TIME
+     * @since 1.0.0
+     */
+    public static LocalTime toLocalTime(String localTime) {
+        return LocalTime.parse(Objects.requireNonNull(localTime), ISO_LOCAL_TIME);
+    }
+
+    /**
      * Try parse to the {@code LocalDateTime}.
      *
      * @param localDateTime string representation of the {@code LocalDateTime}
@@ -92,6 +124,38 @@ public class TimeUtils {
     public static Optional<LocalDateTime> tryToLocalDateTime(String localDateTime) {
         try {
             return Optional.of(toLocalDateTime(localDateTime));
+        } catch (RuntimeException ignore) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Try parse to the {@code LocalDate}.
+     *
+     * @param localDate string representation of the {@code LocalDate}
+     * @return the {@code LocalDate}. Empty if failed parse to the {@code LocalDate}.
+     * @see DateTimeFormatter#ISO_LOCAL_DATE
+     * @since 1.0.0
+     */
+    public static Optional<LocalDate> tryToLocalDate(String localDate) {
+        try {
+            return Optional.of(toLocalDate(localDate));
+        } catch (RuntimeException ignore) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Try parse to the {@code LocalTime}.
+     *
+     * @param localTime string representation of the {@code LocalTime}
+     * @return the {@code LocalTime}. Empty if failed parse to the {@code LocalTime}.
+     * @see DateTimeFormatter#ISO_LOCAL_TIME
+     * @since 1.0.0
+     */
+    public static Optional<LocalTime> tryToLocalTime(String localTime) {
+        try {
+            return Optional.of(toLocalTime(localTime));
         } catch (RuntimeException ignore) {
             return Optional.empty();
         }
