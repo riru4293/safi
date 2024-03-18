@@ -37,7 +37,7 @@ import java.lang.reflect.Type;
 import jp.mydns.projectk.plugin.Plugin;
 
 /**
- * An information for loading and executing the {@link Plugin}.
+ * Definition for {@link Plugin} to loading and executing.
  *
  * <p>
  * Implementation requirements.
@@ -53,7 +53,7 @@ import jp.mydns.projectk.plugin.Plugin;
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
  *     "$id": "https://project-k.mydns.jp/safi/plugdef.schema.json",
  *     "title": "Plugdef",
- *     "description": "An information for loading and executing the Plug-in.",
+ *     "description": "Definition for Plug-in to loading and executing.",
  *     "type": "object",
  *     "properties": {
  *         "name": {
@@ -78,7 +78,7 @@ import jp.mydns.projectk.plugin.Plugin;
  * @since 1.0.0
  */
 @JsonbTypeDeserializer(Plugdef.Deserializer.class)
-@Schema(name = "Plugdef", description = "An information for loading and executing the Plug-in.")
+@Schema(name = "Plugdef", description = "Definition for Plug-in to loading and executing.")
 public interface Plugdef {
 
     /**
@@ -111,6 +111,14 @@ public interface Plugdef {
     class Deserializer implements JsonbDeserializer<Plugdef> {
 
         /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
+
+        /**
          * {@inheritDoc}
          *
          * @since 1.0.0
@@ -121,7 +129,7 @@ public interface Plugdef {
         }
 
         /**
-         * Implements of the {@code Plugdef}.
+         * Implements of the {@code Plugdef} as Java Beans.
          *
          * @author riru
          * @version 1.0.0
@@ -131,6 +139,14 @@ public interface Plugdef {
 
             private String name;
             private JsonObject args;
+
+            /**
+             * Constructor just for JSON deserialization.
+             *
+             * @since 1.0.0
+             */
+            protected Bean() {
+            }
 
             /**
              * {@inheritDoc}
