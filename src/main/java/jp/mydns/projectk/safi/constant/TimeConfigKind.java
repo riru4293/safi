@@ -25,10 +25,8 @@
  */
 package jp.mydns.projectk.safi.constant;
 
-import jp.mydns.projectk.safi.value.TimeConfigValue;
-
 /**
- * Kind definitions of the {@link TimeConfigValue}.
+ * Kind of the date-time configuration value.
  *
  * @author riru
  * @version 1.0.0
@@ -41,4 +39,10 @@ public enum TimeConfigKind {
      * @since 1.0.0
      */
     APP_NOW,
+    /**
+     * Indicates the last day of the period that has already been scheduled.
+     *
+     * @since 1.0.0
+     */
+    ALREADY_SCHEDULED,
 }
