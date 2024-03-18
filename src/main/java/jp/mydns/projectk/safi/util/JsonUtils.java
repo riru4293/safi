@@ -27,6 +27,7 @@ package jp.mydns.projectk.safi.util;
 
 import jakarta.json.Json;
 import jakarta.json.JsonException;
+import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
@@ -235,5 +236,20 @@ public class JsonUtils {
                 .filter(not(p(canMerge, Map.Entry::getKey))).filter(not(p(JsonValue.NULL::equals, Map.Entry::getValue)));
 
         return Stream.of(originEntries, mergedEntries, owEntries).flatMap(identity()).collect(JsonCollectors.toJsonObject());
+    }
+
+    /**
+     * Try conversion to {@code Integer} from {@code JsonValue}.
+     *
+     * @param val the {@code JsonValue}
+     * @return extracted integer
+     * @since 1.0.0
+     */
+    public static Optional<Integer> tryToInteger(JsonValue val) {
+        try {
+            return Optional.ofNullable(val).map(JsonNumber.class::cast).map(JsonNumber::intValueExact);
+        } catch (RuntimeException ignore) {
+            return Optional.empty();
+        }
     }
 }
