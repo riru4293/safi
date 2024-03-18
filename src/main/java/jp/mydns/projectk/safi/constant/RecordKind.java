@@ -25,10 +25,8 @@
  */
 package jp.mydns.projectk.safi.constant;
 
-import jp.mydns.projectk.safi.value.ContentRecord;
-
 /**
- * Kind definitions of the {@link ContentRecord}.
+ * Kind of the recording value.
  *
  * @author riru
  * @version 1.0.0
@@ -55,9 +53,9 @@ public enum RecordKind {
     FAILURE;
 
     /**
-     * Returns a {@code true} if processing for content has terminated normally, otherwise {@code false}.
+     * Determine whether content processing has completed successfully.
      *
-     * @return {@code true} if processing for content has terminated normally, otherwise {@code false}
+     * @return {@code true} if processing has terminated normally, otherwise {@code false}.
      * @since 1.0.0
      */
     public boolean isSuccessful() {
