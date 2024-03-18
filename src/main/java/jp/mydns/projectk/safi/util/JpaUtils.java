@@ -51,7 +51,20 @@ import static java.util.stream.Collectors.toUnmodifiableMap;
  */
 public class JpaUtils {
 
+    /**
+     * Name prefix for JSON object value. If this prefix is given to the field name, the field value will be interpreted
+     * as {@code JsonObject}.
+     *
+     * @since 1.0.0
+     */
     public static final String PREFIX_JSONOBJECT = "jsonobject___";
+
+    /**
+     * Name prefix for JSON array value. If this prefix is given to the field name, the field value will be interpreted
+     * as {@code JsonArray}.
+     *
+     * @since 1.0.0
+     */
     public static final String PREFIX_JSONARRAY = "jsonarray___";
 
     private JpaUtils() {
