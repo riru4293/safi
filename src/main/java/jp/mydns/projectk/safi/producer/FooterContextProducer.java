@@ -50,6 +50,14 @@ public class FooterContextProducer {
     private RealTimeService realTimeSvc;
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected FooterContextProducer() {
+    }
+
+    /**
      * Produce the {@code FooterContext}.
      *
      * @return the {@code FooterContext}
