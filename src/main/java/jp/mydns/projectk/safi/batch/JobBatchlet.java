@@ -31,11 +31,11 @@ import jakarta.batch.runtime.BatchStatus;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
-import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
@@ -43,9 +43,11 @@ import jp.mydns.projectk.safi.constant.ContentKind;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.ValidationService;
+import jp.mydns.projectk.safi.util.TimeUtils;
+import jp.mydns.projectk.safi.value.Condition;
+import jp.mydns.projectk.safi.value.Filtdef;
 import jp.mydns.projectk.safi.value.Job;
 import jp.mydns.projectk.safi.value.Plugdef;
-import trial.JobService;
 
 /**
  * Abstract implements of the <i>Jakarta-Batch</i> for the <i>Job</i> processing.
@@ -73,8 +75,13 @@ public abstract class JobBatchlet implements Batchlet {
     @Inject
     private ValidationService validationSvc;
 
-    @Inject
-    private JobService jobSvc;
+    /**
+     * Construct by <i>Jakarta-Batch</i>.
+     *
+     * @since 1.0.0
+     */
+    protected JobBatchlet() {
+    }
 
     /**
      * Stop the executing this.
@@ -141,7 +148,11 @@ public abstract class JobBatchlet implements Batchlet {
      * @since 1.0.0
      */
     protected Path getWrkDir() {
-        return confSvc.getJobDir().resolve(job.getId());
+        String wrkDirName = job.getBeginTime().map(TimeUtils::toLocalDateTime)
+                .map(t -> t.format(DateTimeFormatter.ofPattern("uuuuMMddhhmmss")))
+                .map(t -> String.format("%s.%s", t, job.getId())).orElseThrow();
+
+        return confSvc.getJobDir().resolve(wrkDirName);
     }
 
     /**
@@ -151,7 +162,7 @@ public abstract class JobBatchlet implements Batchlet {
      * @since 1.0.0
      */
     protected ContentKind getContentKind() {
-        return job.getJobdef().getContentKind();
+        return job.getContentKind();
     }
 
     /**
@@ -162,17 +173,22 @@ public abstract class JobBatchlet implements Batchlet {
      * @since 1.0.0
      */
     protected Plugdef getPlugdef() {
-        return job.getJobdef().getPlugdef().orElseThrow(() -> new IllegalStateException("No plug-in definition was found."));
+        return job.getPlugdef().orElseThrow(() -> new IllegalStateException("No plug-in definition was found."));
     }
 
     /**
-     * Get optional configurations at job execution.
+     * Get the {@code Filtdef}.
      *
-     * @return optional configurations at job execution
+     * @return the {@code Filtdef}
      * @since 1.0.0
      */
-    protected JsonObject getJobOptions() {
-        return job.getOptions().orElse(EMPTY_JSON_OBJECT);
+    protected Filtdef getFiltdef() {
+        return job.getFiltdef().orElseGet(
+                () -> new Filtdef.Builder()
+                        .withTrnsdef(Map.of())
+                        .withFilter(Condition.emptyCondition())
+                        .build(validationSvc.getValidator())
+        );
     }
 
     /**
@@ -182,7 +198,17 @@ public abstract class JobBatchlet implements Batchlet {
      * @since 1.0.0
      */
     protected Map<String, String> getTrnsdef() {
-        return job.getJobdef().getTrnsdef().orElseGet(Map::of);
+        return job.getTrnsdef().orElseGet(Map::of);
+    }
+
+    /**
+     * Get optional configuration at job execution.
+     *
+     * @return optional configuration
+     * @since 1.0.0
+     */
+    protected JsonObject getJobOptions() {
+        return job.getOptions();
     }
 
     /**

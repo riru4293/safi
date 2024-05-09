@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
-import jp.mydns.projectk.safi.dao.CommonBatchDao;
+import jp.mydns.projectk.safi.dao.CommonDao;
 import jp.mydns.projectk.safi.service.AppTimeService;
 import jp.mydns.projectk.safi.service.ImportationService;
 import jp.mydns.projectk.safi.service.ImportationService.UserImportationService;
@@ -97,7 +97,7 @@ public interface ImportationFacade {
             implements ImportationFacade {
 
         @Inject
-        private CommonBatchDao comDao;
+        private CommonDao comDao;
 
         @Inject
         private JobRecordingService recSvc;
@@ -107,6 +107,14 @@ public interface ImportationFacade {
 
         @Inject
         private AppTimeService appTimeSvc;
+
+        /**
+         * Construct by CDI.
+         *
+         * @since 1.0.0
+         */
+        protected AbstractImportationFacade() {
+        }
 
         /**
          * Get service of importation.
@@ -145,7 +153,8 @@ public interface ImportationFacade {
                 });
 
                 // Process register, update and explicit delete the contents.
-                StreamUtils.toChunkedStream(m.stream()).map(c -> c.stream().collect(toLinkedHashMap())).forEachOrdered(c -> {
+                StreamUtils.toChunkedStream(m.stream()).map(c -> c.stream().map(ImportationValue::asEntry)
+                        .collect(toLinkedHashMap())).forEachOrdered(c -> {
                     c.values().stream().forEach(svc::registerWork);
                     comDao.flushAndClear();
                     throwIfInterrupted();
@@ -227,6 +236,14 @@ public interface ImportationFacade {
 
         @Inject
         private UserImportationService svc;
+
+        /**
+         * Construct by CDI.
+         *
+         * @since 1.0.0
+         */
+        protected UserImportationFacade() {
+        }
 
         @Override
         protected UserImportationService getImportationService() {

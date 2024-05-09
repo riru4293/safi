@@ -27,10 +27,14 @@ package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbException;
+import static jakarta.json.stream.JsonCollectors.toJsonArray;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import static jp.mydns.projectk.safi.util.EntryUtils.compute;
@@ -50,6 +54,14 @@ public class JsonService {
 
     @Inject
     private Jsonb jsonb;
+
+    /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected JsonService() {
+    }
 
     /**
      * Writes the Java object tree with root object object to a String instance as JSON.
@@ -136,5 +148,29 @@ public class JsonService {
             default ->
                 jsonb.fromJson(jsonb.toJson(obj), clazz);
         };
+    }
+
+    /**
+     * Conversion to {@code List<String>}.
+     *
+     * @param src source value
+     * @return string list
+     * @throws NullPointerException if {@code src} is {@code null} or contains {@code null}
+     * @since 1.0.0
+     */
+    public List<String> toStringList(JsonArray src) {
+        return Objects.requireNonNull(src).stream().map(JsonUtils::toString).toList();
+    }
+
+    /**
+     * Conversion to {@code JsonArray}.
+     *
+     * @param src source value
+     * @return JSON string array
+     * @throws NullPointerException if {@code src} is {@code null} or contains {@code null}
+     * @since 1.0.0
+     */
+    public JsonArray toJsonStringList(List<String> src) {
+        return Objects.requireNonNull(src).stream().map(Json::createValue).collect(toJsonArray());
     }
 }

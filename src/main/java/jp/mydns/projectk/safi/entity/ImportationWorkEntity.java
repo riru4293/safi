@@ -52,6 +52,11 @@ public class ImportationWorkEntity implements Serializable {
 
     private static final long serialVersionUID = 7862710634490210812L;
 
+    /**
+     * Related {@code UserEntity}.
+     *
+     * @since 1.0.0
+     */
     @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
     private UserEntity userEntity;
 
@@ -73,6 +78,11 @@ public class ImportationWorkEntity implements Serializable {
 //
 //    @OneToOne(mappedBy = "wrkEntity", fetch = FetchType.LAZY)
 //    private GroupEntity groupEntity;
+    /**
+     * Content id.
+     *
+     * @since 1.0.0
+     */
     @NotBlank
     @Size(max = 36)
     @Id
@@ -80,11 +90,24 @@ public class ImportationWorkEntity implements Serializable {
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
 
+    /**
+     * Content digest value.
+     *
+     * @since 1.0.0
+     */
     @NotBlank
     @Size(max = 128)
     @Basic(optional = false)
     @Column(nullable = false, updatable = false, length = 128)
     private String digest;
+
+    /**
+     * Constructs a new entity with all properties are default value.
+     *
+     * @since 1.0.0
+     */
+    public ImportationWorkEntity() {
+    }
 
     /**
      * Get content id.

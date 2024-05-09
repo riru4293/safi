@@ -67,7 +67,8 @@ public class TransformerService {
     private PluginLoader<FunctionPlugin> plgLdr;
 
     /**
-     * Transform processing.
+     * Transform processing. If the transform definition is empty, the received value is returned as is without
+     * transformation.
      *
      * @author riru
      * @version 1.0.0
@@ -145,6 +146,10 @@ public class TransformerService {
         @Override
         public TransResult transform(Map<String, String> src) {
             Objects.requireNonNull(src);
+
+            if (formulas.isEmpty()) {
+                return new TransResult.Success(src, src);
+            }
 
             try {
                 Map<String, String> transformed = formulas.entrySet().stream().map(compute(f -> f.calculate(src)))

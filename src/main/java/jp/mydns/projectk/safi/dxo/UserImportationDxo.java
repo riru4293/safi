@@ -25,14 +25,15 @@
  */
 package jp.mydns.projectk.safi.dxo;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import java.util.Map;
 import java.util.Objects;
 import jp.mydns.projectk.safi.dxo.ImportationDxo.AbstractImportationDxo;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
+import jp.mydns.projectk.safi.service.ValidationService;
 import jp.mydns.projectk.safi.validator.Unsafe;
 import jp.mydns.projectk.safi.value.ContentValue;
 import jp.mydns.projectk.safi.value.ImportationValue;
@@ -47,6 +48,7 @@ import jp.mydns.projectk.safi.value.ValidityPeriod;
  * @version 1.0.0
  * @since 1.0.0
  */
+@RequestScoped
 public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserValue>
         implements ImportationDxo<UserEntity, UserValue> {
 
@@ -54,10 +56,18 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
     private ContentValue.DigestGenerator digestGen;
 
     @Inject
-    private Validator validator;
+    private ValidationService validSvc;
 
     @Inject
     private AppTimeService appTimeSvc;
+
+    /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected UserImportationDxo() {
+    }
 
     /**
      * {@inheritDoc}
@@ -71,17 +81,17 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
         Objects.requireNonNull(transResult);
 
         Map<String, String> value = transResult.getContent();
-        ValidityPeriod vp = toValidityPeriod(value);
+        ValidityPeriod validityPeriod = toValidityPeriod(value);
 
         return new ImportationValue<>(
                 new UserValue.Builder(digestGen)
                         .withId(value.get("id"))
-                        .withEnabled(vp.isEnabled(appTimeSvc.getLocalNow()))
+                        .withEnabled(validityPeriod.isEnabled(appTimeSvc.getLocalNow()))
                         .withName(value.get("name"))
                         .withAtts(toAtts(value))
-                        .withValidityPeriod(vp)
+                        .withValidityPeriod(validityPeriod)
                         .withNote(value.get("note"))
-                        .build(validator),
+                        .build(validSvc.getValidator()),
                 transResult.getSource());
     }
 
@@ -97,12 +107,10 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
         Objects.requireNonNull(importValue);
 
         return new ImportationValue<>(
-                new UserValue.Builder(digestGen)
-                        .with(importValue.getContent())
-                        .withEnabled(importValue.getContent().getValidityPeriod().isEnabled(appTimeSvc.getLocalNow()))
-                        .withVersion(entity.getVersion())
+                new UserValue.Builder(importValue.getContent(), digestGen)
+                        .withPersistenceContext(entity.toPersistenceContext())
                         .withEntity(entity)
-                        .build(validator, Unsafe.class),
+                        .build(validSvc.getValidator(), Unsafe.class),
                 importValue.getSource());
     }
 
@@ -125,9 +133,9 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
                 .withValidityPeriod(newVp)
                 .withEnabled(newVp.isEnabled(appTimeSvc.getLocalNow()))
                 .withNote(entity.getNote())
-                .withVersion(entity.getVersion())
+                .withPersistenceContext(entity.toPersistenceContext())
                 .withEntity(entity)
-                .build(validator, Unsafe.class);
+                .build(validSvc.getValidator(), Unsafe.class);
     }
 
     /**
@@ -140,8 +148,8 @@ public class UserImportationDxo extends AbstractImportationDxo<UserEntity, UserV
     public ImportationValue<UserValue> toLogicalDeletion(UserEntity entity) {
         Objects.requireNonNull(entity);
 
-        ValidityPeriod vp = new ValidityPeriod.Builder().with(entity.getValidityPeriod())
-                .withTo(getExpiredTimeOnNow()).build(validator, Unsafe.class);
+        ValidityPeriod vp = new ValidityPeriod.Builder(entity.getValidityPeriod())
+                .withTo(getExpiredTimeOnNow()).build(validSvc.getValidator(), Unsafe.class);
 
         return new ImportationValue<>(toValue(entity, vp), Map.of());
     }

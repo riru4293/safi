@@ -56,26 +56,50 @@ public class TimeConfigEntity extends CommonEntity {
 
     private static final long serialVersionUID = -8634128441967110929L;
 
+    /**
+     * Configuration id.
+     *
+     * @since 1.0.0
+     */
     @Id
+    @NotNull
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
-    @Column(name = "kind", nullable = false, length = 20)
+    @Column(name = "id", nullable = false, length = 20)
     private TimeConfigKind id;
 
+    /**
+     * Configuration value.
+     *
+     * @since 1.0.0
+     */
     @TimeAccuracy
     @TimeRange
-    @Basic(optional = false)
-    @Column(name = "value", nullable = false)
+    @Column(name = "value")
     private LocalDateTime value;
 
+    /**
+     * The {@code ValidityPeriodEmb}
+     *
+     * @since 1.0.0
+     */
     @NotNull
     @Valid
     @Embedded
-    protected ValidityPeriodEmb validityPeriod;
+    protected ValidityPeriodEmb validityPeriodEmb;
 
     /**
-     * {@inheritDoc}
+     * Constructs a new entity with all properties are default value.
      *
+     * @since 1.0.0
+     */
+    public TimeConfigEntity() {
+    }
+
+    /**
+     * Get id of the configuration.
+     *
+     * @return the {@code TimeConfigKind}
      * @since 1.0.0
      */
     public TimeConfigKind getId() {
@@ -93,8 +117,9 @@ public class TimeConfigEntity extends CommonEntity {
     }
 
     /**
-     * {@inheritDoc}
+     * Get value of the configuration.
      *
+     * @return the {@code LocalDateTime}. It time zone is UTC. It may be {@code null}.
      * @since 1.0.0
      */
     public LocalDateTime getValue() {
@@ -112,22 +137,23 @@ public class TimeConfigEntity extends CommonEntity {
     }
 
     /**
-     * {@inheritDoc}
+     * Get the validity-period of the configuration.
      *
+     * @return the {@code ValidityPeriod}
      * @since 1.0.0
      */
     public ValidityPeriod getValidityPeriod() {
-        return validityPeriod;
+        return validityPeriodEmb != null ? validityPeriodEmb.toValidityPeriod() : null;
     }
 
     /**
-     * Set the validity-period of the configuration.
+     * Set the {@code ValidityPeriod}.
      *
-     * @param vp the {@code ValidityPeriod}
+     * @param validityPeriod the {@code ValidityPeriod}
      * @since 1.0.0
      */
-    public void setValidityPeriod(ValidityPeriod vp) {
-        this.validityPeriod = vp != null ? new ValidityPeriodEmb(vp) : null;
+    public void setValidityPeriod(ValidityPeriod validityPeriod) {
+        this.validityPeriodEmb = validityPeriod != null ? new ValidityPeriodEmb(validityPeriod) : null;
     }
 
     /**
@@ -162,6 +188,6 @@ public class TimeConfigEntity extends CommonEntity {
      */
     @Override
     public String toString() {
-        return "TimeConfigEntity{" + "id=" + id + ", value=" + value + ", validityPeriod=" + validityPeriod + '}';
+        return "TimeConfigEntity{" + "id=" + id + ", value=" + value + ", validityPeriod=" + validityPeriodEmb + '}';
     }
 }

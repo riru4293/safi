@@ -69,12 +69,12 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *     "properties": {
  *         "properties": {
  *             "from": {
- *                 "description": "Begin date-time of validity period.",
+ *                 "description": "Begin time of validity period.",
  *                 "type": "date-time",
  *                 "default": "2000-01-01T00:00:00Z"
  *             },
  *             "to": {
- *                 "description": "End date-time of validity period.",
+ *                 "description": "End time of validity period.",
  *                 "type": "date-time",
  *                 "default": "2999-12-31T23:59:59Z"
  *             },
@@ -102,24 +102,24 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 public interface ValidityPeriod {
 
     /**
-     * Get begin date-time of validity period.
+     * Get begin time of validity period.
      *
-     * @return begin date-time of validity period
+     * @return begin time
      * @since 1.0.0
      */
-    @Schema(example = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period.")
+    @Schema(example = "2000-01-01T00:00:00Z", description = "Begin time of validity period.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
     OffsetDateTime getFrom();
 
     /**
-     * Get end date-time of validity period.
+     * Get end time of validity period.
      *
-     * @return end date-time of validity period
+     * @return end time
      * @since 1.0.0
      */
-    @Schema(example = "2999-12-31T23:59:59Z", description = "End date-time of validity period.")
+    @Schema(example = "2999-12-31T23:59:59Z", description = "End time of validity period.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -137,7 +137,7 @@ public interface ValidityPeriod {
     /**
      * Returns {@code true} if {@code refTime} is within the validity period and not forbidden to be valid.
      *
-     * @param refTime reference date-time. It timezone is UTC.
+     * @param refTime reference time. It timezone is UTC.
      * @return {@code true} if {@code refTime} is within the validity period and not forbidden to be valid, otherwise
      * {@code false}.
      * @throws NullPointerException if {@code refTime} is {@code null}
@@ -151,7 +151,7 @@ public interface ValidityPeriod {
     /**
      * Returns {@code true} if {@code refTime} is within the validity period and not forbidden to be valid.
      *
-     * @param refTime reference date-time
+     * @param refTime reference time
      * @return {@code true} if {@code refTime} is within the validity period and not forbidden to be valid, otherwise
      * {@code false}.
      * @throws NullPointerException if {@code refTime} is {@code null}
@@ -163,7 +163,7 @@ public interface ValidityPeriod {
     }
 
     /**
-     * Get default value of begin date-time of validity period.
+     * Get default value of begin time of validity period.
      *
      * @return {@code 2000-01-01T00:00:00Z}
      * @since 1.0.0
@@ -173,7 +173,7 @@ public interface ValidityPeriod {
     }
 
     /**
-     * Get default value of end date-time of validity period.
+     * Get default value of end time of validity period.
      *
      * @return {@code 2999-12-31T23:59:59Z}
      * @since 1.0.0
@@ -203,24 +203,32 @@ public interface ValidityPeriod {
 
         private OffsetDateTime from = defaultFrom();
         private OffsetDateTime to = defaultTo();
-        private boolean ban = false;
+        private boolean ban = defaultBan();
 
         /**
-         * Set all properties from {@code src}.
+         * Constructs a new builder with all properties are default value.
+         *
+         * @see #defaultFrom() default value for {@code from}
+         * @see #defaultTo() default value for {@code to}
+         * @see #defaultBan() default value for {@code ban}
+         * @since 1.0.0
+         */
+        public Builder() {
+        }
+
+        /**
+         * Constructs a new builder with set all properties by copying them from other value.
          *
          * @param src source value
-         * @return updated this
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 1.0.0
          */
-        public Builder with(ValidityPeriod src) {
+        public Builder(ValidityPeriod src) {
             Objects.requireNonNull(src);
 
             this.from = src.getFrom();
             this.to = src.getTo();
             this.ban = src.isBan();
-
-            return this;
         }
 
         /**
@@ -274,7 +282,7 @@ public interface ValidityPeriod {
         }
 
         /**
-         * Implements of the {@code ValidityPeriod}.
+         * Implements of the {@code ValidityPeriod} as Java Beans.
          *
          * @author riru
          * @version 1.0.0
@@ -287,7 +295,7 @@ public interface ValidityPeriod {
             private boolean ban;
 
             /**
-             * Constructor. Used only for deserialization from JSON.
+             * Constructor just for JSON deserialization.
              *
              * @since 1.0.0
              */
@@ -295,12 +303,15 @@ public interface ValidityPeriod {
             }
 
             /**
-             * Constructor.
+             * Construct with set all properties from builder.
              *
              * @param builder the {@code ValidityPeriod.Builder}
+             * @throws NullPointerException if {@code builder} is {@code null}
              * @since 1.0.0
              */
             protected Bean(Builder builder) {
+                Objects.requireNonNull(builder);
+
                 this.from = builder.from;
                 this.to = builder.to;
                 this.ban = builder.ban;
@@ -317,9 +328,9 @@ public interface ValidityPeriod {
             }
 
             /**
-             * Set begin date-time of validity period.
+             * Set begin time of validity period.
              *
-             * @param from begin date-time of validity period
+             * @param from begin time
              * @since 1.0.0
              */
             public void setFrom(OffsetDateTime from) {
@@ -337,9 +348,9 @@ public interface ValidityPeriod {
             }
 
             /**
-             * Set end date-time of validity period.
+             * Set end time of validity period.
              *
-             * @param to end date-time of validity period
+             * @param to end time
              * @since 1.0.0
              */
             public void setTo(OffsetDateTime to) {
@@ -411,6 +422,14 @@ public interface ValidityPeriod {
      * @since 1.0.0
      */
     class Deserializer implements JsonbDeserializer<ValidityPeriod> {
+
+        /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
 
         /**
          * {@inheritDoc} If an element is null because no value is provided, the default value is used.

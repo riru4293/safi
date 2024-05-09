@@ -60,8 +60,8 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
  *     "$id": "https://project-k.mydns.jp/safi/content-record.schema.json",
- *     "title": "Filtdef",
- *     "description": "An information for filtering the contents.",
+ *     "title": "ContentRecord",
+ *     "description": "A record of one processed content.",
  *     "type": "object",
  *     "properties": {
  *         "id": {
@@ -80,9 +80,10 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *             ]
  *         },
  *         "failurePhase": {
- *             "description": "Failure phase.",
+ *             "description": "Processing phase in which content processing failed.",
  *             "type": "string",
  *             "enum": [
+ *                 "FETCHING",
  *                 "TRANSFORMATION",
  *                 "VALIDATION",
  *                 "PROVISIONING"
@@ -92,7 +93,13 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *             "description": "Format of record value.",
  *             "type": "string",
  *             "enum": [
- *                 "UNDEFINED",
+ *                 "TRANSFORM_RESULT",
+ *                 "IMPORTATION_USER",
+ *                 "IMPORTATION_MEDIUM",
+ *                 "IMPORTATION_ORG",
+ *                 "IMPORTATION_BELONG_ORG",
+ *                 "IMPORTATION_GROUP",
+ *                 "IMPORTATION_BELONG_GROUP",
  *                 "USER",
  *                 "MEDIUM",
  *                 "ORG",
@@ -107,13 +114,14 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *         },
  *         "message": {
  *             "description": "Result message.",
- *             "type": "string"
+ *             "type": "string",
+ *             "minLength": 1
  *         },
  *         "required": [
  *             "kind",
  *             "format",
  *             "value",
- *             "messages"
+ *             "message"
  *         ],
  *         "allOf": [
  *             {
@@ -220,9 +228,17 @@ public interface ContentRecord {
         private String id;
         private RecordKind kind;
         private JobPhase failurePhase;
+        private RecordValueFormat format;
         private JsonObject value;
         private String message;
-        private RecordValueFormat format;
+
+        /**
+         * Constructs a new builder with all properties are {@code null}.
+         *
+         * @since 1.0.0
+         */
+        public Builder() {
+        }
 
         /**
          * Set content id.
@@ -309,7 +325,7 @@ public interface ContentRecord {
         }
 
         /**
-         * Implements of the {@code ContentRecord}.
+         * Implements of the {@code ContentRecord} as Java Beans.
          *
          * @author riru
          * @version 1.0.0
@@ -333,7 +349,7 @@ public interface ContentRecord {
             }
 
             /**
-             * Constructor.
+             * Construct with set all properties from builder.
              *
              * @param builder the {@code ContentRecord.Builder}
              * @since 1.0.0
@@ -342,9 +358,9 @@ public interface ContentRecord {
                 this.id = builder.id;
                 this.kind = builder.kind;
                 this.failurePhase = builder.failurePhase;
+                this.format = builder.format;
                 this.value = builder.value;
                 this.message = builder.message;
-                this.format = builder.format;
             }
 
             /**
@@ -397,6 +413,12 @@ public interface ContentRecord {
                 return failurePhase;
             }
 
+            /**
+             * Set the phase that failed processing.
+             *
+             * @param failurePhase the JobPhase. It is null if processing is successful end.
+             * @since 1.0.0
+             */
             public void setFailurePhase(JobPhase failurePhase) {
                 this.failurePhase = failurePhase;
             }
@@ -469,8 +491,7 @@ public interface ContentRecord {
              */
             @Override
             public String toString() {
-                return "ContentRecord{" + "id=" + id + ", kind=" + kind + ", failurePhase=" + failurePhase
-                        + ", format=" + format + ", value=" + value + ", message=" + message + '}';
+                return "ContentRecord{" + "id=" + id + ", kind=" + kind + ", message=" + message + '}';
             }
         }
     }
@@ -483,6 +504,14 @@ public interface ContentRecord {
      * @since 1.0.0
      */
     class Deserializer implements JsonbDeserializer<ContentRecord> {
+
+        /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
 
         /**
          * {@inheritDoc}

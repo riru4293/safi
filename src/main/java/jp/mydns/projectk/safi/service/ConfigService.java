@@ -45,6 +45,14 @@ import org.eclipse.microprofile.config.ConfigProvider;
 public class ConfigService {
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected ConfigService() {
+    }
+
+    /**
      * Get temporary directory. This directory is guaranteed to exist and be writable.
      *
      * @return temporary directory

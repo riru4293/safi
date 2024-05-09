@@ -55,4 +55,12 @@ import jakarta.ws.rs.core.Application;
         name = "Token issued by SAFI")
 public class JakartaRestConfiguration extends Application {
 
+    /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    public JakartaRestConfiguration() {
+    }
+
 }

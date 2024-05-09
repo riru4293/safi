@@ -35,7 +35,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Optional;
 import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.entity.embedded.AttsEmb;
 import jp.mydns.projectk.safi.entity.embedded.NoEmbedNull;
@@ -60,6 +60,11 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
 
     private static final long serialVersionUID = -1113513901343265409L;
 
+    /**
+     * Content id.
+     *
+     * @since 1.0.0
+     */
     @NotBlank
     @Size(max = 36)
     @Id
@@ -67,37 +72,79 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     protected String id;
 
+    /**
+     * Indicates that it is enable. {@code true} if enabled.
+     *
+     * @since 1.0.0
+     */
     @Column(name = "enabled", nullable = false)
     protected boolean enabled;
 
-    @Size(max = 100)
+    /**
+     * Content name.
+     *
+     * @since 1.0.0
+     */
+    @Size(max = 255)
     @Basic(optional = false)
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 255)
     protected String name;
 
+    /**
+     * The {@code AttsEmb}.
+     *
+     * @since 1.0.0
+     */
     @NotNull
     @Valid
     @Embedded
-    @SuppressWarnings("FieldMayBeFinal")
-    protected AttsEmb attsEmb = new AttsEmb();
+    protected AttsEmb atts;
 
+    /**
+     * The {@code ValidityPeriodEmb}.
+     *
+     * @since 1.0.0
+     */
     @NotNull
     @Valid
     @Embedded
     protected ValidityPeriodEmb validityPeriod;
 
+    /**
+     * Content digest value.
+     *
+     * @since 1.0.0
+     */
     @NotBlank
     @Size(max = 128)
     @Basic(optional = false)
     @Column(name = "digest", nullable = false, length = 128)
     protected String digest;
 
+    /**
+     * {@link #enabled} in textual format.
+     *
+     * @since 1.0.0
+     */
     @Basic(optional = false)
     @Column(name = "txt_enabled", insertable = false, updatable = false)
     protected String txtEnabled;
 
+    /**
+     * The {@code TxtValidityPeriodEmb}.
+     *
+     * @since 1.0.0
+     */
     @Embedded
     protected TxtValidityPeriodEmb txtValidityPeriod = new TxtValidityPeriodEmb();
+
+    /**
+     * Constructs a new entity with all properties are default value.
+     *
+     * @since 1.0.0
+     */
+    public ContentEntity() {
+    }
 
     /**
      * Get content id.
@@ -160,24 +207,23 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
     }
 
     /**
-     * Get <i>Attribute</i> collection.
+     * Get <i>Attribute</i> values.
      *
-     * @return <i>Attribute</i> collection
+     * @return <i>Attribute</i> values
      * @since 1.0.0
      */
     public Map<AttKey, String> getAtts() {
-        return attsEmb.toMap();
+        return Optional.ofNullable(this.atts).map(AttsEmb::toMap).orElseGet(Map::of);
     }
 
     /**
-     * Set <i>Attribute</i> collection.
+     * Set <i>Attribute</i> values.
      *
-     * @param atts <i>Attribute</i> collection
-     * @throws NullPointerException if {@code atts} is {@code null}
+     * @param atts <i>Attribute</i> values
      * @since 1.0.0
      */
     public void setAtts(Map<AttKey, String> atts) {
-        this.attsEmb.update(Objects.requireNonNull(atts));
+        this.atts = Optional.ofNullable(atts).map(AttsEmb::new).orElse(null);
     }
 
     /**
@@ -187,21 +233,23 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
      * @since 1.0.0
      */
     public ValidityPeriod getValidityPeriod() {
-        return validityPeriod;
+        return Optional.ofNullable(this.validityPeriod)
+                .map(ValidityPeriodEmb::toValidityPeriod).orElse(null);
     }
 
     /**
      * Set the {@code ValidityPeriod}.
      *
-     * @param vp the {@code ValidityPeriod}
+     * @param validityPeriod the {@code ValidityPeriod}
      * @since 1.0.0
      */
-    public void setValidityPeriod(ValidityPeriod vp) {
-        this.validityPeriod = vp != null ? new ValidityPeriodEmb(vp) : null;
+    public void setValidityPeriod(ValidityPeriod validityPeriod) {
+        this.validityPeriod = Optional.ofNullable(validityPeriod)
+                .map(ValidityPeriodEmb::new).orElse(null);
     }
 
     /**
-     * Get digest value of this.
+     * Get digest value of this content.
      *
      * @return digest value
      * @since 1.0.0
@@ -211,7 +259,7 @@ public abstract class ContentEntity<T extends ContentEntity<T>> extends CommonEn
     }
 
     /**
-     * Set digest value of this.
+     * Set digest value of this content.
      *
      * @param digest digest value
      * @since 1.0.0

@@ -45,6 +45,24 @@ public class ValidationService {
     private Validator validator;
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected ValidationService() {
+    }
+
+    /**
+     * Get the {@code Validator}.
+     *
+     * @return the {@code Validator}
+     * @since 1.0.0
+     */
+    public Validator getValidator() {
+        return validator;
+    }
+
+    /**
      * Verify that the value is valid.
      *
      * @param <T> value type

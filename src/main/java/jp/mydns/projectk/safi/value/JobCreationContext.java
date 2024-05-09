@@ -36,6 +36,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.lang.reflect.Type;
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -72,6 +73,10 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *             "description": "Schedule time of job execution.",
  *             "type": "date-time"
  *         },
+ *         "timeout": {
+ *             "description": "Job execution timeout.",
+ *             "type": "duration"
+ *         },
  *         "plugdef": {
  *             "description": "An information for loading and executing the Plugin.",
  *             "$ref": "https://project-k.mydns.jp/safi/plugdef.schema.json"
@@ -90,17 +95,12 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *             }
  *         },
  *         "options": {
- *             "description": "Optional configurations at job execution.",
+ *             "description": "Optional configuration at job execution.",
  *             "type": "object"
- *         },
- *         "note": {
- *             "description": "Note for job-creation-context.",
- *             "type": "string"
  *         }
  *     },
  *     "required": [
- *         "jobdefid",
- *         "scheduleTime"
+ *         "jobdefid"
  *     ]
  * }
  * </code></pre>
@@ -125,14 +125,23 @@ public interface JobCreationContext {
     String getJobdefId();
 
     /**
-     * Get schedule time of job execution. If empty, it must be interpreted as the current date-time.
+     * Get schedule of job execution. If empty, it must be interpreted as the current date-time.
      *
-     * @return schedule time of job execution. It timezone is UTC.
+     * @return schedule time
      * @since 1.0.0
      */
     @Schema(type = "string", description = "Schedule time of job execution. It timezone is UTC."
             + " If empty, it must be interpreted as the current date-time.")
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getScheduleTime();
+
+    /**
+     * Get job execution timeout.
+     *
+     * @return job execution timeout
+     * @since 1.0.0
+     */
+    @Schema(type = "string", description = "Job execution timeout.")
+    Optional<Duration> getTimeout();
 
     /**
      * Get the {@code Plugdef}. A value that overrides the default value suggested by the job definition.
@@ -155,30 +164,21 @@ public interface JobCreationContext {
     /**
      * Get the transform definition. A value that overrides the default value suggested by the job definition.
      *
-     * @return the transform definition
+     * @return transform definition
      * @since 1.0.0
      */
     @Schema(description = "The transform definition. A value that overrides the default value suggested by the job definition.")
     Optional<Map<String, @NotNull String>> getTrnsdef();
 
     /**
-     * Get optional configurations at job execution. A value that overrides the default value suggested by the job
+     * Get optional configuration at job execution. A value that overrides the default value suggested by the job
      * definition.
      *
-     * @return option configurations at job execution
+     * @return optional configuration
      * @since 1.0.0
      */
     @Schema(description = "Option settings at job execution. A value that overrides the default value suggested by the job definition.")
     Optional<JsonObject> getOptions();
-
-    /**
-     * Get note for job-creation-context.
-     *
-     * @return note for job-creation-context. It may be {code null}.
-     * @since 1.0.0
-     */
-    @Schema(description = "Note for this job-creation-context.")
-    String getNote();
 
     /**
      * JSON deserializer for {@code JobCreationContext}.
@@ -188,6 +188,14 @@ public interface JobCreationContext {
      * @since 1.0.0
      */
     class Deserializer implements JsonbDeserializer<JobCreationContext> {
+
+        /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
 
         /**
          * {@inheritDoc}
@@ -200,7 +208,7 @@ public interface JobCreationContext {
         }
 
         /**
-         * Implements of the {@code Bean}.
+         * Implements of the {@code Bean} as Java Beans.
          *
          * @author riru
          * @version 1.0.0
@@ -210,14 +218,14 @@ public interface JobCreationContext {
 
             private String jobdefId;
             private OffsetDateTime scheduleTime;
+            private Duration timeout;
             private Plugdef plugdef;
             private Filtdef filtdef;
             private Map<String, String> trnsdef;
             private JsonObject options;
-            private String note;
 
             /**
-             * Constructor. Used only for deserialization from JSON.
+             * Constructor just for JSON deserialization.
              *
              * @since 1.0.0
              */
@@ -255,13 +263,33 @@ public interface JobCreationContext {
             }
 
             /**
-             * Set schedule time of job execution.
+             * Set schedule of job execution.
              *
-             * @param scheduleTime schedule time of job execution
+             * @param scheduleTime schedule time
              * @since 1.0.0
              */
             public void setScheduleTime(OffsetDateTime scheduleTime) {
                 this.scheduleTime = scheduleTime;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public Optional<Duration> getTimeout() {
+                return Optional.ofNullable(timeout);
+            }
+
+            /**
+             * Set job execution timeout.
+             *
+             * @param timeout job execution timeout.
+             * @since 1.0.0
+             */
+            public void setTimeout(Duration timeout) {
+                this.timeout = timeout;
             }
 
             /**
@@ -317,7 +345,7 @@ public interface JobCreationContext {
             /**
              * Set the transform definition.
              *
-             * @param trnsdef the transform definition
+             * @param trnsdef transform definition
              * @since 1.0.0
              */
             public void setTrnsdef(Map<String, String> trnsdef) {
@@ -335,33 +363,13 @@ public interface JobCreationContext {
             }
 
             /**
-             * Set optional configurations at job execution.
+             * Set optional configuration at job execution.
              *
-             * @param options option configurations at job execution
+             * @param options optional configuration
              * @since 1.0.0
              */
             public void setOptions(JsonObject options) {
                 this.options = options;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 1.0.0
-             */
-            @Override
-            public String getNote() {
-                return note;
-            }
-
-            /**
-             * Set note for job-creation-context.
-             *
-             * @param note note for job-creation-context. It can be set {code null}.
-             * @since 1.0.0
-             */
-            public void setNote(String note) {
-                this.note = note;
             }
 
             /**
@@ -373,8 +381,8 @@ public interface JobCreationContext {
             @Override
             public String toString() {
                 return "JobCreationContext{" + "jobdefId=" + jobdefId + ", scheduleTime=" + scheduleTime
-                        + ", plugdef=" + plugdef + ", filtdef=" + filtdef + ", trnsdef=" + trnsdef
-                        + ", options=" + options + '}';
+                        + ", timeout=" + timeout + ", plugdef=" + plugdef + ", filtdef=" + filtdef
+                        + ", trnsdef=" + trnsdef + ", options=" + options + '}';
             }
         }
     }

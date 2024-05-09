@@ -53,6 +53,14 @@ public class TimeConfigDao {
     private EntityManager em;
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected TimeConfigDao() {
+    }
+
+    /**
      * Get the configuration value whose value is date-time.
      *
      * @param id the {@code TimeKind}

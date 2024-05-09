@@ -33,35 +33,48 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import static jp.mydns.projectk.safi.util.TimeUtils.toLocalDateTime;
-import static jp.mydns.projectk.safi.util.TimeUtils.toOffsetDateTime;
 import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
- * Implementation of the {@code ValidityPeriod} as a built-in part of JPA entity.
+ * Validity period as a built-in part of JPA entity.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
  */
 @Embeddable
-public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
+public class ValidityPeriodEmb implements Serializable {
 
     private static final long serialVersionUID = -3134392376473803641L;
 
+    /**
+     * The begin time of validity period.
+     *
+     * @since 1.0.0
+     */
     @Basic(optional = false)
     @Column(name = "from_ts", nullable = false)
-    private LocalDateTime localFrom;
+    private LocalDateTime from;
 
+    /**
+     * The end time of validity period.
+     *
+     * @since 1.0.0
+     */
     @Basic(optional = false)
     @Column(name = "to_ts", nullable = false)
-    private LocalDateTime localTo;
+    private LocalDateTime to;
 
+    /**
+     * The flag that forbidden to be valid.
+     *
+     * @since 1.0.0
+     */
     @Column(name = "ban", nullable = false)
     private boolean ban;
 
     /**
-     * Constructor.
+     * Constructs a part of entity with all properties are {@code null}.
      *
      * @since 1.0.0
      */
@@ -69,92 +82,72 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
     }
 
     /**
-     * Constructor.
+     * Construct with {@code ValidityPeriod}.
      *
-     * @param vp the {@code ValidityPeriod}
-     * @throws NullPointerException if {@code vp} is {@code null}
+     * @param validityPeriod the {@code ValidityPeriod}
+     * @throws NullPointerException if {@code validityPeriod} is {@code null}
      * @since 1.0.0
      */
-    public ValidityPeriodEmb(ValidityPeriod vp) {
-        Objects.requireNonNull(vp);
+    public ValidityPeriodEmb(ValidityPeriod validityPeriod) {
+        Objects.requireNonNull(validityPeriod);
 
-        localFrom = TimeUtils.toLocalDateTime(vp.getFrom());
-        localTo = TimeUtils.toLocalDateTime(vp.getTo());
-        ban = vp.isBan();
+        from = TimeUtils.toLocalDateTime(validityPeriod.getFrom());
+        to = TimeUtils.toLocalDateTime(validityPeriod.getTo());
+        ban = validityPeriod.isBan();
     }
 
     /**
-     * {@inheritDoc}
+     * Get begin time of validity period.
      *
+     * @return begin time
      * @since 1.0.0
      */
-    @Override
-    public OffsetDateTime getFrom() {
-        return TimeUtils.toOffsetDateTime(localFrom);
+    public LocalDateTime getFrom() {
+        return from;
     }
 
     /**
-     * Get begin date-time of validity period.
+     * Set begin time of validity period.
      *
-     * @return begin date-time of validity period
+     * @param from begin time
      * @since 1.0.0
      */
-    public LocalDateTime getLocalFrom() {
-        return localFrom;
+    public void setFrom(LocalDateTime from) {
+        this.from = from;
     }
 
     /**
-     * Set begin date-time of validity period.
+     * Get end time of validity period.
      *
-     * @param from begin date-time of validity period
+     * @return end time
      * @since 1.0.0
      */
-    public void setLocalFrom(LocalDateTime from) {
-        this.localFrom = from;
+    public LocalDateTime getTo() {
+        return to;
     }
 
     /**
-     * {@inheritDoc}
+     * Set end time of validity period.
      *
+     * @param to end time
      * @since 1.0.0
      */
-    @Override
-    public OffsetDateTime getTo() {
-        return TimeUtils.toOffsetDateTime(localTo);
+    public void setTo(LocalDateTime to) {
+        this.to = to;
     }
 
     /**
-     * Get end date-time of validity period.
+     * Get flag that indicates ban of valid.
      *
-     * @return end date-time of validity period
+     * @return {@code true} if forbidden to be valid, otherwise {@code false}.
      * @since 1.0.0
      */
-    public LocalDateTime getLocalTo() {
-        return localTo;
-    }
-
-    /**
-     * Set end date-time of validity period.
-     *
-     * @param to end date-time of validity period
-     * @since 1.0.0
-     */
-    public void setLocalTo(LocalDateTime to) {
-        this.localTo = to;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @since 1.0.0
-     */
-    @Override
     public boolean isBan() {
         return ban;
     }
 
     /**
-     * Sets a flag that indicates ban of valid.
+     * Set flag that indicates ban of valid.
      *
      * @param ban {@code true} if forbidden to be valid, otherwise {@code false}.
      * @since 1.0.0
@@ -171,7 +164,7 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(localFrom, localTo, ban);
+        return Objects.hash(from, to, ban);
     }
 
     /**
@@ -183,10 +176,8 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      */
     @Override
     public boolean equals(Object other) {
-        return this == other || other instanceof ValidityPeriod o
-                && Objects.equals(localFrom, toLocalDateTime(o.getFrom()))
-                && Objects.equals(localTo, toLocalDateTime(o.getTo()))
-                && Objects.equals(ban, o.isBan());
+        return this == other || other instanceof ValidityPeriodEmb o && Objects.equals(from, o.getFrom())
+                && Objects.equals(to, o.getTo()) && Objects.equals(ban, o.isBan());
     }
 
     /**
@@ -197,7 +188,94 @@ public class ValidityPeriodEmb implements ValidityPeriod, Serializable {
      */
     @Override
     public String toString() {
-        return "ValidityPeriod{" + "from=" + toOffsetDateTime(localFrom)
-                + ", to=" + toOffsetDateTime(localTo) + ", ban=" + ban + '}';
+        return "ValidityPeriodEmb{" + "from=" + from + ", to=" + to + ", ban=" + ban + '}';
+    }
+
+    /**
+     * Get the {@code ValidityPeriod}.
+     *
+     * @return the {@code ValidityPeriod}
+     * @since 1.0.0
+     */
+    public ValidityPeriod toValidityPeriod() {
+        return new ValidityPeriodImpl(this);
+    }
+
+    private class ValidityPeriodImpl implements ValidityPeriod {
+
+        private final OffsetDateTime from;
+        private final OffsetDateTime to;
+        private final boolean ban;
+
+        private ValidityPeriodImpl(ValidityPeriodEmb emb) {
+            this.from = TimeUtils.toOffsetDateTime(emb.from);
+            this.to = TimeUtils.toOffsetDateTime(emb.to);
+            this.ban = emb.ban;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public OffsetDateTime getFrom() {
+            return from;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public OffsetDateTime getTo() {
+            return to;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public boolean isBan() {
+            return ban;
+        }
+
+        /**
+         * Returns a hash code value.
+         *
+         * @return a hash code value
+         * @since 1.0.0
+         */
+        @Override
+        public int hashCode() {
+            return Objects.hash(from, to, ban);
+        }
+
+        /**
+         * Indicates that specified object is equal to this one.
+         *
+         * @param other an any object
+         * @return {@code true} if matches otherwise {@code false}.
+         * @since 1.0.0
+         */
+        @Override
+        public boolean equals(Object other) {
+            return this == other || other instanceof ValidityPeriod o && Objects.equals(from, o.getFrom())
+                    && Objects.equals(to, o.getTo()) && Objects.equals(ban, o.isBan());
+        }
+
+        /**
+         * Returns a string representation.
+         *
+         * @return a string representation
+         * @since 1.0.0
+         */
+        @Override
+        public String toString() {
+            return "ValidityPeriod{" + "from=" + from + ", to=" + to + ", ban=" + ban + '}';
+        }
     }
 }

@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import jp.mydns.projectk.safi.constant.RecordValueFormat;
 import trial.TransformerService;
 
 /**
@@ -114,7 +115,7 @@ public interface TransResult extends RecordableValue {
         private final Map<String, String> source;
 
         /**
-         * Constructor.
+         * Construct with transformed content and transform source.
          *
          * @param content transformed content
          * @param source transformation source content
@@ -170,6 +171,16 @@ public interface TransResult extends RecordableValue {
         }
 
         /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public RecordValueFormat getFormat() {
+            return RecordValueFormat.TRANSFORM_SUCCESS_RESULT;
+        }
+
+        /**
          * Returns a string representation.
          *
          * @return a string representation
@@ -200,7 +211,7 @@ public interface TransResult extends RecordableValue {
         private final Map<String, String> source;
 
         /**
-         * Constructor.
+         * Construct with failure reason and transform source.
          *
          * @param reason failure reasons
          * @param source transformation source content
@@ -255,6 +266,16 @@ public interface TransResult extends RecordableValue {
         @Override
         public Map<String, String> getSource() {
             return Collections.unmodifiableMap(source);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 1.0.0
+         */
+        @Override
+        public RecordValueFormat getFormat() {
+            return RecordValueFormat.TRANSFORM_FAILURE_RESULT;
         }
 
         /**

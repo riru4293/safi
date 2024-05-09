@@ -55,6 +55,14 @@ public class AppTimeService {
     private TimeConfigDao timeDao;
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected AppTimeService() {
+    }
+
+    /**
      * Get current time. Accuracy is seconds. The retrieved value is cached for the life of this class. If a cached
      * value exists, it returns that value.
      *

@@ -42,29 +42,17 @@ import jp.mydns.projectk.safi.entity.CommonEntity;
  * @since 1.0.0
  */
 @RequestScoped
-public class CommonAppDao {
+public class CommonDao {
 
+    @Inject
     private EntityManager em;
 
     /**
-     * Get the {@code EntityManager}.
+     * Construct by CDI.
      *
-     * @return the {@code EntityManager}
      * @since 1.0.0
      */
-    protected EntityManager getEntityManager() {
-        return em;
-    }
-
-    /**
-     * Inject the {@code EntityManager}.
-     *
-     * @param em the {@code EntityManager}
-     * @since 1.0.0
-     */
-    @Inject
-    protected void setEntityManager(EntityManager em) {
-        this.em = em;
+    protected CommonDao() {
     }
 
     /**
@@ -87,7 +75,7 @@ public class CommonAppDao {
      * @since 1.0.0
      */
     public void flush() {
-        getEntityManager().flush();
+        em.flush();
     }
 
     /**
@@ -97,7 +85,7 @@ public class CommonAppDao {
      * @since 1.0.0
      */
     public void clear() {
-        getEntityManager().clear();
+        em.clear();
     }
 
     /**
@@ -113,7 +101,7 @@ public class CommonAppDao {
      * @since 1.0.0
      */
     public <T> T persist(T entity) {
-        getEntityManager().persist(Objects.requireNonNull(entity));
+        em.persist(Objects.requireNonNull(entity));
         return entity;
     }
 
@@ -129,11 +117,11 @@ public class CommonAppDao {
      * @since 1.0.0
      */
     public <T> T merge(T entity) {
-        if (getEntityManager().contains(Objects.requireNonNull(entity))) {
+        if (em.contains(Objects.requireNonNull(entity))) {
             return entity;
         }
 
-        return getEntityManager().merge(entity);
+        return em.merge(entity);
     }
 
     /**

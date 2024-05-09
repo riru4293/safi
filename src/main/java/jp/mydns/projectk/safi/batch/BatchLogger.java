@@ -57,6 +57,14 @@ public class BatchLogger implements StepListener {
     private JobOperator operator;
 
     /**
+     * Construct by <i>Jakarta-Batch</i>.
+     *
+     * @since 1.0.0
+     */
+    protected BatchLogger() {
+    }
+
+    /**
      * Output log on begin processing. Logs a job execution id and job parameters.
      *
      * @throws Exception throw if an error occurs

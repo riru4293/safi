@@ -53,7 +53,6 @@ import jp.mydns.projectk.safi.entity.ContentEntity_;
 import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
 import jp.mydns.projectk.safi.entity.ImportationWorkEntity_;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb_;
-import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 import jp.mydns.projectk.safi.util.StreamUtils;
 import jp.mydns.projectk.safi.value.Condition;
 
@@ -69,11 +68,18 @@ import jp.mydns.projectk.safi.value.Condition;
 public abstract class ImportationDao<E extends ContentEntity<E>> {
 
     @Inject
-    @EntityManagerProducer.ForBatch
     private EntityManager em;
 
     @Inject
-    private CommonBatchDao comDao;
+    private CommonDao comDao;
+
+    /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected ImportationDao() {
+    }
 
     /**
      * Clear the working area for importation. Needs to be run only once at the beginning of the importation process.
@@ -149,6 +155,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * @return id of the <i>ID-Content</i> to be added
      * @throws NullPointerException if {@code targetIds} is {@code null}, or contains {@code null}.
      * @throws PersistenceException if occurs an exception while access to database
+     * @throws TransactionRequiredException if there is no transaction
      * @since 1.0.0
      */
     public Stream<String> getAdditionalDiferrence(Collection<String> targetIds) {
@@ -190,6 +197,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * @return the <i>ID-Content</i> to be updated
      * @throws NullPointerException if {@code targetIds} is {@code null}, or contains {@code null}.
      * @throws PersistenceException if occurs an exception while access to database
+     * @throws TransactionRequiredException if there is no transaction
      * @since 1.0.0
      */
     public Stream<E> getUpdateDifference(Collection<String> targetIds) {
@@ -230,6 +238,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * @return count of the <i>ID-Content</i> that will be lost
      * @throws NullPointerException if {@code condition} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
+     * @throws TransactionRequiredException if there is no transaction
      * @since 1.0.0
      */
     public long getCountOfDeletionDifference(Condition condition) {
@@ -252,6 +261,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * out when there are a large number of items.
      * @throws NullPointerException if {@code condition} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
+     * @throws TransactionRequiredException if there is no transaction
      * @since 1.0.0
      */
     public Stream<List<E>> getDeletionDifference(Condition condition) {
@@ -293,6 +303,7 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
      * when there are a large number of items.
      * @throws NullPointerException if {@code refTime} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
+     * @throws TransactionRequiredException if there is no transaction
      * @since 1.0.0
      */
     public Stream<List<E>> getRequireRebuilding(LocalDateTime refTime) {
@@ -306,8 +317,8 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
         Root<E> c = cq.from(eType);
 
         // Path
-        Path<LocalDateTime> from = c.get(ContentEntity_.validityPeriod).get(ValidityPeriodEmb_.localFrom);
-        Path<LocalDateTime> to = c.get(ContentEntity_.validityPeriod).get(ValidityPeriodEmb_.localTo);
+        Path<LocalDateTime> from = c.get(ContentEntity_.validityPeriodEmb).get(ValidityPeriodEmb_.from);
+        Path<LocalDateTime> to = c.get(ContentEntity_.validityPeriodEmb).get(ValidityPeriodEmb_.to);
         Path<Boolean> enabled = c.get(ContentEntity_.enabled);
 
         // Where
@@ -315,13 +326,14 @@ public abstract class ImportationDao<E extends ContentEntity<E>> {
         Predicate isEnable = cb.equal(enabled, true);
 
         return StreamUtils.toChunkedStream(em.createQuery(cq.where(cb.or(cb.and(withinRange, cb.not(isEnable)),
-                cb.and(cb.not(withinRange), isEnable)))));
+                cb.and(cb.not(withinRange), isEnable)))).setLockMode(PESSIMISTIC_WRITE));
     }
 
     /**
      * Update derived data for <i>ID content</i>. Default implements do nothing.
      *
      * @throws PersistenceException if occurs an exception while access to database
+     * @throws TransactionRequiredException if there is no transaction
      * @since 1.0.0
      */
     public void updateDerivedData() {

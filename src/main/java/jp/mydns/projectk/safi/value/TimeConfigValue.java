@@ -37,6 +37,7 @@ import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import jp.mydns.projectk.safi.constant.TimeConfigKind;
 import jp.mydns.projectk.safi.entity.TimeConfigEntity;
 import jp.mydns.projectk.safi.util.ValidationUtils;
@@ -45,6 +46,12 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 
 /**
  * Configuration value whose value is date-time. It is persisted via {@link TimeConfigEntity}.
+ *
+ * <p>
+ * Implementation requirements.
+ * <ul>
+ * <li>This class is immutable and thread-safe.</li>
+ * </ul>
  *
  * @author riru
  * @version 1.0.0
@@ -66,12 +73,10 @@ public interface TimeConfigValue {
     /**
      * Get value of the configuration.
      *
-     * @return the {@code LocalDateTime}. It may be {@code null}.
+     * @return the {@code LocalDateTime}. It time zone is UTC. It may be {@code null}.
      * @since 1.0.0
      */
-    @TimeAccuracy
-    @TimeRange
-    LocalDateTime getValue();
+    Optional<@TimeAccuracy @TimeRange LocalDateTime> getValue();
 
     /**
      * Get the validity-period of the configuration.
@@ -82,6 +87,15 @@ public interface TimeConfigValue {
     @NotNull
     @Valid
     ValidityPeriod getValidityPeriod();
+
+    /**
+     * Get the {@code PersistenceContext}.
+     *
+     * @return persistence information
+     * @since 1.0.0
+     */
+    @Schema(description = "Persistence information.")
+    Optional<@Valid PersistenceContext> getPersistenceContext();
 
     /**
      * Builder of the {@link TimeConfigValue}.
@@ -95,23 +109,30 @@ public interface TimeConfigValue {
         private TimeConfigKind id;
         private LocalDateTime value;
         private ValidityPeriod validityPeriod;
+        private PersistenceContext persistenceContext;
 
         /**
-         * Set all properties from {@code src}.
+         * Constructs a new builder with all properties are {@code null}.
+         *
+         * @since 1.0.0
+         */
+        public Builder() {
+        }
+
+        /**
+         * Constructs a new builder with set all properties by copying them from other value.
          *
          * @param src source value
-         * @return updated this
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 1.0.0
          */
-        public Builder with(TimeConfigValue src) {
+        public Builder(TimeConfigValue src) {
             Objects.requireNonNull(src);
 
             this.id = src.getId();
-            this.value = src.getValue();
+            this.value = src.getValue().orElse(null);
             this.validityPeriod = src.getValidityPeriod();
-
-            return this;
+            this.persistenceContext = src.getPersistenceContext().orElse(null);
         }
 
         /**
@@ -129,7 +150,7 @@ public interface TimeConfigValue {
         /**
          * Set value of the configuration.
          *
-         * @param value the {@code LocalDateTime}
+         * @param value the {@code LocalDateTime}. It can be set {@code null}.
          * @return updated this
          * @since 1.0.0
          */
@@ -151,6 +172,18 @@ public interface TimeConfigValue {
         }
 
         /**
+         * Set the {@code PersistenceContext}.
+         *
+         * @param persistenceContext the {@code PersistenceContext}. It can be set {@code null}.
+         * @return updated this
+         * @since 1.0.0
+         */
+        public Builder withPersistenceContext(PersistenceContext persistenceContext) {
+            this.persistenceContext = persistenceContext;
+            return this;
+        }
+
+        /**
          * Build a new inspected instance.
          *
          * @param validator the {@code Validator}
@@ -165,7 +198,7 @@ public interface TimeConfigValue {
         }
 
         /**
-         * Implements of the {@code TimeConfigValue}.
+         * Implements of the {@code TimeConfigValue} as Java Beans.
          *
          * @author riru
          * @version 1.0.0
@@ -176,9 +209,10 @@ public interface TimeConfigValue {
             private TimeConfigKind id;
             private LocalDateTime value;
             private ValidityPeriod validityPeriod;
+            private PersistenceContext persistenceContext;
 
             /**
-             * Constructor. Used only for deserialization from JSON.
+             * Constructor just for JSON deserialization.
              *
              * @since 1.0.0
              */
@@ -186,21 +220,24 @@ public interface TimeConfigValue {
             }
 
             /**
-             * Constructor.
+             * Construct with set all properties from builder.
              *
              * @param builder the {@code TimeConfigValue.Builder}
+             * @throws NullPointerException if {@code builder} is {@code null}
              * @since 1.0.0
              */
             protected Bean(TimeConfigValue.Builder builder) {
+                Objects.requireNonNull(builder);
+
                 this.id = builder.id;
                 this.value = builder.value;
                 this.validityPeriod = builder.validityPeriod;
+                this.persistenceContext = builder.persistenceContext;
             }
 
             /**
-             * Get id of the configuration.
+             * {@inheritDoc}
              *
-             * @return the {@code TimeConfigKind}
              * @since 1.0.0
              */
             @Override
@@ -219,20 +256,19 @@ public interface TimeConfigValue {
             }
 
             /**
-             * Get value of the configuration.
+             * {@inheritDoc}
              *
-             * @return the {@code LocalDateTime}. It may be {@code null}.
              * @since 1.0.0
              */
             @Override
-            public LocalDateTime getValue() {
-                return value;
+            public Optional<LocalDateTime> getValue() {
+                return Optional.ofNullable(value);
             }
 
             /**
              * Set value of the configuration.
              *
-             * @param value the {@code LocalDateTime}. It can be set {@code null}.
+             * @param value the {@code LocalDateTime}. It time zone is UTC. It can be set {@code null}.
              * @since 1.0.0
              */
             public void setValue(LocalDateTime value) {
@@ -240,9 +276,8 @@ public interface TimeConfigValue {
             }
 
             /**
-             * Get the validity-period of the configuration.
+             * {@inheritDoc}
              *
-             * @return the {@code ValidityPeriod}
              * @since 1.0.0
              */
             @Override
@@ -258,6 +293,26 @@ public interface TimeConfigValue {
              */
             public void setValidityPeriod(ValidityPeriod validityPeriod) {
                 this.validityPeriod = validityPeriod;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public Optional<PersistenceContext> getPersistenceContext() {
+                return Optional.ofNullable(persistenceContext);
+            }
+
+            /**
+             * Set the {@code PersistenceContext}.
+             *
+             * @param persistenceContext the {@code PersistenceContext}. It can be set {@code null}.
+             * @since 1.0.0
+             */
+            public void setPersistenceContext(PersistenceContext persistenceContext) {
+                this.persistenceContext = persistenceContext;
             }
 
             /**
@@ -281,6 +336,14 @@ public interface TimeConfigValue {
      * @since 1.0.0
      */
     class Deserializer implements JsonbDeserializer<TimeConfigValue> {
+
+        /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
 
         /**
          * {@inheritDoc}

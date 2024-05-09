@@ -26,8 +26,11 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.json.bind.annotation.JsonbTransient;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
+import jp.mydns.projectk.safi.constant.RecordValueFormat;
 
 /**
  * Indicate that it can be converted to the {@link ContentRecord}.
@@ -46,12 +49,23 @@ import jakarta.validation.groups.Default;
 public interface RecordableValue {
 
     /**
-     * Get id for recording.
+     * Get id of recording content.
      *
-     * @return id for recording
+     * @return content id
      * @since 1.0.0
      */
-    @Schema(description = "ID for recording.")
+    @Schema(description = "The id of recording content.")
     @Size(max = 36, groups = {Default.class})
     String getId();
+
+    /**
+     * Get the {@code RecordValueFormat}.
+     *
+     * @return the {@code RecordValueFormat}
+     * @since 1.0.0
+     */
+    @JsonbTransient
+    @NotNull
+    @Schema(description = "The id of recording content.")
+    RecordValueFormat getFormat();
 }

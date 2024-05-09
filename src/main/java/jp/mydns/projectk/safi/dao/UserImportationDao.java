@@ -46,6 +46,14 @@ import jp.mydns.projectk.safi.entity.UserEntity_;
 public class UserImportationDao extends ImportationDao<UserEntity> {
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected UserImportationDao() {
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @since 1.0.0

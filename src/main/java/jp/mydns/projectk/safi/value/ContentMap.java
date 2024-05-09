@@ -135,7 +135,7 @@ public class ContentMap<T> implements Closeable {
     /**
      * Returns storing number of content.
      *
-     * @return storing number of content
+     * @return number of content
      * @since 1.0.0
      */
     public int size() {

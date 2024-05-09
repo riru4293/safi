@@ -73,6 +73,14 @@ public class ImporterService {
     private JsonService jsonSvc;
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected ImporterService() {
+    }
+
+    /**
      * This is the processing related to <i>SAFI</i> external data in the content importation processing, and its main
      * function is fetch the data.
      *
@@ -109,7 +117,7 @@ public class ImporterService {
      *
      * @param wrkDir working directory for the {@code Importer}
      * @param plugdef the {@code Plugdef}
-     * @param opts optional configurations for the {@code ImporterPlugin}
+     * @param opts optional configuration for the {@code ImporterPlugin}
      * @return the {@code Importer}
      * @throws NullPointerException if any argument is {@code null}
      * @throws IllegalArgumentException if {@code wrkDir} is not an existing directory

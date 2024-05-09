@@ -30,14 +30,13 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Selection;
 import java.util.List;
-import jp.mydns.projectk.safi.dao.CommonBatchDao;
+import jp.mydns.projectk.safi.dao.CommonDao;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.dao.criteria.UserPathContext;
 import jp.mydns.projectk.safi.entity.ContentEntity_;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.entity.embedded.AttsEmb_;
 import jp.mydns.projectk.safi.entity.embedded.TxtValidityPeriodEmb_;
-import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 
 /**
  * Data access processing to export the <i>ID-Content</i> of the <i>User</i>.
@@ -49,11 +48,10 @@ import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 public class UserExportationDao extends ExportationDao<UserEntity> {
 
     @Inject
-    @EntityManagerProducer.ForBatch
     private EntityManager em;
 
     @Inject
-    private CommonBatchDao comDao;
+    private CommonDao comDao;
 
     /**
      * {@inheritDoc}

@@ -40,11 +40,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
+import jp.mydns.projectk.safi.batch.JobBatchlet;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.value.Job;
-import jp.mydns.projectk.safi.batch.JobBatchlet;
 
 /**
  * Utilities for <i>Jakarta-Batch</i>.
@@ -61,6 +61,14 @@ public class BatchService {
 
     @Inject
     private Jsonb jsonb;
+
+    /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected BatchService() {
+    }
 
     /**
      * Collect id of the {@link Job} from all the <i>Jakarta-Batch</i> executions. Anything other than those running as
@@ -96,7 +104,7 @@ public class BatchService {
         props.setProperty(JobBatchlet.PropName.JSON_JOB, jsonb.toJson(job));
         props.setProperty(JobBatchlet.PropName.TIMEOUT, jsonb.toJson(TimeUtils.toLocalDateTime(job.getLimitTime())));
 
-        return operator.start(job.getJobdef().getJobKind().name().toLowerCase(), props);
+        return operator.start(job.getKind().name().toLowerCase(), props);
     }
 
     /**

@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
@@ -33,8 +34,11 @@ import jakarta.json.stream.JsonParser;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.lang.reflect.Type;
+import java.util.AbstractMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import jp.mydns.projectk.safi.constant.RecordValueFormat;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
@@ -68,95 +72,93 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *             "maxLength": 36
  *         },
  *         "enabled": {
- *             "description": "Validity state flag.",
+ *             "description": "Validity state.",
  *             "type": "boolean"
  *         },
  *         "name": {
  *             "description": "User name.",
  *             "type": "string",
- *             "maxLength": 100
+ *             "maxLength": 255
+ *         },
+ *         "digest": {
+ *             "description": "Digest value.",
+ *             "type": "string",
+ *             "minLength": 1,
+ *             "maxLength": 128
  *         },
  *         "attributes": {
- *             "description": "Attribute collection.",
+ *             "description": "Attribute values.",
  *             "type": "object",
  *             "properties": {
  *                 "att01": {
- *                     "description": "Attribute #1.",
+ *                     "description": "Attribute value #1.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att02": {
- *                     "description": "Attribute #2.",
+ *                     "description": "Attribute value #2.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att03": {
- *                     "description": "Attribute #3.",
+ *                     "description": "Attribute value #3.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att04": {
- *                     "description": "Attribute #4.",
+ *                     "description": "Attribute value #4.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att05": {
- *                     "description": "Attribute #5.",
+ *                     "description": "Attribute value #5.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att06": {
- *                     "description": "Attribute #6.",
+ *                     "description": "Attribute value #6.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att07": {
- *                     "description": "Attribute #7.",
+ *                     "description": "Attribute value #7.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att08": {
- *                     "description": "Attribute #8.",
+ *                     "description": "Attribute value #8.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att09": {
- *                     "description": "Attribute #9.",
+ *                     "description": "Attribute value #9.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att10": {
- *                     "description": "Attribute #10.",
+ *                     "description": "Attribute value #10.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 }
  *             },
  *             "validityPeriod": {
  *                 "description": "Validity period.",
  *                 "$ref": "https://project-k.mydns.jp/safi/validity-period.schema.json"
  *             },
- *             "digest": {
- *                 "description": "Digest value.",
- *                 "type": "string",
- *                 "minLength": 1,
- *                 "maxLength": 128
+ *             "persistenceContext": {
+ *                 "description": "Persistence information.",
+ *                 "$ref": "https://project-k.mydns.jp/safi/persistence-context.schema.json"
  *             },
  *             "note": {
  *                 "description": "Note for this entity.",
  *                 "type": "string"
- *             },
- *             "version": {
- *                 "description": "Entity version stored in database. 0 if not yet stored.",
- *                 "type": "integer",
- *                 "minimum": 0
  *             }
  *         },
  *         "required": [
  *             "id",
  *             "enabled",
  *             "attributes",
- *             "validityPeriod",
- *             "version"
+ *             "validityPeriod"
  *         ]
  *     }
  * }
@@ -171,10 +173,12 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
 public interface UserValue extends ContentValue<UserValue> {
 
     /**
-     * {@inheritDoc}
+     * Get paired entity. The pairs here mean the same content that has already been persisted.
      *
+     * @return paired entity
      * @since 1.0.0
      */
+    @JsonbTransient
     Optional<UserEntity> getEntity();
 
     /**
@@ -190,7 +194,7 @@ public interface UserValue extends ContentValue<UserValue> {
         private UserEntity entity;
 
         /**
-         * Constructor.
+         * Constructs a new builder with all properties are {@code null}.
          *
          * @param digestGenerator the {@code DigestGenerator}
          * @throws NullPointerException if {@code digestGenerator} is {@code null}
@@ -202,16 +206,16 @@ public interface UserValue extends ContentValue<UserValue> {
         }
 
         /**
-         * {@inheritDoc}
+         * Constructs a new builder with set all properties by copying them from other value.
          *
-         * @throws NullPointerException if {@code src} is {@code null}
+         * @param src source value
+         * @param digestGenerator the {@code DigestGenerator}
+         * @throws NullPointerException if any argument is {@code null}
          * @since 1.0.0
          */
-        @Override
-        public Builder with(UserValue src) {
-            super.with(Objects.requireNonNull(src));
-            this.entity = src.getEntity().orElse(null);
-            return this;
+        public Builder(UserValue src, DigestGenerator digestGenerator) {
+            this(digestGenerator);
+            Objects.requireNonNull(src).getEntity().ifPresent(v -> this.entity = v);
         }
 
         /**
@@ -236,14 +240,13 @@ public interface UserValue extends ContentValue<UserValue> {
          * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 1.0.0
          */
-        @Override
         public UserValue build(Validator validator, Class<?>... groups) {
             final String digest = digestGenerator.generate(id, enabled, name, atts, validityPeriod);
             return ValidationUtils.requireValid(new Bean(this, digest), validator, groups);
         }
 
         /**
-         * Implements of the {@code UserValue}.
+         * Implements of the {@code UserValue} as Java Beans.
          *
          * @author riru
          * @version 1.0.0
@@ -254,7 +257,7 @@ public interface UserValue extends ContentValue<UserValue> {
             private UserEntity entity;
 
             /**
-             * Constructor. Used only for deserialization from JSON.
+             * Constructor just for JSON deserialization.
              *
              * @since 1.0.0
              */
@@ -262,10 +265,11 @@ public interface UserValue extends ContentValue<UserValue> {
             }
 
             /**
-             * Constructor.
+             * Construct with set all properties from builder.
              *
              * @param builder the {@code UserValue.Builder}
              * @param digest digest value. It must be provided by {@code builder}.
+             * @throws NullPointerException if any argument is {@code null}
              * @since 1.0.0
              */
             protected Bean(UserValue.Builder builder, String digest) {
@@ -279,28 +283,28 @@ public interface UserValue extends ContentValue<UserValue> {
              * @since 1.0.0
              */
             @Override
-            public UserValue getValue() {
-                return this;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 1.0.0
-             */
-            @Override
-            public UserValue setValue(UserValue unused) {
-                throw new UnsupportedOperationException();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 1.0.0
-             */
-            @Override
             public Optional<UserEntity> getEntity() {
                 return Optional.ofNullable(entity);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public Map.Entry<String, ContentValue<UserValue>> asEntry() {
+                return new AbstractMap.SimpleImmutableEntry<>(id, this);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 1.0.0
+             */
+            @Override
+            public RecordValueFormat getFormat() {
+                return RecordValueFormat.USER;
             }
 
             /**
@@ -311,8 +315,7 @@ public interface UserValue extends ContentValue<UserValue> {
              */
             @Override
             public String toString() {
-                return "User{" + "id=" + id + ", enabled=" + enabled + ", name=" + name + ", atts=" + atts
-                        + ", validityPeriod=" + validityPeriod + ", digest=" + digest + '}';
+                return "User{" + "id=" + id + ", enabled=" + enabled + ", name=" + name + ", digest=" + digest + '}';
             }
         }
     }
@@ -325,6 +328,14 @@ public interface UserValue extends ContentValue<UserValue> {
      * @since 1.0.0
      */
     class Deserializer implements JsonbDeserializer<UserValue> {
+
+        /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
 
         /**
          * {@inheritDoc}

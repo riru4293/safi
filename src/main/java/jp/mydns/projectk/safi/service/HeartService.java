@@ -82,6 +82,14 @@ public class HeartService {
     private RealTimeService realTimeSvc;
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected HeartService() {
+    }
+
+    /**
      * Notifies {@link Heartbeat} as a CDI event. Along with the notification, enable request context.
      *
      * @since 1.0.0

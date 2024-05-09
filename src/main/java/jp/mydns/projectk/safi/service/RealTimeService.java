@@ -43,6 +43,14 @@ import java.time.temporal.ChronoUnit;
 public class RealTimeService {
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected RealTimeService() {
+    }
+
+    /**
      * Get current time. Accuracy is seconds.
      *
      * @return current time, in that case timezone is UTC.

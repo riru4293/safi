@@ -30,7 +30,7 @@ import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 
 /**
- * Text representation of the {@link ValidityPeriodEmb} as a built-in part of JPA entity.
+ * Text representation of the {@link ValidityPeriodEmb}.
  *
  * @author riru
  * @version 1.0.0
@@ -41,14 +41,37 @@ public class TxtValidityPeriodEmb implements Serializable {
 
     private static final long serialVersionUID = -4883678074036718540L;
 
+    /**
+     * The begin time of validity period.
+     *
+     * @since 1.0.0
+     */
     @Column(name = "txt_from_ts", insertable = false, updatable = false)
     private String from;
 
+    /**
+     * The end time of validity period.
+     *
+     * @since 1.0.0
+     */
     @Column(name = "txt_to_ts", insertable = false, updatable = false)
     private String to;
 
+    /**
+     * The flag that forbidden to be valid.
+     *
+     * @since 1.0.0
+     */
     @Column(name = "txt_ban", insertable = false, updatable = false)
     private String ban;
+
+    /**
+     * Construct a new instance with all properties are {@code null}.
+     *
+     * @since 1.0.0
+     */
+    public TxtValidityPeriodEmb() {
+    }
 
     /**
      * Get begin date-time of validity period.

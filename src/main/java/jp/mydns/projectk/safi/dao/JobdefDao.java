@@ -28,39 +28,57 @@ package jp.mydns.projectk.safi.dao;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jp.mydns.projectk.safi.producer.EntityManagerProducer;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.PersistenceException;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import java.util.Objects;
+import java.util.Optional;
+import jp.mydns.projectk.safi.entity.JobdefEntity;
+import jp.mydns.projectk.safi.entity.JobdefEntity_;
 
 /**
- * Common data access object for batch processing.
+ * Data access processing to the Job definition.
  *
  * @author riru
  * @version 1.0.0
  * @since 1.0.0
  */
 @RequestScoped
-public class CommonBatchDao extends CommonAppDao {
+public class JobdefDao {
 
+    @Inject
     private EntityManager em;
 
     /**
-     * {@inheritDoc}
+     * Construct by CDI.
      *
      * @since 1.0.0
      */
-    @Override
-    protected EntityManager getEntityManager() {
-        return em;
+    protected JobdefDao() {
     }
 
     /**
-     * {@inheritDoc}
+     * Get specified Job definition entity.
      *
-     * @param em the {@code EntityManager} for batch processing.
+     * @param jobdefId job definition id
+     * @return job definition entity
+     * @throws NullPointerException if {@code jobdefId} is {@code null}
+     * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
      */
-    @Inject
-    @Override
-    protected void setEntityManager(@EntityManagerProducer.ForBatch EntityManager em) {
-        this.em = em;
+    public Optional<JobdefEntity> getJobdef(String jobdefId) {
+        return getJobdef(Objects.requireNonNull(jobdefId), LockModeType.NONE);
+    }
+
+    private Optional<JobdefEntity> getJobdef(String jobdefId, LockModeType lockType) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<JobdefEntity> cq = cb.createQuery(JobdefEntity.class);
+
+        Root<JobdefEntity> job = cq.from(JobdefEntity.class);
+
+        return em.createQuery(cq.where(cb.equal(job.get(JobdefEntity_.id), jobdefId)))
+                .setLockMode(lockType).getResultStream().findFirst();
     }
 }

@@ -37,7 +37,7 @@ import java.util.Optional;
 import static java.util.function.Predicate.not;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
 import trial.JobRecordingService;
-import trial.JobService;
+import jp.mydns.projectk.safi.service.JobService;
 import trial.UncheckedInterruptedException;
 
 /**
@@ -67,6 +67,14 @@ public class JobFinisher implements StepListener {
 
     @Inject
     private RequestContextProducer reqCtxPrd;
+
+    /**
+     * Construct by <i>Jakarta-Batch</i>.
+     *
+     * @since 1.0.0
+     */
+    protected JobFinisher() {
+    }
 
     /**
      * Do nothing.

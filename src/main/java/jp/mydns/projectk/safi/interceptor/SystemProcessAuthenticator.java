@@ -51,6 +51,14 @@ public class SystemProcessAuthenticator {
     private RequestContextProducer reqCtxPrd;
 
     /**
+     * Construct by CDI.
+     *
+     * @since 1.0.0
+     */
+    protected SystemProcessAuthenticator() {
+    }
+
+    /**
      * Extract the process name from {@link ProcessName} and set it to {@link RequestContext}.
      *
      * @param ic the {@code InvocationContext}

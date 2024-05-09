@@ -50,10 +50,23 @@ public class UserEntity extends ContentEntity<UserEntity> {
 
     private static final long serialVersionUID = 2711050439353117979L;
 
+    /**
+     * Related {@code ImportationWorkEntity}.
+     *
+     * @since 1.0.0
+     */
     @OneToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "id", referencedColumnName = "id",
             foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private ImportationWorkEntity wrkEntity;
+
+    /**
+     * Constructs a new entity with all properties are default value.
+     *
+     * @since 1.0.0
+     */
+    public UserEntity() {
+    }
 
     /**
      * Get the {@code ImportWorkEntity}.
@@ -98,7 +111,7 @@ public class UserEntity extends ContentEntity<UserEntity> {
      */
     @Override
     public String toString() {
-        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", name=" + name + ", attributes=" + attsEmb
+        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", name=" + name + ", attributes=" + atts
                 + ", validityPeriod=" + validityPeriod + ", digest=" + digest + '}';
     }
 }

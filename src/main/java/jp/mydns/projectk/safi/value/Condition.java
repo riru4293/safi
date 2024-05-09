@@ -97,7 +97,7 @@ import java.util.stream.Stream;
  *             "type": "string"
  *         },
  *         "children": {
- *             "description": "Chile condition collection.",
+ *             "description": "Child condition values.",
  *             "$ref": "https://project-k.mydns.jp/safi/condition.schema.json"
  *         }
  *     },
@@ -157,7 +157,7 @@ import java.util.stream.Stream;
 public interface Condition {
 
     /**
-     * {@code true} if multiple filtering condition.
+     * Indicates a multiple condition.
      *
      * @return {@code true} if multiple filtering condition, otherwise {@code false}.
      * @see Multi
@@ -177,7 +177,7 @@ public interface Condition {
     FilteringOperation getOperation();
 
     /**
-     * Get this as {@code Single}.
+     * Get this instance as {@code Single}.
      *
      * @return single filtering condition
      * @throws ClassCastException if not assignable to {@code Single}
@@ -188,7 +188,7 @@ public interface Condition {
     }
 
     /**
-     * Get this as {@code Multi}.
+     * Get this instance as {@code Multi}.
      *
      * @return multiple filtering condition
      * @throws ClassCastException if not assignable to {@code Multi}
@@ -220,7 +220,7 @@ public interface Condition {
             throw new IllegalArgumentException("Incorrect filtering operation.");
         }
 
-        return new Deserializer.SingleBean(op, name, value);
+        return new Deserializer().new SingleBean(op, name, value);
     }
 
     /**
@@ -243,7 +243,7 @@ public interface Condition {
             throw new IllegalArgumentException("Incorrect filtering operation.");
         }
 
-        return new Deserializer.MultiBean(op, children);
+        return new Deserializer().new MultiBean(op, children);
     }
 
     /**
@@ -372,14 +372,22 @@ public interface Condition {
     class Deserializer implements JsonbDeserializer<Condition> {
 
         /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
+
+        /**
          * {@inheritDoc}
          *
          * @since 1.0.0
          */
         @Override
-        public Condition deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public Condition deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
 
-            Bean tmp = dc.deserialize(Bean.class, jp);
+            Bean tmp = ctx.deserialize(Bean.class, parser);
 
             if (tmp == null) {
                 return null;
@@ -401,7 +409,7 @@ public interface Condition {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected static class SingleBean implements Single {
+        private class SingleBean implements Single {
 
             private final FilteringOperation operation;
             private final String name;
@@ -415,7 +423,7 @@ public interface Condition {
              * @param value value to filter
              * @since 1.0.0
              */
-            public SingleBean(FilteringOperation operation, String name, String value) {
+            private SingleBean(FilteringOperation operation, String name, String value) {
                 this.operation = operation;
                 this.name = name;
                 this.value = value;
@@ -481,7 +489,7 @@ public interface Condition {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected static class MultiBean implements Multi {
+        private class MultiBean implements Multi {
 
             private final FilteringOperation operation;
             private final List<Condition> children;
@@ -492,7 +500,7 @@ public interface Condition {
              * @param operation the {@code FilteringOperation}
              * @param children child conditions
              */
-            public MultiBean(FilteringOperation operation, List<Condition> children) {
+            private MultiBean(FilteringOperation operation, List<Condition> children) {
                 this.operation = operation;
                 this.children = children;
             }
@@ -556,6 +564,14 @@ public interface Condition {
             private String name;
             private String value;
             private List<Condition> children;
+
+            /**
+             * Constructor just for JSON deserialization.
+             *
+             * @since 1.0.0
+             */
+            protected Bean() {
+            }
 
             /**
              * {@inheritDoc}

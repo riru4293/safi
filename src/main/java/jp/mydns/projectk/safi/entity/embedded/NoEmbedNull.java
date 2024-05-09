@@ -45,6 +45,14 @@ import org.eclipse.persistence.mappings.AggregateObjectMapping;
 public final class NoEmbedNull implements DescriptorCustomizer {
 
     /**
+     * Constructor.
+     *
+     * @since 1.0.0
+     */
+    public NoEmbedNull() {
+    }
+
+    /**
      * Prevent certain {@link Embeddable} field from always becoming {@code null} when entity mapping.
      *
      * @param descriptor the {@code ClassDescriptor}

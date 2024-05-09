@@ -25,7 +25,6 @@
  */
 package stock;
 
-import jp.mydns.projectk.safi.value.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
@@ -37,6 +36,7 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.value.*;
 
 /**
  * <i>ID-Content</i> of the <i>User</i> that represents one user. All other <i>ID-Content</i> are directly or indirectly
@@ -83,52 +83,52 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *                 "att01": {
  *                     "description": "Attribute #1.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att02": {
  *                     "description": "Attribute #2.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att03": {
  *                     "description": "Attribute #3.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att04": {
  *                     "description": "Attribute #4.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att05": {
  *                     "description": "Attribute #5.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att06": {
  *                     "description": "Attribute #6.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att07": {
  *                     "description": "Attribute #7.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att08": {
  *                     "description": "Attribute #8.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att09": {
  *                     "description": "Attribute #9.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 },
  *                 "att10": {
  *                     "description": "Attribute #10.",
  *                     "type": "string",
- *                     "maxLength": 200
+ *                     "maxLength": 255
  *                 }
  *             },
  *             "validityPeriod": {
@@ -216,7 +216,8 @@ public interface BelongOrgValue extends ContentValue<BelongOrgValue> {
          * @version 1.0.0
          * @since 1.0.0
          */
-        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<BelongOrgValue> implements BelongOrgValue {
+        protected static class Bean extends ContentValue.AbstractBuilder.AbstractBean<BelongOrgValue> implements
+                BelongOrgValue {
 
             /**
              * Constructor. Used only for deserialization from JSON.

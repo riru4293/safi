@@ -28,9 +28,13 @@ package jp.mydns.projectk.safi.value;
 import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import jp.mydns.projectk.safi.constant.RecordValueFormat;
+import static jp.mydns.projectk.safi.constant.RecordValueFormat.BELONG_GROUP;
+import static jp.mydns.projectk.safi.constant.RecordValueFormat.BELONG_ORG;
 
 /**
  * Value of importation. Wrapped content and source value. And also represents whether content is explicitly removed.
@@ -40,13 +44,13 @@ import java.util.Objects;
  * @version 1.0.0
  * @since 1.0.0
  */
-public class ImportationValue<T extends ContentValue<T>> implements RecordableValue, Map.Entry<String, ImportationValue<T>> {
+public class ImportationValue<T extends ContentValue<T>> implements RecordableValue {
 
     private final T content;
     private final Map<String, String> source;
 
     /**
-     * Constructor.
+     * Construct with content and content source.
      *
      * @param content content value
      * @param source source of content
@@ -72,56 +76,19 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
     }
 
     /**
-     * Get content id.
+     * Get a {@code Map.Entry} whose key is {@link #getId()} and whose value is this instance.
      *
-     * @return content id
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    @Override
-    public String getKey() {
-        return getId();
-    }
-
-    /**
-     * Get this.
-     *
-     * @return this
-     * @since 1.0.0
-     */
-    @JsonbTransient
-    @Override
-    public ImportationValue<T> getValue() {
-        return this;
-    }
-
-    /**
-     * Unsupported.
-     *
-     * @param value no use
-     * @return nothing
-     * @throws UnsupportedOperationException always
-     * @since 1.0.0
-     */
-    @Override
-    public ImportationValue<T> setValue(ImportationValue<T> value) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Get this as {@code Map.Entry<String, ImportationValue<T>>}.
-     *
-     * @return this
+     * @return the {@code Map.Entry}
      * @since 1.0.0
      */
     public Map.Entry<String, ImportationValue<T>> asEntry() {
-        return this;
+        return new AbstractMap.SimpleImmutableEntry<>(getId(), this);
     }
 
     /**
-     * Get source of content.
+     * Get content.
      *
-     * @return source of content
+     * @return content
      * @since 1.0.0
      */
     @Valid
@@ -137,5 +104,30 @@ public class ImportationValue<T extends ContentValue<T>> implements RecordableVa
      */
     public Map<String, String> getSource() {
         return Collections.unmodifiableMap(source);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 1.0.0
+     */
+    @Override
+    public RecordValueFormat getFormat() {
+        return switch (getContent().getFormat()) {
+            case USER ->
+                RecordValueFormat.IMPORTATION_USER;
+            case MEDIUM ->
+                RecordValueFormat.IMPORTATION_MEDIUM;
+            case ORG ->
+                RecordValueFormat.IMPORTATION_ORG;
+            case BELONG_ORG ->
+                RecordValueFormat.IMPORTATION_BELONG_ORG;
+            case GROUP ->
+                RecordValueFormat.IMPORTATION_GROUP;
+            case BELONG_GROUP ->
+                RecordValueFormat.IMPORTATION_BELONG_GROUP;
+            default ->
+                throw new IllegalStateException("Unexpected content format.");
+        };
     }
 }

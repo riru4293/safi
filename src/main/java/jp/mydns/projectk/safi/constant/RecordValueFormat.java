@@ -36,11 +36,53 @@ import jp.mydns.projectk.safi.value.ContentRecord;
  */
 public enum RecordValueFormat {
     /**
-     * Indicates that free format.
+     * Indicates that transform success result.
      *
      * @since 1.0.0
      */
-    UNDEFINED,
+    TRANSFORM_SUCCESS_RESULT,
+    /**
+     * Indicates that transform failure result.
+     *
+     * @since 1.0.0
+     */
+    TRANSFORM_FAILURE_RESULT,
+    /**
+     * Indicates that import value for <i>User</i>.
+     *
+     * @since 1.0.0
+     */
+    IMPORTATION_USER,
+    /**
+     * Indicates that import value for <i>Authentication-Medium</i>.
+     *
+     * @since 1.0.0
+     */
+    IMPORTATION_MEDIUM,
+    /**
+     * Indicates that import value for <i>Organization</i>.
+     *
+     * @since 1.0.0
+     */
+    IMPORTATION_ORG,
+    /**
+     * Indicates that import value for <i>Belong-Organization</i>.
+     *
+     * @since 1.0.0
+     */
+    IMPORTATION_BELONG_ORG,
+    /**
+     * Indicates that import value for <i>Group</i>.
+     *
+     * @since 1.0.0
+     */
+    IMPORTATION_GROUP,
+    /**
+     * Indicates that import value for <i>Belong-Group</i>.
+     *
+     * @since 1.0.0
+     */
+    IMPORTATION_BELONG_GROUP,
     /**
      * Indicates that the <i>User</i>.
      *
@@ -67,6 +109,8 @@ public enum RecordValueFormat {
     BELONG_ORG,
     /**
      * Indicates that the <i>Group</i>.
+     *
+     * @since 1.0.0
      */
     GROUP,
     /**

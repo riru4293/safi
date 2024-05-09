@@ -38,11 +38,10 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.ContentKind;
-import jp.mydns.projectk.safi.dao.CommonBatchDao;
+import jp.mydns.projectk.safi.dao.CommonDao;
 import jp.mydns.projectk.safi.dao.criteria.CriteriaPathContext;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.ContentEntity_;
-import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 
 /**
  * Data access processing to export the <i>ID-Content</i>.
@@ -56,11 +55,10 @@ import jp.mydns.projectk.safi.producer.EntityManagerProducer;
 public abstract class ExportationDao<E extends ContentEntity<E>> {
 
     @Inject
-    @EntityManagerProducer.ForBatch
     private EntityManager em;
 
     @Inject
-    private CommonBatchDao comDao;
+    private CommonDao comDao;
 
     /**
      * Get entity type of the <i>ID-Content</i>.

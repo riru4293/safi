@@ -27,7 +27,6 @@ package jp.mydns.projectk.safi.dxo;
 
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -42,6 +41,7 @@ import jp.mydns.projectk.safi.constant.AttKey;
 import jp.mydns.projectk.safi.entity.ContentEntity;
 import jp.mydns.projectk.safi.entity.ImportationWorkEntity;
 import jp.mydns.projectk.safi.service.AppTimeService;
+import jp.mydns.projectk.safi.service.ValidationService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.alwaysThrow;
 import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import static jp.mydns.projectk.safi.util.LambdaUtils.p;
@@ -137,14 +137,32 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
      */
     E toEntity(V value);
 
+    /**
+     * Abstract implements of the {@code ImportationDxo}.
+     *
+     * @param <E> entity type
+     * @param <V> content type
+     *
+     * @author riru
+     * @version 1.0.0
+     * @since 1.0.0
+     */
     abstract class AbstractImportationDxo<E extends ContentEntity<E>, V extends ContentValue<V>>
             implements ImportationDxo<E, V> {
 
         @Inject
-        private Validator validator;
+        private ValidationService validSvc;
 
         @Inject
         private AppTimeService appTimeSvc;
+
+        /**
+         * Construct by CDI.
+         *
+         * @since 1.0.0
+         */
+        protected AbstractImportationDxo() {
+        }
 
         /**
          * {@inheritDoc}
@@ -189,7 +207,7 @@ public interface ImportationDxo<E extends ContentEntity<E>, V extends ContentVal
                             : getExpiredTimeOnNow())
                     .withBan(Optional.ofNullable(
                             value.get("ban")).map(Boolean::valueOf).orElseGet(ValidityPeriod::defaultBan))
-                    .build(validator, Unsafe.class);
+                    .build(validSvc.getValidator(), Unsafe.class);
         }
 
         /**

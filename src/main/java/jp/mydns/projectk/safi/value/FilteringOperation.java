@@ -65,7 +65,7 @@ public interface FilteringOperation {
     String name();
 
     /**
-     * Get this as {@code FilteringOperation.Single}.
+     * Get this instance as {@code FilteringOperation.Single}.
      *
      * @return this
      * @throws ClassCastException if not assignable to {@code FilteringOperation.Single}
@@ -76,7 +76,7 @@ public interface FilteringOperation {
     }
 
     /**
-     * Get this as {@code FilteringOperation.Multi}.
+     * Get this instance as {@code FilteringOperation.Multi}.
      *
      * @return this
      * @throws ClassCastException if not assignable to {@code FilteringOperation.Multi}
@@ -179,19 +179,27 @@ public interface FilteringOperation {
                 = Stream.of(Multi.values()).map(Enum::name).collect(toUnmodifiableSet());
 
         /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
+
+        /**
          * {@inheritDoc}
          *
          * @since 1.0.0
          */
         @Override
         public FilteringOperation deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-            String opName = ctx.deserialize(String.class, parser);
+            String op = ctx.deserialize(String.class, parser);
 
-            if (opName == null) {
+            if (op == null) {
                 return null;
             }
 
-            return multiOpNames.contains(opName) ? Multi.valueOf(opName) : Single.valueOf(opName);
+            return multiOpNames.contains(op) ? Multi.valueOf(op) : Single.valueOf(op);
         }
     }
 }

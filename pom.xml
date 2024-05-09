@@ -417,6 +417,8 @@ POSSIBILITY OF SUCH DAMAGE.
                             <sourceFileExcludes>
                                 <!-- Exclude the automatically generated codes. -->
                                 <exclude>**/*_.*</exclude>
+                                <exclude>**/trial/**/*.*</exclude>
+                                <exclude>**/stock/**/*.*</exclude>
                             </sourceFileExcludes>
                             <links>
                                 <link>https://javadoc.io/doc/jakarta.persistence/jakarta.persistence-api/3.1.0</link>

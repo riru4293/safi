@@ -45,7 +45,7 @@ import static java.util.function.Predicate.not;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.JobPhase;
 import jp.mydns.projectk.safi.constant.RecordKind;
-import jp.mydns.projectk.safi.dao.CommonBatchDao;
+import jp.mydns.projectk.safi.dao.CommonDao;
 import jp.mydns.projectk.safi.dao.ImportationDao;
 import jp.mydns.projectk.safi.dao.UserImportationDao;
 import jp.mydns.projectk.safi.dxo.ImportationDxo;
@@ -77,7 +77,7 @@ public interface ImportationService<V extends ContentValue<V>> {
 
     /**
      * Initialize the importation working area. All data in working area will be erased. Finally call the
-     * {@link CommonBatchDao#flushAndClear()}.
+     * {@link CommonDao#flushAndClear()}.
      *
      * @throws PersistenceException if occurs an exception while access to database
      * @throws TransactionRequiredException if there is no transaction
@@ -110,8 +110,8 @@ public interface ImportationService<V extends ContentValue<V>> {
     /**
      * Convert to the {@code ContentMap}. The purpose of conversion is to eliminate duplicate content.
      *
-     * @param values collection of the importation content
-     * @return collection of the importation content as the {@code ContentMap}
+     * @param values importation content values
+     * @return importation content values as the {@code ContentMap}
      * @throws NullPointerException if {@code values} is {@code null}
      * @throws IOException if occurs I/O error
      * @since 1.0.0
@@ -122,8 +122,8 @@ public interface ImportationService<V extends ContentValue<V>> {
      * Returns the content to be registered from the difference of content between the will be imported and the
      * registered in the database. Registration means creation and updating.
      *
-     * @param values collection of the importation content
-     * @return content collection of the to be registered
+     * @param values importation content values
+     * @return content to be registered values
      * @throws NullPointerException if {@code values} is {@code null}
      * @throws PersistenceException if occurs an exception while access to database
      * @since 1.0.0
@@ -143,7 +143,7 @@ public interface ImportationService<V extends ContentValue<V>> {
     long getCountOfToBeImplicitDelete(Condition condition);
 
     /**
-     * Gets a chunked collection of implicitly deleted content.
+     * Get the to be implicitly deleted content values.
      *
      * @param condition implicit deletion content narrow down condition
      * @return implicit deletion content
@@ -154,7 +154,7 @@ public interface ImportationService<V extends ContentValue<V>> {
     Stream<List<ImportationValue<V>>> getToBeImplicitDeleted(Condition condition);
 
     /**
-     * Gets a chunked collection of to be rebuilt content.
+     * Get the to be rebuilt content values.
      *
      * @param refTime reference time of rebuilding
      * @return to be rebuilt content
@@ -208,7 +208,7 @@ public interface ImportationService<V extends ContentValue<V>> {
             ImportationService<V> {
 
         @Inject
-        private CommonBatchDao comDao;
+        private CommonDao comDao;
 
         @Inject
         private JsonService jsonSvc;
@@ -218,6 +218,14 @@ public interface ImportationService<V extends ContentValue<V>> {
 
         @Inject
         private RecordingDxo recDxo;
+
+        /**
+         * Construct by CDI.
+         *
+         * @since 1.0.0
+         */
+        protected AbstractImportationService() {
+        }
 
         /**
          * Get content type.
@@ -445,6 +453,14 @@ public interface ImportationService<V extends ContentValue<V>> {
 
         @Inject
         private UserImportationDao dao;
+
+        /**
+         * Construct by CDI.
+         *
+         * @since 1.0.0
+         */
+        protected UserImportationService() {
+        }
 
         @Override
         protected UserImportationDxo getDxo() {

@@ -37,11 +37,12 @@ import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Type;
 import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
+import java.util.Objects;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
- * An information for filtering the contents. It has a transform definition and filtering condition, and is used to
- * determine whether the transform result matches the filtering condition.
+ * Definition for content narrow down. It has a transform definition and filtering condition, and is used to determine
+ * whether the transform result matches the filtering condition.
  *
  * <p>
  * Implementation requirements.
@@ -57,7 +58,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
  *     "$id": "https://project-k.mydns.jp/safi/filtdef.schema.json",
  *     "title": "Filtdef",
- *     "description": "An information for filtering the contents.",
+ *     "description": "Definition for content narrow down.",
  *     "type": "object",
  *     "properties": {
  *         "trnsdef": {
@@ -86,13 +87,13 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @since 1.0.0
  */
 @JsonbTypeDeserializer(Filtdef.Deserializer.class)
-@Schema(name = "Filtdef", description = "An information for filtering the contents.")
+@Schema(name = "Filtdef", description = "Definition for content narrow down.")
 public interface Filtdef {
 
     /**
      * Get the transform definition for filtering.
      *
-     * @return transform definition for filtering
+     * @return transform definition
      * @since 1.0.0
      */
     @NotNull
@@ -123,9 +124,17 @@ public interface Filtdef {
         private Condition condition;
 
         /**
+         * Constructs a new builder with all properties are {@code null}.
+         *
+         * @since 1.0.0
+         */
+        public Builder() {
+        }
+
+        /**
          * Set transform definition for filtering.
          *
-         * @param trnsdef transform definition for filtering
+         * @param trnsdef transform definition
          * @return updated this
          * @since 1.0.0
          */
@@ -161,7 +170,7 @@ public interface Filtdef {
         }
 
         /**
-         * Implements of the {@code Filtdef}.
+         * Implements of the {@code Filtdef} as Java Beans.
          *
          * @author riru
          * @version 1.0.0
@@ -173,7 +182,7 @@ public interface Filtdef {
             private Condition condition;
 
             /**
-             * Constructor. Used only for deserialization from JSON.
+             * Constructor just for JSON deserialization.
              *
              * @since 1.0.0
              */
@@ -181,12 +190,15 @@ public interface Filtdef {
             }
 
             /**
-             * Constructor.
+             * Construct with set all properties from builder.
              *
              * @param builder the {@code Filtdef.Builder}
+             * @throws NullPointerException if {@code builder} is {@code null}
              * @since 1.0.0
              */
             protected Bean(Filtdef.Builder builder) {
+                Objects.requireNonNull(builder);
+
                 this.trnsdef = builder.trnsdef;
                 this.condition = builder.condition;
             }
@@ -252,6 +264,14 @@ public interface Filtdef {
      * @since 1.0.0
      */
     class Deserializer implements JsonbDeserializer<Filtdef> {
+
+        /**
+         * Construct a new JSON deserializer.
+         *
+         * @since 1.0.0
+         */
+        public Deserializer() {
+        }
 
         /**
          * {@inheritDoc}

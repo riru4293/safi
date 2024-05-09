@@ -28,7 +28,7 @@ public class ContentDigestGenerator implements ContentValue.DigestGenerator {
     private final MessageDigest sha256;
 
     /**
-     * Constructor.
+     * Construct by CDI.
      *
      * @throws IllegalStateException if unsupported SHA256 as {@link MessageDigest}
      * @since 1.0.0

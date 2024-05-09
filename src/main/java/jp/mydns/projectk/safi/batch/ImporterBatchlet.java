@@ -108,6 +108,14 @@ public class ImporterBatchlet extends JobBatchlet {
 //    private GroupImportationFacade groupImportFcd;
 
     /**
+     * Construct by <i>Jakarta-Batch</i>.
+     *
+     * @since 1.0.0
+     */
+    protected ImporterBatchlet() {
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @since 1.0.0
@@ -174,7 +182,7 @@ public class ImporterBatchlet extends JobBatchlet {
          *
          * @param importer the {@code Importer}
          * @param transformer the {@code Transformer}
-         * @param options optional configurations for import process
+         * @param options optional configuration for import process
          * @throws NullPointerException if any argument is {@code null}
          * @since 1.0.0
          */

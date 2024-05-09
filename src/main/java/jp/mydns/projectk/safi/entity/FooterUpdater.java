@@ -42,9 +42,9 @@ public class FooterUpdater {
     private final FooterContext footerCtx;
 
     /**
-     * Constructor.
+     * Construct with the {@code FooterContext}.
      *
-     * @param footerCtx instance of the {@code FooterContext}
+     * @param footerCtx the {@code FooterContext}
      * @since 1.0.0
      */
     @Inject

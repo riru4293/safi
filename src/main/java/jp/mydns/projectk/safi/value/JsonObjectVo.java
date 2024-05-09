@@ -60,7 +60,7 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
     private transient JsonObject value; // Note: immutable
 
     /**
-     * Constructor.
+     * Construct with JsonObject.
      *
      * @param value an any JSON object
      * @throws NullPointerException if {@code value} is {@code null}
@@ -234,11 +234,26 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
         return value.toString();
     }
 
+    /**
+     * Serialize this instance.
+     *
+     * @param stream the {@code ObjectOutputStream}
+     * @throws IOException if occurs I/O error
+     * @since 1.0.0
+     */
     private void writeObject(ObjectOutputStream stream) throws IOException {
         stream.defaultWriteObject();
         stream.writeUTF(value.toString());
     }
 
+    /**
+     * Deserialize this instance.
+     *
+     * @param stream the {@code ObjectInputStream}
+     * @throws IOException if occurs I/O error
+     * @throws ClassNotFoundException if the class of a serialized object could not be found
+     * @since 1.0.0
+     */
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
         try (var reader = Json.createReader(new StringReader(stream.readUTF()))) {
