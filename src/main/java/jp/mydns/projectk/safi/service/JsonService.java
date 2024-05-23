@@ -26,115 +26,169 @@
 package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import jakarta.json.bind.JsonbException;
+import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import static jp.mydns.projectk.safi.util.EntryUtils.compute;
-import jp.mydns.projectk.safi.util.JsonUtils;
-import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
+import java.util.Map.Entry;
+import static java.util.stream.Collectors.toMap;
+import java.util.stream.Stream;
 import jp.mydns.projectk.safi.value.JsonObjectVo;
 
 /**
- * Utilities for <i>JSON</i>.
+ * JSON conversion service by the <i>Jakarta JSON Processing</i> and <i>Jakarta JSON Binding</i>.
  *
  * @author riru
- * @version 1.0.0
- * @since 1.0.0
+ * @version 2.0.0
+ * @since 2.0.0
  */
-@ApplicationScoped
-public class JsonService {
-
-    @Inject
-    private Jsonb jsonb;
+public interface JsonService {
 
     /**
      * Writes the Java object tree with root object object to a String instance as JSON.
      *
-     * @param obj the root object of the object content tree to be serialized
-     * @return String instance with serialized JSON data
-     * @throws NullPointerException if {@code obj} is {@code null}
-     * @since 1.0.0
+     * @param src the root object of the object content tree to be serialized
+     * @return string instance with serialized JSON data
+     * @throws NullPointerException if {@code src} is {@code null}
+     * @since 2.0.0
      */
-    public String toJson(Object obj) {
-        return jsonb.toJson(Objects.requireNonNull(obj));
-    }
+    String toJson(Object src);
 
     /**
      * Conversion to the {@code Map<String, String>}.
      *
-     * @param obj object that convertible to {@code JsonObject}
-     * @return the value converted to {@code Map<String, String>}
-     * @throws NullPointerException if {@code obj} is {@code null}
-     * @throws ClassCastException if {@code obj} is {@code JsonValue} but not {@code JsonObject}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @since 1.0.0
+     * @param src source value. It should support serialization to JSON-Object.
+     * @return the {@code Map<String, String>}
+     * @throws NullPointerException if {@code src} is {@code null}
+     * @throws JsonbException if any unexpected error(s) occur(s) during conversion
+     * @since 2.0.0
      */
-    public Map<String, String> toStringMap(Object obj) {
-        return toJsonObject(Objects.requireNonNull(obj)).entrySet().stream()
-                .map(compute(JsonUtils::toString)).collect(toLinkedHashMap());
-    }
+    Map<String, String> toStringMap(Object src);
 
     /**
      * Conversion to {@code JsonObject}.
      *
-     * @param obj source value
-     * @return the value converted to the {@code JsonObject}
-     * @throws NullPointerException if {@code obj} is {@code null}
-     * @throws ClassCastException if {@code obj} is {@code JsonValue} but not {@code JsonObject}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @since 1.0.0
+     * @param src source value. It should support serialization to JSON-Object.
+     * @return the {@code JsonObject}
+     * @throws NullPointerException if {@code src} is {@code null}
+     * @throws JsonbException if any unexpected error(s) occur(s) during conversion
+     * @since 2.0.0
      */
-    public JsonObject toJsonObject(Object obj) {
-        return convertViaJson(Objects.requireNonNull(obj), JsonObject.class);
-    }
+    JsonObject toJsonObject(Object src);
 
     /**
      * Conversion to {@code JsonObjectVo}.
      *
-     * @param obj source value
-     * @return the value converted to the {@code JsonObjectVo}
+     * @param src source value. It should support serialization to JSON-Object.
+     * @return the {@code JsonObjectVo}
      * @throws NullPointerException if {@code obj} is {@code null}
      * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @see #toJsonObject(java.lang.Object)
-     * @see #toJsonObjectVo(jakarta.json.JsonObject)
-     * @since 1.0.0
+     * @since 2.0.0
      */
-    public JsonObjectVo toJsonObjectVo(Object obj) {
-        return new JsonObjectVo(toJsonObject(Objects.requireNonNull(obj)));
-    }
+    JsonObjectVo toJsonObjectVo(Object src);
 
     /**
      * Convert to type of the {@code T} via JSON.
      *
      * @param <T> destination type. It should support deserialization from JSON.
-     * @param obj source value. It should support serialization to JSON.
+     * @param src source value. It should support serialization to JSON.
      * @param clazz destination type
-     * @return the value converted to the {@code T}
+     * @return the {@code T}
      * @throws NullPointerException if any argument is {@code null}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @since 1.0.0
+     * @throws JsonbException if any unexpected error(s) occur(s) during conversion
+     * @since 2.0.0
      */
-    public <T> T convertViaJson(Object obj, Class<T> clazz) {
-        Objects.requireNonNull(obj);
-        Objects.requireNonNull(clazz);
+    <T> T convertViaJson(Object src, Class<T> clazz);
 
-        if (obj.getClass() == clazz) {
-            return clazz.cast(obj);
+    /**
+     * Conversion to {@code List<String>}.
+     *
+     * @param src the {@code JsonArray}
+     * @return the {@code List<String>}
+     * @throws NullPointerException if {@code src} is {@code null} or contains {@code null}
+     * @since 2.0.0
+     */
+    List<String> toStringList(JsonArray src);
+
+    /**
+     * Conversion to {@code JsonArray}.
+     *
+     * @param src the {@code List<String>}
+     * @return the {@code JsonArray}
+     * @throws NullPointerException if {@code src} is {@code null} or contains {@code null}
+     * @since 2.0.0
+     */
+    JsonArray toJsonStringList(List<String> src);
+
+    /**
+     * Make a {@code JsonValue} stream from {@code InputStream}. No close {@code jsonArray} if occurs an any
+     * {@code RuntimeException}.
+     *
+     * @param jsonArray JSON array
+     * @return {@code JsonValue} stream. If close this then closes the underlying input source.
+     * @throws NullPointerException if {@code jsonArray} is {@code null}
+     * @throws IllegalArgumentException if {@code jsonArray} is not JSON array
+     * @throws JsonException if encoding cannot be determined or I/O error
+     * @since 2.0.0
+     */
+    Stream<JsonValue> toStream(InputStream jsonArray);
+
+    /**
+     * Implementation of {@code JsonService}.
+     *
+     * @author riru
+     * @version 2.0.0
+     * @since 2.0.0
+     */
+    @ApplicationScoped
+    class Stub implements JsonService {
+// ToDo: Must be implement.
+
+        @Override
+        public String toJson(Object obj) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
 
-        return switch (obj) {
-            case String s ->
-                jsonb.fromJson(s, clazz);
+        @Override
+        public Map<String, String> toStringMap(Object src) {
+            Jsonb jsonb = JsonbBuilder.create();
+            return JsonObject.class.cast(src).entrySet().stream()
+                    .collect(toMap(Entry::getKey, e -> e.getValue().toString()));
+        }
 
-            case JsonValue v ->
-                jsonb.fromJson(v.toString(), clazz);
+        @Override
+        public JsonObject toJsonObject(Object src) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
 
-            default ->
-                jsonb.fromJson(jsonb.toJson(obj), clazz);
-        };
+        @Override
+        public JsonObjectVo toJsonObjectVo(Object src) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public <T> T convertViaJson(Object src, Class<T> clazz) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public List<String> toStringList(JsonArray src) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public JsonArray toJsonStringList(List<String> src) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public Stream<JsonValue> toStream(InputStream jsonArray) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
     }
 }

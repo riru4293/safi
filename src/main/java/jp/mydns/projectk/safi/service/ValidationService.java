@@ -26,23 +26,26 @@
 package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
-import jp.mydns.projectk.safi.util.ValidationUtils;
+import jakarta.validation.groups.Default;
 
 /**
- * Validation utilities by the <i>Jakarta Bean Validation</i>.
+ * Validation service by the <i>Jakarta Bean Validation</i>.
  *
  * @author riru
- * @version 1.0.0
- * @since 1.0.0
+ * @version 2.0.0
+ * @since 2.0.0
  */
-@ApplicationScoped
-public class ValidationService {
+public interface ValidationService {
 
-    @Inject
-    private Validator validator;
+    /**
+     * Get the {@code Validator}.
+     *
+     * @return the {@code Validator}
+     * @since 2.0.0
+     */
+    Validator getValidator();
 
     /**
      * Verify that the value is valid.
@@ -52,26 +55,47 @@ public class ValidationService {
      * @return value as is that received by argument {@code value}
      * @throws NullPointerException if {@code value} is {@code null}
      * @throws ConstraintViolationException if {@code value} is invalid
-     * @see ValidationUtils#requireValid(java.lang.Object, jakarta.validation.Validator, java.lang.Class...)
-     * @since 1.0.0
+     * @since 2.0.0
      */
-    public <T> T requireValid(T value) {
-        return ValidationUtils.requireValid(value, validator);
-    }
+    <T> T requireValid(T value);
 
     /**
      * Verify that the value is valid.
      *
      * @param <T> value type
      * @param value value that to be validated
-     * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+     * @param groups validation groups. Use the {@link Default} if empty.
      * @return value as is that received by argument {@code value}
      * @throws NullPointerException if any argument is {@code null}
      * @throws ConstraintViolationException if {@code value} is invalid
-     * @see ValidationUtils#requireValid(java.lang.Object, jakarta.validation.Validator, java.lang.Class...)
-     * @since 1.0.0
+     * @since 2.0.0
      */
-    public <T> T requireValid(T value, Class<?>... groups) {
-        return ValidationUtils.requireValid(value, validator, groups);
+    <T> T requireValid(T value, Class<?>... groups);
+
+    /**
+     * Implementation of {@code ValidationService}.
+     *
+     * @author riru
+     * @version 2.0.0
+     * @since 2.0.0
+     */
+    @ApplicationScoped
+    class Stub implements ValidationService {
+// ToDo: Must be implement.
+
+        @Override
+        public Validator getValidator() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public <T> T requireValid(T value) {
+            return value;
+        }
+
+        @Override
+        public <T> T requireValid(T value, Class<?>... groups) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
     }
 }

@@ -29,68 +29,121 @@ import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
+import java.nio.file.Path;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import jp.mydns.projectk.plugin.PluginLoader;
-import jp.mydns.projectk.plugin.impl.PluginLoaderImpl;
-import jp.mydns.projectk.plugin.impl.PluginStorageImpl;
-import jp.mydns.projectk.safi.plugin.FunctionPlugin;
-import jp.mydns.projectk.safi.plugin.ImporterPlugin;
-import jp.mydns.projectk.safi.service.ConfigService;
+import jp.mydns.projectk.safi.plugin.ContentSourceReaderPlugin;
 
 /**
  * Produce the {@link PluginLoader}.
  *
  * @author riru
- * @version 1.0.0
- * @since 1.0.0
+ * @version 2.0.0
+ * @since 2.0.0
  */
-@Dependent
-public class PluginLoaderProducer {
-
-    @Inject
-    private ConfigService confSvc;
+public interface PluginLoaderProducer {
 
     /**
-     * Produce the {@code PluginLoader<FunctionPlugin>}.
+     * Produce the {@code PluginLoader<ContentSourceReaderPlugin>}.
      *
-     * @return the {@code PluginLoader<FunctionPlugin>}
-     * @since 1.0.0
+     * @return the {@code PluginLoader<ContentSourceReaderPlugin>}
+     * @since 2.0.0
      */
-    @Produces
-    @RequestScoped
-    public PluginLoader<FunctionPlugin> produceFunctionPluginLoader() {
-        return new PluginLoaderImpl<>(FunctionPlugin.class, new PluginStorageImpl(confSvc.getPluginDir()));
-    }
+    PluginLoader<ContentSourceReaderPlugin> produceContentSourceReaderPluginLoader();
 
     /**
-     * Close the {@code PluginLoader<FunctionPlugin>} if dispose.
+     * Close the {@code PluginLoader<ContentSourceReaderPlugin>} if dispose.
      *
-     * @param loader the {@code PluginLoader<FunctionPlugin>}
-     * @since 1.0.0
+     * @param loader the {@code PluginLoader<ContentSourceReaderPlugin>}
+     * @since 2.0.0
      */
-    public void closeFunctionPluginLoader(@Disposes PluginLoader<FunctionPlugin> loader) {
-        loader.close();
-    }
+    void closeContentSourceReaderPluginLoader(PluginLoader<ContentSourceReaderPlugin> loader);
 
     /**
-     * Produce the {@code PluginLoader<ImporterPlugin>}.
+     * Implementation of {@code PluginLoaderProducer}.
      *
-     * @return the {@code PluginLoader<ImporterPlugin>}
-     * @since 1.0.0
+     * @author riru
+     * @version 2.0.0
+     * @since 2.0.0
      */
-    @Produces
-    @RequestScoped
-    public PluginLoader<ImporterPlugin> produceImporterPluginLoader() {
-        return new PluginLoaderImpl<>(ImporterPlugin.class, new PluginStorageImpl(confSvc.getPluginDir()));
-    }
+    @Dependent
+    class Stub implements PluginLoaderProducer {
+// ToDo: Must be implement.
 
-    /**
-     * Close the {@code PluginLoader<ImporterPlugin>} if dispose.
-     *
-     * @param loader the {@code PluginLoader<ImporterPlugin>}
-     * @since 1.0.0
-     */
-    public void closeImporterPluginLoader(@Disposes PluginLoader<ImporterPlugin> loader) {
-        loader.close();
+        @Override
+        @Produces
+        @RequestScoped
+        public PluginLoader<ContentSourceReaderPlugin> produceContentSourceReaderPluginLoader() {
+            return new PluginLoader<ContentSourceReaderPlugin>() {
+                @Override
+                public void close() {
+                }
+
+                @Override
+                public ContentSourceReaderPlugin load(String name) {
+                    return new ContentSourceReaderPlugin() {
+                        @Override
+                        public void fetch(Consumer<Map<String, String>> cnsmr) throws InterruptedException {
+                            cnsmr.accept(Map.of("id", "33195", "name", "windows95"));
+                            cnsmr.accept(Map.of("id", "hh6d9", "name", "windows2000"));
+                        }
+
+                        @Override
+                        public void doPostProcess(Map<String, Boolean> map) throws InterruptedException {
+                        }
+
+                        @Override
+                        public Path getWrkDir() {
+                            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                        }
+
+                        @Override
+                        public void setWrkDir(Path path) {
+                        }
+
+                        @Override
+                        public JsonObject getProperties() {
+                            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                        }
+
+                        @Override
+                        public void setProperties(JsonObject jo) {
+                        }
+
+                        @Override
+                        public Consumer<String> getReporter() {
+                            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                        }
+
+                        @Override
+                        public void setReporter(Consumer<String> cnsmr) {
+                        }
+
+                        @Override
+                        public String getAbout() {
+                            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                        }
+
+                        @Override
+                        public String getVersion() {
+                            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                        }
+                    };
+                }
+
+                @Override
+                public Stream<Map.Entry<String, Supplier<ContentSourceReaderPlugin>>> stream() {
+                    throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+                }
+            };
+        }
+
+        @Override
+        public void closeContentSourceReaderPluginLoader(@Disposes PluginLoader<ContentSourceReaderPlugin> loader) {
+        }
     }
 }
