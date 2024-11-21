@@ -2,3 +2,8 @@
 nb-configuration.xml
 nbactions.xml
 /nbproject/
+.gitsecret/keys/random_seed
+!*.secret
+setup/SelfSignedCertificate/gen-ca-cert.bat
+setup/SelfSignedCertificate/gen-server-cert.bat
+setup/SelfSignedCertificate/merami.7z
