@@ -25,7 +25,7 @@ openssl rand -hex 128 `
 
 
 Write-Host 'Encode the encryption keys to aes-256-cbc'
-openssl enc -aes-256-cbc -pbkdf2 -iter 91342 -md sha1 -pass file:"${DEST}\tdekeys.key" -in "${DEST}\tdekeys.txt" -out "${DEST}\tdekeys.enc"
+openssl enc -aes-256-cbc -md sha1 -pass file:"${DEST}\tdekeys.key" -in "${DEST}\tdekeys.txt" -out "${DEST}\tdekeys.enc"
 
 Write-Host 'Generated keys'
 Get-Content "${DEST}\tdekeys.txt"
