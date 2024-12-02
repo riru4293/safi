@@ -1,0 +1,83 @@
+Install
+----------
+curl -LsS https://downloads.mariadb.com/MariaDB/mariadb_repo_setup | sudo bash
+sudo apt update
+sudo apt install mariadb-server
+
+
+Generate-TDE-keys
+----------
+genkeys.sh
+
+
+Configure
+----------
+TDEKEY_SRC="/tmp/MariaDB-Keys.$(date +%F)"
+mkdir /etc/mysql/tde-keys
+cp ${TDEKEY_SRC}/* /etc/mysql/tde-keys
+chmod 0550 /etc/mysql/tde-keys
+chmod 0440 /etc/mysql/tde-keys/*
+chown -R mysql:mysql /etc/mysql/tde-keys
+
+usermod -aG ssl-cert mysql
+
+tee /etc/mysql/mariadb.conf.d/77-timeout.cnf <<'EOF'
+[mysqld]
+wait_timeout=1800
+EOF
+
+tee /etc/mysql/mariadb.conf.d/77-tls.cnf <<EOF
+[mysqld]
+ssl-ca   = /etc/ssl/certs/projectk-ca.pem
+ssl-key  = /etc/ssl/private/$(hostname).key
+ssl-cert = /etc/ssl/certs/$(hostname).crt
+EOF
+
+tee /etc/mysql/mariadb.conf.d/77-tde.cnf <<'EOF'
+[mysqld]
+plugin-load-add = file_key_management.so
+file_key_management = FORCE_PLUS_PERMANENT
+file_key_management_filename = /etc/mysql/tde-keys/tdekeys.enc
+file_key_management_filekey = FILE:/etc/mysql/tde-keys/tdekeys.key
+file_key_management_encryption_algorithm = AES_CBC
+
+innodb_encrypt_tables = FORCE
+innodb_encrypt_log = ON
+innodb_encrypt_temporary_tables = ON
+innodb_encryption_threads = 4
+innodb_encryption_rotate_key_age = 1
+
+encrypt_tmp_disk_tables = ON
+encrypt_tmp_files = ON
+encrypt_binlog = ON
+EOF
+
+tee /etc/mysql/mariadb.conf.d/77-global.cnf <<'EOF'
+[mysqld]
+transaction-isolation = READ-COMMITTED
+innodb_buffer_pool_size=4G
+innodb_rollback_on_timeout = TRUE
+general_log=1
+general_log_file=/var/log/mysql/general-query.log
+EOF
+
+tee /etc/mysql/mariadb.conf.d/77-charset.cnf <<'EOF'
+[mysqld]
+character-set-client-handshake = FALSE
+character-set-server = utf8mb4
+collation-server = utf8mb4_general_ci
+[client]
+default-character-set = utf8mb4
+EOF
+
+systemctl --now enable mariadb.service
+
+mariadb-tzinfo-to-sql /usr/share/zoneinfo | mariadb mysql
+
+tee /etc/mysql/mariadb.conf.d/77-timezone.cnf <<EOF
+[mysqld]
+default-time-zone='GMT'
+EOF
+
+systemctl restart mariadb.service
+
