@@ -6,7 +6,5 @@ nbactions.xml
 !*.secret
 setup/SelfSignedCertificate/gen-ca-cert.bat
 setup/SelfSignedCertificate/gen-server-cert.bat
-setup/SelfSignedCertificate/merami.7z
 setup/SelfSignedCertificate/gen-ca-cert.sh
-setup/SelfSignedCertificate/x270.tgz
 setup/SelfSignedCertificate/gen-server-cert.sh
