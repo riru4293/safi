@@ -72,7 +72,3 @@ JNDI Name: jdbc/safi
 ### JVM Options
 -Dsafi.home=/path-of-dist/safi
 
-## files
-cd ${dist}
-mkdir safi
-mkdir safi/tmp
