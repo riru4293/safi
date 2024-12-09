@@ -70,5 +70,5 @@ Password: Golden Hammer
 JNDI Name: jdbc/safi
 
 ### JVM Options
--Dsafi.home=/path-of-dist/safi
+-Dsafi.home=/opt/safi
 
