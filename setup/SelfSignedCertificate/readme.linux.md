@@ -90,47 +90,45 @@ echo 'CA password' > "${CA_HOME}/.capass"
 openssl req \
     -new \
     -config   "${HOME}/.local/openssl.cnf" \
-    -keyout   "${CA_HOME}/private/ca.project-k.key" \
-    -out      "${CA_HOME}/certs/ca.project-k.crt" \
+    -keyout   "${CA_HOME}/private/ca.key" \
+    -out      "${CA_HOME}/certs/ca.crt" \
     -passout  "file:${CA_HOME}/.capass" \
-    -subj     "/C=JP/ST=Osaka/O=Project-K/CN=ca.project-k.mydns.jp" \
+    -subj     "/C=JP/ST=Kyoto/O=Owner/CN=localhost" \
     -x509 -days 3650 -extensions v3_ca
 ```
 
 Confirm the created CA certificate
 ```sh
-openssl x509 -in "${CA_HOME}/certs/ca.project-k.crt" -text
+openssl x509 -in "${CA_HOME}/certs/ca.crt" -text
 ```
 
 ## Create a server certificate
 
 ```sh
-SERVER_NAME="$(hostname)"
-
-cp ${HOME}/.local/openssl.cnf ${CA_HOME}/openssl.${SERVER_NAME}.cnf
-tee -a ${CA_HOME}/openssl.${SERVER_NAME}.cnf <<EOF
+cp ${HOME}/.local/openssl.cnf ${CA_HOME}/openssl.localhost.cnf
+tee -a ${CA_HOME}/openssl.localhost.cnf <<EOF
 [ v3_server ]
 basicConstraints=CA:FALSE
 keyUsage = digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid,issuer
-subjectAltName=DNS:${SERVER_NAME},DNS:${SERVER_NAME}.project-k.mydns.jp,DNS:localhost,IP:127.0.0.1
+subjectAltName=DNS:localhost,IP:127.0.0.1
 EOF
 
 # genrsaコマンドでパスフレーズなしの秘密鍵を生成する。
 #   -out  出力する秘密鍵ファイル
 #   2048  秘密鍵のサイズ（ビット数）
-openssl genrsa -out "${CA_HOME}/private/${SERVER_NAME}.project-k.key" 2048
+openssl genrsa -out "${CA_HOME}/private/localhost.key" 2048
 
 # reqコマンドでCSR（証明書署名要求）を出力する。
 #   -key  上で生成した秘密鍵ファイル
 #   -out  出力するCSRファイル
 #   -subj ターゲットの識別名
 openssl req -new \
-    -key      "${CA_HOME}/private/${SERVER_NAME}.project-k.key" \
-    -out      "${CA_HOME}/certs/${SERVER_NAME}.project-k.csr" \
-    -subj     "/C=JP/ST=Osaka/O=Project-K/CN=${SERVER_NAME}.project-k.mydns.jp"
+    -key      "${CA_HOME}/private/localhost.key" \
+    -out      "${CA_HOME}/certs/localhost.csr" \
+    -subj     "/C=JP/ST=Kyoto/O=Owner/CN=localhost"
 
 # caコマンドで署名して証明書を出力する。
 #   -config     設定ファイルの場所
@@ -143,22 +141,22 @@ openssl req -new \
 #   -passin     CAの秘密鍵のパスフレーズ入力
 #   -infiles    上で生成したCSRファイル
 openssl ca \
-    -config     "${CA_HOME}/openssl.${SERVER_NAME}.cnf" \
-    -cert       "${CA_HOME}/certs/ca.project-k.crt" \
-    -keyfile    "${CA_HOME}/private/ca.project-k.key" \
+    -config     "${CA_HOME}/openssl.localhost.cnf" \
+    -cert       "${CA_HOME}/certs/ca.crt" \
+    -keyfile    "${CA_HOME}/private/ca.key" \
     -batch \
     -extensions v3_server \
-    -out        "${CA_HOME}/certs/${SERVER_NAME}.project-k.crt" \
+    -out        "${CA_HOME}/certs/localhost.crt" \
     -days       1000 \
     -passin     "file:${CA_HOME}/.capass" \
-    -infiles    "${CA_HOME}/certs/${SERVER_NAME}.project-k.csr"
+    -infiles    "${CA_HOME}/certs/localhost.csr"
 ```
 
 ## Install CA certificate
 
 ```sh
 sudo apt-get install -y ca-certificates
-sudo cp ${HOME}/.local/CA/certs/ca.project-k.crt /usr/local/share/ca-certificates
+sudo cp ${HOME}/.local/CA/certs/ca.crt /usr/local/share/ca-certificates
 sudo update-ca-certificates
 ```
 
@@ -166,6 +164,6 @@ sudo update-ca-certificates
 
 ```sh
 STORE_PASS='changeit'
-keytool -import -alias Project-K -cacerts -storepass ${STORE_PASS} -noprompt \
-  -file "$(getent passwd ${SUDO_USER:-$USER} | cut -d: -f6)/.local/CA/certs/ca.project-k.crt"
+keytool -import -alias Local -cacerts -storepass ${STORE_PASS} -noprompt \
+  -file "$(getent passwd ${SUDO_USER:-$USER} | cut -d: -f6)/.local/CA/certs/ca.crt"
 ```

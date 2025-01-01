@@ -78,26 +78,24 @@ echo CA password > "%CA_HOME%\.capass"
 openssl req ^
     -new ^
     -config   "%LOCALAPPDATA%\Programs\OpenSSL\primary\ssl\openssl.cnf" ^
-    -keyout   "%CA_HOME%\private\ca.project-k.key" ^
-    -out      "%CA_HOME%\certs\ca.project-k.crt" ^
+    -keyout   "%CA_HOME%\private\ca.key" ^
+    -out      "%CA_HOME%\certs\ca.crt" ^
     -passout  "file:%CA_HOME%\.capass" ^
-    -subj     "/C=JP/ST=Osaka/O=Project-K/CN=ca.project-k.mydns.jp" ^
+    -subj     "/C=JP/ST=Kyoto/O=Owner/CN=localhost" ^
     -x509 -days 3650 -extensions v3_ca
 ```
 
 Confirm the created CA certificate
 ```batch
-openssl x509 -in "%CA_HOME%\certs\ca.project-k.crt" -text
+openssl x509 -in "%CA_HOME%\certs\ca.crt" -text
 ```
 
 ## Create a server certificate
 
 ```batch
-SET "SERVER_NAME=%COMPUTERNAME%"
+COPY "%LOCALAPPDATA%\Programs\OpenSSL\primary\ssl\openssl.cnf" "%CA_HOME%/openssl.localhost.cnf"
 
-COPY "%LOCALAPPDATA%\Programs\OpenSSL\primary\ssl\openssl.cnf" "%CA_HOME%/openssl.%SERVER_NAME%.cnf"
-
-"%CA_HOME%/openssl.%SERVER_NAME%.cnf"
+"%CA_HOME%/openssl.localhost.cnf"
 ```
 
 ```
@@ -108,7 +106,7 @@ keyUsage = digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid,issuer
-subjectAltName=DNS:%SERVER_NAME%,DNS:%SERVER_NAME%.project-k.mydns.jp,DNS:localhost,IP:127.0.0.1
+subjectAltName=DNS:localhost,IP:127.0.0.1
 ### <<< Append
 ```
 
@@ -116,7 +114,7 @@ subjectAltName=DNS:%SERVER_NAME%,DNS:%SERVER_NAME%.project-k.mydns.jp,DNS:localh
 ; genrsaコマンドでパスフレーズなしの秘密鍵を生成する。
 ;   -out  出力する秘密鍵ファイル
 ;   2048  秘密鍵のサイズ（ビット数）
-openssl genrsa -out "%CA_HOME%\private\%SERVER_NAME%.project-k.key" 2048
+openssl genrsa -out "%CA_HOME%\private\localhost.key" 2048
 
 # reqコマンドでCSR（証明書署名要求）を出力する。
 #   -config     設定ファイルの場所
@@ -124,10 +122,10 @@ openssl genrsa -out "%CA_HOME%\private\%SERVER_NAME%.project-k.key" 2048
 #   -out  出力するCSRファイル
 #   -subj ターゲットの識別名
 openssl req -new ^
-    -config   "%CA_HOME%/openssl.%SERVER_NAME%.cnf" ^
-    -key      "%CA_HOME%\private\%SERVER_NAME%.project-k.key" ^
-    -out      "%CA_HOME%\certs\%SERVER_NAME%.project-k.csr" ^
-    -subj     "/C=JP/ST=Osaka/O=Project-K/CN=%SERVER_NAME%.project-k.mydns.jp"
+    -config   "%CA_HOME%/openssl.localhost.cnf" ^
+    -key      "%CA_HOME%\private\localhost.key" ^
+    -out      "%CA_HOME%\certs\localhost.csr" ^
+    -subj     "/C=JP/ST=Kyoto/O=Owner/CN=localhost"
 
 # caコマンドで署名して証明書を出力する。
 #   -config     設定ファイルの場所
@@ -140,15 +138,15 @@ openssl req -new ^
 #   -passin     CAの秘密鍵のパスフレーズ入力
 #   -infiles    上で生成したCSRファイル
 openssl ca ^
-    -config     "%CA_HOME%\openssl.%SERVER_NAME%.cnf" ^
-    -cert       "%CA_HOME%\certs\ca.project-k.crt" ^
-    -keyfile    "%CA_HOME%\private\ca.project-k.key" ^
+    -config     "%CA_HOME%\openssl.localhost.cnf" ^
+    -cert       "%CA_HOME%\certs\ca.crt" ^
+    -keyfile    "%CA_HOME%\private\ca.key" ^
     -batch ^
     -extensions v3_server ^
-    -out        "%CA_HOME%\certs\%SERVER_NAME%.project-k.crt" ^
+    -out        "%CA_HOME%\certs\localhost.crt" ^
     -days       1000 ^
     -passin     "file:%CA_HOME%\.capass" ^
-    -infiles    "%CA_HOME%\certs\%SERVER_NAME%.project-k.csr"
+    -infiles    "%CA_HOME%\certs\localhost.csr"
 ```
 
 ## Import CA to JDK
@@ -159,6 +157,6 @@ $CA_HOME = "$env:LOCALAPPDATA\CA"
 $STORE_PASS = 'changeit'
 
 # Import CA
-Start-Process -FilePath "${JAVA_HOME}\bin\keytool.exe" -ArgumentList "-import","-alias","Project-K","-file","`"${CA_HOME}\certs\ca.project-k.crt`"","-cacerts","-storepass","${STORE_PASS}","-noprompt" -Wait -NoNewWindow
+Start-Process -FilePath "${JAVA_HOME}\bin\keytool.exe" -ArgumentList "-import","-alias","Local","-file","`"${CA_HOME}\certs\ca.crt`"","-cacerts","-storepass","${STORE_PASS}","-noprompt" -Wait -NoNewWindow
 ```
 
