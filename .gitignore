@@ -4,7 +4,4 @@ nbactions.xml
 /nbproject/
 .gitsecret/keys/random_seed
 !*.secret
-setup/SelfSignedCertificate/gen-ca-cert.bat
-setup/SelfSignedCertificate/gen-server-cert.bat
-setup/SelfSignedCertificate/gen-ca-cert.sh
-setup/SelfSignedCertificate/gen-server-cert.sh
+

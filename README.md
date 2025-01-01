@@ -1,5 +1,13 @@
 # Simple And Flexible Idm
 
+## Setup
+
+We will build an https-compatible web server, Jakarta EE server, and MariaDB.
+
+### Creates a self signed certificates
+
+[[install]](setup/SelfSignedCertificate/install.md)
+
 ## Install MariaDB
 
 ## Setup database (MariaDB)

@@ -34,8 +34,8 @@ EOF
 rm /etc/nginx/sites-enabled/default
 
 tee /etc/nginx/conf.d/tls-server/cert.conf <<EOF
-ssl_certificate     /etc/ssl/certs/$(hostname).crt;
-ssl_certificate_key /etc/ssl/private/$(hostname).key;
+ssl_certificate     /etc/ssl/certs/$(hostname).project-k.crt;
+ssl_certificate_key /etc/ssl/private/$(hostname).project-k.key;
 EOF
 
 tee /etc/nginx/conf.d/tls-server/safi-tls-server.conf <<'EOF'

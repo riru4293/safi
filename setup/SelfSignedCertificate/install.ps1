@@ -33,14 +33,3 @@ Expand-Archive -Path "${ZIP}" -DestinationPath "${DEST}"
 # Create junctions
 if( Test-Path "${PREFIX}\primary" ) { ( Get-Item "${PREFIX}\primary" ).Delete() }
 New-Item -Path "${PREFIX}" -Name primary -Value "${DEST}" -ItemType Junction
-
-
-# Configura CA location
-$data = Get-Content "$OPENSSL_CONF" | ForEach-Object { $_ -replace './demoCA', "${CA_DIR}" }
-${data} | ForEach-Object { $_ + "`n" } | ForEach-Object { [Text.Encoding]::UTF8.GetBytes($_) } `
-  | Set-Content -Encoding Byte -Path "$OPENSSL_CONF"
-
-
-# Register environment variable
-Write-Output "OPENSSL_CONF is ${OPENSSL_CONF}"
-[Environment]::SetEnvironmentVariable('OPENSSL_CONF', "$OPENSSL_CONF", 'User')
