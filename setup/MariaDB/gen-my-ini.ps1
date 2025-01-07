@@ -12,9 +12,9 @@ default-time-zone='GMT'
 
 ## TLS
 #
-ssl-ca   = "$($(${CA_HOME}).Replace('\', '/'))/projectk-ca.crt"
-ssl-key  = "$($(${CA_HOME}).Replace('\', '/'))/private/${SERVER_NAME}.key"
-ssl-cert = "$($(${CA_HOME}).Replace('\', '/'))/${SERVER_NAME}.crt"
+ssl-ca   = "$($(${CA_HOME}).Replace('\', '/'))/certs/ca.project-k.crt"
+ssl-key  = "$($(${CA_HOME}).Replace('\', '/'))/private/${SERVER_NAME}.project-k.key"
+ssl-cert = "$($(${CA_HOME}).Replace('\', '/'))/certs/${SERVER_NAME}.project-k.crt"
 
 ## timeout
 #
