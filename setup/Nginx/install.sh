@@ -1,12 +1,18 @@
-# Summary
+#!/bin/sh
 
-Install the Nginx.
+# Execute as root
+if [ $(id -u) -ne 0 ]; then
+  sudo $0
+  exit $?
+fi
 
-## Install the Nginx
+ORG_NAME='project-k'
+SERVER_NAME="$(hostname)"
+CERTFILE_NAME="${SERVER_NAME}$(if [ -n "$ORG_NAME" ]; then echo .; fi)${ORG_NAME}"
 
-```sh
 apt update && apt install nginx
 
+rm /etc/nginx/sites-enabled/default
 mkdir /etc/nginx/conf.d/tls-server
 mkdir /etc/nginx/conf.d/upstream
 
@@ -36,11 +42,9 @@ server {
 }
 EOF
 
-rm /etc/nginx/sites-enabled/default
-
 tee /etc/nginx/conf.d/tls-server/cert.conf <<EOF
-ssl_certificate     /etc/ssl/certs/$(hostname).project-k.crt;
-ssl_certificate_key /etc/ssl/private/$(hostname).project-k.key;
+ssl_certificate     /etc/ssl/certs/${CERTFILE_NAME}.crt;
+ssl_certificate_key /etc/ssl/private/${CERTFILE_NAME}.key;
 EOF
 
 tee /etc/nginx/conf.d/tls-server/safi-tls-server.conf <<'EOF'
@@ -55,6 +59,6 @@ upstream safi-host {
 }
 EOF
 
-nginx -t
-systemctl --now enable nginx.service
+systemctl enable nginx.service
+systemctl restart nginx.service
 ```
