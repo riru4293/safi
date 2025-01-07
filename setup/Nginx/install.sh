@@ -61,4 +61,3 @@ EOF
 
 systemctl enable nginx.service
 systemctl restart nginx.service
-```
