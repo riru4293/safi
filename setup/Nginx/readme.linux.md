@@ -1,10 +1,15 @@
-Install
-----------
+# Summary
 
+Install the Nginx.
+
+## Install the Nginx
+
+```sh
 apt update && apt install nginx
 
 mkdir /etc/nginx/conf.d/tls-server
 mkdir /etc/nginx/conf.d/upstream
+
 tee /etc/nginx/conf.d/base.conf <<'EOF'
 include /etc/nginx/conf.d/upstream/*.conf;
 
@@ -50,8 +55,6 @@ upstream safi-host {
 }
 EOF
 
-
-
 nginx -t
 systemctl --now enable nginx.service
-
+```
