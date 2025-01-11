@@ -158,7 +158,7 @@ subjectAltName=DNS:${n}.${DOMAIN},DNS:${n},DNS:localhost,IP:127.0.0.1
   -out "${env:CA_HOME}\certs\${n}.${ORG}.csr" -subj "/C=${COUNTRY}/ST=${STATION}/O=${ORG}/CN=${n}.${DOMAIN}"
 
   openssl ca -batch -extensions v3_self_server -config "${env:CA_HOME}\openssl.${n}.cnf" `
-  -cert "${env:CA_HOME}\certs\${CA_CERT_NAME}.crt" ` -keyfile "${env:CA_HOME}\private\${CA_CERT_NAME}.key" `
+  -cert "${env:CA_HOME}\certs\${CA_CERT_NAME}.crt" -keyfile "${env:CA_HOME}\private\${CA_CERT_NAME}.key" `
   -passin file:"${env:CA_HOME}\.capass" -out "${env:CA_HOME}\certs\${n}.${ORG}.crt" -days ${SV_DAYS} `
   -infiles "${env:CA_HOME}\certs\${n}.${ORG}.csr"
 }
@@ -168,8 +168,8 @@ Read-Host "Press enter to exit."
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUITloXEn38tIyJ0hdhlVR1G+y
-# mzagggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUiZ2KIYwfOIxskbnE+VpIVstY
+# o2CgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -193,11 +193,11 @@ Read-Host "Press enter to exit."
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBSoPxmuOOVM
-# br2BYKTQxulVcEZDPTANBgkqhkiG9w0BAQEFAASCAQCquz1AwnNkWQHLpNCrVfzf
-# qsKojNirXgv/l5QKUd2V+fMbqntl5sQqdhX+Qd3Qw4vfzkW+Sl7rNRdeu/EfRAG+
-# 2Qac7jbTAxqp2MtJ0ZmqS2OUuCFVW9iYvdZ9AlCTwxxci7DUj38aDqU0AOJQpRER
-# MWQZFiVXk5E6xRNQHx0X77gkrpYk4pbZZUaA6DjT+7Tpk6jbaFwmZIiyN1B7ztaZ
-# 3MWnt+cCLcmgN+7ye2areeo/AQ0Nzuj+VVw9Jq9Nd4wIh3cXLjwn6tbOPBzXl7BG
-# AT9fI1+hCaxITqTRf4u/wYgkTm4UBn3ueXegWUWDSTnnOLrk/bWGA6pP9MhvAfQh
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBQiwKUS0JNU
+# Gw9su9iGSpw2PT8viDANBgkqhkiG9w0BAQEFAASCAQBhbMIMdo2GWlLok6LAm12B
+# sRO3NB27nAiAUBExbnLUEVoM301VsnphScJlb9Tf556VqZSdjUV/BQ/jSTUCL4vB
+# K5DrMJfaucGCZqar0g31oJqJzj+F0GqgRhz2tR8Iqnu/l2R355nJPH1QVNt9qJbp
+# GS25+72tgsGL2V3YF2O/teZ6p+NKkTBbBaptN/9qvkOXNwYbCuEKq5dxI1KKhyFU
+# s/2aVS5b652rdsOLz1EZd3iQbr2BRpmVJOpiAokHrv6P37xz7grlEtOjEkFtuZbK
+# UlYUtzC/cXEGlBowv3Kl8wLcDVM0fmbiFrf1Wd5diV1CX/Tj9tq2p9nltw6X9p8E
 # SIG # End signature block

@@ -1,33 +1,90 @@
-#!/bin/sh
+#!/bin/bash
 
-# Execute as root
-if [ $(id -u) -ne 0 ]; then
-  sudo $0
-  exit $?
-fi
+# Basic variables
+PREFIX='/opt'
+CONF="$(openssl version -a | awk -F'\"' '/OPENSSLDIR/ { print $2 }')"'/openssl.cnf'
+COUNTRY='JP'
+STATION='Osaka'
+ORG='project-k'
+DOMAIN='project-k.mydns.jp'
 
-PREFIX="$(getent passwd $(logname) | cut -d: -f6)/.local"
+# Environment variables
 export CA_HOME="${PREFIX}/CA"
 
-CA_PASS='CA password'
-ORG_NAME='project-k'
-DOMAIN="project-k.mydns.jp"
-CA_NAME="ca$(if [ -n "$DOMAIN" ]; then echo .; fi)${DOMAIN}"
-SERVER_NAME="$(hostname)"
-SERVER_FULLNAME="${SERVER_NAME}$(if [ -n "$DOMAIN" ]; then echo .; fi)${DOMAIN}"
-CA_CERT_NAME="ca$(if [ -n "$ORG_NAME" ]; then echo .; fi)${ORG_NAME}"
-CA_SUBJ="/C=JP/ST=Osaka$(if [ -n "$ORG_NAME" ]; then echo /O=; fi)${ORG_NAME}/CN=${CA_NAME}"
-SV_CERT_NAME="${SERVER_NAME}$(if [ -n "$ORG_NAME" ]; then echo .; fi)${ORG_NAME}"
-SV_SUBJ="/C=JP/ST=Osaka$(if [ -n "$ORG_NAME" ]; then echo /O=; fi)${ORG_NAME}/CN=${SERVER_FULLNAME}"
-OPENSSL_HOME="$(openssl version -a | awk -F'\"' '/OPENSSLDIR/ { print $2 }')"
+# CA configuration
+CA_PASS='Please change'
+CA_CONF="${CA_HOME}/openssl.ca.cnf"
+CA_SUBJ="/C=${COUNTRY}/ST=${STATION}/O=${ORG}/CN=ca.${DOMAIN}"
+CA_CERT_NAME="ca.${ORG}"
+CA_DAYS=3650
 
-apt update && apt install openssl
+# Server configuration
+SV_DAYS=1000
+SV_NAMES=("
+  $(hostname)
+  cure
+  blizzard
+  poison
+  toad
+  meteor
+")
+# --------------------------------------------------
 
-dir=${PREFIX}; [ ! -e $dir ] && mkdir -p "$dir"
-sed -e 's@./demoCA@$ENV::CA_HOME@' ${OPENSSL_HOME}/openssl.cnf > ${PREFIX}/openssl.cnf
-chown $(logname):$(id -gn $(logname)) ${PREFIX}/openssl.cnf
 
-tee -a ${PREFIX}/openssl.cnf <<'EOF'
+# Abort if already exists a CA
+if [ -d "${CA_HOME}" ]; then
+  echo "Abort because already exists a CA. [ ${CA_HOME} ]"
+  exit 9
+fi
+
+
+# Execute as root
+if [ $(id -u) -ne 0 ]; then sudo $0; exit $?; fi
+
+
+# Install OpenSSL if not exists
+if [ ! $(which openssl) ]; then 
+  apt update && apt install openssl
+fi
+
+
+# Install ssl-cert if not exists
+if [ ! $(which make-ssl-cert) ]; then
+  apt update && apt install ssl-cert
+fi
+
+
+# Uninstall CA if exists
+if [ -e "/usr/local/share/ca-certificates/${CA_CERT_NAME}.crt" ]; then
+  rm "/usr/local/share/ca-certificates/${CA_CERT_NAME}.crt"
+  update-ca-certificates
+fi
+
+if [ -e "/etc/ssl/certs/${CA_CERT_NAME}.crt" ]; then
+  rm "/etc/ssl/certs/${CA_CERT_NAME}.crt"
+fi
+
+if [ -e "/etc/ssl/private/${CA_CERT_NAME}.key" ]; then
+  rm "/etc/ssl/private/${CA_CERT_NAME}.key"
+fi
+
+
+# Create CA directories
+dir=${CA_HOME}; [ ! -e $dir ] && mkdir -p "$dir"
+mkdir "${CA_HOME}/private"
+mkdir "${CA_HOME}/crl"
+mkdir "${CA_HOME}/certs"
+mkdir "${CA_HOME}/newcerts"
+touch "${CA_HOME}/index.txt"
+echo 01 > "${CA_HOME}/serial"
+echo ${CA_PASS} > "${CA_HOME}/.capass"
+
+
+# OpenSSL configuration for CA
+sed -e 's@./demoCA@$ENV::CA_HOME@' "${CONF}" > "${CA_CONF}"
+
+tee -a "${CA_CONF}" <<'EOF'
+
 [ v3_self_ca ]
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid:always,issuer
@@ -35,53 +92,53 @@ basicConstraints = CA:true
 keyUsage = cRLSign, keyCertSign
 EOF
 
-mkdir "${CA_HOME}"
-mkdir "${CA_HOME}/private"
-mkdir "${CA_HOME}/crl"
-mkdir "${CA_HOME}/certs"
-mkdir "${CA_HOME}/newcerts"
-echo 01 > "${CA_HOME}/serial"
-touch "${CA_HOME}/index.txt"
 
-echo ${CA_PASS} > "${CA_HOME}/.capass"
+# Create CA cert
+openssl req -new -x509 -extensions v3_self_ca -config "${CA_CONF}" -subj "${CA_SUBJ}" \
+-keyout "${CA_HOME}/private/${CA_CERT_NAME}.key" -out "${CA_HOME}/certs/${CA_CERT_NAME}.crt" \
+-passout file:"${CA_HOME}/.capass" -days ${CA_DAYS}
 
-openssl req \
-    -new \
-    -config   "${PREFIX}/openssl.cnf" \
-    -keyout   "${CA_HOME}/private/${CA_CERT_NAME}.key" \
-    -out      "${CA_HOME}/certs/${CA_CERT_NAME}.crt" \
-    -passout  "file:${CA_HOME}/.capass" \
-    -subj     "${CA_SUBJ}" \
-    -x509 -days 3650 -extensions v3_self_ca
+openssl x509 -in "${CA_HOME}/certs/${CA_CERT_NAME}.crt" -text
 
-cp "${PREFIX}/openssl.cnf" "${CA_HOME}/openssl.${SERVER_NAME}.cnf"
 
-tee -a ${CA_HOME}/openssl.${SERVER_NAME}.cnf <<EOF
-[ v3_server ]
+# Install CA
+cp "${CA_HOME}/certs/${CA_CERT_NAME}.crt" '/usr/local/share/ca-certificates/'
+update-ca-certificates
+
+cp "${CA_HOME}/certs/${CA_CERT_NAME}.crt" "/etc/ssl/certs/${CA_CERT_NAME}.crt"
+chmod 444 "/etc/ssl/certs/${CA_CERT_NAME}.crt"
+chown root:ssl-cert "/etc/ssl/certs/${CA_CERT_NAME}.crt"
+
+cp "${CA_HOME}/private/${CA_CERT_NAME}.key" "/etc/ssl/private/${CA_CERT_NAME}.key"
+chmod 440 "/etc/ssl/private/${CA_CERT_NAME}.key"
+chown root:ssl-cert "/etc/ssl/private/${CA_CERT_NAME}.key"
+
+# Create servers certs
+for n in ${SV_NAMES[@]}; do
+  # OpenSSL configuration for server
+  c="${CA_HOME}/openssl.${n}.cnf"
+  sed -e 's@./demoCA@$ENV::CA_HOME@' "${CONF}" > "${c}"
+
+  tee -a "${c}" <<EOF
+
+[ v3_self_server ]
 basicConstraints=CA:FALSE
 keyUsage = digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid,issuer
-subjectAltName=DNS:${SERVER_NAME}$(if [ -n "${DOMAIN}" ]; then echo ,DNS:${SERVER_NAME}.${DOMAIN}; fi),DNS:localhost,IP:127.0.0.1
+subjectAltName=DNS:${n}.${DOMAIN},DNS:${n},DNS:localhost,IP:127.0.0.1
 EOF
 
-openssl genrsa -out "${CA_HOME}/private/${SV_CERT_NAME}.key" 2048
+  ## Create server cert
+  openssl genrsa -out "${CA_HOME}/private/${n}.${ORG}.key" 2048
 
-openssl req -new \
-    -key      "${CA_HOME}/private/${SV_CERT_NAME}.key" \
-    -out      "${CA_HOME}/certs/${SV_CERT_NAME}.csr" \
-    -subj     "${SV_SUBJ}"
+  openssl req -new -config "${c}" -key "${CA_HOME}/private/${n}.${ORG}.key" \
+  -out "${CA_HOME}/certs/${n}.${ORG}.csr" -subj "/C=${COUNTRY}/ST=${STATION}/O=${ORG}/CN=${n}.${DOMAIN}"
 
-openssl ca \
-    -config     "${CA_HOME}/openssl.${SERVER_NAME}.cnf" \
-    -cert       "${CA_HOME}/certs/${CA_CERT_NAME}.crt" \
-    -keyfile    "${CA_HOME}/private/${CA_CERT_NAME}.key" \
-    -batch \
-    -extensions v3_server \
-    -out        "${CA_HOME}/certs/${SV_CERT_NAME}.crt" \
-    -days       1000 \
-    -passin     "file:${CA_HOME}/.capass" \
-    -infiles    "${CA_HOME}/certs/${SV_CERT_NAME}.csr"
+  openssl ca -batch -extensions v3_self_server -config "${c}" \
+  -cert "${CA_HOME}/certs/${CA_CERT_NAME}.crt" -keyfile "${CA_HOME}/private/${CA_CERT_NAME}.key" \
+  -passin file:"${CA_HOME}/.capass" -out "${CA_HOME}/certs/${n}.${ORG}.crt" -days ${SV_DAYS} \
+  -infiles "${CA_HOME}/certs/${n}.${ORG}.csr"
+done
 
-chown -R $(logname):$(id -gn $(logname)) "${CA_HOME}"
