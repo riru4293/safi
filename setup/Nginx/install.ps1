@@ -1,72 +1,82 @@
-$ErrorActionPreference = "Stop"
+#Requires -Version 7
+${ErrorActionPreference} = 'Stop'
 
-if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole("Administrators")) { Start-Process powershell.exe "-ExecutionPolicy RemoteSigned -File `"$PSCommandPath`"" -Verb RunAs; exit }
+${VER} = '1.26.2'
+${WSW_VER} = '2.12.0'
+${SVC_NAME} = 'SAFI.Nginx'
+${ORG} = 'project-k'
 
-$VER = '1.26.2'
-$WSW_VER = '2.12.0'
+${PREFIX} = "${env:LOCALAPPDATA}\Programs\Nginx"
+${ORIGIN_NAME} = "nginx-${VER}"
+${NAME} = "${VER}"
+${DEST} = "${PREFIX}\${NAME}"
 
-$PREFIX = "$env:LOCALAPPDATA\Programs\Nginx"
-$ORIGIN_NAME = "nginx-${VER}"
-$NAME = "${VER}"
-$DEST = "${PREFIX}\${NAME}"
-
-$SVC_NAME = 'SAFI.Nginx'
-$SVC = $null
-
-$SRC = "https://nginx.org/download/nginx-${VER}.zip"
-$SRC_HASH = '942638CC31C836FE429FDE22E4C46E497F89D3C2BBCE46CD2C8800854FD71409'
-$HASH_ALG = 'SHA256' # [MD5|SHA1|SHA256|SHA512]
-$ZIP = "$env:TMP\$(${SRC}.Substring(${SRC}.LastIndexOf("/") + 1))"
+${SRC} = "https://nginx.org/download/nginx-${VER}.zip"
+${SRC_HASH} = '942638CC31C836FE429FDE22E4C46E497F89D3C2BBCE46CD2C8800854FD71409'.ToUpper()
+${HASH_ALG} = 'SHA256' # [MD5|SHA1|SHA256|SHA512]
+${ZIP} = "${env:TMP}\$( Split-Path -Path ${SRC} -Leaf )"
 
 # https://github.com/winsw/winsw/releases
-$WSW_NAME = 'WinSW.NET461.exe'
-$WSW_ASSETS = "https://api.github.com/repos/winsw/winsw/releases/tags/v${WSW_VER}"
-$WSW_SRC = 'Get it later with GitHub API'
-$WSW_SRC_HASH = 'B5066B7BBDFBA1293E5D15CDA3CAAEA88FBEAB35BD5B38C41C913D492AADFC4F'
-$WSW_HASH_ALG = 'SHA256' # [MD5|SHA1|SHA256|SHA512]
-$WSW_EXE = "$env:TMP\${WSW_NAME}"
+${WSW_NAME} = 'WinSW.NET461.exe'
+${WSW_ASSETS} = "https://api.github.com/repos/winsw/winsw/releases/tags/v${WSW_VER}"
+${WSW_SRC} = 'Get it later with GitHub API'
+${WSW_SRC_HASH} = 'B5066B7BBDFBA1293E5D15CDA3CAAEA88FBEAB35BD5B38C41C913D492AADFC4F'.ToUpper()
+${WSW_HASH_ALG} = 'SHA256' # [MD5|SHA1|SHA256|SHA512]
+${WSW_EXE} = "${env:TMP}\${WSW_NAME}"
 
-$NGINX_HOME = "${PREFIX}\primary"
+${NGINX_HOME} = "${PREFIX}\primary"
+${CA_HOME} = "${env:LOCALAPPDATA}\CA"
+${SV_CERT_NAME} = "$( ${env:COMPUTERNAME}.ToLower() ).${ORG}"
+# --------------------------------------------------
+
+
+# To be running again as administrators if not administrators.
+${u} = [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
+
+if ( -Not( ${u} ).IsInRole( 'Administrators' ) ) {
+  Start-Process -Verb RunAs -FilePath pwsh -ArgumentList @(
+    '-ExecutionPolicy', 'RemoteSigned', '-File', "`"${PSCommandPath}`""
+  )
+  exit
+}
+
 
 # Remove an existing service
-$ErrorActionPreference = "Continue"
-$Svc = Get-Service -Name ${SVC_NAME} 2> $null
-$ErrorActionPreference = "Stop"
-
-
-if( ${Svc} -ne $null ) {
-  if ( ${Svc}.Status -eq 'Running' ) {
+if ( ${s} = Get-Service -Name ${SVC_NAME} -ErrorAction SilentlyContinue ) {
+  
+  if ( ${s}.Status -eq 'Running' ) {
     Stop-Service -Name ${SVC_NAME}
   }
-  $S = Get-WmiObject win32_service | Where-Object {$_.Name -eq ${SVC_NAME}}
-  $S.delete()
+
+  Remove-Service -Name ${SVC_NAME}
+  Write-Host 'Removed existng service'
 }
 
 
 # Download Nginx
-$RequireDownload = -Not( Test-Path "${ZIP}" ) `
-  -or ${SRC_HASH}.ToUpper() -ne ( Get-FileHash -Path "${ZIP}" -Algorithm ${HASH_ALG} ).Hash
+${d} = -Not( Test-Path "${ZIP}" ) -or -Not( "${SRC_HASH}" -eq ( Get-FileHash -Path "${ZIP}" -Algorithm "${HASH_ALG}" ).Hash )
 
-if( ${RequireDownload} ) {
-  Write-Output "Downloading to ${ZIP} from ${SRC}"
+if( ${d} ) {
+  Write-Host "Downloading to ${ZIP} from ${SRC}"
   Invoke-WebRequest -Uri "${SRC}" -outfile "${ZIP}"
 } else {
-  Write-Output "Skip download Nginx. Because already exists."
+  Write-Host 'Skip download Nginx. Because already exists.'
 }
 
+
 # Download WinSW
-$WswR = Invoke-RestMethod -Uri ${WSW_ASSETS} -Headers @{ "User-Agent" = "PowerShell" }
-$WswA = ${WswR}.assets | Where-Object { $_.name -eq ${WSW_NAME} }
-$WSW_SRC = ${WswA}.browser_download_url
+${r} = Invoke-RestMethod -Uri ${WSW_ASSETS} -Headers @{ 'User-Agent' = 'PowerShell' }
+${a} = ${r}.assets | Where-Object { $_.name -eq ${WSW_NAME} }
+${WSW_SRC} = ${a}.browser_download_url
 
-$RequireDownload = -Not( Test-Path "${WSW_EXE}" ) `
-  -or ${WSW_SRC_HASH}.ToUpper() -ne ( Get-FileHash -Path "${WSW_EXE}" -Algorithm ${WSW_HASH_ALG} ).Hash
+${d} = -Not( Test-Path "${WSW_EXE}" ) `
+-or -Not( "${WSW_SRC_HASH}" -eq ( Get-FileHash -Path "${WSW_EXE}" -Algorithm "${WSW_HASH_ALG}" ).Hash )
 
-if( ${RequireDownload} ) {
-  Write-Output "Downloading to ${WSW_EXE} from ${WSW_SRC}"
-  Invoke-WebRequest -Uri "${WSW_SRC}" -outfile "${WSW_EXE}" -Headers @{ "User-Agent" = "PowerShell" }
+if( ${d} ) {
+  Write-Host "Downloading to ${WSW_EXE} from ${WSW_SRC}"
+  Invoke-WebRequest -Uri "${WSW_SRC}" -outfile "${WSW_EXE}" -Headers @{ 'User-Agent' = 'PowerShell' }
 } else {
-  Write-Output "Skip download WinSW. Because already exists."
+  Write-Host 'Skip download WinSW. Because already exists.'
 }
 
 
@@ -108,12 +118,12 @@ http {
     ##
     # Virtual Host Configs
     ##
-    include $(${NGINX_HOME}.Replace( '\', '/' ) )/conf/conf.d/*.conf;
+    include $( ${NGINX_HOME}.Replace( '\', '/' ) )/conf/conf.d/*.conf;
 }
 "@ | Out-File -enc default "${NGINX_HOME}\conf\nginx.conf"
 
 @"
-include $(${NGINX_HOME}.Replace( '\', '/' ) )/conf/conf.d/upstream/*.conf;
+include $( ${NGINX_HOME}.Replace( '\', '/' ) )/conf/conf.d/upstream/*.conf;
 
 server {
     listen 80 default_server;
@@ -139,8 +149,8 @@ server {
 "@ | Out-File -enc default "${NGINX_HOME}\conf\conf.d\base.conf"
 
 @"
-ssl_certificate     $(${env:LOCALAPPDATA}.Replace( '\', '/' ) )/CA/certs/$( ${env:COMPUTERNAME}.ToLower() ).project-k.crt;
-ssl_certificate_key $(${env:LOCALAPPDATA}.Replace( '\', '/' ) )/CA/private/$( ${env:COMPUTERNAME}.ToLower() ).project-k.key;
+ssl_certificate     $( ${CA_HOME}.Replace( '\', '/' ) )/certs/${SV_CERT_NAME}.crt;
+ssl_certificate_key $( ${CA_HOME}.Replace( '\', '/' ) )/private/${SV_CERT_NAME}.key;
 "@ | Out-File -enc default "${NGINX_HOME}\conf\conf.d\tls-server\cert.conf"
 
 @"
@@ -172,39 +182,42 @@ upstream safi-host {
 & "${NGINX_HOME}\nginx_service.exe" install
 Start-Service "${SVC_NAME}"
 
+Read-Host "Press enter to exit."
+
 # SIG # Begin signature block
-# MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
-# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUbwcHW4JUhYWkb+u0xqZ164UG
-# cWCgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
-# EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
-# AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
-# OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
-# DAlQcm9qZWN0LUsxDTALBgNVBAMMBHJpcnUxITAfBgkqhkiG9w0BCQEWEnJpcnU0
-# MjkzQGdtYWlsLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAOIR
-# PFXMzPTz21pfPjUIs2PJB1WQGDr4+dCCk3j17EFQKx3pZJObLXBtdjAwbqxZJnF/
-# DoyUpsCcVHLwqI7t7+lfsUiq7/MTRFIhJBve5oKRCGK3fYDe2+XS1fY5yFjJmWmm
-# 8eRI7gSJHi9IKCJRzZ3aZ59EmyI5YhefnstYzKh5ro/FtHF8JgJNix5lWRQfsqo8
-# TbJcLNg6nYGmBuKsTeggVmNYi5SS1z662y69kaxX/hWanQCT8bs7PwBKfxNwjOVD
-# C7XVd+lGB51eCfUdLOqgvm5OfKnYw8hb8Yac+NBH82jJGkZD/cdxovT+YGojXUUX
-# IWjX67+Ux25/TYKnFGUCAwEAAaOBmzCBmDAdBgNVHQ4EFgQU1vJRZwN7hBv36Z8K
-# kqO2qHYYMiMwCQYDVR0TBAIwADALBgNVHQ8EBAMCB4AwKwYDVR0lBCQwIgYIKwYB
-# BQUHAwMGCisGAQQBgjcCARUGCisGAQQBgjcCARYwEQYJYIZIAYb4QgEBBAQDAgSw
-# MB8GA1UdIwQYMBaAFLACqQ8B931Vg2H0tDbKTgnZ10bqMA0GCSqGSIb3DQEBCwUA
-# A4IBAQBgBIWW+P8OYjQqQCxauzqKZhALGNAT6mwIcsX7NIitJ7fYA1gH5JeDBCH4
-# GbcehR5sXA7r75xwhGJ7RcH2Lu1jQE/WjBCS1IhZQECP8zPnH27EZ1kYQZZRap30
-# jJU8XgYeyLeiifnRHx+uTplE+zsMp4hZlrBWVdnQBZRwu8FZPPfq9wIYjhe3sX8g
-# g1MIlW5nwzBwxA6tAo8S7/OWsMKA2kwxR2GebGpg5cYyAfjyCLb9d4T7eMwzBnbe
-# 876hMv536wdOnelAN4PmUSORV2BaahYODLaA/Ko4W2PgQuL7CF5WMyRy2mMyogT6
-# lw82ZMtMH6KAu9RfPECBfaYzKBJvMYIB9zCCAfMCAQEwVjBRMQswCQYDVQQGEwJK
-# UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
-# Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
-# AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBRGmsQmsp/Z
-# BMWoL7YYpHZZRnriRDANBgkqhkiG9w0BAQEFAASCAQBIIjNPH9TjnLtj1p87Llxt
-# SiksKiJAjQ4DvQyNHUBIlW/UKNDtnh7/OqlIuwZe5RbbdMYHZ3kezpiHk2p5KyAp
-# J+3SseqwnLbsZB4XUni3Ws+N/6W+8aJHU7+wGUqyw1cx1kgCkXF/ukvj+cdr8OkG
-# fC+d6yCYfH8USpEYwkUVkTZklIKp5nO4Y6vwKAysPyYup6r8cA/aY7eMC5KI57uD
-# AqsTv0x5TtZEFu0IMHCzr9TSYyiUqrrTVKnWkIdTi+to9hBprkQM0T//iVft+u7O
-# sFZbmcIZv86whrGo5QmBtkBfFZLHh+01i3q1DsJ4aWSt6agvcgKSgQfiEJWSc8kT
+# MIIGgQYJKoZIhvcNAQcCoIIGcjCCBm4CAQExDzANBglghkgBZQMEAgEFADB5Bgor
+# BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCAJmXzSCEz3rW+L
+# OBRZn+wyqropw8v/muWwz3AlEha5p6CCA88wggPLMIICs6ADAgECAgEGMA0GCSqG
+# SIb3DQEBCwUAMFExCzAJBgNVBAYTAkpQMQ4wDAYDVQQIDAVPc2FrYTESMBAGA1UE
+# CgwJUHJvamVjdC1LMR4wHAYDVQQDDBVjYS5wcm9qZWN0LWsubXlkbnMuanAwHhcN
+# MjUwMTAyMTM0NzE3WhcNMjcwOTI5MTM0NzE3WjBjMQswCQYDVQQGEwJKUDEOMAwG
+# A1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzENMAsGA1UEAwwEcmlydTEh
+# MB8GCSqGSIb3DQEJARYScmlydTQyOTNAZ21haWwuY29tMIIBIjANBgkqhkiG9w0B
+# AQEFAAOCAQ8AMIIBCgKCAQEA4hE8VczM9PPbWl8+NQizY8kHVZAYOvj50IKTePXs
+# QVArHelkk5stcG12MDBurFkmcX8OjJSmwJxUcvCoju3v6V+xSKrv8xNEUiEkG97m
+# gpEIYrd9gN7b5dLV9jnIWMmZaabx5EjuBIkeL0goIlHNndpnn0SbIjliF5+ey1jM
+# qHmuj8W0cXwmAk2LHmVZFB+yqjxNslws2DqdgaYG4qxN6CBWY1iLlJLXPrrbLr2R
+# rFf+FZqdAJPxuzs/AEp/E3CM5UMLtdV36UYHnV4J9R0s6qC+bk58qdjDyFvxhpz4
+# 0EfzaMkaRkP9x3Gi9P5gaiNdRRchaNfrv5THbn9NgqcUZQIDAQABo4GbMIGYMB0G
+# A1UdDgQWBBTW8lFnA3uEG/fpnwqSo7aodhgyIzAJBgNVHRMEAjAAMAsGA1UdDwQE
+# AwIHgDArBgNVHSUEJDAiBggrBgEFBQcDAwYKKwYBBAGCNwIBFQYKKwYBBAGCNwIB
+# FjARBglghkgBhvhCAQEEBAMCBLAwHwYDVR0jBBgwFoAUsAKpDwH3fVWDYfS0NspO
+# CdnXRuowDQYJKoZIhvcNAQELBQADggEBAGAEhZb4/w5iNCpALFq7OopmEAsY0BPq
+# bAhyxfs0iK0nt9gDWAfkl4MEIfgZtx6FHmxcDuvvnHCEYntFwfYu7WNAT9aMEJLU
+# iFlAQI/zM+cfbsRnWRhBllFqnfSMlTxeBh7It6KJ+dEfH65OmUT7OwyniFmWsFZV
+# 2dAFlHC7wVk89+r3AhiOF7exfyCDUwiVbmfDMHDEDq0CjxLv85awwoDaTDFHYZ5s
+# amDlxjIB+PIItv13hPt4zDMGdt7zvqEy/nfrB06d6UA3g+ZRI5FXYFpqFg4MtoD8
+# qjhbY+BC4vsIXlYzJHLaYzKiBPqXDzZky0wfooC71F88QIF9pjMoEm8xggIIMIIC
+# BAIBATBWMFExCzAJBgNVBAYTAkpQMQ4wDAYDVQQIDAVPc2FrYTESMBAGA1UECgwJ
+# UHJvamVjdC1LMR4wHAYDVQQDDBVjYS5wcm9qZWN0LWsubXlkbnMuanACAQYwDQYJ
+# YIZIAWUDBAIBBQCggYQwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZBgkqhkiG
+# 9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYBBAGCNwIB
+# FjAvBgkqhkiG9w0BCQQxIgQgCFJjwIhcV8u3OmF7Eq5dcELzyyhhiA6o5e8qbUfC
+# uYgwDQYJKoZIhvcNAQEBBQAEggEAQtGhln2ACCyDOX1Ci6enFDRnnZF6BjSIp+dU
+# vRBcBeh6JW4qZSMpAdinN9ypMNBAj1VrCOWdxzRoYppzcrCqr53RDrDNhXaOyI8W
+# rIycqi8lIAh4WgWHTMMxk/bQeIFDame3Z/WmiSawpFyeYXFCHO5ApaZT/patkLAi
+# 9CjqXXSliZzfxIbiWqEPPP0w0qCHzoGKFT7kRdzYhQ/XtkhC/RestPRVsN6G5JNo
+# q5DrZ2mH1EwsBSbIi2HluxFd7pDrDzNHX6oOHv9WBb9RJdJPT0VTAPzuLzEaZrvB
+# qOh/yQQ4h/WF4MTnYoUSqZi6CSc0Bljrv9wxKQWd+gSs41EXAw==
 # SIG # End signature block
