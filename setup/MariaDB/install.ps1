@@ -1,4 +1,4 @@
-${ErrorActionPreference} = "Stop"
+${ErrorActionPreference} = 'Stop'
 
 ${PREFIX} = "${env:LOCALAPPDATA}\Programs\MariaDB"
 ${VER} = '11.6.2'
@@ -8,15 +8,30 @@ ${DEST} = "${PREFIX}\${NAME}"
 ${SRC} = "https://mirrors.xtom.jp/mariadb//mariadb-${VER}/winx64-packages/mariadb-${VER}-winx64.zip"
 ${SRC_HASH} = 'FDA36DC30BD10979BA1496D08C2AEE4549833A09BF26AA914B653AB792A9ACBE'
 ${HASH_ALG} = 'SHA256' # [MD5|SHA1|SHA256|SHA512]
-${ZIP} = "${env:TMP}\$(${SRC}.Substring(${SRC}.LastIndexOf("/") + 1))"
+${ZIP} = "${env:TMP}\$(${SRC}.Substring(${SRC}.LastIndexOf('/') + 1))"
 
 # https://mirror.mariadb.org/zoneinfo/
 ${TZ_SRC} = "https://mirrors.xtom.jp/mariadb/zoneinfo/zoneinfo.zip"
 ${TZ_SRC_HASH} = '2bac8646c92314f8d6c30a0e05bce8355091a7bbb0b6b7b058c9363378c9597a'
 ${TZ_HASH_ALG} = 'SHA256' # [MD5|SHA1|SHA256|SHA512]
-${TZ_ZIP} = "${env:TMP}\$(${TZ_SRC}.Substring(${TZ_SRC}.LastIndexOf("/") + 1))"
+${TZ_ZIP} = "${env:TMP}\$(${TZ_SRC}.Substring(${TZ_SRC}.LastIndexOf('/') + 1))"
 ${TZ_SQL} = "${DEST}\zoneinfo.sql"
 
+
+# --------------------------------------------------
+# Remove an existing service
+$ErrorActionPreference = 'Continue'
+$Svc = Get-Service -Name ${SVC_NAME} 2> $null
+$ErrorActionPreference = 'Stop'
+
+
+if( $null -ne ${Svc} ) {
+  if ( ${Svc}.Status -eq 'Running' ) {
+    Stop-Service -Name ${SVC_NAME}
+  }
+  $S = Get-WmiObject win32_service | Where-Object {$_.Name -eq ${SVC_NAME}}
+  $S.delete()
+}
 
 # Download
 ${RequireDownload} = -Not( Test-Path "${ZIP}" ) `
@@ -26,7 +41,7 @@ if( ${RequireDownload} ) {
   Write-Output "Downloading to ${ZIP} from ${SRC}"
   Invoke-WebRequest -Uri "${SRC}" -outfile "${ZIP}"
 } else {
-  Write-Output "Skip download MariaDB. Because already exists."
+  Write-Output 'Skip download MariaDB. Because already exists.'
 }
 
 
@@ -38,7 +53,7 @@ if( ${RequireDownload} ) {
   Write-Output "Downloading to ${TZ_ZIP} from ${TZ_SRC}"
   Invoke-WebRequest -Uri "${TZ_SRC}" -outfile "${TZ_ZIP}"
 } else {
-  Write-Output "Skip download time zones. Because already exists."
+  Write-Output 'Skip download time zones. Because already exists.'
 }
 
 
