@@ -90,7 +90,7 @@ Rename-Item -Path "${PREFIX}\${ORIGIN_NAME}" -NewName "${NAME}"
 
 # Copy WinSW
 Write-Output "Copy to ${DEST}\nginx_service.exe from ${WSW_EXE}"
-Copy-Item -Path ${WSW_EXE} -Destination ${DEST}\nginx_service.exe
+Copy-Item -Path "${WSW_EXE}" -Destination "${DEST}\nginx_service.exe"
 
 
 # Create junctions
@@ -169,7 +169,7 @@ upstream safi-host {
 @"
 <service>
   <id>${SVC_NAME}</id>
-  <name>Nginx</name>
+  <name>${SVC_NAME}</name>
   <description>Web Server, Reverse Proxy</description>
   <executable>nginx.exe</executable>
   <logmode>rotate</logmode>
@@ -182,13 +182,13 @@ upstream safi-host {
 & "${NGINX_HOME}\nginx_service.exe" install
 Start-Service "${SVC_NAME}"
 
-Read-Host "Press enter to exit"
+Read-Host 'Press enter to exit'
 
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUsu44lhgbD1FdKiKjIydH5sm9
-# MG+gggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUlJ7jKWEfTVnJEVaCZq6wprku
+# DqKgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -212,11 +212,11 @@ Read-Host "Press enter to exit"
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBQ3Q0Q1vnTz
-# 3B8oNkWW0rGOPuDvvjANBgkqhkiG9w0BAQEFAASCAQAXpg4i3qkL40QSlgsFEYnY
-# SAqxWVxZM0bRtcHsBAocAKXJfUWV31ar6xOfmO/pStJGPyq6ZfM5tuFqCHfjpr6g
-# yI04KlhKmeXMA7P5swSgChjj68KIBFJticm7iPJUt0Ka/IVgHlOZYCgtGDu5Q+SV
-# 44whSayJYxiX4GCkpkMXQsHB2v06zzfdC/DidW7r9joUxWGSDEcnmbyv1cBlQQYc
-# tNnFlT/STGgNMg0lSxwtULyo+Z7x3Ly0jh9naZQud2VAWmtiZHPuICxPcAcEKU/X
-# /hm9giw3njpG1HpwH44sOP+AoTxHNZNPgJ7vX9SsEnP8PI+BJXVk2J3nHImOv5lw
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBQQv8n0Sxqv
+# c0vRin6plg6SvQx49TANBgkqhkiG9w0BAQEFAASCAQDXTEeFveoAjXSnoHK7FR4s
+# fh1TJdzFqmxmJ6bCarTHZ22jUmNbGWq7jwrXQN4C2N6sxv1c1RmGftZnO6a+oq+C
+# whfD/fRq4hwHKteSQ+339b+TWLpFIT9uL1nJeUWTfFjrjIjLEMCDQvtxNt4Fsuel
+# cMz1khh+K11rqwQmjd06EoCgUCE5o7XFqoiLbLRRX6FTUjNMu5t2wqRtzwDtQxDc
+# roUs2SzOdCos8zPF9/TLR8hyU+R7ZtFeEoEmlqNYGWxelBuMGt0DY/Ll6YiLzSSY
+# TU6e0XlQLWQ8I00Q8LJGRDlW/oHa+A31kxn/ojBKp9ITgyA4Yb/BULdI0XaO+W8m
 # SIG # End signature block

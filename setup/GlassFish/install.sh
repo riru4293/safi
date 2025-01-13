@@ -4,12 +4,12 @@ VER='7.0.21'
 PREFIX='/opt/GlassFish'
 # PREFIX="${HOME}/.local/GlassFish"
 DEST="${PREFIX}/${VER}"
-MARIA_HOME="${DEST}"
+GLASSFISH_HOME="${DEST}"
 SRC="https://mirror.kakao.com/eclipse/ee4j/glassfish/glassfish-${VER}.zip"
 HASH="https://www.eclipse.org/downloads/sums.php?file=/ee4j/glassfish/glassfish-${VER}.zip&type=sha512"
 ZIP="/tmp/$( basename "${SRC}" )"
 ORIGIN_NAME="glassfish7"
-JAVA_HOME="${HOME}/.local/Java/jdk21"
+JAVA_HOME="${HOME}/.local/Java/primary"
 
 MARIA_CLIENT_VER='3.5.1'
 MARIA_CLIENT_SRC="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/${MARIA_CLIENT_VER}/mariadb-java-client-${MARIA_CLIENT_VER}.jar"
@@ -55,19 +55,17 @@ systemctl --user --now enable glassfish
 
 
 # Configure JDBC
-"${MARIA_HOME}/bin/asadmin" create-jdbc-connection-pool \
+"${GLASSFISH_HOME}/bin/asadmin" create-jdbc-connection-pool \
 --datasourceclassname=org.mariadb.jdbc.MariaDbDataSource \
 --restype=javax.sql.XADataSource \
 --property=user=safi:password="${SAFI_PASS}":URL='jdbc\:mariadb\://localhost/safi?sessionVariables\=innodb_lock_wait_timeout\=60' \
 SafiPool
 
-"${MARIA_HOME}/bin/asadmin" create-jdbc-resource --connectionpoolid SafiPool jdbc/safi
-
-"${MARIA_HOME}/bin/asadmin" set domain.domain1.jvm-options='-Dsahi_home=/, opt, safi'
+"${GLASSFISH_HOME}/bin/asadmin" create-jdbc-resource --connectionpoolid SafiPool jdbc/safi
 
 
 # Configure JVM options
-"${MARIA_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/, opt, safi'
+"${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/, opt, safi'
 
 
 # Restart service
