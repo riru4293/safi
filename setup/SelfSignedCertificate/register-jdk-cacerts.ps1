@@ -1,3 +1,4 @@
+#Requires -Version 7
 $ErrorActionPreference = 'Continue'
 
 ${ORG} = 'project-k'
@@ -22,12 +23,12 @@ foreach ( ${jdk} in ${JDKS} ) {
 
     ${a} | ForEach-Object {
       if ( $_ -match 'version "([\d\.]+)' ) {
-        ${v} = $Matches[1]
+        ${v} = ${Matches}[1]
         Write-Host "Java version: ${v}"
   
         # Major version
         ${m} = if ( ${v} -like '1.*' ) {
-            # Version 8 and under (example: 1.8 → 8)
+            # Version 8 and under (example: 1.8 ↁE8)
             ${v}.Split('.')[1]
         } else {
             # Newer than version 8 (example: 9.0 -> 9)
@@ -48,13 +49,13 @@ foreach ( ${jdk} in ${JDKS} ) {
   }
 }
 
-Read-Host "Press enter to exit."
+Read-Host "Press enter to exit"
 
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUJBHCW1oNN6JpYtZV1+981Pjg
-# VJqgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUEKK/FQZVo/VRLcDNJ3sW/BFh
+# n4SgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -78,11 +79,11 @@ Read-Host "Press enter to exit."
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBRRCSbl25Xe
-# gM0v5LbvmD725oGASDANBgkqhkiG9w0BAQEFAASCAQDZ38gTKKb7eU0HZ/l9r4tX
-# m5BPndx0LoTg+GiI7TUTXvKj0Gkdqs4+QUqmq4vvS7xD7doZ8rgdPPE7ogj+Qr7n
-# yvS208wasDig7AVFxl2Qkymo0QLF8g60FPegrnlmm+MSM3KRibKzJEAWUoyuWrB0
-# 6/c+vU3dEIpXO7shvRAxdeZxNalM6jlgbfZ6jz+EJP+l2QvCXB9LA3Q9d7cuj6is
-# Gy0lEVzMSMwYo7S0wy9+UodKY6x3FaYTllL0BCK/h6ppUwaXrf8zsvs4F3EhRaCi
-# mCRdEMo7HhIAcC3os+xjKCjGXBVhsPcB2l4373MnWDvWSUgLrDEJ8nL7o6Ju9jup
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBT0oDdt6pJ7
+# icMzyRwFxzVGYN4ejTANBgkqhkiG9w0BAQEFAASCAQCfhNzPtT2OBRro9KhC1I1H
+# ns8ZJXB/GiKEL72XZ7z3twdmVrqbYlcGAuXe447T16F8LRQnwCUDkzjzaV8KTC7C
+# oCMEdw//9VtITopS3IHM2kxZY8FU7ReJ69v3VV2gYugP2MIVnNEzy8PQ66VLKMQp
+# S4AjZIVrsZYwdXEER4yzeCQ2KoohCQ+yadhnO5jCfoEzrVgfpFrTYd7i7qw7upu6
+# cAPC+zi3ZQkkntPupuhzLUrA+JeZIyFgYnGJGG+eXPSuldBFfCAc9DsoNELnTkIj
+# vrtJ8Vnr1bmdlUz2DTbS2rj1s6yAjggyt2YD8JDcA5QAs/RR1+PBWPg7Vdb7//BS
 # SIG # End signature block

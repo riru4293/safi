@@ -46,7 +46,7 @@ ${SV_NAMES} = @(
 if( Test-Path "${env:CA_HOME}" )
 {
   Write-Host "Abort because already exists a CA. [ ${env:CA_HOME} ]"
-  Read-Host "Press enter to exit."
+  Read-Host "Press enter to exit"
   exit 9
 }
 
@@ -163,7 +163,7 @@ subjectAltName=DNS:${n}.${DOMAIN},DNS:${n},DNS:localhost,IP:127.0.0.1
   -infiles "${env:CA_HOME}\certs\${n}.${ORG}.csr"
 }
 
-Read-Host "Press enter to exit."
+Read-Host "Press enter to exit"
 
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
