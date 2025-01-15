@@ -147,8 +147,8 @@ keyUsage = cRLSign, keyCertSign
 
 [ v3_self_server ]
 basicConstraints=CA:FALSE
-keyUsage = digitalSignature, keyEncipherment
-extendedKeyUsage = serverAuth
+keyUsage = digitalSignature, keyEncipherment, keyAgreement
+extendedKeyUsage = serverAuth, clientAuth
 subjectKeyIdentifier=hash
 authorityKeyIdentifier=keyid,issuer
 subjectAltName=DNS:${serverName}.${DOMAIN},DNS:${serverName},DNS:localhost,IP:127.0.0.1
@@ -187,8 +187,8 @@ Read-Host "Press enter to exit"
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU87U11zDH/9BgV5KDofy9L9DL
-# ylmgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU2BCQLJAPDOeHi+Itniq6DsUT
+# 1IGgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -212,11 +212,11 @@ Read-Host "Press enter to exit"
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBTsFZizfIik
-# wIBTqByUZz/ql44B2TANBgkqhkiG9w0BAQEFAASCAQBLcEPgZbaC5FY4kW3xdY2Y
-# Sfl8msRLDe0ONqcSvO3XjkJF4W5YGeMATGk6DS7xGbQvMBxv46r7ueN6ESNfaf6f
-# rUs+3RL8+dWWHUpoz7wXaLSMBrG8YVEDrITO8xBbgKmzCP68B/GNRvkb6MwgxlEA
-# H/Ca6VyjuaQ/9VSPA38cUz6WOZUherYsk8eKQwtifUto0Q+GPD0EDRYQHE+FqDsp
-# ugDmb8hPTQ4ES6xaxo9haNtziuIdhBRoJWkr8CIJUngPXHpOlB+DBwJfOnkI9LKf
-# Zs8FaREkKa4mIgFR61Fas2v9QDefCelpSZZzRAePGXAiyzd0g5j6EIQbdmkFzNj6
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBQIop9sgVIG
+# xknWW/TPrQpS+0X+7jANBgkqhkiG9w0BAQEFAASCAQC69tkLIibGU9j5BlHn3Efm
+# CbYinCihfp2xZLh0Y0WNKXv60ECf4FJKfs3CTh7K5Pjeo+GQ+anokTv3pFxyjBWd
+# hVMFaqeUqYNLMrlr/bXnwu9qz9su4n3BmkqZEZJPLw/GZQp+C4mj2ObDmE2LImPY
+# WiZ0gyWxvwnlMzoIOaLzi5DieLiuI9LRP6Nf5EoHIsksmBckhPdUoZuEI8phqePJ
+# Vji09Pw98ueKMm3/lGunY0rw6lrBNSI3EiGM95kU5tvrBJPnqjVbh0CjOitt7akU
+# 2GK7Q5UgjNLP+6SNrXzQ6I7l4KFodBqanLv7utx3uYfGyYt5aMjflkM25fpij5Cy
 # SIG # End signature block
