@@ -1,8 +1,8 @@
 #!/bin/bash
 
-ORG='project-k'
-CA_HOME="/opt/CA"
-CA_CERT="${CA_HOME}/certs/ca.${ORG}.crt"
+ORG='Project-K'
+CA_HOME="${CA_HOME:-${HOME}/.local/CA}"
+CA_CERT="${CA_HOME}/certs/ca.${ORG,,}.crt"
 
 declare -A JDK_HOMES STORE_PASSES
 
