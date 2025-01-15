@@ -7,10 +7,16 @@ CA_CERT="${CA_HOME}/certs/ca.${ORG,,}.crt"
 declare -A JDK_HOMES STORE_PASSES
 
 JDK_HOMES[jdk8]="${HOME}/.local/Java/jdk8"
+JDK_HOMES[jdk11]="${HOME}/.local/Java/jdk11"
+JDK_HOMES[jdk17]="${HOME}/.local/Java/jdk17"
 JDK_HOMES[jdk21]="${HOME}/.local/Java/jdk21"
+JDK_HOMES[jdk23]="${HOME}/.local/Java/jdk23"
 
 STORE_PASSES[jdk8]="changeit"
+STORE_PASSES[jdk11]="changeit"
+STORE_PASSES[jdk17]="changeit"
 STORE_PASSES[jdk21]="changeit"
+STORE_PASSES[jdk23]="changeit"
 # -------------------------------------
 
 for k in "${!JDK_HOMES[@]}"; do
