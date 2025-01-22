@@ -2,3 +2,6 @@
 nb-configuration.xml
 nbactions.xml
 /nbproject/
+.gitsecret/keys/random_seed
+!*.secret
+
