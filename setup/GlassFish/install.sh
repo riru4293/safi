@@ -10,11 +10,13 @@ HASH="https://www.eclipse.org/downloads/sums.php?file=/ee4j/glassfish/glassfish-
 ZIP="/tmp/$( basename "${SRC}" )"
 ORIGIN_NAME="glassfish7"
 JAVA_HOME="${HOME}/.local/Java/primary"
+CA_HOME="${HOME}/.local/CA"
 
 MARIA_CLIENT_VER='3.5.1'
 MARIA_CLIENT_SRC="https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/${MARIA_CLIENT_VER}/mariadb-java-client-${MARIA_CLIENT_VER}.jar"
 
-SAFI_PASS='Please Change'
+SAFI_PASS='Golden Hammer'
+STORE_PASS='changeit'
 
 # Uninstall service
 systemctl --user --now disable glassfish
@@ -58,7 +60,7 @@ systemctl --user --now enable glassfish
 "${GLASSFISH_HOME}/bin/asadmin" create-jdbc-connection-pool \
 --datasourceclassname=org.mariadb.jdbc.MariaDbDataSource \
 --restype=javax.sql.XADataSource \
---property=user=safi:password="${SAFI_PASS}":URL='jdbc\:mariadb\://localhost/safi?sessionVariables\=innodb_lock_wait_timeout\=60' \
+--property=user=safi:password="${SAFI_PASS}":URL='jdbc\:mariadb\://localhost/safi?sessionVariables\=innodb_lock_wait_timeout\=60&useSSL\=true&trustStore\=file\://'${CA_HOME}'/mariadb-connector-cacerts&trustStoreType\=pkcs12&trustStorePassword\='${STORE_PASS} \
 SafiPool
 
 "${GLASSFISH_HOME}/bin/asadmin" create-jdbc-resource --connectionpoolid SafiPool jdbc/safi

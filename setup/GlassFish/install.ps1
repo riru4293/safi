@@ -6,7 +6,6 @@ ${PREFIX} = "${env:LOCALAPPDATA}\Programs\GlassFish"
 ${NAME} = "${VER}"
 ${DEST} = "${PREFIX}\${NAME}"
 ${GLASSFISH_HOME} = "${DEST}"
-${TMP_SVC_NAME} = 'SAFI_GlassFish'
 ${SVC_NAME} = 'SAFI.GlassFish'
 ${SRC} = "https://mirror.kakao.com/eclipse/ee4j/glassfish/glassfish-${VER}.zip"
 ${SRC_HASH} = "Get it later"
@@ -19,7 +18,8 @@ ${JAVA_HOME} = "${env:LOCALAPPDATA}\Programs\Java\primary"
 ${MARIA_CLIENT_VER} = '3.5.1'
 ${MARIA_CLIENT_SRC} = "https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/${MARIA_CLIENT_VER}/mariadb-java-client-${MARIA_CLIENT_VER}.jar"
 
-${SAFI_PASS} = 'Please Change'
+${SAFI_PASS} = 'Golden Hammer'
+${STORE_PASS} = 'changeit'
 ${SVC_NAME} = 'SAFI.GlassFish'
 
 # https://github.com/winsw/winsw/releases
@@ -152,8 +152,9 @@ Write-Host 'Complete start domain1'
 & "${GLASSFISH_HOME}\bin\asadmin.bat" create-jdbc-connection-pool `
 --datasourceclassname=org.mariadb.jdbc.MariaDbDataSource `
 --restype=javax.sql.XADataSource `
---property=user=safi:password="${SAFI_PASS}":URL='jdbc\:mariadb\://localhost/safi?sessionVariables\=innodb_lock_wait_timeout\=60' `
+--property=user=safi:password="${SAFI_PASS}":URL='jdbc\:mariadb\://localhost/safi?sessionVariables\=innodb_lock_wait_timeout\=60&useSSL\=true&trustStore\=file\:///'$( ${env:LOCALAPPDATA}.Replace( '\', '/' ).Replace( ':', '\:' ) )'/CA/mariadb-connector-cacerts&trustStoreType\=pkcs12&trustStorePassword\='${STORE_PASS} `
 SafiPool
+
 
 & "${GLASSFISH_HOME}\bin\asadmin.bat" create-jdbc-resource --connectionpoolid SafiPool jdbc/safi
 
@@ -167,11 +168,12 @@ Restart-Service -Name "${SVC_NAME}"
 
 
 Read-Host 'Press enter to exit'
+
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUDSehoMlXCoiJPSMGBNKgb4Cx
-# qJagggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUHc6LssnA1ZsOSoOV6a0OzlfH
+# WECgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -195,11 +197,11 @@ Read-Host 'Press enter to exit'
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBSxrxTuc9QZ
-# wk9ZXun5Z3Qu9bitcDANBgkqhkiG9w0BAQEFAASCAQDbEGgVC01/p1JET2le4r/d
-# Srk+uUQX2Opk7FBYIH5drmzA+iftWyuP6bUMyhveoJDA0W87+zIl8Z0NdZefrna0
-# TCl/jm1gKxaHsKh+/r5P32MxG+HHS9jusWZjj/JcsVeRaVx5snwkMBFMyndzgakh
-# UHcuz78LXvf/g1Zw8ITFy17u35pComu27ok899jJkxav6hZpvUCpho+BvtdzwfPM
-# RwMYz88dyRijAP5HVG+W/nRV8LP31nXDuK16r8CA3Yc+E2uGTpeEL4BrRwIS1++Q
-# FDJ4stPylscaKxg/odXavFLDMCBo6muqBrE6NsbrR+Tp7EM1JDkyG2tSQdey46A2
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBTKK0+awp33
+# XOIzqZrWrWwdejG7ETANBgkqhkiG9w0BAQEFAASCAQAaGrRzQUfke6uFodit8FwX
+# n598Z2i6H4oNVFiSIf4Ykl1GrSxl0Wn6NPpUNxEG1PyhslW2oSzbnkWHZn1LiDM4
+# D9H7Ul+b8Rnl1UrJoGY9c5GkgPbHrRTqt0cH0qIoTbg9M6rpKJMuEI0ebjAsQg7Z
+# E62ILM2sxgFEU13TOAs/OupPOcaVsHv1SdHNgb0Bktk6NUsBHmrlViVy3UiOjdwQ
+# xebACxsqABRXY38kWShOkgVnT3fLrbZ4VOU54+w7qKg44yYIM/v5BBPvQPgmsPgw
+# Dr/NALtnWu0U3npRc1B/ZbzuksP+1MuNwYXVCzHSeDdadkYbEA1z37JvuXfc6vM8
 # SIG # End signature block
