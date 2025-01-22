@@ -1,8 +1,8 @@
 #!/bin/sh
 
 VER='7.0.21'
-PREFIX='/opt/GlassFish'
-# PREFIX="${HOME}/.local/GlassFish"
+# PREFIX='/opt/GlassFish'
+PREFIX="${HOME}/.local/GlassFish"
 DEST="${PREFIX}/${VER}"
 GLASSFISH_HOME="${DEST}"
 SRC="https://mirror.kakao.com/eclipse/ee4j/glassfish/glassfish-${VER}.zip"
