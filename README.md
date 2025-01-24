@@ -44,7 +44,7 @@ CREATE TABLE           `t_user` (
     `id`                     CHAR(     36) NOT NULL
   , `enabled`             BOOLEAN          NOT NULL
   , `name`                VARCHAR(    100)          COLLATE utf8mb4_unicode_ci
-  , `atts`                JSON                      COLLATE utf8mb4_unicode_ci
+  , `atts`                   JSON                   COLLATE utf8mb4_unicode_ci
   , `from_ts`            DATETIME          NOT NULL
   , `to_ts`              DATETIME          NOT NULL
   , `ban`                 BOOLEAN          NOT NULL
