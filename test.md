@@ -14,3 +14,9 @@ CREATE TABLE           `test_content` (
   ENCRYPTED=YES ENCRYPTION_KEY_ID=8
 ;
 ```
+
+# GlassFishのコンソールログのレベル変更
+
+logging.propertiesの
+org.glassfish.main.jul.handler.SimpleLogHandler.level
+を変更して再起動
