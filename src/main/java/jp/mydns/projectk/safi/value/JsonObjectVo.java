@@ -41,7 +41,7 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * The {@link JsonObject} that can be serialized. Exactly the same as the original except that it can be serialized
+ * The {@link JsonObject} that can be serialized. Exactly the same as the original except that it can be serialized.
  *
  * <p>
  * Implementation requirements.
@@ -50,7 +50,7 @@ import java.util.Set;
  * </ul>
  *
  * @author riru
- * @version 1.0.0
+ * @version 3.0.0
  * @since 1.0.0
  */
 public class JsonObjectVo extends AbstractMap<String, JsonValue> implements JsonObject, Serializable {
@@ -60,7 +60,7 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
     private transient JsonObject value; // Note: immutable
 
     /**
-     * Construct with JsonObject.
+     * Construct with {@code JsonObject}.
      *
      * @param value an any JSON object
      * @throws NullPointerException if {@code value} is {@code null}
@@ -216,11 +216,11 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
      *
      * @param other an any object
      * @return {@code true} if matches otherwise {@code false}.
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public boolean equals(Object other) {
-        return this == other || other instanceof JsonObject && Objects.equals(value, other);
+        return other instanceof JsonObject o && value.equals(o);
     }
 
     /**
@@ -256,8 +256,9 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
      */
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        try (var reader = Json.createReader(new StringReader(stream.readUTF()))) {
-            value = reader.readObject();
+
+        try (var r = Json.createReader(new StringReader(stream.readUTF()))) {
+            value = r.readObject();
         }
     }
 }
