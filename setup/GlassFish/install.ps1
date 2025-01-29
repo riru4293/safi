@@ -117,6 +117,7 @@ New-Item -Path "${PREFIX}" -Name primary -Value "${DEST}" -ItemType Junction
 <service>
   <id>${SVC_NAME}</id>
   <name>${SVC_NAME}</name>
+  <startmode>Manual</startmode>
   <description>GlassFish Server for SAFI</description>
   <executable>$( ${GLASSFISH_HOME}.Replace( '\', '/' ) )/glassfish/lib/nadmin.bat</executable>
   <logpath>$( ${GLASSFISH_HOME}.Replace( '\', '\\' ) )\\glassfish\\domains\\domain1\\service</logpath>
@@ -152,7 +153,16 @@ Write-Host 'Complete start domain1'
 & "${GLASSFISH_HOME}\bin\asadmin.bat" create-jdbc-connection-pool `
 --datasourceclassname=org.mariadb.jdbc.MariaDbDataSource `
 --restype=javax.sql.XADataSource `
---property=user=safi:password="${SAFI_PASS}":URL='jdbc\:mariadb\://localhost/safi?sessionVariables\=innodb_lock_wait_timeout\=60&useSSL\=true&trustStore\=file\:///'$( ${env:LOCALAPPDATA}.Replace( '\', '/' ).Replace( ':', '\:' ) )'/CA/mariadb-connector-cacerts&trustStoreType\=pkcs12&trustStorePassword\='${STORE_PASS} `
+--property=$(Write-Output $(Join-String -Separator ':' -InputObject @(`
+  'user=safi', `
+  "password=${SAFI_PASS}", `
+  'sessionVariables=innodb_lock_wait_timeout\=60', `
+  'sslMode=verify-full', `
+  "trustStore=file\:///$( ${env:LOCALAPPDATA}.Replace( '\', '/' ).Replace( ':', '\:' ) )/CA/mariadb-connector-cacerts", `
+  'trustStoreType=pkcs12', `
+  "trustStorePassword=${STORE_PASS}", `
+  'URL=jdbc\:mariadb\://localhost/safi' `
+))) `
 SafiPool
 
 
@@ -161,6 +171,16 @@ SafiPool
 
 # Configure JVM options
 & "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Dsafi.home=/, $( ${env:LOCALAPPDATA}.Replace( '\', ', ' ).Replace( ':', '\:' ) ), safi"
+
+
+# Configure console log-level
+Rename-Item -Path "${GLASSFISH_HOME}\glassfish\domains\domain1\config\logging.properties" -NewName "logging.properties.origin"
+
+Get-Content "${GLASSFISH_HOME}\glassfish\domains\domain1\config\logging.properties.origin" `
+| ForEach-Object { $_ -replace `
+  'org.glassfish.main.jul.handler.SimpleLogHandler.level=INFO', `
+  'org.glassfish.main.jul.handler.SimpleLogHandler.level=ALL' } `
+| Set-Content -Path "${GLASSFISH_HOME}\glassfish\domains\domain1\config\logging.properties"
 
 
 # Restart service
@@ -172,8 +192,8 @@ Read-Host 'Press enter to exit'
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUHc6LssnA1ZsOSoOV6a0OzlfH
-# WECgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUk58c4/sqjtKGt5j6BK4iajss
+# tNKgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -197,11 +217,11 @@ Read-Host 'Press enter to exit'
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBTKK0+awp33
-# XOIzqZrWrWwdejG7ETANBgkqhkiG9w0BAQEFAASCAQAaGrRzQUfke6uFodit8FwX
-# n598Z2i6H4oNVFiSIf4Ykl1GrSxl0Wn6NPpUNxEG1PyhslW2oSzbnkWHZn1LiDM4
-# D9H7Ul+b8Rnl1UrJoGY9c5GkgPbHrRTqt0cH0qIoTbg9M6rpKJMuEI0ebjAsQg7Z
-# E62ILM2sxgFEU13TOAs/OupPOcaVsHv1SdHNgb0Bktk6NUsBHmrlViVy3UiOjdwQ
-# xebACxsqABRXY38kWShOkgVnT3fLrbZ4VOU54+w7qKg44yYIM/v5BBPvQPgmsPgw
-# Dr/NALtnWu0U3npRc1B/ZbzuksP+1MuNwYXVCzHSeDdadkYbEA1z37JvuXfc6vM8
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBTIxcfClO8C
+# ee4G+qpHNXZLP2d2QDANBgkqhkiG9w0BAQEFAASCAQC/FlA/GGlV72JtYbW+zY8R
+# 92W8vrWJTgFSLrm1ueXqPRjBjUBGsG0Sn+2vZsA9W9aqAysFc9YxvrsYwJdaGFJP
+# hP9b3LPzFI8rvD3Jx9LeI9N08Jw0NQYp+nhS4KiJvqXxishwMSOsGO90uHa73mAw
+# JdJqBKZNyzbkBC/v1Bov0+KQVggKutIPNk9sqbj3MTEb+AzRpdAVx04/KloGPoEJ
+# HaUSb57ALSOEV5KIHpxm24NJ9A7pEjeuz02MX8Pn/tgOyL3QdumRKxBWVMJWoxYw
+# rIJSFWlGOtSV4x/bpHk10B+kSAcvjNFO6w2zuoO93pnVmdbQKPg19DSnR6c7wXeK
 # SIG # End signature block

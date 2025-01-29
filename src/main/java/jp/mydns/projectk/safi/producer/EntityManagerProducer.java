@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Project-K
+ * Copyright (c) 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,33 +27,24 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Qualifier;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 /**
- * Producer for the {@link EntityManager}.
+ * A CDI Producer that provides instances of {@link EntityManager}.
  *
  * @author riru
- * @version 1.0.0
+ * @version 3.0.0
  * @since 1.0.0
  */
 @RequestScoped
 public class EntityManagerProducer {
 
     @PersistenceContext(unitName = "safi_persistence_unit")
-    EntityManager em;
-
-    @PersistenceContext(unitName = "safi_batch_persistence_unit")
-    EntityManager batchEm;
+    private EntityManager em;
 
     /**
-     * Produce the {@code EntityManager}.
+     * Produces an the {@code EntityManager}.
      *
      * @return the {@code EntityManager}
      * @since 1.0.0
@@ -61,37 +52,6 @@ public class EntityManagerProducer {
     @Produces
     @RequestScoped
     public EntityManager produce() {
-
         return em;
     }
-
-    /**
-     * Produce the {@code EntityManager} for batch processing.
-     *
-     * @return the {@code EntityManager} for batch processing
-     * @since 1.0.0
-     */
-    @ForBatch
-    @Produces
-    @RequestScoped
-    public EntityManager produceForBatch() {
-
-        return batchEm;
-    }
-
-    /**
-     * Indicates used for batch processing.
-     *
-     * @author riru
-     * @version 1.0.0
-     * @since 1.0.0
-     */
-    @Qualifier
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
-    @Documented
-    public static @interface ForBatch {
-
-    }
-
 }

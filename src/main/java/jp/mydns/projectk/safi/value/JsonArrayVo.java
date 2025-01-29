@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Project-K
+ * Copyright (c) 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,7 @@ import java.util.Objects;
  * </ul>
  *
  * @author riru
- * @version 1.0.0
+ * @version 3.0.0
  * @since 1.0.0
  */
 public class JsonArrayVo extends AbstractList<JsonValue> implements JsonArray, Serializable {
@@ -60,7 +60,7 @@ public class JsonArrayVo extends AbstractList<JsonValue> implements JsonArray, S
     private transient JsonArray value; // Note: immutable
 
     /**
-     * Constructor.
+     * Construct with {@code JsonArray}.
      *
      * @param value an any JSON array
      * @throws NullPointerException if {@code value} is {@code null}
@@ -240,7 +240,7 @@ public class JsonArrayVo extends AbstractList<JsonValue> implements JsonArray, S
      */
     @Override
     public boolean equals(Object other) {
-        return this == other || other instanceof JsonArray && Objects.equals(value, other);
+        return other instanceof JsonArray o && value.equals(o);
     }
 
     /**
@@ -261,8 +261,9 @@ public class JsonArrayVo extends AbstractList<JsonValue> implements JsonArray, S
 
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        try (var reader = Json.createReader(new StringReader(stream.readUTF()))) {
-            value = reader.readArray();
+        
+        try (var r = Json.createReader(new StringReader(stream.readUTF()))) {
+            value = r.readArray();
         }
     }
 }
