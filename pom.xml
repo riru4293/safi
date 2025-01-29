@@ -47,7 +47,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <!--<version.microprofile-config>3.1</version.microprofile-config>-->
         <!--<version.smallrye-config>3.5.0</version.smallrye-config>-->
         <!--<version.mockito>5.5.0</version.mockito>-->
-        <!--<version.junit>5.10.0</version.junit>-->
+        <version.junit>5.11.4</version.junit>
         <versin.slf4j>2.0.16</versin.slf4j>
         <version.eclipselink>4.0.3</version.eclipselink>
         <!--<version.ulidj>1.0.4</version.ulidj>-->
@@ -79,13 +79,13 @@ POSSIBILITY OF SUCH DAMAGE.
 
     <dependencyManagement>
         <dependencies>
-            <!--            <dependency>
+            <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
                 <version>${version.junit}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>-->
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -168,11 +168,11 @@ POSSIBILITY OF SUCH DAMAGE.
                 </exclusion>
             </exclusions>
         </dependency>-->
-        <!--        <dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
-        </dependency>-->
+        </dependency>
         <!--        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
