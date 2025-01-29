@@ -26,53 +26,32 @@
 package jp.mydns.projectk.safi.resource;
 
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
-import jakarta.ws.rs.*;
-import static jakarta.ws.rs.core.MediaType.*;
-import java.util.List;
-import jp.mydns.projectk.safi.entity.TestEntity;
-import jp.mydns.projectk.safi.entity.TestEntity_;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 
 /**
+ * JAX-RS resource for test.
  *
  * @author riru
+ * @version 3.0.0
+ * @since 3.0.0
  */
 @RequestScoped
 @Path("tests")
 public class TestResource {
 
-    @PersistenceContext
-    private EntityManager em;
-
+    /**
+     * API communication check.
+     *
+     * @return response message
+     * @since 3.0.0
+     */
     @GET
     @Path("ping")
     @Produces(TEXT_PLAIN)
-    public String hello() {
-        return "Hello";
-    }
-
-    @GET
-    @Path("contents")
-    @Produces(APPLICATION_JSON)
-    public List<TestEntity> getContents() {
-        
-        em.clear();
-        
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<TestEntity> cq = cb.createQuery(TestEntity.class);
-        Root<TestEntity> t = cq.from(TestEntity.class);
-
-        var jex = cb.function(
-                "JSON_EXTRACT",
-                String.class,
-                t.get(TestEntity_.atts),
-                cb.literal("$.1")
-        );
-
-        return em.createQuery(cq.where(cb.like(jex, "%a%"))).getResultList();
+    public String ping() {
+        return "Hello SAFI API.";
     }
 }

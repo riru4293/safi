@@ -31,7 +31,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 /**
- * A CDI Producer that provides instances of {@link EntityManager}.
+ * CDI Producer that provides instances of {@link EntityManager}.
  *
  * @author riru
  * @version 3.0.0

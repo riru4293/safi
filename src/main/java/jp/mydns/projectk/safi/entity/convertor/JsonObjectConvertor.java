@@ -26,7 +26,6 @@
 package jp.mydns.projectk.safi.entity.convertor;
 
 import jakarta.json.Json;
-import jakarta.json.JsonReader;
 import jakarta.json.stream.JsonParsingException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
@@ -37,52 +36,41 @@ import jp.mydns.projectk.safi.value.JsonObjectVo;
  * JPA attribute convertor for the {@code JsonObjectVo}. This convertor is applied automatically.
  *
  * @author riru
- * @version 1.0.0
+ * @version 3.0.0
  * @since 1.0.0
  */
 @Converter(autoApply = true)
 public final class JsonObjectConvertor implements AttributeConverter<JsonObjectVo, String> {
 
     /**
-     * Construct a new entity attribute convertor.
-     *
-     * @since 1.0.0
-     */
-    public JsonObjectConvertor() {
-    }
-
-    /**
      * Convert to database column type.
      *
-     * @param entityValue entity attribute value. It can be set {@code null}.
-     * @return {@code entityValue} that converted to string representation of {@code JsonObjectVo}. {@code null} if
-     * {@code entityValue} is {@code null}.
-     * @see JsonObjectVo#toString() conversion process
-     * @since 1.0.0
+     * @param val the {@code JsonObjectVo}. It can be set {@code null}.
+     * @return {@code val} that converted to string representation of {@code JsonObjectVo}. {@code null} if
+     * {@code val} is {@code null}.
+     * @since 3.0.0
      */
     @Override
-    public String convertToDatabaseColumn(JsonObjectVo entityValue) {
-        return entityValue != null ? entityValue.toString() : null;
+    public String convertToDatabaseColumn(JsonObjectVo val) {
+        return val != null ? val.toString() : null;
     }
 
     /**
      * Convert to entity attribute type.
      *
-     * @param databaseValue database column value. It must be a string representation of {@code JsonObjectVo}. It can be
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonObjectVo}. It can be
      * set {@code null}.
-     * @return {@code databaseValue} as {@code JsonObjectVo}. {@code null} if {@code databaseValue} is {@code null}.
-     * @throws JsonParsingException if {@code databaseValue} is malformed as {@code JsonObjectVo}
-     * @since 1.0.0
-     * @see JsonReader#readObject() conversion process #1
-     * @see JsonObjectVo#JsonObjectVo(jakarta.json.JsonObject) conversion process #2
+     * @return {@code dbVal} as {@code JsonObjectVo}. {@code null} if {@code dbVal} is {@code null}.
+     * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonObjectVo}
+     * @since 3.0.0
      */
     @Override
-    public JsonObjectVo convertToEntityAttribute(String databaseValue) {
-        if (databaseValue == null) {
+    public JsonObjectVo convertToEntityAttribute(String dbVal) {
+        if (dbVal == null) {
             return null;
         }
 
-        try (var r = Json.createReader(new StringReader(databaseValue))) {
+        try (var r = Json.createReader(new StringReader(dbVal))) {
             return new JsonObjectVo(r.readObject());
         }
     }
