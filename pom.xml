@@ -51,7 +51,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <versin.slf4j>2.0.16</versin.slf4j>
         <version.eclipselink>4.0.3</version.eclipselink>
         <!--<version.ulidj>1.0.4</version.ulidj>-->
-        <!--<version.assertj>3.24.2</version.assertj>-->
+        <version.assertj>3.27.3</version.assertj>
         <!--<version.mockito>5.2.0</version.mockito>-->
         <!--<version.hibernate-validator>8.0.1.Final</version.hibernate-validator>-->
         <!--<version.expressly>5.0.0</version.expressly>-->
@@ -115,16 +115,22 @@ POSSIBILITY OF SUCH DAMAGE.
             <artifactId>k-formula-mechanism</artifactId>
             <version>${version.k-formula-mechanism}</version>
         </dependency>-->
+        
+        <!-- License: MIT -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>${versin.slf4j}</version>
         </dependency>
+        
+        <!-- License: APL-2.0 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
             <version>${versin.slf4j}</version>
         </dependency>
+        
+        <!-- License: APL-2.0 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -156,18 +162,22 @@ POSSIBILITY OF SUCH DAMAGE.
             <artifactId>ulidj</artifactId>
             <version>${version.ulidj}</version>
         </dependency>-->
-        <!--        <dependency>
+        
+        <!-- License: APL-2.0 -->
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${version.assertj}</version>
             <scope>test</scope>
-            <exclusions>
+<!--            <exclusions>
                 <exclusion>
                     <groupId>net.bytebuddy</groupId>
                     <artifactId>byte-buddy</artifactId>
                 </exclusion>
-            </exclusions>
-        </dependency>-->
+            </exclusions>-->
+        </dependency>
+        
+        <!-- License: EPL-2.0 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
