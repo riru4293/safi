@@ -54,8 +54,8 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.assertj>3.27.3</version.assertj>
         <!--<version.mockito>5.2.0</version.mockito>-->
         <!--<version.hibernate-validator>8.0.1.Final</version.hibernate-validator>-->
-        <!--<version.expressly>5.0.0</version.expressly>-->
-        <!--<version.yasson>3.0.3</version.yasson>-->
+        <version.expressly>5.0.0</version.expressly>
+        <version.yasson>3.0.4</version.yasson>
         <!--<version.weld-junit5>4.0.1.Final</version.weld-junit5>-->
         <!--<version.h2>2.2.224</version.h2>-->
         <!--<version.bytebuddy>1.14.6</version.bytebuddy>-->
@@ -212,18 +212,24 @@ POSSIBILITY OF SUCH DAMAGE.
             <version>${version.hibernate-validator}</version>
             <scope>test</scope>
         </dependency>-->
-        <!--        <dependency>
+        
+        <!-- License: EPL-2.0 -->
+        <!-- License: GPL -->
+                <dependency>
             <groupId>org.glassfish.expressly</groupId>
             <artifactId>expressly</artifactId>
             <version>${version.expressly}</version>
             <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>org.eclipse</groupId>
+        </dependency>
+        
+        <!-- License: EDL-1.0 -->
+        <!-- License: EPL-2.0 -->
+                <dependency>
+                <groupId>org.eclipse</groupId>
             <artifactId>yasson</artifactId>
             <version>${version.yasson}</version>
             <scope>test</scope>
-        </dependency>-->
+        </dependency>
         <!--        <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-junit5</artifactId>

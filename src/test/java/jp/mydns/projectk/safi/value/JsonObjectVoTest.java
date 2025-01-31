@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test of class JsonObjectVo.
+ * Test of class {@code JsonObjectVo}.
  *
  * @author riru
  * @version 3.0.0
@@ -46,34 +46,36 @@ import org.junit.jupiter.api.Test;
 class JsonObjectVoTest {
 
     /**
-     * Test serialize and de-serialize.
+     * Test serialize and deserialize.
+     *
+     * @since 3.0.0
      */
     @Test
     void testSerialize() throws IOException, ClassNotFoundException {
 
         JsonObjectVo expect = new JsonObjectVo(Json.createObjectBuilder()
-                .add("null", JsonValue.NULL)
-                .add("true", JsonValue.TRUE)
-                .add("false", JsonValue.FALSE)
-                .add("number", 777)
-                .add("string", "hello")
-                .add("array", Json.createArrayBuilder().add(1))
-                .add("object", Json.createObjectBuilder().add("key", "value"))
-                .build());
+            .add("null", JsonValue.NULL)
+            .add("true", JsonValue.TRUE)
+            .add("false", JsonValue.FALSE)
+            .add("number", 777)
+            .add("string", "hello")
+            .add("array", Json.createArrayBuilder().add(1))
+            .add("object", Json.createObjectBuilder().add("key", "value"))
+            .build());
 
         // Serialize
         final byte[] serialized;
-        try ( var os = new ByteArrayOutputStream();
-                 var oos = new ObjectOutputStream(os);) {
+        try (var baos = new ByteArrayOutputStream();
+             var oos = new ObjectOutputStream(baos);) {
             oos.writeObject(expect);
             oos.flush();
-            serialized = os.toByteArray();
+            serialized = baos.toByteArray();
         }
 
-        // De-serialize
+        // Deserialize
         final JsonObjectVo result;
-        try ( var is = new ByteArrayInputStream(serialized);
-                 var ois = new ObjectInputStream(is);) {
+        try (var bais = new ByteArrayInputStream(serialized);
+             var ois = new ObjectInputStream(bais);) {
             result = JsonObjectVo.class.cast(ois.readObject());
         }
 
@@ -86,15 +88,16 @@ class JsonObjectVoTest {
     @Test
     void testEquals() {
         JsonObject raw = Json.createObjectBuilder()
-                .add("null", JsonValue.NULL)
-                .add("true", JsonValue.TRUE)
-                .add("false", JsonValue.FALSE)
-                .add("number", 777)
-                .add("string", "hello")
-                .add("array", Json.createArrayBuilder().add(1))
-                .add("object", Json.createObjectBuilder().add("key", "value"))
-                .build();
+            .add("null", JsonValue.NULL)
+            .add("true", JsonValue.TRUE)
+            .add("false", JsonValue.FALSE)
+            .add("number", 777)
+            .add("string", "hello")
+            .add("array", Json.createArrayBuilder().add(1))
+            .add("object", Json.createObjectBuilder().add("key", "value"))
+            .build();
 
+        // Wrap with JsonObjectVo
         JsonObjectVo value = new JsonObjectVo(raw);
 
         assertThat(value).isEqualTo(raw);
