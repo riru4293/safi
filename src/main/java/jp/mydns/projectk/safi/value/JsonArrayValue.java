@@ -53,7 +53,7 @@ import java.util.Objects;
  * @version 3.0.0
  * @since 1.0.0
  */
-public class JsonArrayVo extends AbstractList<JsonValue> implements JsonArray, Serializable {
+public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray, Serializable {
 
     private static final long serialVersionUID = 1349564549742480960L;
 
@@ -66,7 +66,7 @@ public class JsonArrayVo extends AbstractList<JsonValue> implements JsonArray, S
      * @throws NullPointerException if {@code value} is {@code null}
      * @since 1.0.0
      */
-    public JsonArrayVo(JsonArray value) {
+    public JsonArrayValue(JsonArray value) {
         this.value = Objects.requireNonNull(value);
     }
 

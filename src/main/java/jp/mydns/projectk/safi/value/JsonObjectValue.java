@@ -53,7 +53,7 @@ import java.util.Set;
  * @version 3.0.0
  * @since 1.0.0
  */
-public class JsonObjectVo extends AbstractMap<String, JsonValue> implements JsonObject, Serializable {
+public class JsonObjectValue extends AbstractMap<String, JsonValue> implements JsonObject, Serializable {
 
     private static final long serialVersionUID = 6337206561334398852L;
 
@@ -66,7 +66,7 @@ public class JsonObjectVo extends AbstractMap<String, JsonValue> implements Json
      * @throws NullPointerException if {@code value} is {@code null}
      * @since 1.0.0
      */
-    public JsonObjectVo(JsonObject value) {
+    public JsonObjectValue(JsonObject value) {
         this.value = Objects.requireNonNull(value);
     }
 
