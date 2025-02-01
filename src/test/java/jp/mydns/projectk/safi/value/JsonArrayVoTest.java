@@ -26,7 +26,7 @@
 package jp.mydns.projectk.safi.value;
 
 import jakarta.json.Json;
-import jakarta.json.JsonObject;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonValue;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,13 +37,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test of class {@code JsonObjectVo}.
+ * Test of class {@code JsonArrayVo}.
  *
  * @author riru
  * @version 3.0.0
  * @since 1.0.0
  */
-class JsonObjectVoTest {
+class JsonArrayVoTest {
 
     /**
      * Test serialize and deserialize.
@@ -53,14 +53,14 @@ class JsonObjectVoTest {
     @Test
     void testSerialize() throws IOException, ClassNotFoundException {
 
-        JsonObjectVo expect = new JsonObjectVo(Json.createObjectBuilder()
-            .add("null", JsonValue.NULL)
-            .add("true", JsonValue.TRUE)
-            .add("false", JsonValue.FALSE)
-            .add("number", 777)
-            .add("string", "hello")
-            .add("array", Json.createArrayBuilder().add(1))
-            .add("object", Json.createObjectBuilder().add("key", "value"))
+        JsonArrayVo expect = new JsonArrayVo(Json.createArrayBuilder()
+            .add(JsonValue.NULL)
+            .add(JsonValue.TRUE)
+            .add(JsonValue.FALSE)
+            .add(777)
+            .add("string")
+            .add(Json.createArrayBuilder().add(1))
+            .add(Json.createObjectBuilder().add("key", "value"))
             .build());
 
         // Serialize
@@ -72,11 +72,11 @@ class JsonObjectVoTest {
             serialized = baos.toByteArray();
         }
 
-        // Deserialize
-        final JsonObjectVo result;
+        // De-serialize
+        final JsonArrayVo result;
         try (var bais = new ByteArrayInputStream(serialized);
              var ois = new ObjectInputStream(bais);) {
-            result = JsonObjectVo.class.cast(ois.readObject());
+            result = JsonArrayVo.class.cast(ois.readObject());
         }
 
         assertThat(result).isEqualTo(expect);
@@ -84,23 +84,23 @@ class JsonObjectVoTest {
 
     /**
      * Test equals method.
-     * 
+     *
      * @since 3.0.0
      */
     @Test
     void testEquals() {
-        JsonObject raw = Json.createObjectBuilder()
-            .add("null", JsonValue.NULL)
-            .add("true", JsonValue.TRUE)
-            .add("false", JsonValue.FALSE)
-            .add("number", 777)
-            .add("string", "hello")
-            .add("array", Json.createArrayBuilder().add(1))
-            .add("object", Json.createObjectBuilder().add("key", "value"))
+        JsonArray raw = Json.createArrayBuilder()
+            .add(JsonValue.NULL)
+            .add(JsonValue.TRUE)
+            .add(JsonValue.FALSE)
+            .add(777)
+            .add("hello")
+            .add(Json.createArrayBuilder().add(1))
+            .add(Json.createObjectBuilder().add("key", "value"))
             .build();
 
-        // Wrap with JsonObjectVo
-        JsonObjectVo value = new JsonObjectVo(raw);
+        // Wrap with JsonArrayVo
+        JsonArrayVo value = new JsonArrayVo(raw);
 
         assertThat(value).isEqualTo(raw);
     }
