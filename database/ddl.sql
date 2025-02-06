@@ -14,11 +14,11 @@ CREATE TABLE           `t_user` (
   , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci
   , `version`                 INT          NOT NULL
   , `reg_ts`             DATETIME          NOT NULL
-  , `reg_id`              VARCHAR(     36) NOT NULL
-  , `reg_ap`              VARCHAR(     36) NOT NULL
+  , `reg_id`              VARCHAR(    250) NOT NULL
+  , `reg_ap`              VARCHAR(    250) NOT NULL
   , `upd_ts`             DATETIME          NOT NULL
-  , `upd_id`              VARCHAR(     36) NOT NULL
-  , `upd_ap`              VARCHAR(     36) NOT NULL
+  , `upd_id`              VARCHAR(    250) NOT NULL
+  , `upd_ap`              VARCHAR(    250) NOT NULL
 -- ---------------------+--------+--------+--------+---
   , PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=DYNAMIC
