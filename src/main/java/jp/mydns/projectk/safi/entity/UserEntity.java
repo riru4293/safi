@@ -79,8 +79,8 @@ public class UserEntity implements Serializable {
     @Column(name = "to_ts", nullable = false)
     private LocalDateTime localTo;
 
-    @Column(name = "ignore", nullable = false)
-    private boolean ignore;
+    @Column(name = "ignored", nullable = false)
+    private boolean ignored;
 
     @Column(name = "atts")
     private JsonObjectValue atts;
@@ -249,23 +249,23 @@ public class UserEntity implements Serializable {
     }
 
     /**
-     * Get a flag of ignore.
+     * Get a flag of ignored.
      *
-     * @return {@code true} if ignore, otherwise {@code false}.
+     * @return {@code true} if ignored, otherwise {@code false}.
      * @since 3.0.0
      */
-    public boolean isIgnore() {
-        return ignore;
+    public boolean isIgnored() {
+        return ignored;
     }
 
     /**
-     * Set a flag of ignore.
+     * Set a flag of ignored.
      *
-     * @param ignore {@code true} if ignore, otherwise {@code false}.
+     * @param ignored {@code true} if ignored, otherwise {@code false}.
      * @since 3.0.0
      */
-    public void setIgnore(boolean ignore) {
-        this.ignore = ignore;
+    public void setIgnored(boolean ignored) {
+        this.ignored = ignored;
     }
 
     /**
@@ -522,7 +522,7 @@ public class UserEntity implements Serializable {
     @Override
     public String toString() {
         return "UserEntity{" + "id=" + id + ", name=" + name + ", enabled=" + enabled
-            + ", from=" + localFrom + ", to=" + localTo + ", ignore=" + ignore
+            + ", from=" + localFrom + ", to=" + localTo + ", ignored=" + ignored
             + ", atts=" + atts + ", digest=" + digest + '}';
     }
 }

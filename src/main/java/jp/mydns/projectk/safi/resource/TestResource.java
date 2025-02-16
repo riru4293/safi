@@ -26,10 +26,17 @@
 package jp.mydns.projectk.safi.resource;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
+import java.util.List;
+import jp.mydns.projectk.safi.entity.UserEntity;
 
 /**
  * JAX-RS resource for test.
@@ -42,6 +49,9 @@ import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 @Path("tests")
 public class TestResource {
 
+    @Inject
+    private EntityManager em;
+
     /**
      * API communication check.
      *
@@ -53,5 +63,18 @@ public class TestResource {
     @Produces(TEXT_PLAIN)
     public String ping() {
         return "Hello SAFI API.";
+    }
+
+    @GET
+    @Path("contents")
+    @Produces(APPLICATION_JSON)
+    public List<UserEntity> getContents() {
+
+        em.clear();
+
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<UserEntity> cq = cb.createQuery(UserEntity.class);
+
+        return em.createQuery(cq).getResultList();
     }
 }
