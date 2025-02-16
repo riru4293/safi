@@ -7,7 +7,7 @@ CREATE TABLE           `t_user` (
   , `enabled`             BOOLEAN          NOT NULL
   , `from_ts`            DATETIME          NOT NULL
   , `to_ts`              DATETIME          NOT NULL
-  , `ban`                 BOOLEAN          NOT NULL
+  , `ignore`              BOOLEAN          NOT NULL
   , `atts`                   JSON                   COLLATE utf8mb4_unicode_ci
   , `digest`                 CHAR(    128) NOT NULL
 -- ---------------------+--------+--------+--------+---
