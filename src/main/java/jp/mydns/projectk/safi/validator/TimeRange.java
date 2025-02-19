@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Project-K
+ * Copyright (c) 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,13 +48,15 @@ import java.time.ZoneOffset;
  * {@code LocalDateTime} and {@code OffsetDateTime}.
  *
  * @author riru
- * @version 1.0.0
+ * @version 3.0.0
  * @since 1.0.0
  */
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = {TimeRange.LocalDateTimeValidator.class, TimeRange.OffsetDateTimeValidator.class})
+@Constraint(validatedBy = {
+    TimeRange.LocalDateTimeValidator.class,
+    TimeRange.OffsetDateTimeValidator.class})
 public @interface TimeRange {
 
     String message() default "{jp.mydns.projectk.safi.validator.TimeRange.message}";
@@ -75,7 +77,7 @@ public @interface TimeRange {
      * A validator that checks that the time is in the range 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z.
      *
      * @author riru
-     * @version 1.0.0
+     * @version 3.0.0
      * @since 1.0.0
      */
     abstract class AbstractValidator {
@@ -89,7 +91,7 @@ public @interface TimeRange {
      * A validator that checks that the time is in the range 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z.
      *
      * @author riru
-     * @version 1.0.0
+     * @version 3.0.0
      * @since 1.0.0
      */
     class LocalDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, LocalDateTime> {
@@ -97,7 +99,7 @@ public @interface TimeRange {
         /**
          * {@inheritDoc}
          *
-         * @since 1.0.0-M3
+         * @since 1.0.0
          */
         @Override
         public boolean isValid(LocalDateTime value, ConstraintValidatorContext ctx) {
@@ -115,7 +117,7 @@ public @interface TimeRange {
      * A validator that checks that the time is in the range 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z.
      *
      * @author riru
-     * @version 1.0.0
+     * @version 3.0.0
      * @since 1.0.0
      */
     class OffsetDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, OffsetDateTime> {
@@ -123,7 +125,7 @@ public @interface TimeRange {
         /**
          * {@inheritDoc}
          *
-         * @since 1.0.0-M3
+         * @since 1.0.0
          */
         @Override
         public boolean isValid(OffsetDateTime value, ConstraintValidatorContext ctx) {
@@ -133,7 +135,6 @@ public @interface TimeRange {
             }
 
             return isValid(value.toInstant().getEpochSecond());
-
         }
     }
 }

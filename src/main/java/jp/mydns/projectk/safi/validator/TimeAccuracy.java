@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, Project-K
+ * Copyright (c) 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -47,13 +47,15 @@ import java.time.temporal.ChronoUnit;
  * Validates that no value is less than seconds. Supported types are {@code LocalDateTime} and {@code OffsetDateTime}.
  *
  * @author riru
- * @version 1.0.0
+ * @version 3.0.0
  * @since 1.0.0
  */
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = {TimeAccuracy.LocalDateTimeValidator.class, TimeAccuracy.OffsetDateTimeValidator.class})
+@Constraint(validatedBy = {
+    TimeAccuracy.LocalDateTimeValidator.class,
+    TimeAccuracy.OffsetDateTimeValidator.class})
 public @interface TimeAccuracy {
 
     String message() default "{jp.mydns.projectk.safi.validator.TimeAccuracy.message}";
@@ -74,7 +76,7 @@ public @interface TimeAccuracy {
      * A validator that validates that there is no fractional seconds value.
      *
      * @author riru
-     * @version 1.0.0
+     * @version 3.0.0
      * @since 1.0.0
      */
     class LocalDateTimeValidator implements ConstraintValidator<TimeAccuracy, LocalDateTime> {
@@ -92,7 +94,6 @@ public @interface TimeAccuracy {
             }
 
             return value.truncatedTo(ChronoUnit.SECONDS).isEqual(value);
-
         }
     }
 
@@ -100,7 +101,7 @@ public @interface TimeAccuracy {
      * A validator that validates that there is no fractional seconds value.
      *
      * @author riru
-     * @version 1.0.0
+     * @version 3.0.0
      * @since 1.0.0
      */
     class OffsetDateTimeValidator implements ConstraintValidator<TimeAccuracy, OffsetDateTime> {
@@ -118,7 +119,6 @@ public @interface TimeAccuracy {
             }
 
             return value.truncatedTo(ChronoUnit.SECONDS).isEqual(value);
-
         }
     }
 }

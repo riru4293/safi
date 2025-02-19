@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2024, riru
+Copyright (c) 2025, riru
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
     <modelVersion>4.0.0</modelVersion>
     <groupId>jp.mydns.project-k</groupId>
     <artifactId>safi</artifactId>
-    <version>1.0.0-M2</version>
+    <version>3.0.0-M2</version>
     <packaging>war</packaging>
     <name>SAFI-${project.version}</name>
 
@@ -42,26 +42,26 @@ POSSIBILITY OF SUCH DAMAGE.
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jacocoArgLine/>
         <version.jakartaee>10.0.0</version.jakartaee>
-        <version.swagger>2.2.20</version.swagger>
-        <version.swagger-ui>5.4.2</version.swagger-ui>
-        <version.microprofile-config>3.1</version.microprofile-config>
-        <version.smallrye-config>3.5.0</version.smallrye-config>
-        <version.mockito>5.5.0</version.mockito>
-        <version.junit>5.10.0</version.junit>
-        <versin.slf4j>2.0.9</versin.slf4j>
-        <version.eclipselink>4.0.2</version.eclipselink>
-        <version.ulidj>1.0.4</version.ulidj>
-        <version.assertj>3.24.2</version.assertj>
-        <version.mockito>5.2.0</version.mockito>
-        <version.hibernate-validator>8.0.1.Final</version.hibernate-validator>
+        <!--<version.swagger>2.2.20</version.swagger>-->
+        <!--<version.swagger-ui>5.4.2</version.swagger-ui>-->
+        <!--<version.microprofile-config>3.1</version.microprofile-config>-->
+        <!--<version.smallrye-config>3.5.0</version.smallrye-config>-->
+        <!--<version.mockito>5.5.0</version.mockito>-->
+        <version.junit>5.11.4</version.junit>
+        <versin.slf4j>2.0.16</versin.slf4j>
+        <version.eclipselink>4.0.3</version.eclipselink>
+        <!--<version.ulidj>1.0.4</version.ulidj>-->
+        <version.assertj>3.27.3</version.assertj>
+        <!--<version.mockito>5.2.0</version.mockito>-->
+        <!--<version.hibernate-validator>8.0.1.Final</version.hibernate-validator>-->
         <version.expressly>5.0.0</version.expressly>
-        <version.yasson>3.0.3</version.yasson>
-        <version.weld-junit5>4.0.1.Final</version.weld-junit5>
-        <version.h2>2.2.224</version.h2>
-        <version.bytebuddy>1.14.6</version.bytebuddy>
-        <version.k-plugin-mechanism>1.0.0</version.k-plugin-mechanism>
-        <version.k-formula-mechanism>1.0.0-M4</version.k-formula-mechanism>
-        <version.safi-pif>2.0.4</version.safi-pif>
+        <version.yasson>3.0.4</version.yasson>
+        <!--<version.weld-junit5>4.0.1.Final</version.weld-junit5>-->
+        <!--<version.h2>2.2.224</version.h2>-->
+        <!--<version.bytebuddy>1.14.6</version.bytebuddy>-->
+        <!--<version.k-plugin-mechanism>1.0.0</version.k-plugin-mechanism>-->
+        <!--<version.k-formula-mechanism>1.0.0-M4</version.k-formula-mechanism>-->
+        <!--<version.safi-pif>2.0.4</version.safi-pif>-->
     </properties>
 
     <licenses>
@@ -90,262 +90,286 @@ POSSIBILITY OF SUCH DAMAGE.
     </dependencyManagement>
 
     <dependencies>
-        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>safi-plugin-interface</artifactId>
-            <version>${version.safi-pif}</version>
-        </dependency>
-        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>k-plugin-mechanism</artifactId>
-            <version>${version.k-plugin-mechanism}</version>
-        </dependency>
-        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>k-formula-mechanism</artifactId>
-            <version>${version.k-formula-mechanism}</version>
-        </dependency>
+        <!-- License: EPL-2.0 -->
+        <!-- License: GPL-2.0 with Classpath Exception -->
         <dependency>
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-api</artifactId>
             <version>${version.jakartaee}</version>
             <scope>provided</scope>
         </dependency>
+        
+        
+        <!--        <dependency>
+            <groupId>jp.mydns.project-k</groupId>
+            <artifactId>safi-plugin-interface</artifactId>
+            <version>${version.safi-pif}</version>
+        </dependency>-->
+        <!--        <dependency>
+            <groupId>jp.mydns.project-k</groupId>
+            <artifactId>k-plugin-mechanism</artifactId>
+            <version>${version.k-plugin-mechanism}</version>
+        </dependency>-->
+        <!--        <dependency>
+            <groupId>jp.mydns.project-k</groupId>
+            <artifactId>k-formula-mechanism</artifactId>
+            <version>${version.k-formula-mechanism}</version>
+        </dependency>-->
+        
+        <!-- License: MIT -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>${versin.slf4j}</version>
         </dependency>
+        
+        <!-- License: APL-2.0 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
             <version>${versin.slf4j}</version>
         </dependency>
+        
+        <!-- License: APL-2.0 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${versin.slf4j}</version>
         </dependency>
-        <dependency>
+        <!--        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
             <version>${version.swagger}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>org.eclipse.microprofile.config</groupId>
             <artifactId>microprofile-config-api</artifactId>
             <version>${version.microprofile-config}</version>
             <scope>provided</scope>
-        </dependency>
+        </dependency>-->
+        
+        <!-- License: EPL-2.0 -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
             <version>${version.eclipselink}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
+        
+        <!--        <dependency>
             <groupId>io.azam.ulidj</groupId>
             <artifactId>ulidj</artifactId>
             <version>${version.ulidj}</version>
-        </dependency>
+        </dependency>-->
+        
+        <!-- License: APL-2.0 -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${version.assertj}</version>
             <scope>test</scope>
-            <exclusions>
+<!--            <exclusions>
                 <exclusion>
                     <groupId>net.bytebuddy</groupId>
                     <artifactId>byte-buddy</artifactId>
                 </exclusion>
-            </exclusions>
+            </exclusions>-->
         </dependency>
+        
+        <!-- License: EPL-2.0 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${version.mockito}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-inline</artifactId>
             <version>${version.mockito}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>io.smallrye.config</groupId>
             <artifactId>smallrye-config</artifactId>
             <version>${version.smallrye-config}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${version.hibernate-validator}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        
+        <!-- License: EPL-2.0 -->
+        <!-- License: GPL -->
+                <dependency>
             <groupId>org.glassfish.expressly</groupId>
             <artifactId>expressly</artifactId>
             <version>${version.expressly}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse</groupId>
+        
+        <!-- License: EDL-1.0 -->
+        <!-- License: EPL-2.0 -->
+                <dependency>
+                <groupId>org.eclipse</groupId>
             <artifactId>yasson</artifactId>
             <version>${version.yasson}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
+        <!--        <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-junit5</artifactId>
             <version>${version.weld-junit5}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>2.2.224</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
             <version>3.1.5</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
+        </dependency>-->
+        <!--        <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>4.2.0</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
 
         <!-- Each is referenced by transitive dependency, but the version is not aligned, so specify explictly -->
-        <dependency>
-            <!-- License: Apache License Version 2.0 -->
+        <!-- License: Apache License Version 2.0 -->
+        <!--        <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy</artifactId>
             <version>${version.bytebuddy}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- License: Apache License Version 2.0 -->
+        </dependency>-->
+        
+        <!-- License: Apache License Version 2.0 -->
+        <!--        <dependency>
             <groupId>net.bytebuddy</groupId>
             <artifactId>byte-buddy-agent</artifactId>
             <version>${version.bytebuddy}</version>
             <scope>test</scope>
-        </dependency>
+        </dependency>-->
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
-                <plugin>
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>3.3.2</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.12.1</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>3.1.1</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
                     <version>3.2.3</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>3.1.1</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>3.3.1</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>4.0.0-M13</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.2.3</version>
                     <configuration>
                         <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
                     </configuration>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-verifier-plugin</artifactId>
                     <version>1.1</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>3.3.0</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>3.4.0</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
                     <version>3.3.0</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.6.3</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>3.1.0</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
                     <version>3.6.0</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>3.6.1</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
                     <version>3.0.1</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>io.swagger.core.v3</groupId>
                     <artifactId>swagger-maven-plugin-jakarta</artifactId>
                     <version>${version.swagger}</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>com.google.code.maven-replacer-plugin</groupId>
                     <artifactId>replacer</artifactId>
                     <version>1.5.3</version>
@@ -356,22 +380,22 @@ POSSIBILITY OF SUCH DAMAGE.
                             <version>2.12.2</version>
                         </dependency>
                     </dependencies>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <version>0.8.11</version>
-                </plugin>
-                <plugin>
+                </plugin>-->
+                <!--                <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>3.10.0.2594</version>
-                </plugin>
+                </plugin>-->
             </plugins>
         </pluginManagement>
     </build>
     <profiles>
-        <profile>
+        <!--        <profile>
             <id>release-profile</id>
 
             <build>
@@ -391,7 +415,7 @@ POSSIBILITY OF SUCH DAMAGE.
                         <configuration>
                             <propertyName>jacocoArgLine</propertyName>
                             <excludes>
-                                <!-- Exclude the automatically generated codes. -->
+                                 Exclude the automatically generated codes. 
                                 <exclude>**/*_.*</exclude>
                             </excludes>
                         </configuration>
@@ -415,7 +439,7 @@ POSSIBILITY OF SUCH DAMAGE.
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <sourceFileExcludes>
-                                <!-- Exclude the automatically generated codes. -->
+                                 Exclude the automatically generated codes. 
                                 <exclude>**/*_.*</exclude>
                             </sourceFileExcludes>
                             <links>
@@ -543,6 +567,6 @@ POSSIBILITY OF SUCH DAMAGE.
                     </plugin>
                 </plugins>
             </build>
-        </profile>
+        </profile>-->
     </profiles>
 </project>

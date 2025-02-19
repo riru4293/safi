@@ -10,17 +10,6 @@
             <property name="eclipselink.logging.logger" value="ServerLogger"/>
             <property name="eclipselink.logging.level" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
-        </properties>
-    </persistence-unit>
-    <persistence-unit name="safi_batch_persistence_unit" transaction-type="JTA">
-        <jta-data-source>jdbc/safi-batch</jta-data-source>
-        <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
-        <validation-mode>CALLBACK</validation-mode>
-        <properties>
-            <property name="eclipselink.logging.logger" value="ServerLogger"/>
-            <property name="eclipselink.logging.level" value="FINE"/>
-            <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.jdbc.batch-writing" value="jdbc"/>
             <property name="eclipselink.jdbc.batch-writing.size" value="1000"/>
         </properties>

@@ -23,35 +23,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.producer;
+package jp.mydns.projectk.safi.util;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
- * CDI Producer that provides instances of {@link EntityManager}.
+ * Test of class {@code TimeUtils}.
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
-@RequestScoped
-public class EntityManagerProducer {
-
-    @PersistenceContext(unitName = "safi_persistence_unit")
-    private EntityManager em;
+class TimeUtilsTest {
 
     /**
-     * Produces an the {@code EntityManager}.
+     * Test of {@code toOffsetDateTime} method.
      *
-     * @return the {@code EntityManager}
-     * @since 1.0.0
+     * @since 3.0.0
      */
-    @Produces
-    @RequestScoped
-    public EntityManager produce() {
-        return em;
+    @Test
+    void testToOffsetDateTime() {
+
+        var expect = OffsetDateTime.of(1999, 12, 31, 23, 48, 53, 123456, ZoneOffset.UTC);
+
+        var localDateTime = LocalDateTime.of(1999, 12, 31, 23, 48, 53, 123456);
+
+        assertThat(TimeUtils.toOffsetDateTime(localDateTime)).isEqualTo(expect);
+    }
+
+    /**
+     * Test of {@code toOffsetDateTime} method, if {@code null}.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testToOffsetDateTimeIfNull() {
+
+        LocalDateTime nullValue = null;
+
+        assertThat(TimeUtils.toOffsetDateTime(nullValue)).isNull();
     }
 }
