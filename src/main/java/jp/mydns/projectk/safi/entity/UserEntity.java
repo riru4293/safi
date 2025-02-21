@@ -82,8 +82,9 @@ public class UserEntity implements Serializable {
     @Column(name = "ignored", nullable = false)
     private boolean ignored;
 
-    @Column(name = "atts")
-    private JsonObjectValue atts;
+    @Basic(optional = false)
+    @Column(name = "props")
+    private JsonObjectValue properties;
 
     @Basic(optional = false)
     @Column(name = "digest", nullable = false, length = 128)
@@ -95,28 +96,22 @@ public class UserEntity implements Serializable {
     @Column(name = "version", nullable = false)
     private int version;
 
-    @Basic(optional = false)
-    @Column(name = "reg_ts", updatable = false, nullable = false)
+    @Column(name = "reg_ts", updatable = false)
     private LocalDateTime registerTime;
 
-    @Basic(optional = false)
-    @Column(name = "reg_id", updatable = false, nullable = false, length = 250)
+    @Column(name = "reg_id", updatable = false, length = 250)
     private String registerAccountId;
 
-    @Basic(optional = false)
-    @Column(name = "reg_ap", updatable = false, nullable = false, length = 250)
+    @Column(name = "reg_ap", updatable = false, length = 250)
     private String registerProcessName;
 
-    @Basic(optional = false)
-    @Column(name = "upd_ts", nullable = false)
+    @Column(name = "upd_ts")
     private LocalDateTime updateTime;
 
-    @Basic(optional = false)
-    @Column(name = "upd_id", nullable = false, length = 250)
+    @Column(name = "upd_id", length = 250)
     private String updateAccountId;
 
-    @Basic(optional = false)
-    @Column(name = "upd_ap", nullable = false, length = 250)
+    @Column(name = "upd_ap", length = 250)
     private String updateProcessName;
 
     /**
@@ -269,23 +264,24 @@ public class UserEntity implements Serializable {
     }
 
     /**
-     * Get <i>Attribute</i> collection.
+     * Get user properties.
      *
-     * @return <i>Attribute</i> collection. Empty value if {@code null}.
+     * @return user properties
      * @since 3.0.0
      */
-    public JsonObjectValue getAtts() {
-        return atts != null ? atts : new JsonObjectValue(JsonValue.EMPTY_JSON_OBJECT);
+    @NotNull
+    public JsonObjectValue getProperties() {
+        return properties;
     }
 
     /**
-     * Set <i>Attribute</i> collection.
+     * Set user properties.
      *
-     * @param atts <i>Attribute</i> collection. It can be set {@code null}.
+     * @param properties user properties
      * @since 3.0.0
      */
-    public void setAtts(JsonObjectValue atts) {
-        this.atts = atts;
+    public void setAtts(JsonObjectValue properties) {
+        this.properties = properties;
     }
 
     /**
@@ -358,10 +354,9 @@ public class UserEntity implements Serializable {
     /**
      * Get time the entity was persisted.
      *
-     * @return persisted time. It time zone is UTC.
+     * @return persisted time. It time zone is UTC. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotNull
     @TimeRange
     @TimeAccuracy
     public LocalDateTime getRegisterTime() {
@@ -371,7 +366,7 @@ public class UserEntity implements Serializable {
     /**
      * Set time the entity was persisted.
      *
-     * @param registerTime persisted time. It time zone is UTC.
+     * @param registerTime persisted time. It time zone is UTC. It can be set {@code null}.
      * @since 3.0.0
      */
     public void setRegisterTime(LocalDateTime registerTime) {
@@ -381,10 +376,9 @@ public class UserEntity implements Serializable {
     /**
      * Get id of the account who made the entity persistent.
      *
-     * @return persisted account id
+     * @return persisted account id. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotBlank
     @Size(max = 250)
     public String getRegisterAccountId() {
         return registerAccountId;
@@ -393,7 +387,7 @@ public class UserEntity implements Serializable {
     /**
      * Set id of the account who made the entity persistent.
      *
-     * @param registerAccountId persisted account id
+     * @param registerAccountId persisted account id. It can be set {@code null}.
      * @since 3.0.0
      */
     public void setRegisterAccountId(String registerAccountId) {
@@ -403,10 +397,9 @@ public class UserEntity implements Serializable {
     /**
      * Get name of the process who made the entity persistent.
      *
-     * @return persisted process name
+     * @return persisted process name. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotBlank
     @Size(max = 250)
     public String getRegisterProcessName() {
         return registerProcessName;
@@ -415,7 +408,7 @@ public class UserEntity implements Serializable {
     /**
      * Set name of the process who made the entity persistent.
      *
-     * @param registerProcessName persisted process name
+     * @param registerProcessName persisted process name. It can be set {@code null}.
      * @since 3.0.0
      */
     public void setRegisterProcessName(String registerProcessName) {
@@ -425,10 +418,9 @@ public class UserEntity implements Serializable {
     /**
      * Get time the entity was last updated.
      *
-     * @return last updated time. It time zone is UTC.
+     * @return last updated time. It time zone is UTC. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotNull
     @TimeRange
     @TimeAccuracy
     public LocalDateTime getUpdateTime() {
@@ -438,7 +430,7 @@ public class UserEntity implements Serializable {
     /**
      * Set time the entity was last updated.
      *
-     * @param updateTime last updated time. It time zone is UTC.
+     * @param updateTime last updated time. It time zone is UTC. It can be set {@code null}.
      * @since 3.0.0
      */
     public void setUpdateTime(LocalDateTime updateTime) {
@@ -448,10 +440,9 @@ public class UserEntity implements Serializable {
     /**
      * Get id of the account who made the entity last updated.
      *
-     * @return last updated account id
+     * @return last updated account id. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotBlank
     @Size(max = 250)
     public String getUpdateAccountId() {
         return updateAccountId;
@@ -460,7 +451,7 @@ public class UserEntity implements Serializable {
     /**
      * Set id of the account who made the entity last updated.
      *
-     * @param updateAccountId last updated account id
+     * @param updateAccountId last updated account id. It can be set {@code null}.
      * @since 3.0.0
      */
     public void setUpdateAccountId(String updateAccountId) {
@@ -470,10 +461,9 @@ public class UserEntity implements Serializable {
     /**
      * Get name of the process who made the entity last updated.
      *
-     * @return last updated process name
+     * @return last updated process name. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotBlank
     @Size(max = 250)
     public String getUpdateProcessName() {
         return updateProcessName;
@@ -482,7 +472,7 @@ public class UserEntity implements Serializable {
     /**
      * Set name of the process who made the entity last updated.
      *
-     * @param updateProcessName last updated process name
+     * @param updateProcessName last updated process name. It can be set {@code null}.
      * @since 3.0.0
      */
     public void setUpdateProcessName(String updateProcessName) {
@@ -523,6 +513,6 @@ public class UserEntity implements Serializable {
     public String toString() {
         return "UserEntity{" + "id=" + id + ", name=" + name + ", enabled=" + enabled
             + ", from=" + localFrom + ", to=" + localTo + ", ignored=" + ignored
-            + ", atts=" + atts + ", digest=" + digest + '}';
+            + ", properies=" + properties + ", digest=" + digest + '}';
     }
 }
