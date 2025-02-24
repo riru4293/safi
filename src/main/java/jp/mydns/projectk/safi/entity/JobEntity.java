@@ -37,10 +37,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.constant.JobTarget;
+import jp.mydns.projectk.safi.validator.TimeAccuracy;
+import jp.mydns.projectk.safi.validator.TimeRange;
 
 /**
  * JPA entity for the <i>t_job</i> table.
@@ -75,6 +78,20 @@ public class JobEntity implements Serializable {
     @Column(name = "target", nullable = false, updatable = false, length = 20)
     @Enumerated(EnumType.STRING)
     private JobTarget target;
+
+    @Basic(optional = false)
+    @Column(name = "sche_ts", nullable = false, updatable = false)
+    private LocalDateTime scheduleTime;
+
+    @Basic(optional = false)
+    @Column(name = "limit_ts", nullable = false, updatable = false)
+    private LocalDateTime limitTime;
+
+    @Column(name = "begin_ts", insertable = false)
+    private LocalDateTime beginTime;
+
+    @Column(name = "end_ts", insertable = false)
+    private LocalDateTime endTime;
 
     /**
      * Get job id.
@@ -118,7 +135,7 @@ public class JobEntity implements Serializable {
     public void setStatus(JobStatus status) {
         this.status = status;
     }
-    
+
     /**
      * Get job kind.
      *
@@ -139,7 +156,7 @@ public class JobEntity implements Serializable {
     public void setKind(JobKind kind) {
         this.kind = kind;
     }
-    
+
     /**
      * Get job target.
      *
@@ -159,6 +176,96 @@ public class JobEntity implements Serializable {
      */
     public void setTarget(JobTarget target) {
         this.target = target;
+    }
+
+    /**
+     * Get job schedule time.
+     *
+     * @return job schedule time
+     * @since 3.0.0
+     */
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
+    public LocalDateTime getScheduleTime() {
+        return scheduleTime;
+    }
+
+    /**
+     * Set job schedule time. It is impossible to update an already persisted value.
+     *
+     * @param scheduleTime job schedule time
+     * @since 3.0.0
+     */
+    public void setScheduleTime(LocalDateTime scheduleTime) {
+        this.scheduleTime = scheduleTime;
+    }
+
+    /**
+     * Get limit time at job execution.
+     *
+     * @return limit time
+     * @since 3.0.0
+     */
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
+    public LocalDateTime getLimitTime() {
+        return limitTime;
+    }
+
+    /**
+     * Set limit time at job execution. It is impossible to update an already persisted value.
+     *
+     * @param limitTime limit time
+     * @since 3.0.0
+     */
+    public void setLimitTime(LocalDateTime limitTime) {
+        this.limitTime = limitTime;
+    }
+
+    /**
+     * Get begin time at job execution.
+     *
+     * @return begin time. {@code null} if before begin job execution.
+     * @since 3.0.0
+     */
+    @TimeRange
+    @TimeAccuracy
+    public LocalDateTime getBeginTime() {
+        return beginTime;
+    }
+
+    /**
+     * Set begin time at job execution. It is impossible to insert new.
+     *
+     * @param beginTime begin time
+     * @since 3.0.0
+     */
+    public void setBeginTime(LocalDateTime beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    /**
+     * Get end time at job execution.
+     *
+     * @return end time. {@code null} if before end job execution.
+     * @since 3.0.0
+     */
+    @TimeRange
+    @TimeAccuracy
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    /**
+     * Set end time at job execution. It is impossible to insert new.
+     *
+     * @param endTime end time
+     * @since 3.0.0
+     */
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     /**
@@ -193,6 +300,9 @@ public class JobEntity implements Serializable {
      */
     @Override
     public String toString() {
-        return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target + '}';
+        return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target
+            + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
+            + ", endTime=" + endTime
+            + '}';
     }
 }
