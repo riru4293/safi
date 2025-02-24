@@ -4,22 +4,32 @@ hide circle
 entity "t_user" as t_user {
     * id
     --
-      name
       enabled
       from_ts
       to_ts
       ignored
+      name
       props
       digest
-      note
-      version
-      reg_ts
-      reg_id
-      reg_ap
-      upd_ts
-      upd_id
-      upd_ap
 }
+
+entity "t_asset" as t_asset {
+    * id
+    --
+      enabled
+      from_ts
+      to_ts
+      ignored
+      name
+      gen
+      sn
+      user_id
+      priority
+      props
+      digest
+}
+
+t_user ||--o{ t_asset : "id = user_id"
 
 entity "t_job" as t_job {
     * id
@@ -36,14 +46,6 @@ entity "t_job" as t_job {
       schedef_id
       srcdefs
       results
-      note
-      version
-      reg_ts
-      reg_id
-      reg_ap
-      upd_ts
-      upd_id
-      upd_ap
 }
 
 @enduml

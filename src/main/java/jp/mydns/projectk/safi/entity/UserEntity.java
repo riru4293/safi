@@ -65,9 +65,6 @@ public class UserEntity implements Serializable {
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
 
-    @Column(name = "name", length = 250)
-    private String name;
-
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
@@ -81,6 +78,9 @@ public class UserEntity implements Serializable {
 
     @Column(name = "ignored", nullable = false)
     private boolean ignored;
+
+    @Column(name = "name", length = 250)
+    private String name;
 
     @Basic(optional = false)
     @Column(name = "props")
@@ -134,27 +134,6 @@ public class UserEntity implements Serializable {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Get user name.
-     *
-     * @return user name. It may be {@code null}.
-     * @since 3.0.0
-     */
-    @Size(max = 250)
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set user name.
-     *
-     * @param name user name. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
@@ -261,6 +240,27 @@ public class UserEntity implements Serializable {
      */
     public void setIgnored(boolean ignored) {
         this.ignored = ignored;
+    }
+
+    /**
+     * Get user name.
+     *
+     * @return user name. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 250)
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Set user name.
+     *
+     * @param name user name. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -511,8 +511,7 @@ public class UserEntity implements Serializable {
      */
     @Override
     public String toString() {
-        return "UserEntity{" + "id=" + id + ", name=" + name + ", enabled=" + enabled
-            + ", from=" + localFrom + ", to=" + localTo + ", ignored=" + ignored
-            + ", properies=" + properties + ", digest=" + digest + '}';
+        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", from=" + localFrom + ", to=" + localTo
+            + ", ignored=" + ignored + ", name=" + name + ", properies=" + properties + ", digest=" + digest + '}';
     }
 }

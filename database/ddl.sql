@@ -3,11 +3,11 @@ DROP   TABLE IF EXISTS `t_user`;
 CREATE TABLE           `t_user` (
 -- ---------------------+--------+--------+--------+-----------------------------------
     `id`                  VARCHAR(     36) NOT NULL                                    COMMENT 'User ID'
-  , `name`                VARCHAR(    250)          COLLATE utf8mb4_unicode_ci         COMMENT 'User name'
   , `enabled`             BOOLEAN          NOT NULL DEFAULT TRUE                       COMMENT 'Enabled state. It is calculated from three items: from_ts, to_ts, and ignored, but the calculation is asynchronous.'
   , `from_ts`            DATETIME          NOT NULL DEFAULT '2000-01-01 00:00:00'      COMMENT 'Begin date-time of enabled period.'
   , `to_ts`              DATETIME          NOT NULL DEFAULT '2999-12-31 23:59:59'      COMMENT 'End date-time of enabled period.'
   , `ignored`             BOOLEAN          NOT NULL DEFAULT FALSE                      COMMENT 'Ignore flag. True means ignore and the enabled state is disabled.'
+  , `name`                VARCHAR(    250)          COLLATE utf8mb4_unicode_ci         COMMENT 'User name'
   , `props`                  JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Properties of user.'
   , `digest`                 CHAR(    128) NOT NULL DEFAULT 'unknown'                  COMMENT 'Hash value of this record.'
 -- ---------------------+--------+--------+--------+-----------------------------------

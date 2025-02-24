@@ -29,12 +29,18 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Objects;
+import jp.mydns.projectk.safi.constant.JobKind;
+import jp.mydns.projectk.safi.constant.JobStatus;
+import jp.mydns.projectk.safi.constant.JobTarget;
 
 /**
  * JPA entity for the <i>t_job</i> table.
@@ -47,14 +53,29 @@ import java.util.Objects;
 @Cacheable(false)
 @Table(name = "t_job")
 public class JobEntity implements Serializable {
-    
+
     private static final long serialVersionUID = -1878103273727614325L;
-    
+
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
-    
+
+    @Basic(optional = false)
+    @Column(name = "stat", nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private JobStatus status;
+
+    @Basic(optional = false)
+    @Column(name = "kind", nullable = false, updatable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private JobKind kind;
+
+    @Basic(optional = false)
+    @Column(name = "target", nullable = false, updatable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private JobTarget target;
+
     /**
      * Get job id.
      *
@@ -76,7 +97,70 @@ public class JobEntity implements Serializable {
     public void setId(String id) {
         this.id = id;
     }
+
+    /**
+     * Get job status.
+     *
+     * @return job status
+     * @since 3.0.0
+     */
+    @NotNull
+    public JobStatus getStatus() {
+        return status;
+    }
+
+    /**
+     * Set job status.
+     *
+     * @param status job status
+     * @since 3.0.0
+     */
+    public void setStatus(JobStatus status) {
+        this.status = status;
+    }
     
+    /**
+     * Get job kind.
+     *
+     * @return job kind
+     * @since 3.0.0
+     */
+    @NotNull
+    public JobKind getKind() {
+        return kind;
+    }
+
+    /**
+     * Set job kind.
+     *
+     * @param kind job kind. Cannot update persisted value.
+     * @since 3.0.0
+     */
+    public void setKind(JobKind kind) {
+        this.kind = kind;
+    }
+    
+    /**
+     * Get job target.
+     *
+     * @return job target
+     * @since 3.0.0
+     */
+    @NotNull
+    public JobTarget getTarget() {
+        return target;
+    }
+
+    /**
+     * Set job target.
+     *
+     * @param target job target. Cannot update persisted value.
+     * @since 3.0.0
+     */
+    public void setTarget(JobTarget target) {
+        this.target = target;
+    }
+
     /**
      * Returns a hash code value.
      *
@@ -109,6 +193,6 @@ public class JobEntity implements Serializable {
      */
     @Override
     public String toString() {
-        return "JobEntity{" + "id=" + id + '}';
+        return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target + '}';
     }
 }
