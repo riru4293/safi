@@ -1,0 +1,49 @@
+@startuml
+hide circle
+
+entity "t_user" as t_user {
+    * id
+    --
+      name
+      enabled
+      from_ts
+      to_ts
+      ignored
+      props
+      digest
+      note
+      version
+      reg_ts
+      reg_id
+      reg_ap
+      upd_ts
+      upd_id
+      upd_ap
+}
+
+entity "t_job" as t_job {
+    * id
+    --
+      stat
+      kind
+      target
+      sche_ts
+      limit_ts
+      begin_ts
+      end_ts
+      opts
+      jobdef_id
+      schedef_id
+      srcdefs
+      results
+      note
+      version
+      reg_ts
+      reg_id
+      reg_ap
+      upd_ts
+      upd_id
+      upd_ap
+}
+
+@enduml

@@ -25,12 +25,12 @@
  */
 package jp.mydns.projectk.safi.entity;
 
-import jakarta.json.JsonValue;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
@@ -65,7 +65,7 @@ public class UserEntity implements Serializable {
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
 
-    @Column(name = "name", length = 100)
+    @Column(name = "name", length = 250)
     private String name;
 
     @Column(name = "enabled", nullable = false)
@@ -105,13 +105,13 @@ public class UserEntity implements Serializable {
     @Column(name = "reg_ap", updatable = false, length = 250)
     private String registerProcessName;
 
-    @Column(name = "upd_ts")
+    @Column(name = "upd_ts", insertable = false)
     private LocalDateTime updateTime;
 
-    @Column(name = "upd_id", length = 250)
+    @Column(name = "upd_id", insertable = false, length = 250)
     private String updateAccountId;
 
-    @Column(name = "upd_ap", length = 250)
+    @Column(name = "upd_ap", insertable = false, length = 250)
     private String updateProcessName;
 
     /**
@@ -142,7 +142,7 @@ public class UserEntity implements Serializable {
      * @return user name. It may be {@code null}.
      * @since 3.0.0
      */
-    @Size(max = 100)
+    @Size(max = 250)
     public String getName() {
         return name;
     }
@@ -280,7 +280,7 @@ public class UserEntity implements Serializable {
      * @param properties user properties
      * @since 3.0.0
      */
-    public void setAtts(JsonObjectValue properties) {
+    public void setProperties(JsonObjectValue properties) {
         this.properties = properties;
     }
 
