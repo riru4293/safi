@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
     <modelVersion>4.0.0</modelVersion>
     <groupId>jp.mydns.project-k</groupId>
     <artifactId>safi</artifactId>
-    <version>3.0.0-M2</version>
+    <version>3.0.0-M4</version>
     <packaging>war</packaging>
     <name>SAFI-${project.version}</name>
 
