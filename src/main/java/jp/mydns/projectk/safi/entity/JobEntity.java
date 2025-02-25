@@ -29,6 +29,8 @@ import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.Table;
@@ -39,15 +41,17 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Objects;
-import jp.mydns.projectk.safi.util.TimeUtils;
+import jp.mydns.projectk.safi.constant.JobKind;
+import jp.mydns.projectk.safi.constant.JobStatus;
+import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.value.JsonArrayValue;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
- * JPA entity for the <i>t_user</i> table.
+ * JPA entity for the <i>t_job</i> table.
  *
  * @author riru
  * @version 3.0.0
@@ -55,40 +59,60 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
  */
 @Entity
 @Cacheable(false)
-@Table(name = "t_user")
-public class UserEntity implements Serializable {
+@Table(name = "t_job")
+public class JobEntity implements Serializable {
 
-    private static final long serialVersionUID = 2711050439353117979L;
+    private static final long serialVersionUID = -1878103273727614325L;
 
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
 
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    @Basic(optional = false)
+    @Column(name = "stat", nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private JobStatus status;
 
     @Basic(optional = false)
-    @Column(name = "from_ts", nullable = false)
-    private LocalDateTime localFrom;
+    @Column(name = "kind", nullable = false, updatable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private JobKind kind;
 
     @Basic(optional = false)
-    @Column(name = "to_ts", nullable = false)
-    private LocalDateTime localTo;
-
-    @Column(name = "ignored", nullable = false)
-    private boolean ignored;
-
-    @Column(name = "name", length = 250)
-    private String name;
+    @Column(name = "target", nullable = false, updatable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private JobTarget target;
 
     @Basic(optional = false)
-    @Column(name = "props")
+    @Column(name = "sche_ts", nullable = false, updatable = false)
+    private LocalDateTime scheduleTime;
+
+    @Basic(optional = false)
+    @Column(name = "limit_ts", nullable = false, updatable = false)
+    private LocalDateTime limitTime;
+
+    @Column(name = "begin_ts", insertable = false)
+    private LocalDateTime beginTime;
+
+    @Column(name = "end_ts", insertable = false)
+    private LocalDateTime endTime;
+
+    @Basic(optional = false)
+    @Column(name = "props", updatable = false)
     private JsonObjectValue properties;
 
-    @Basic(optional = false)
-    @Column(name = "digest", nullable = false, length = 128)
-    private String digest;
+    @Column(name = "jobdef_id", updatable = false, length = 36)
+    private String jobdefId;
+
+    @Column(name = "schedef_id", updatable = false, length = 36)
+    private String schedefId;
+
+    @Column(name = "srcdefs", updatable = false)
+    private JsonObjectValue definitions;
+
+    @Column(name = "results", insertable = false)
+    private JsonArrayValue resultMessages;
 
     @Column(name = "note")
     private String note;
@@ -115,9 +139,9 @@ public class UserEntity implements Serializable {
     private String updateProcessName;
 
     /**
-     * Get user id.
+     * Get job id.
      *
-     * @return user id
+     * @return job id
      * @since 3.0.0
      */
     @NotBlank
@@ -127,9 +151,9 @@ public class UserEntity implements Serializable {
     }
 
     /**
-     * Set user id.
+     * Set job id.
      *
-     * @param id user id. Cannot update persisted value.
+     * @param id job id. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setId(String id) {
@@ -137,136 +161,162 @@ public class UserEntity implements Serializable {
     }
 
     /**
-     * Get the enabled state.
+     * Get job status.
      *
-     * @return {@code true} if enabled, otherwise {@code false}.
+     * @return job status
      * @since 3.0.0
      */
-    public boolean isEnabled() {
-        return enabled;
+    @NotNull
+    public JobStatus getStatus() {
+        return status;
     }
 
     /**
-     * Set the enabled state.
+     * Set job status.
      *
-     * @param enabled {@code true} if enabled, otherwise {@code false}.
+     * @param status job status
      * @since 3.0.0
      */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setStatus(JobStatus status) {
+        this.status = status;
     }
 
     /**
-     * Get begin date-time of enabled period.
+     * Get job kind.
      *
-     * @return begin date-time of enabled period
+     * @return job kind
      * @since 3.0.0
      */
-    public OffsetDateTime getFrom() {
-        return TimeUtils.toOffsetDateTime(localFrom);
+    @NotNull
+    public JobKind getKind() {
+        return kind;
     }
 
     /**
-     * Get begin date-time of enabled period.
+     * Set job kind.
      *
-     * @return begin date-time of enabled period
+     * @param kind job kind. Cannot update persisted value.
+     * @since 3.0.0
+     */
+    public void setKind(JobKind kind) {
+        this.kind = kind;
+    }
+
+    /**
+     * Get job target.
+     *
+     * @return job target
+     * @since 3.0.0
+     */
+    @NotNull
+    public JobTarget getTarget() {
+        return target;
+    }
+
+    /**
+     * Set job target.
+     *
+     * @param target job target. Cannot update persisted value.
+     * @since 3.0.0
+     */
+    public void setTarget(JobTarget target) {
+        this.target = target;
+    }
+
+    /**
+     * Get job schedule time.
+     *
+     * @return job schedule time
      * @since 3.0.0
      */
     @NotNull
     @TimeRange
     @TimeAccuracy
-    public LocalDateTime getLocalFrom() {
-        return localFrom;
+    public LocalDateTime getScheduleTime() {
+        return scheduleTime;
     }
 
     /**
-     * Set begin date-time of enabled period.
+     * Set job schedule time.
      *
-     * @param from begin date-time of enabled period
+     * @param scheduleTime job schedule time. Cannot update persisted value.
      * @since 3.0.0
      */
-    public void setLocalFrom(LocalDateTime from) {
-        this.localFrom = from;
+    public void setScheduleTime(LocalDateTime scheduleTime) {
+        this.scheduleTime = scheduleTime;
     }
 
     /**
-     * Get end date-time of enabled period.
+     * Get limit time at job execution.
      *
-     * @return end date-time of enabled period
-     * @since 3.0.0
-     */
-    public OffsetDateTime getTo() {
-        return TimeUtils.toOffsetDateTime(localTo);
-    }
-
-    /**
-     * Get end date-time of enabled period.
-     *
-     * @return end date-time of enabled period
+     * @return limit time
      * @since 3.0.0
      */
     @NotNull
     @TimeRange
     @TimeAccuracy
-    public LocalDateTime getLocalTo() {
-        return localTo;
+    public LocalDateTime getLimitTime() {
+        return limitTime;
     }
 
     /**
-     * Set end date-time of enabled period.
+     * Set limit time at job execution.
      *
-     * @param to end date-time of enabled period
+     * @param limitTime limit time. Cannot update persisted value.
      * @since 3.0.0
      */
-    public void setLocalTo(LocalDateTime to) {
-        this.localTo = to;
+    public void setLimitTime(LocalDateTime limitTime) {
+        this.limitTime = limitTime;
     }
 
     /**
-     * Get a flag of ignored.
+     * Get begin time at job execution.
      *
-     * @return {@code true} if ignored, otherwise {@code false}.
+     * @return begin time. {@code null} if before begin job execution. {@code null} if yet begun.
      * @since 3.0.0
      */
-    public boolean isIgnored() {
-        return ignored;
+    @TimeRange
+    @TimeAccuracy
+    public LocalDateTime getBeginTime() {
+        return beginTime;
     }
 
     /**
-     * Set a flag of ignored.
+     * Set begin time at job execution.
      *
-     * @param ignored {@code true} if ignored, otherwise {@code false}.
+     * @param beginTime begin time. Cannot insert new.
      * @since 3.0.0
      */
-    public void setIgnored(boolean ignored) {
-        this.ignored = ignored;
+    public void setBeginTime(LocalDateTime beginTime) {
+        this.beginTime = beginTime;
     }
 
     /**
-     * Get user name.
+     * Get end time at job execution.
      *
-     * @return user name. It may be {@code null}.
+     * @return end time. {@code null} if before end job execution. {@code null} if yet end.
      * @since 3.0.0
      */
-    @Size(max = 250)
-    public String getName() {
-        return name;
+    @TimeRange
+    @TimeAccuracy
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     /**
-     * Set user name.
+     * Set end time at job execution. It is impossible to insert new.
      *
-     * @param name user name. It can be set {@code null}.
+     * @param endTime end time. Cannot insert new.
      * @since 3.0.0
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     /**
-     * Get user properties.
+     * Get job properties.
      *
-     * @return user properties
+     * @return job properties
      * @since 3.0.0
      */
     @NotNull
@@ -275,9 +325,9 @@ public class UserEntity implements Serializable {
     }
 
     /**
-     * Set user properties.
+     * Set job properties.
      *
-     * @param properties user properties
+     * @param properties job properties. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setProperties(JsonObjectValue properties) {
@@ -285,25 +335,87 @@ public class UserEntity implements Serializable {
     }
 
     /**
-     * Get digest value of this entity.
+     * Get job definition id.
      *
-     * @return digest value
+     * @return job definition id. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotBlank
-    @Size(max = 128)
-    public String getDigest() {
-        return digest;
+    @Size(max = 36)
+    public String getJobdefId() {
+        return jobdefId;
     }
 
     /**
-     * Set digest value of this entity.
+     * Set job definition id.
      *
-     * @param digest digest value
+     * @param jobdefId job definition id. Cannot update persisted value. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setDigest(String digest) {
-        this.digest = digest;
+    public void setJobdefId(String jobdefId) {
+        this.jobdefId = jobdefId;
+    }
+
+    /**
+     * Get schedule definition id.
+     *
+     * @return schedule definition id. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 36)
+    public String getSchedefId() {
+        return schedefId;
+    }
+
+    /**
+     * Set schedule definition id.
+     *
+     * @param schedefId schedule definition id. Cannot update persisted value. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setSchedefId(String schedefId) {
+        this.schedefId = schedefId;
+    }
+
+    /**
+     * Get source definitions.
+     *
+     * @return source definitions. May contain a job definition under the key <@code jobdef> and a schedule definition
+     * under the key <@code schedef>.
+     * @since 3.0.0
+     */
+    public JsonObjectValue getDefinitions() {
+        return definitions;
+    }
+
+    /**
+     * Set source definitions.
+     *
+     * @param definitions source definitions. May contain a job definition under the key <@code jobdef> and a schedule
+     * definition under the key <@code schedef>.
+     * @since 3.0.0
+     */
+    public void setDefinitions(JsonObjectValue definitions) {
+        this.definitions = definitions;
+    }
+
+    /**
+     * Get result messages.
+     *
+     * @return result messages
+     * @since 3.0.0
+     */
+    public JsonArrayValue getResultMessages() {
+        return resultMessages;
+    }
+
+    /**
+     * Set result messages.
+     *
+     * @param resultMessages result messages
+     * @since 3.0.0
+     */
+    public void setResultMessages(JsonArrayValue resultMessages) {
+        this.resultMessages = resultMessages;
     }
 
     /**
@@ -500,7 +612,7 @@ public class UserEntity implements Serializable {
      */
     @Override
     public boolean equals(Object other) {
-        return other instanceof UserEntity o && Objects.equals(id, o.id);
+        return other instanceof JobEntity o && Objects.equals(id, o.id);
     }
 
     /**
@@ -511,7 +623,9 @@ public class UserEntity implements Serializable {
      */
     @Override
     public String toString() {
-        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", from=" + localFrom + ", to=" + localTo
-            + ", ignored=" + ignored + ", name=" + name + ", properies=" + properties + ", digest=" + digest + '}';
+        return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target
+            + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
+            + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId
+            + ", schedefId=" + schedefId + ", definitions=" + definitions + ", resultMessages=" + resultMessages + '}';
     }
 }

@@ -1,5 +1,10 @@
 # Simple And Flexible Idm
 
+# 3.0.0-M3
+
+- [] footerのNotNull解除
+- [] job
+
 ## Java-Doc
 
 <i>固有名詞</i>

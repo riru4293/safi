@@ -1,0 +1,51 @@
+@startuml
+hide circle
+
+entity "t_user" as t_user {
+    * id
+    --
+      enabled
+      from_ts
+      to_ts
+      ignored
+      name
+      props
+      digest
+}
+
+entity "t_asset" as t_asset {
+    * id
+    --
+      enabled
+      from_ts
+      to_ts
+      ignored
+      name
+      gen
+      sn
+      user_id
+      priority
+      props
+      digest
+}
+
+t_user ||--o{ t_asset : "id = user_id"
+
+entity "t_job" as t_job {
+    * id
+    --
+      stat
+      kind
+      target
+      sche_ts
+      limit_ts
+      begin_ts
+      end_ts
+      props
+      jobdef_id
+      schedef_id
+      srcdefs
+      results
+}
+
+@enduml
