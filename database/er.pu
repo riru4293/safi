@@ -41,7 +41,7 @@ entity "t_job" as t_job {
       limit_ts
       begin_ts
       end_ts
-      opts
+      props
       jobdef_id
       schedef_id
       srcdefs

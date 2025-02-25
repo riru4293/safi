@@ -32,9 +32,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -44,6 +47,8 @@ import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.value.JsonArrayValue;
+import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
  * JPA entity for the <i>t_job</i> table.
@@ -92,6 +97,46 @@ public class JobEntity implements Serializable {
 
     @Column(name = "end_ts", insertable = false)
     private LocalDateTime endTime;
+
+    @Basic(optional = false)
+    @Column(name = "props", updatable = false)
+    private JsonObjectValue properties;
+
+    @Column(name = "jobdef_id", updatable = false, length = 36)
+    private String jobdefId;
+
+    @Column(name = "schedef_id", updatable = false, length = 36)
+    private String schedefId;
+
+    @Column(name = "srcdefs", updatable = false)
+    private JsonObjectValue definitions;
+
+    @Column(name = "results", insertable = false)
+    private JsonArrayValue resultMessages;
+
+    @Column(name = "note")
+    private String note;
+
+    @Column(name = "version", nullable = false)
+    private int version;
+
+    @Column(name = "reg_ts", updatable = false)
+    private LocalDateTime registerTime;
+
+    @Column(name = "reg_id", updatable = false, length = 250)
+    private String registerAccountId;
+
+    @Column(name = "reg_ap", updatable = false, length = 250)
+    private String registerProcessName;
+
+    @Column(name = "upd_ts", insertable = false)
+    private LocalDateTime updateTime;
+
+    @Column(name = "upd_id", insertable = false, length = 250)
+    private String updateAccountId;
+
+    @Column(name = "upd_ap", insertable = false, length = 250)
+    private String updateProcessName;
 
     /**
      * Get job id.
@@ -192,9 +237,9 @@ public class JobEntity implements Serializable {
     }
 
     /**
-     * Set job schedule time. It is impossible to update an already persisted value.
+     * Set job schedule time.
      *
-     * @param scheduleTime job schedule time
+     * @param scheduleTime job schedule time. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setScheduleTime(LocalDateTime scheduleTime) {
@@ -215,9 +260,9 @@ public class JobEntity implements Serializable {
     }
 
     /**
-     * Set limit time at job execution. It is impossible to update an already persisted value.
+     * Set limit time at job execution.
      *
-     * @param limitTime limit time
+     * @param limitTime limit time. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setLimitTime(LocalDateTime limitTime) {
@@ -227,7 +272,7 @@ public class JobEntity implements Serializable {
     /**
      * Get begin time at job execution.
      *
-     * @return begin time. {@code null} if before begin job execution.
+     * @return begin time. {@code null} if before begin job execution. {@code null} if yet begun.
      * @since 3.0.0
      */
     @TimeRange
@@ -237,9 +282,9 @@ public class JobEntity implements Serializable {
     }
 
     /**
-     * Set begin time at job execution. It is impossible to insert new.
+     * Set begin time at job execution.
      *
-     * @param beginTime begin time
+     * @param beginTime begin time. Cannot insert new.
      * @since 3.0.0
      */
     public void setBeginTime(LocalDateTime beginTime) {
@@ -249,7 +294,7 @@ public class JobEntity implements Serializable {
     /**
      * Get end time at job execution.
      *
-     * @return end time. {@code null} if before end job execution.
+     * @return end time. {@code null} if before end job execution. {@code null} if yet end.
      * @since 3.0.0
      */
     @TimeRange
@@ -261,11 +306,289 @@ public class JobEntity implements Serializable {
     /**
      * Set end time at job execution. It is impossible to insert new.
      *
-     * @param endTime end time
+     * @param endTime end time. Cannot insert new.
      * @since 3.0.0
      */
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    /**
+     * Get job properties.
+     *
+     * @return job properties
+     * @since 3.0.0
+     */
+    @NotNull
+    public JsonObjectValue getProperties() {
+        return properties;
+    }
+
+    /**
+     * Set job properties.
+     *
+     * @param properties job properties. Cannot update persisted value.
+     * @since 3.0.0
+     */
+    public void setProperties(JsonObjectValue properties) {
+        this.properties = properties;
+    }
+
+    /**
+     * Get job definition id.
+     *
+     * @return job definition id. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 36)
+    public String getJobdefId() {
+        return jobdefId;
+    }
+
+    /**
+     * Set job definition id.
+     *
+     * @param jobdefId job definition id. Cannot update persisted value. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setJobdefId(String jobdefId) {
+        this.jobdefId = jobdefId;
+    }
+
+    /**
+     * Get schedule definition id.
+     *
+     * @return schedule definition id. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 36)
+    public String getSchedefId() {
+        return schedefId;
+    }
+
+    /**
+     * Set schedule definition id.
+     *
+     * @param schedefId schedule definition id. Cannot update persisted value. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setSchedefId(String schedefId) {
+        this.schedefId = schedefId;
+    }
+
+    /**
+     * Get source definitions.
+     *
+     * @return source definitions. May contain a job definition under the key <@code jobdef> and a schedule definition
+     * under the key <@code schedef>.
+     * @since 3.0.0
+     */
+    public JsonObjectValue getDefinitions() {
+        return definitions;
+    }
+
+    /**
+     * Set source definitions.
+     *
+     * @param definitions source definitions. May contain a job definition under the key <@code jobdef> and a schedule
+     * definition under the key <@code schedef>.
+     * @since 3.0.0
+     */
+    public void setDefinitions(JsonObjectValue definitions) {
+        this.definitions = definitions;
+    }
+
+    /**
+     * Get result messages.
+     *
+     * @return result messages
+     * @since 3.0.0
+     */
+    public JsonArrayValue getResultMessages() {
+        return resultMessages;
+    }
+
+    /**
+     * Set result messages.
+     *
+     * @param resultMessages result messages
+     * @since 3.0.0
+     */
+    public void setResultMessages(JsonArrayValue resultMessages) {
+        this.resultMessages = resultMessages;
+    }
+
+    /**
+     * Get a note for this entity. This value is only used to record notes about the data records represented by the
+     * entity and is never used to process.
+     *
+     * @return note. It may be {@code null}.
+     * @since 3.0.0
+     */
+    public String getNote() {
+        return note;
+    }
+
+    /**
+     * Set a note for this entity.
+     *
+     * @param note note. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    /**
+     * Get entity version. This value used for optimistic locking. Will be thrown {@link OptimisticLockException} when
+     * inserted or updated when the configured version number is not equal to that of the database. The version of the
+     * entity before persistence is 0.
+     *
+     * @return entity version
+     * @since 3.0.0
+     */
+    @PositiveOrZero
+    @Version
+    public int getVersion() {
+        return version;
+    }
+
+    /**
+     * Set entity version.
+     *
+     * @param version entity version
+     * @since 3.0.0
+     */
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
+    /**
+     * Get time the entity was persisted.
+     *
+     * @return persisted time. It time zone is UTC. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @TimeRange
+    @TimeAccuracy
+    public LocalDateTime getRegisterTime() {
+        return registerTime;
+    }
+
+    /**
+     * Set time the entity was persisted.
+     *
+     * @param registerTime persisted time. It time zone is UTC. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setRegisterTime(LocalDateTime registerTime) {
+        this.registerTime = registerTime;
+    }
+
+    /**
+     * Get id of the account who made the entity persistent.
+     *
+     * @return persisted account id. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 250)
+    public String getRegisterAccountId() {
+        return registerAccountId;
+    }
+
+    /**
+     * Set id of the account who made the entity persistent.
+     *
+     * @param registerAccountId persisted account id. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setRegisterAccountId(String registerAccountId) {
+        this.registerAccountId = registerAccountId;
+    }
+
+    /**
+     * Get name of the process who made the entity persistent.
+     *
+     * @return persisted process name. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 250)
+    public String getRegisterProcessName() {
+        return registerProcessName;
+    }
+
+    /**
+     * Set name of the process who made the entity persistent.
+     *
+     * @param registerProcessName persisted process name. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setRegisterProcessName(String registerProcessName) {
+        this.registerProcessName = registerProcessName;
+    }
+
+    /**
+     * Get time the entity was last updated.
+     *
+     * @return last updated time. It time zone is UTC. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @TimeRange
+    @TimeAccuracy
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    /**
+     * Set time the entity was last updated.
+     *
+     * @param updateTime last updated time. It time zone is UTC. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    /**
+     * Get id of the account who made the entity last updated.
+     *
+     * @return last updated account id. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 250)
+    public String getUpdateAccountId() {
+        return updateAccountId;
+    }
+
+    /**
+     * Set id of the account who made the entity last updated.
+     *
+     * @param updateAccountId last updated account id. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setUpdateAccountId(String updateAccountId) {
+        this.updateAccountId = updateAccountId;
+    }
+
+    /**
+     * Get name of the process who made the entity last updated.
+     *
+     * @return last updated process name. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 250)
+    public String getUpdateProcessName() {
+        return updateProcessName;
+    }
+
+    /**
+     * Set name of the process who made the entity last updated.
+     *
+     * @param updateProcessName last updated process name. It can be set {@code null}.
+     * @since 3.0.0
+     */
+    public void setUpdateProcessName(String updateProcessName) {
+        this.updateProcessName = updateProcessName;
     }
 
     /**
@@ -302,7 +625,7 @@ public class JobEntity implements Serializable {
     public String toString() {
         return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target
             + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
-            + ", endTime=" + endTime
-            + '}';
+            + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId
+            + ", schedefId=" + schedefId + ", definitions=" + definitions + ", resultMessages=" + resultMessages + '}';
     }
 }

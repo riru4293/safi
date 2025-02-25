@@ -41,7 +41,7 @@ CREATE TABLE           `t_job` (
   , `limit_ts`           DATETIME          NOT NULL                                    COMMENT 'Expiration time for job.'            
   , `begin_ts`           DATETIME                                                      COMMENT 'Begun time of job.'
   , `end_ts`             DATETIME                                                      COMMEnt 'End time of job.'
-  , `opts`                   JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Option values for job processing.'
+  , `props`                  JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Option values for job processing.'
   , `jobdef_id`           VARCHAR(     36)                                             COMMENT 'Source job definition id.'
   , `schedef_id`          VARCHAR(     36)                                             COMMENT 'Source schedule definition id.'
   , `srcdefs`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Source definitions copy. The format is expected to be {"jobdef": {}, "schedef": {}}. No fields are required.'
