@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.entity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.persistence.Version;
@@ -46,7 +47,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * @since 3.0.0
  */
 @MappedSuperclass
-//@EntityListeners({FooterUpdater.class})
+@EntityListeners({FooterUpdater.class})
 public abstract class CommonEntity implements Serializable {
 
     private static final long serialVersionUID = 7002393193138803696L;

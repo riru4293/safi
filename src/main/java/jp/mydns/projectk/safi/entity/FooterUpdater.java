@@ -23,43 +23,59 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util;
+package jp.mydns.projectk.safi.entity;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 
 /**
- * Utilities for date and time.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
+ * Set footer values in the {@link CommonEntity} when insert and update to database.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class TimeUtils {
+public class FooterUpdater {
 
-    private TimeUtils() {
+    private final FooterContext ctx;
+
+    /**
+     * Constructor.
+     *
+     * @param ctx instance of the {@code FooterContext}
+     * @since 3.0.0
+     */
+    @Inject
+    public FooterUpdater(Instance<FooterContext> ctx) {
+        this.ctx = ctx.get();
     }
 
     /**
-     * Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
+     * Set entity common footer values when insert. Set only values related to register.
      *
-     * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
-     * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
+     * @param entity the {@code CommonEntity}
      * @since 3.0.0
      */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
+    @PrePersist
+    public void insert(CommonEntity entity) {
+        entity.setRegisterTime(ctx.getUtcNow());
+        entity.setRegisterAccountId(ctx.getAccountId());
+        entity.setRegisterProcessName(ctx.getProcessName());
+        update(entity);
+    }
 
-        if (localDateTime == null) {
-            return null;
-        }
-
-        return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
+    /**
+     * Set entity common footer values when update. Set only values related to update.
+     *
+     * @param entity the {@code CommonEntity}
+     * @since 3.0.0
+     */
+    @PreUpdate
+    public void update(CommonEntity entity) {
+        entity.setUpdateTime(ctx.getUtcNow());
+        entity.setUpdateAccountId(ctx.getAccountId());
+        entity.setUpdateProcessName(ctx.getProcessName());
     }
 }
