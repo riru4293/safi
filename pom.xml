@@ -79,6 +79,7 @@ POSSIBILITY OF SUCH DAMAGE.
 
     <dependencyManagement>
         <dependencies>
+            <!-- License: EPL-2.0 -->
             <dependency>
                 <groupId>org.junit</groupId>
                 <artifactId>junit-bom</artifactId>
