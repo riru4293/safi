@@ -98,14 +98,19 @@ public class JobEntity extends CommonEntity {
     @Column(name = "props", updatable = false)
     private JsonObjectValue properties;
 
-    @Column(name = "jobdef_id", updatable = false, length = 36)
+    @Basic(optional = false)
+    @Column(name = "jobdef_id", nullable = false, updatable = false, length = 36)
     private String jobdefId;
 
+    @Basic(optional = false)
+    @Column(name = "jobdef", nullable = false, updatable = false)
+    private JsonObjectValue jobdef;
+    
     @Column(name = "schedef_id", updatable = false, length = 36)
     private String schedefId;
 
-    @Column(name = "srcdefs", updatable = false)
-    private JsonObjectValue definitions;
+    @Column(name = "schedef", updatable = false)
+    private JsonObjectValue schedef;
 
     @Column(name = "results", insertable = false)
     private JsonArrayValue resultMessages;
@@ -309,9 +314,10 @@ public class JobEntity extends CommonEntity {
     /**
      * Get job definition id.
      *
-     * @return job definition id. It may be {@code null}.
+     * @return job definition id
      * @since 3.0.0
      */
+    @NotBlank
     @Size(max = 36)
     public String getJobdefId() {
         return jobdefId;
@@ -320,11 +326,32 @@ public class JobEntity extends CommonEntity {
     /**
      * Set job definition id.
      *
-     * @param jobdefId job definition id. Cannot update persisted value. It can be set {@code null}.
+     * @param jobdefId job definition id. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setJobdefId(String jobdefId) {
         this.jobdefId = jobdefId;
+    }
+    
+    /**
+     * Get job definition.
+     *
+     * @return source job definition
+     * @since 3.0.0
+     */
+    @NotNull
+    public JsonObjectValue getJobdef() {
+        return jobdef;
+    }
+
+    /**
+     * Set job definition.
+     *
+     * @param jobdef source job definition
+     * @since 3.0.0
+     */
+    public void setJobdef(JsonObjectValue jobdef) {
+        this.jobdef = jobdef;
     }
 
     /**
@@ -349,25 +376,23 @@ public class JobEntity extends CommonEntity {
     }
 
     /**
-     * Get source definitions.
+     * Get schedule definition.
      *
-     * @return source definitions. May contain a job definition under the key <@code jobdef> and a schedule definition
-     * under the key <@code schedef>.
+     * @return source schedule definitions
      * @since 3.0.0
      */
-    public JsonObjectValue getDefinitions() {
-        return definitions;
+    public JsonObjectValue getSchedef() {
+        return schedef;
     }
 
     /**
-     * Set source definitions.
+     * Set schedule definition.
      *
-     * @param definitions source definitions. May contain a job definition under the key <@code jobdef> and a schedule
-     * definition under the key <@code schedef>.
+     * @param schedef source schedule definition
      * @since 3.0.0
      */
-    public void setDefinitions(JsonObjectValue definitions) {
-        this.definitions = definitions;
+    public void setSchedef(JsonObjectValue schedef) {
+        this.schedef = schedef;
     }
 
     /**
@@ -424,7 +449,7 @@ public class JobEntity extends CommonEntity {
     public String toString() {
         return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target
             + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
-            + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId
-            + ", schedefId=" + schedefId + ", definitions=" + definitions + ", resultMessages=" + resultMessages + '}';
+            + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId+ ", jobdef=" + jobdef
+            + ", schedefId=" + schedefId + ", schedef=" + schedef + ", resultMessages=" + resultMessages + '}';
     }
 }

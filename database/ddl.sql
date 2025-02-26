@@ -42,9 +42,10 @@ CREATE TABLE           `t_job` (
   , `begin_ts`           DATETIME                                                      COMMENT 'Begun time of job.'
   , `end_ts`             DATETIME                                                      COMMEnt 'End time of job.'
   , `props`                  JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Option values for job processing.'
-  , `jobdef_id`           VARCHAR(     36)                                             COMMENT 'Source job definition id.'
+  , `jobdef_id`           VARCHAR(     36) NOT NULL                                    COMMENT 'Source job definition id'
+  , `jobdef`                 JSON          NOT NULL                                    COMMENT 'Source job definition'
   , `schedef_id`          VARCHAR(     36)                                             COMMENT 'Source schedule definition id.'
-  , `srcdefs`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Source definitions copy. The format is expected to be {"jobdef": {}, "schedef": {}}. No fields are required.'
+  , `schedef`                JSON                                                      COMMENT 'Source schedule definition'
   , `results`                JSON          NOT NULL DEFAULT '[]'                       COMMENT 'Result messages array. Expects the format: ["msg1", "msg2"].'
 -- ---------------------+--------+--------+--------+-----------------------------------
   , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
