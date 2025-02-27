@@ -23,59 +23,47 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity;
+package jp.mydns.projectk.safi.entity.convertor;
 
-import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 
 /**
- * Set footer values in the {@link CommonEntity} when insert and update to database.
+ * JPA attribute convertor for the {@code Duration}. This convertor is applied automatically.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class FooterUpdater {
-
-    private final FooterContext ctx;
+@Converter(autoApply = true)
+public final class DurationConvertor implements AttributeConverter<Duration, String> {
 
     /**
-     * Constructor.
+     * Convert to database column type.
      *
-     * @param ctx instance of the {@code FooterContext}
+     * @param javaVal the {@code Duration}. It can be set {@code null}.
+     * @return {@code javaVal} that converted to string representation of {@code Duration}. {@code null} if
+     * {@code javaVal} is {@code null}.
      * @since 3.0.0
      */
-    @Inject
-    public FooterUpdater(Instance<FooterContext> ctx) {
-        this.ctx = ctx.get();
+    @Override
+    public String convertToDatabaseColumn(Duration javaVal) {
+        return javaVal != null ? javaVal.toString() : null;
     }
 
     /**
-     * Set entity common footer values when insert. Set only values related to register.
+     * Convert to entity attribute type.
      *
-     * @param entity the {@code CommonEntity}
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code Duration}. It
+     * can be set {@code null}.
+     * @return {@code dbVal} as {@code Duration}. {@code null} if {@code dbVal} is {@code null}.
+     * @throws DateTimeParseException if {@code dbVal} is malformed as {@code Duration}
      * @since 3.0.0
      */
-    @PrePersist
-    public void insert(CommonEntity entity) {
-        entity.setRegTime(ctx.getUtcNow());
-        entity.setRegId(ctx.getAccountId());
-        entity.setRegName(ctx.getProcessName());
-        update(entity);
-    }
-
-    /**
-     * Set entity common footer values when update. Set only values related to update.
-     *
-     * @param entity the {@code CommonEntity}
-     * @since 3.0.0
-     */
-    @PreUpdate
-    public void update(CommonEntity entity) {
-        entity.setUpdTime(ctx.getUtcNow());
-        entity.setUpdId(ctx.getAccountId());
-        entity.setUpdName(ctx.getProcessName());
+    @Override
+    public Duration convertToEntityAttribute(String dbVal) {
+        return dbVal != null ? Duration.parse(dbVal) : null;
     }
 }

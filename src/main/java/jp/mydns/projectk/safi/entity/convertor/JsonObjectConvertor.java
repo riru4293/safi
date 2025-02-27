@@ -45,21 +45,21 @@ public final class JsonObjectConvertor implements AttributeConverter<JsonObjectV
     /**
      * Convert to database column type.
      *
-     * @param val the {@code JsonObjectValue}. It can be set {@code null}.
-     * @return {@code val} that converted to string representation of {@code JsonObjectValue}. {@code null} if
-     * {@code val} is {@code null}.
+     * @param javaVal the {@code JsonObjectValue}. It can be set {@code null}.
+     * @return {@code javaVal} that converted to string representation of {@code JsonObjectValue}. {@code null} if
+     * {@code javaVal} is {@code null}.
      * @since 3.0.0
      */
     @Override
-    public String convertToDatabaseColumn(JsonObjectValue val) {
-        return val != null ? val.toString() : null;
+    public String convertToDatabaseColumn(JsonObjectValue javaVal) {
+        return javaVal != null ? javaVal.toString() : null;
     }
 
     /**
      * Convert to entity attribute type.
      *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonObjectValue}. It can be
-     * set {@code null}.
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonObjectValue}. It
+     * can be set {@code null}.
      * @return {@code dbVal} as {@code JsonObjectValue}. {@code null} if {@code dbVal} is {@code null}.
      * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonObjectValue}
      * @since 3.0.0

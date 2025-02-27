@@ -95,8 +95,8 @@ public class JobEntity extends CommonEntity {
     private LocalDateTime endTime;
 
     @Basic(optional = false)
-    @Column(name = "props", updatable = false)
-    private JsonObjectValue properties;
+    @Column(name = "props", nullable = false, updatable = false)
+    private JsonObjectValue props;
 
     @Basic(optional = false)
     @Column(name = "jobdef_id", nullable = false, updatable = false, length = 36)
@@ -105,7 +105,7 @@ public class JobEntity extends CommonEntity {
     @Basic(optional = false)
     @Column(name = "jobdef", nullable = false, updatable = false)
     private JsonObjectValue jobdef;
-    
+
     @Column(name = "schedef_id", updatable = false, length = 36)
     private String schedefId;
 
@@ -297,18 +297,18 @@ public class JobEntity extends CommonEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonObjectValue getProperties() {
-        return properties;
+    public JsonObjectValue getProps() {
+        return props;
     }
 
     /**
      * Set job properties.
      *
-     * @param properties job properties. Cannot update persisted value.
+     * @param props job properties. Cannot update persisted value.
      * @since 3.0.0
      */
-    public void setProperties(JsonObjectValue properties) {
-        this.properties = properties;
+    public void setProps(JsonObjectValue props) {
+        this.props = props;
     }
 
     /**
@@ -332,7 +332,7 @@ public class JobEntity extends CommonEntity {
     public void setJobdefId(String jobdefId) {
         this.jobdefId = jobdefId;
     }
-    
+
     /**
      * Get job definition.
      *
@@ -347,7 +347,7 @@ public class JobEntity extends CommonEntity {
     /**
      * Set job definition.
      *
-     * @param jobdef source job definition
+     * @param jobdef source job definition. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setJobdef(JsonObjectValue jobdef) {
@@ -378,7 +378,7 @@ public class JobEntity extends CommonEntity {
     /**
      * Get schedule definition.
      *
-     * @return source schedule definitions
+     * @return source schedule definitions. It may be {@code null}.
      * @since 3.0.0
      */
     public JsonObjectValue getSchedef() {
@@ -388,7 +388,7 @@ public class JobEntity extends CommonEntity {
     /**
      * Set schedule definition.
      *
-     * @param schedef source schedule definition
+     * @param schedef source schedule definition. Cannot update persisted value. It can be set {@code null}.
      * @since 3.0.0
      */
     public void setSchedef(JsonObjectValue schedef) {
@@ -398,7 +398,7 @@ public class JobEntity extends CommonEntity {
     /**
      * Get result messages.
      *
-     * @return result messages
+     * @return result messages. It may be {@code null}.
      * @since 3.0.0
      */
     public JsonArrayValue getResultMessages() {
@@ -408,7 +408,7 @@ public class JobEntity extends CommonEntity {
     /**
      * Set result messages.
      *
-     * @param resultMessages result messages
+     * @param resultMessages result messages. Cannot insert new.
      * @since 3.0.0
      */
     public void setResultMessages(JsonArrayValue resultMessages) {
@@ -449,7 +449,7 @@ public class JobEntity extends CommonEntity {
     public String toString() {
         return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target
             + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
-            + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId+ ", jobdef=" + jobdef
+            + ", endTime=" + endTime + ", props=" + props + ", jobdefId=" + jobdefId + ", jobdef=" + jobdef
             + ", schedefId=" + schedefId + ", schedef=" + schedef + ", resultMessages=" + resultMessages + '}';
     }
 }

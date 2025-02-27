@@ -59,22 +59,22 @@ public abstract class CommonEntity implements Serializable {
     private int version;
 
     @Column(name = "reg_ts", updatable = false)
-    private LocalDateTime registerTime;
+    private LocalDateTime regTime;
 
     @Column(name = "reg_id", updatable = false, length = 250)
-    private String registerAccountId;
+    private String regId;
 
     @Column(name = "reg_ap", updatable = false, length = 250)
-    private String registerProcessName;
+    private String regName;
 
     @Column(name = "upd_ts", insertable = false)
-    private LocalDateTime updateTime;
+    private LocalDateTime updTime;
 
     @Column(name = "upd_id", insertable = false, length = 250)
-    private String updateAccountId;
+    private String updId;
 
     @Column(name = "upd_ap", insertable = false, length = 250)
-    private String updateProcessName;
+    private String updName;
 
     /**
      * Get a note for this entity. This value is only used to record notes about the data records represented by the
@@ -129,18 +129,18 @@ public abstract class CommonEntity implements Serializable {
      */
     @TimeRange
     @TimeAccuracy
-    public LocalDateTime getRegisterTime() {
-        return registerTime;
+    public LocalDateTime getRegTime() {
+        return regTime;
     }
 
     /**
      * Set time the entity was persisted.
      *
-     * @param registerTime persisted time. It time zone is UTC. It can be set {@code null}.
+     * @param regTime persisted time. It time zone is UTC. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setRegisterTime(LocalDateTime registerTime) {
-        this.registerTime = registerTime;
+    public void setRegTime(LocalDateTime regTime) {
+        this.regTime = regTime;
     }
 
     /**
@@ -150,18 +150,18 @@ public abstract class CommonEntity implements Serializable {
      * @since 3.0.0
      */
     @Size(max = 250)
-    public String getRegisterAccountId() {
-        return registerAccountId;
+    public String getRegId() {
+        return regId;
     }
 
     /**
      * Set id of the account who made the entity persistent.
      *
-     * @param registerAccountId persisted account id. It can be set {@code null}.
+     * @param regId persisted account id. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setRegisterAccountId(String registerAccountId) {
-        this.registerAccountId = registerAccountId;
+    public void setRegId(String regId) {
+        this.regId = regId;
     }
 
     /**
@@ -171,18 +171,18 @@ public abstract class CommonEntity implements Serializable {
      * @since 3.0.0
      */
     @Size(max = 250)
-    public String getRegisterProcessName() {
-        return registerProcessName;
+    public String getRegName() {
+        return regName;
     }
 
     /**
      * Set name of the process who made the entity persistent.
      *
-     * @param registerProcessName persisted process name. It can be set {@code null}.
+     * @param regName persisted process name. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setRegisterProcessName(String registerProcessName) {
-        this.registerProcessName = registerProcessName;
+    public void setRegName(String regName) {
+        this.regName = regName;
     }
 
     /**
@@ -193,18 +193,18 @@ public abstract class CommonEntity implements Serializable {
      */
     @TimeRange
     @TimeAccuracy
-    public LocalDateTime getUpdateTime() {
-        return updateTime;
+    public LocalDateTime getUpdTime() {
+        return updTime;
     }
 
     /**
      * Set time the entity was last updated.
      *
-     * @param updateTime last updated time. It time zone is UTC. It can be set {@code null}.
+     * @param updTime last updated time. It time zone is UTC. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setUpdateTime(LocalDateTime updateTime) {
-        this.updateTime = updateTime;
+    public void setUpdTime(LocalDateTime updTime) {
+        this.updTime = updTime;
     }
 
     /**
@@ -214,18 +214,18 @@ public abstract class CommonEntity implements Serializable {
      * @since 3.0.0
      */
     @Size(max = 250)
-    public String getUpdateAccountId() {
-        return updateAccountId;
+    public String getUpdId() {
+        return updId;
     }
 
     /**
      * Set id of the account who made the entity last updated.
      *
-     * @param updateAccountId last updated account id. It can be set {@code null}.
+     * @param updId last updated account id. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setUpdateAccountId(String updateAccountId) {
-        this.updateAccountId = updateAccountId;
+    public void setUpdId(String updId) {
+        this.updId = updId;
     }
 
     /**
@@ -235,17 +235,17 @@ public abstract class CommonEntity implements Serializable {
      * @since 3.0.0
      */
     @Size(max = 250)
-    public String getUpdateProcessName() {
-        return updateProcessName;
+    public String getUpdName() {
+        return updName;
     }
 
     /**
      * Set name of the process who made the entity last updated.
      *
-     * @param updateProcessName last updated process name. It can be set {@code null}.
+     * @param updName last updated process name. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setUpdateProcessName(String updateProcessName) {
-        this.updateProcessName = updateProcessName;
+    public void setUpdName(String updName) {
+        this.updName = updName;
     }
 }
