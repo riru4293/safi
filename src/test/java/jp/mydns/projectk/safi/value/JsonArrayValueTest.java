@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 class JsonArrayValueTest {
 

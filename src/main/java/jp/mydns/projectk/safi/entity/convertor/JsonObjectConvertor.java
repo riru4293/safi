@@ -37,7 +37,7 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 @Converter(autoApply = true)
 public final class JsonObjectConvertor implements AttributeConverter<JsonObjectValue, String> {

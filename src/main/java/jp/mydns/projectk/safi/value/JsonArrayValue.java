@@ -51,7 +51,7 @@ import java.util.Objects;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray, Serializable {
 
@@ -64,7 +64,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
      *
      * @param value an any JSON array
      * @throws NullPointerException if {@code value} is {@code null}
-     * @since 1.0.0
+     * @since 3.0.0
      */
     public JsonArrayValue(JsonArray value) {
         this.value = Objects.requireNonNull(value);
@@ -73,7 +73,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonValue get(int index) {
@@ -83,7 +83,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public int size() {
@@ -93,7 +93,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonObject getJsonObject(int index) {
@@ -103,7 +103,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonArray getJsonArray(int index) {
@@ -113,7 +113,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonNumber getJsonNumber(int index) {
@@ -123,7 +123,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonString getJsonString(int index) {
@@ -133,7 +133,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public <T extends JsonValue> List<T> getValuesAs(Class<T> clazz) {
@@ -143,7 +143,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public String getString(int index) {
@@ -153,7 +153,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public String getString(int index, String defaultValue) {
@@ -163,7 +163,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public int getInt(int index) {
@@ -173,7 +173,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public int getInt(int index, int defaultValue) {
@@ -183,7 +183,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public boolean getBoolean(int index) {
@@ -193,7 +193,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public boolean getBoolean(int index, boolean defaultValue) {
@@ -203,7 +203,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public boolean isNull(int index) {
@@ -213,7 +213,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public ValueType getValueType() {
@@ -224,7 +224,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
      * Returns a hash code value.
      *
      * @return a hash code value
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public int hashCode() {
@@ -236,7 +236,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
      *
      * @param other an any object
      * @return {@code true} if matches otherwise {@code false}.
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public boolean equals(Object other) {
@@ -247,7 +247,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
      * Returns a string representation.
      *
      * @return a string representation
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public String toString() {

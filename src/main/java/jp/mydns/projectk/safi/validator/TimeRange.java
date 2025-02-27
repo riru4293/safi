@@ -49,7 +49,7 @@ import java.time.ZoneOffset;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -78,7 +78,7 @@ public @interface TimeRange {
      *
      * @author riru
      * @version 3.0.0
-     * @since 1.0.0
+     * @since 3.0.0
      */
     abstract class AbstractValidator {
 
@@ -92,14 +92,14 @@ public @interface TimeRange {
      *
      * @author riru
      * @version 3.0.0
-     * @since 1.0.0
+     * @since 3.0.0
      */
     class LocalDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, LocalDateTime> {
 
         /**
          * {@inheritDoc}
          *
-         * @since 1.0.0
+         * @since 3.0.0
          */
         @Override
         public boolean isValid(LocalDateTime value, ConstraintValidatorContext ctx) {
@@ -118,14 +118,14 @@ public @interface TimeRange {
      *
      * @author riru
      * @version 3.0.0
-     * @since 1.0.0
+     * @since 3.0.0
      */
     class OffsetDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, OffsetDateTime> {
 
         /**
          * {@inheritDoc}
          *
-         * @since 1.0.0
+         * @since 3.0.0
          */
         @Override
         public boolean isValid(OffsetDateTime value, ConstraintValidatorContext ctx) {

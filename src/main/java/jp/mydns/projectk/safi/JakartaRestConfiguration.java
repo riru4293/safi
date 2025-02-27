@@ -40,10 +40,10 @@ import jakarta.ws.rs.core.Application;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 @ApplicationPath("api")
-//@OpenAPIDefinition(info = @Info(title = "SAFI", version = "1.0.0", description = "SAFI API",
+//@OpenAPIDefinition(info = @Info(title = "SAFI", version = "3.0.0", description = "SAFI API",
 //        license = @License(name = "BSD", url = "https://opensource.org/licenses/BSD-2-Clause"),
 //        contact = @Contact(url = "https://project-k.mydns.jp", name = "riru", email = "riru4293@gmail.com")),
 //        servers = {

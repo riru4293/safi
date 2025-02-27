@@ -39,6 +39,7 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -48,12 +49,13 @@ import java.time.temporal.ChronoUnit;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {
+    TimeAccuracy.DurationValidator.class,
     TimeAccuracy.LocalDateTimeValidator.class,
     TimeAccuracy.OffsetDateTimeValidator.class})
 public @interface TimeAccuracy {
@@ -77,14 +79,14 @@ public @interface TimeAccuracy {
      *
      * @author riru
      * @version 3.0.0
-     * @since 1.0.0
+     * @since 3.0.0
      */
     class LocalDateTimeValidator implements ConstraintValidator<TimeAccuracy, LocalDateTime> {
 
         /**
          * {@inheritDoc}
          *
-         * @since 1.0.0
+         * @since 3.0.0
          */
         @Override
         public boolean isValid(LocalDateTime value, ConstraintValidatorContext ctx) {
@@ -102,14 +104,14 @@ public @interface TimeAccuracy {
      *
      * @author riru
      * @version 3.0.0
-     * @since 1.0.0
+     * @since 3.0.0
      */
     class OffsetDateTimeValidator implements ConstraintValidator<TimeAccuracy, OffsetDateTime> {
 
         /**
          * {@inheritDoc}
          *
-         * @since 1.0.0
+         * @since 3.0.0
          */
         @Override
         public boolean isValid(OffsetDateTime value, ConstraintValidatorContext ctx) {
@@ -119,6 +121,31 @@ public @interface TimeAccuracy {
             }
 
             return value.truncatedTo(ChronoUnit.SECONDS).isEqual(value);
+        }
+    }
+
+    /**
+     * A validator that validates that there is no fractional seconds value.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    class DurationValidator implements ConstraintValidator<TimeAccuracy, Duration> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+
+            if (value == null) {
+                return true;
+            }
+
+            return value.truncatedTo(ChronoUnit.SECONDS).equals(value);
         }
     }
 }
