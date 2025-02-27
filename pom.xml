@@ -482,11 +482,7 @@ POSSIBILITY OF SUCH DAMAGE.
                                 <exclude>**/*_.*</exclude>
                             </sourceFileExcludes>
                             <links>
-                                <link>https://javadoc.io/doc/jakarta.persistence/jakarta.persistence-api/3.1.0</link>
-                                <link>https://javadoc.io/doc/jakarta.enterprise/jakarta.enterprise.cdi-api/4.0.1</link>
-                                <link>https://javadoc.io/doc/jakarta.ws.rs/jakarta.ws.rs-api/3.1.0</link>
-                                <link>https://javadoc.io/doc/jakarta.validation/jakarta.validation-api/3.0.2</link>
-                                <link>https://javadoc.io/doc/jakarta.transaction/jakarta.transaction-api/2.0.1</link>
+                                <link>https://jakarta.ee/specifications/platform/10/apidocs</link>
                             </links>
                         </configuration>
                         <executions>
@@ -511,65 +507,6 @@ POSSIBILITY OF SUCH DAMAGE.
 
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <compilerArgs>
-                                <arg>-Xlint:all,-processing</arg>
-                            </compilerArgs>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <configuration>
-                            <propertyName>jacocoArgLine</propertyName>
-                            <excludes>
-                                 Exclude the automatically generated codes. 
-                                <exclude>**/*_.*</exclude>
-                            </excludes>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <sourceFileExcludes>
-                                 Exclude the automatically generated codes. 
-                                <exclude>**/*_.*</exclude>
-                            </sourceFileExcludes>
-                            <links>
-                                <link>https://javadoc.io/doc/jakarta.persistence/jakarta.persistence-api/3.1.0</link>
-                                <link>https://javadoc.io/doc/jakarta.enterprise/jakarta.enterprise.cdi-api/4.0.1</link>
-                                <link>https://javadoc.io/doc/jakarta.ws.rs/jakarta.ws.rs-api/3.1.0</link>
-                                <link>https://javadoc.io/doc/jakarta.validation/jakarta.validation-api/3.0.2</link>
-                                <link>https://javadoc.io/doc/jakarta.transaction/jakarta.transaction-api/2.0.1</link>
-                            </links>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>javadoc</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>io.swagger.core.v3</groupId>
                         <artifactId>swagger-maven-plugin-jakarta</artifactId>
