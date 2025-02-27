@@ -25,13 +25,13 @@
  */
 package jp.mydns.projectk.safi;
 
-//import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-//import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-//import io.swagger.v3.oas.annotations.info.Contact;
-//import io.swagger.v3.oas.annotations.info.Info;
-//import io.swagger.v3.oas.annotations.info.License;
-//import io.swagger.v3.oas.annotations.security.SecurityScheme;
-//import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 

@@ -45,7 +45,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <!-- Library versions -->
         <!-- Jakarta EE library versions must match GlassFish 7.0.21 -->
         <version.jakartaee>10.0.0</version.jakartaee>
-        <!--<version.swagger>2.2.20</version.swagger>-->
+        <version.swagger>2.2.28</version.swagger>
         <!--<version.swagger-ui>5.4.2</version.swagger-ui>-->
         <!--<version.microprofile-config>3.1</version.microprofile-config>-->
         <!--<version.smallrye-config>3.5.0</version.smallrye-config>-->
@@ -148,12 +148,15 @@ POSSIBILITY OF SUCH DAMAGE.
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${versin.slf4j}</version>
         </dependency>
-        <!--        <dependency>
+        
+        <!-- License: APL-2.0 -->
+        <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
             <version>${version.swagger}</version>
             <scope>provided</scope>
-        </dependency>-->
+        </dependency>
+        
         <!--        <dependency>
             <groupId>org.eclipse.microprofile.config</groupId>
             <artifactId>microprofile-config-api</artifactId>
@@ -195,6 +198,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
+        
         <!--        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
@@ -242,6 +246,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <version>${version.yasson}</version>
             <scope>test</scope>
         </dependency>
+        
         <!--        <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-junit5</artifactId>
