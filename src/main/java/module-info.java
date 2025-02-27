@@ -32,4 +32,14 @@ module jp.mydns.projectk.safi {
     requires java.base;
     requires org.eclipse.persistence.asm;
     requires org.eclipse.persistence.jpa.modelgen;
+    
+    exports jp.mydns.projectk.safi.constant;
+    exports jp.mydns.projectk.safi.entity;
+    exports jp.mydns.projectk.safi.entity.convertor;
+    exports jp.mydns.projectk.safi.producer;
+    exports jp.mydns.projectk.safi.resource;
+    exports jp.mydns.projectk.safi.service;
+    exports jp.mydns.projectk.safi.util;
+    exports jp.mydns.projectk.safi.validator;
+    exports jp.mydns.projectk.safi.value;
 }

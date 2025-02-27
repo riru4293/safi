@@ -33,7 +33,7 @@ import java.io.StringReader;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
- * JPA attribute convertor for the {@code JsonObjectValue}.This convertor is applied automatically.
+ * JPA attribute convertor for the {@code JsonObjectValue}. This convertor is applied automatically.
  *
  * @author riru
  * @version 3.0.0
