@@ -72,6 +72,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.maven-compiler>3.14.0</version.maven-compiler>
         <version.maven-war>3.4.0</version.maven-war>
         <version.maven-install>3.1.3</version.maven-install>
+        <version.maven-javadoc>3.11.2</version.maven-javadoc>
     </properties>
 
     <licenses>
@@ -319,7 +320,7 @@ POSSIBILITY OF SUCH DAMAGE.
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.11.2</version>
+                    <version>${version.maven-javadoc}</version>
                 </plugin>
                 
                 <!-- License: APL-2.0 -->
@@ -468,6 +469,37 @@ POSSIBILITY OF SUCH DAMAGE.
                                 <goals>
                                     <goal>report</goal>
                                 </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <configuration>
+                            <sourceFileExcludes>
+                                Exclude the automatically generated codes. 
+                                <exclude>**/*_.*</exclude>
+                            </sourceFileExcludes>
+                            <links>
+                                <link>https://javadoc.io/doc/jakarta.persistence/jakarta.persistence-api/3.1.0</link>
+                                <link>https://javadoc.io/doc/jakarta.enterprise/jakarta.enterprise.cdi-api/4.0.1</link>
+                                <link>https://javadoc.io/doc/jakarta.ws.rs/jakarta.ws.rs-api/3.1.0</link>
+                                <link>https://javadoc.io/doc/jakarta.validation/jakarta.validation-api/3.0.2</link>
+                                <link>https://javadoc.io/doc/jakarta.transaction/jakarta.transaction-api/2.0.1</link>
+                            </links>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>javadoc</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalOptions>
+                                        <additionalOption>-Xdoclint:all,-missing</additionalOption>
+                                    </additionalOptions>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
