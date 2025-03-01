@@ -28,18 +28,16 @@ package jp.mydns.projectk.safi.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Objects;
-import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.validator.TimeAccuracy;
-import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
@@ -64,16 +62,8 @@ public class UserEntity extends CommonEntity {
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
 
-    @Basic(optional = false)
-    @Column(name = "from_ts", nullable = false)
-    private LocalDateTime localFrom;
-
-    @Basic(optional = false)
-    @Column(name = "to_ts", nullable = false)
-    private LocalDateTime localTo;
-
-    @Column(name = "ignored", nullable = false)
-    private boolean ignored;
+    @Embedded
+    private ValidityPeriodEmb validityPeriod;
 
     @Column(name = "name", length = 250)
     private String name;
@@ -129,89 +119,25 @@ public class UserEntity extends CommonEntity {
     }
 
     /**
-     * Get begin date-time of enabled period.
+     * Get the {@code ValidityPeriodEmb}.
      *
-     * @return begin date-time of enabled period
-     * @since 3.0.0
-     */
-    public OffsetDateTime getFrom() {
-        return TimeUtils.toOffsetDateTime(localFrom);
-    }
-
-    /**
-     * Get begin date-time of enabled period.
-     *
-     * @return begin date-time of enabled period
+     * @return the {@code ValidityPeriodEmb}
      * @since 3.0.0
      */
     @NotNull
-    @TimeRange
-    @TimeAccuracy
-    public LocalDateTime getLocalFrom() {
-        return localFrom;
+    @Valid
+    public ValidityPeriodEmb getValidityPeriod() {
+        return validityPeriod;
     }
 
     /**
-     * Set begin date-time of enabled period.
+     * Set the {@code ValidityPeriodEmb}.
      *
-     * @param from begin date-time of enabled period
+     * @param validityPeriod the {@code ValidityPeriodEmb}
      * @since 3.0.0
      */
-    public void setLocalFrom(LocalDateTime from) {
-        this.localFrom = from;
-    }
-
-    /**
-     * Get end date-time of enabled period.
-     *
-     * @return end date-time of enabled period
-     * @since 3.0.0
-     */
-    public OffsetDateTime getTo() {
-        return TimeUtils.toOffsetDateTime(localTo);
-    }
-
-    /**
-     * Get end date-time of enabled period.
-     *
-     * @return end date-time of enabled period
-     * @since 3.0.0
-     */
-    @NotNull
-    @TimeRange
-    @TimeAccuracy
-    public LocalDateTime getLocalTo() {
-        return localTo;
-    }
-
-    /**
-     * Set end date-time of enabled period.
-     *
-     * @param to end date-time of enabled period
-     * @since 3.0.0
-     */
-    public void setLocalTo(LocalDateTime to) {
-        this.localTo = to;
-    }
-
-    /**
-     * Get a flag of ignored.
-     *
-     * @return {@code true} if ignored, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    public boolean isIgnored() {
-        return ignored;
-    }
-
-    /**
-     * Set a flag of ignored.
-     *
-     * @param ignored {@code true} if ignored, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    public void setIgnored(boolean ignored) {
-        this.ignored = ignored;
+    public void setValidityPeriod(ValidityPeriodEmb validityPeriod) {
+        this.validityPeriod = validityPeriod;
     }
 
     /**
@@ -310,7 +236,7 @@ public class UserEntity extends CommonEntity {
      */
     @Override
     public String toString() {
-        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", from=" + localFrom + ", to=" + localTo
-            + ", ignored=" + ignored + ", name=" + name + ", properies=" + properties + ", digest=" + digest + '}';
+        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", validityPeriod=" + validityPeriod
+            + ", name=" + name + ", properies=" + properties + ", digest=" + digest + '}';
     }
 }
