@@ -26,10 +26,12 @@
 package jp.mydns.projectk.safi.entity.convertor;
 
 import jakarta.json.Json;
+import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
 import jakarta.json.stream.JsonParsingException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.io.StringReader;
+import java.util.Optional;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
@@ -45,29 +47,29 @@ public final class JsonObjectConvertor implements AttributeConverter<JsonObjectV
     /**
      * Convert to database column type.
      *
-     * @param javaVal the {@code JsonObjectValue}. It can be set {@code null}.
-     * @return {@code javaVal} that converted to string representation of {@code JsonObjectValue}. {@code null} if
+     * @param javaVal the {@code JsonObjectValue}
+     * @return {@code javaVal} that converted to string representation of {@code JsonObjectValue}. Returns {@code {}} if
      * {@code javaVal} is {@code null}.
      * @since 3.0.0
      */
     @Override
     public String convertToDatabaseColumn(JsonObjectValue javaVal) {
-        return javaVal != null ? javaVal.toString() : null;
+        return Optional.ofNullable(javaVal).map(JsonObjectValue::toString).orElseGet(EMPTY_JSON_OBJECT::toString);
     }
 
     /**
      * Convert to entity attribute type.
      *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonObjectValue}. It
-     * can be set {@code null}.
-     * @return {@code dbVal} as {@code JsonObjectValue}. {@code null} if {@code dbVal} is {@code null}.
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonObjectValue}.
+     * @return {@code dbVal} as {@code JsonObjectValue}. Returns {@code EMPTY_JSON_OBJECT} if {@code dbVal} is
+     * {@code null}.
      * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonObjectValue}
      * @since 3.0.0
      */
     @Override
     public JsonObjectValue convertToEntityAttribute(String dbVal) {
         if (dbVal == null) {
-            return null;
+            return new JsonObjectValue(EMPTY_JSON_OBJECT);
         }
 
         try (var r = Json.createReader(new StringReader(dbVal))) {

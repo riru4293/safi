@@ -109,10 +109,12 @@ public class JobEntity extends CommonEntity {
     @Column(name = "schedef_id", updatable = false, length = 36)
     private String schedefId;
 
-    @Column(name = "schedef", updatable = false)
+    @Basic(optional = false)
+    @Column(name = "schedef", nullable = false, updatable = false)
     private JsonObjectValue schedef;
 
-    @Column(name = "results", insertable = false)
+    @Basic(optional = false)
+    @Column(name = "results", nullable = false, insertable = false)
     private JsonArrayValue resultMessages;
 
     /**
@@ -378,9 +380,10 @@ public class JobEntity extends CommonEntity {
     /**
      * Get schedule definition.
      *
-     * @return source schedule definitions. It may be {@code null}.
+     * @return source schedule definitions
      * @since 3.0.0
      */
+    @NotNull
     public JsonObjectValue getSchedef() {
         return schedef;
     }
@@ -388,7 +391,7 @@ public class JobEntity extends CommonEntity {
     /**
      * Set schedule definition.
      *
-     * @param schedef source schedule definition. Cannot update persisted value. It can be set {@code null}.
+     * @param schedef source schedule definition. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setSchedef(JsonObjectValue schedef) {
@@ -398,9 +401,10 @@ public class JobEntity extends CommonEntity {
     /**
      * Get result messages.
      *
-     * @return result messages. It may be {@code null}.
+     * @return result messages
      * @since 3.0.0
      */
+    @NotNull
     public JsonArrayValue getResultMessages() {
         return resultMessages;
     }

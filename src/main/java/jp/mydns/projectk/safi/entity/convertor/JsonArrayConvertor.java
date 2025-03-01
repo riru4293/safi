@@ -26,10 +26,12 @@
 package jp.mydns.projectk.safi.entity.convertor;
 
 import jakarta.json.Json;
+import static jakarta.json.JsonValue.EMPTY_JSON_ARRAY;
 import jakarta.json.stream.JsonParsingException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.io.StringReader;
+import java.util.Optional;
 import jp.mydns.projectk.safi.value.JsonArrayValue;
 
 /**
@@ -45,29 +47,29 @@ public final class JsonArrayConvertor implements AttributeConverter<JsonArrayVal
     /**
      * Convert to database column type.
      *
-     * @param javaVal the {@code JsonArrayValue}. It can be set {@code null}.
-     * @return {@code javaVal} that converted to string representation of {@code JsonArrayValue}. {@code null} if
+     * @param javaVal the {@code JsonArrayValue}
+     * @return {@code javaVal} that converted to string representation of {@code JsonArrayValue}. Returns {@code []} if
      * {@code javaVal} is {@code null}.
      * @since 3.0.0
      */
     @Override
     public String convertToDatabaseColumn(JsonArrayValue javaVal) {
-        return javaVal != null ? javaVal.toString() : null;
+        return Optional.ofNullable(javaVal).map(JsonArrayValue::toString).orElseGet(EMPTY_JSON_ARRAY::toString);
     }
 
     /**
      * Convert to entity attribute type.
      *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonArrayValue}. It
-     * can be set {@code null}.
-     * @return {@code dbVal} as {@code JsonArrayValue}. {@code null} if {@code dbVal} is {@code null}.
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonArrayValue}.
+     * @return {@code dbVal} as {@code JsonArrayValue}. Returns {@code EMPTY_JSON_ARRAY} if {@code dbVal} is
+     * {@code null}.
      * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonArrayValue}
      * @since 3.0.0
      */
     @Override
     public JsonArrayValue convertToEntityAttribute(String dbVal) {
         if (dbVal == null) {
-            return null;
+            return new JsonArrayValue(EMPTY_JSON_ARRAY);
         }
 
         try (var r = Json.createReader(new StringReader(dbVal))) {

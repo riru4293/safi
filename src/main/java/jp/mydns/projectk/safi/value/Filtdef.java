@@ -35,7 +35,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Type;
-import static java.util.Collections.unmodifiableMap;
 import java.util.Map;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
@@ -75,7 +74,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *             "$ref": "https://project-k.mydns.jp/safi/condition.schema.json"
  *         },
  *         "required": [
- *             "condition"
+ *             "trnsdef", "condition"
  *         ]
  *     }
  * }
@@ -92,10 +91,11 @@ public interface Filtdef {
     /**
      * Get the transform definition for filtering.
      *
-     * @return transform definition for filtering. It may be {@code null}.
+     * @return transform definition for filtering
      * @since 3.0.0
      */
     @Schema(description = "Transform definition for filtering.")
+    @NotNull
     Map<String, String> getTrnsdef();
 
     /**
@@ -104,9 +104,9 @@ public interface Filtdef {
      * @return filtering condition
      * @since 3.0.0
      */
+    @Schema(description = "Filtering condition.")
     @NotNull
     @Valid
-    @Schema(description = "Filtering condition.")
     Condition getCondition();
 
     /**
@@ -124,7 +124,7 @@ public interface Filtdef {
         /**
          * Set transform definition for filtering.
          *
-         * @param trnsdef transform definition for filtering. It can be set {@code null}.
+         * @param trnsdef transform definition for filtering
          * @return updated this
          * @since 3.0.0
          */
@@ -197,13 +197,13 @@ public interface Filtdef {
              */
             @Override
             public Map<String, String> getTrnsdef() {
-                return trnsdef != null ? unmodifiableMap(trnsdef) : null;
+                return trnsdef;
             }
 
             /**
              * Set transform definition for filtering.
              *
-             * @param trnsdef transform definition for filtering. It can be set {@code null}.
+             * @param trnsdef transform definition for filtering
              * @since 3.0.0
              */
             public void setTrnsdef(Map<String, String> trnsdef) {

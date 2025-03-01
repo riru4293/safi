@@ -41,8 +41,8 @@ CREATE TABLE           `t_job` (
   , `jobdef_id`           VARCHAR(     36) NOT NULL                                    COMMENT 'Source job definition id'
   , `jobdef`                 JSON          NOT NULL                                    COMMENT 'Source job definition'
   , `schedef_id`          VARCHAR(     36)                                             COMMENT 'Source schedule definition id.'
-  , `schedef`                JSON                                                      COMMENT 'Source schedule definition'
-  , `results`            LONGTEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Result messages array. Expects the format: ["msg1", "msg2"].'
+  , `schedef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Source schedule definition'
+  , `results`                JSON          NOT NULL DEFAULT '[]'                       COMMENT 'Result messages array. Expects the format: ["msg1", "msg2"].'
 -- ---------------------+--------+--------+--------+-----------------------------------
   , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
   , `version`                 INT          NOT NULL DEFAULT 1                          COMMENT 'JPA entity version. Used for mutual exclusion control. Starts at 1 and increments with each update.'
@@ -52,8 +52,6 @@ CREATE TABLE           `t_job` (
   , `upd_ts`             DATETIME                                                      COMMENT 'Updated time'
   , `upd_id`              VARCHAR(    250)                                             COMMENT 'The ID of the account that updated.'
   , `upd_ap`              VARCHAR(    250)                                             COMMENT 'The name of the application that updated.'
--- ---------------------+--------+--------+--------+-----------------------------------
-  , CHECK (JSON_VALID(`results`))
 -- ---------------------+--------+--------+--------+-----------------------------------
   , PRIMARY KEY (`id`)
   , KEY t_job_key01 (`stat`)                                                           COMMENT 'For exclusive control of jobs and rescheduling jobs.'
@@ -73,9 +71,9 @@ CREATE TABLE           `m_jobdef` (
   , `job_target`          VARCHAR(     20) NOT NULL                                    COMMENT 'Target content type of job. Values are USER, ASSET, BELONG_ORG, ORG1, ORG2, BELONG_GRP, GRP, PER_USER, PER_ASSET.'
   , `timeout`             VARCHAR(     20) NOT NULL                                    COMMENT 'Job processing timeout.'
   , `name`                VARCHAR(    250)          COLLATE utf8mb4_unicode_ci         COMMENT 'Job definition name'
-  , `plugin`              VARCHAR(     50)                                             COMMENT 'Plugin name'
-  , `trnsdef`                JSON                                                      COMMENT 'Content transform definition'
-  , `filtdef`                JSON                                                      COMMENT 'Content filtering definition'
+  , `plugin`              VARCHAR(     50)          COLLATE utf8mb4_unicode_ci         COMMENT 'Plugin name'
+  , `trnsdef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Content transform definition'
+  , `filtdef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Content filtering definition'
   , `job_props`              JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Option values for job processing.'
 -- ---------------------+--------+--------+--------+-----------------------------------
   , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
