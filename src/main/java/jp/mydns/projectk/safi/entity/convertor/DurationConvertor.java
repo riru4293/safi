@@ -25,53 +25,45 @@
  */
 package jp.mydns.projectk.safi.entity.convertor;
 
-import jakarta.json.Json;
-import jakarta.json.stream.JsonParsingException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import java.io.StringReader;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
+import java.time.Duration;
+import java.time.format.DateTimeParseException;
 
 /**
- * JPA attribute convertor for the {@code JsonObjectValue}. This convertor is applied automatically.
+ * JPA attribute convertor for the {@code Duration}. This convertor is applied automatically.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
 @Converter(autoApply = true)
-public final class JsonObjectConvertor implements AttributeConverter<JsonObjectValue, String> {
+public final class DurationConvertor implements AttributeConverter<Duration, String> {
 
     /**
      * Convert to database column type.
      *
-     * @param javaVal the {@code JsonObjectValue}. It can be set {@code null}.
-     * @return {@code javaVal} that converted to string representation of {@code JsonObjectValue}. {@code null} if
+     * @param javaVal the {@code Duration}. It can be set {@code null}.
+     * @return {@code javaVal} that converted to string representation of {@code Duration}. {@code null} if
      * {@code javaVal} is {@code null}.
      * @since 3.0.0
      */
     @Override
-    public String convertToDatabaseColumn(JsonObjectValue javaVal) {
+    public String convertToDatabaseColumn(Duration javaVal) {
         return javaVal != null ? javaVal.toString() : null;
     }
 
     /**
      * Convert to entity attribute type.
      *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonObjectValue}. It
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code Duration}. It
      * can be set {@code null}.
-     * @return {@code dbVal} as {@code JsonObjectValue}. {@code null} if {@code dbVal} is {@code null}.
-     * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonObjectValue}
+     * @return {@code dbVal} as {@code Duration}. {@code null} if {@code dbVal} is {@code null}.
+     * @throws DateTimeParseException if {@code dbVal} is malformed as {@code Duration}
      * @since 3.0.0
      */
     @Override
-    public JsonObjectValue convertToEntityAttribute(String dbVal) {
-        if (dbVal == null) {
-            return null;
-        }
-
-        try (var r = Json.createReader(new StringReader(dbVal))) {
-            return new JsonObjectValue(r.readObject());
-        }
+    public Duration convertToEntityAttribute(String dbVal) {
+        return dbVal != null ? Duration.parse(dbVal) : null;
     }
 }

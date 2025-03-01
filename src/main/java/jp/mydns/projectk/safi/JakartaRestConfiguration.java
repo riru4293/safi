@@ -25,13 +25,13 @@
  */
 package jp.mydns.projectk.safi;
 
-//import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-//import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-//import io.swagger.v3.oas.annotations.info.Contact;
-//import io.swagger.v3.oas.annotations.info.Info;
-//import io.swagger.v3.oas.annotations.info.License;
-//import io.swagger.v3.oas.annotations.security.SecurityScheme;
-//import io.swagger.v3.oas.annotations.servers.Server;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import io.swagger.v3.oas.annotations.servers.Server;
 import jakarta.ws.rs.ApplicationPath;
 import jakarta.ws.rs.core.Application;
 
@@ -40,19 +40,18 @@ import jakarta.ws.rs.core.Application;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 @ApplicationPath("api")
-//@OpenAPIDefinition(info = @Info(title = "SAFI", version = "1.0.0", description = "SAFI API",
-//        license = @License(name = "BSD", url = "https://opensource.org/licenses/BSD-2-Clause"),
-//        contact = @Contact(url = "https://project-k.mydns.jp", name = "riru", email = "riru4293@gmail.com")),
-//        servers = {
-//            @Server(url = "https://project-k.mydns.jp/safi/api"),
-//            @Server(url = "https://localhost/safi/api"),
-//            @Server(url = "http://localhost:8080/safi/api")
-//        })
-//@SecurityScheme(type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT",
-//        name = "Token issued by SAFI")
+@OpenAPIDefinition(info = @Info(title = "SAFI", version = "3.0.0", description = "SAFI API",
+    license = @License(name = "BSD", url = "https://opensource.org/licenses/BSD-2-Clause"),
+    contact = @Contact(url = "https://project-k.mydns.jp", name = "riru", email = "riru4293@gmail.com")),
+    servers = {
+        @Server(url = "https://project-k.mydns.jp/safi/api"),
+        @Server(url = "https://localhost/safi/api"),
+        @Server(url = "http://localhost:8080/safi/api")
+    })
+@SecurityScheme(type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", name = "Token issued by SAFI")
 public class JakartaRestConfiguration extends Application {
 
 }

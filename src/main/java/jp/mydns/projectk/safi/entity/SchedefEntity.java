@@ -38,7 +38,7 @@ import java.util.Objects;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
- * JPA entity for the <i>t_user</i> table.
+ * JPA entity for the <i>m_schedef</i> table.
  *
  * @author riru
  * @version 3.0.0
@@ -46,31 +46,28 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
  */
 @Entity
 @Cacheable(false)
-@Table(name = "t_user")
-public class UserEntity extends NamedEntity {
+@Table(name = "m_schedef")
+public class SchedefEntity extends NamedEntity {
 
-    private static final long serialVersionUID = 2711050439353117979L;
+    private static final long serialVersionUID = 6291085973948685738L;
 
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
 
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
+    @Basic(optional = false)
+    @Column(name = "priority", nullable = false, length = 1)
+    private String priority;
 
     @Basic(optional = false)
-    @Column(name = "props")
-    private JsonObjectValue properties;
-
-    @Basic(optional = false)
-    @Column(name = "digest", nullable = false, length = 128)
-    private String digest;
+    @Column(name = "val", nullable = false)
+    private JsonObjectValue value;
 
     /**
-     * Get user id.
+     * Get job schedule definition id.
      *
-     * @return user id
+     * @return job schedule definition id
      * @since 3.0.0
      */
     @NotBlank
@@ -80,9 +77,9 @@ public class UserEntity extends NamedEntity {
     }
 
     /**
-     * Set user id.
+     * Set job schedule definition id.
      *
-     * @param id user id. Cannot update persisted value.
+     * @param id job schedule definition id. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setId(String id) {
@@ -90,66 +87,47 @@ public class UserEntity extends NamedEntity {
     }
 
     /**
-     * Get the enabled state.
+     * Get schedule definition priority.
      *
-     * @return {@code true} if enabled, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * Set the enabled state.
-     *
-     * @param enabled {@code true} if enabled, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    /**
-     * Get user properties.
-     *
-     * @return user properties
-     * @since 3.0.0
-     */
-    @NotNull
-    public JsonObjectValue getProperties() {
-        return properties;
-    }
-
-    /**
-     * Set user properties.
-     *
-     * @param properties user properties
-     * @since 3.0.0
-     */
-    public void setProperties(JsonObjectValue properties) {
-        this.properties = properties;
-    }
-
-    /**
-     * Get digest value of this entity.
-     *
-     * @return digest value
+     * @return schedule definition priority. In case of a conflict with another schedule definition, the one with the
+     * higher priority will be used. The higher the value, the higher the priority.
      * @since 3.0.0
      */
     @NotBlank
-    @Size(max = 128)
-    public String getDigest() {
-        return digest;
+    @Size(max = 1)
+    public String getPriority() {
+        return priority;
     }
 
     /**
-     * Set digest value of this entity.
+     * Set schedule definition priority.
      *
-     * @param digest digest value
+     * @param priority schedule definition priority
      * @since 3.0.0
      */
-    public void setDigest(String digest) {
-        this.digest = digest;
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    /**
+     * Get job schedule definition value.
+     *
+     * @return job schedule definition value
+     * @since 3.0.0
+     */
+    @NotNull
+    public JsonObjectValue getValue() {
+        return value;
+    }
+
+    /**
+     * Set job schedule definition value.
+     *
+     * @param value job schedule definition value
+     * @since 3.0.0
+     */
+    public void setJobProps(JsonObjectValue value) {
+        this.value = value;
     }
 
     /**
@@ -173,7 +151,7 @@ public class UserEntity extends NamedEntity {
      */
     @Override
     public boolean equals(Object other) {
-        return other instanceof UserEntity o && Objects.equals(id, o.id);
+        return other instanceof SchedefEntity o && Objects.equals(id, o.id);
     }
 
     /**
@@ -184,7 +162,7 @@ public class UserEntity extends NamedEntity {
      */
     @Override
     public String toString() {
-        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", validityPeriod=" + validityPeriod
-            + ", name=" + name + ", properies=" + properties + ", digest=" + digest + '}';
+        return "SchedefEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", priority=" + priority
+            + ", name=" + name + ", value=" + value + '}';
     }
 }

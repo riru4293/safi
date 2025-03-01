@@ -23,59 +23,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util;
+package jp.mydns.projectk.safi.producer;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 
 /**
- * Utilities for date and time.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
+ * Producer of {@link Jsonb}. Instances are created only once, reducing construction costs.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class TimeUtils {
+@Dependent
+public class JsonbProducer {
 
-    private TimeUtils() {
+    /**
+     * Produce the {@code Jsonb}.
+     *
+     * @return the {@code Jsonb}
+     * @since 3.0.0
+     */
+    @Produces
+    @ApplicationScoped
+    public Jsonb produce() {
+        return JsonbBuilder.create();
     }
 
     /**
-     * Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
+     * Close the produced {@code Jsonb} if disposed.
      *
-     * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
-     * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
+     * @param jsonb the produced {@code Jsonb}
      * @since 3.0.0
      */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
-
-        if (localDateTime == null) {
-            return null;
+    public void close(@Disposes Jsonb jsonb) {
+        try {
+            jsonb.close();
+        } catch (Exception ex) {
+            // Do nothing. Because not expected to occur the exception.
         }
-
-        return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
-    }
-
-    /**
-     * Parse to the {@code LocalDateTime}.
-     *
-     * @param localDateTime string representation of the {@code LocalDateTime}
-     * @return the {@code LocalDateTime}
-     * @throws NullPointerException if {@code localDateTime} is {@code null}
-     * @throws DateTimeParseException if failed parse to the {@code LocalDateTime}
-     * @since 3.0.0
-     */
-    public static LocalDateTime toLocalDateTime(String localDateTime) {
-        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
     }
 }

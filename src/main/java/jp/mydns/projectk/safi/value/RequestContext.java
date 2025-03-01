@@ -23,59 +23,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util;
-
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
+package jp.mydns.projectk.safi.value;
 
 /**
- * Utilities for date and time.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
+ * Current request information. A <i>Request</i> is a processing request, and there are processing requests via Web API
+ * and background processing requests by the system.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class TimeUtils {
-
-    private TimeUtils() {
-    }
+public interface RequestContext {
 
     /**
-     * Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
+     * Get account id.
      *
-     * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
-     * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
+     * @return logged account id
      * @since 3.0.0
      */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
-
-        if (localDateTime == null) {
-            return null;
-        }
-
-        return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
-    }
+    String getAccountId();
 
     /**
-     * Parse to the {@code LocalDateTime}.
+     * Get processing name.
      *
-     * @param localDateTime string representation of the {@code LocalDateTime}
-     * @return the {@code LocalDateTime}
-     * @throws NullPointerException if {@code localDateTime} is {@code null}
-     * @throws DateTimeParseException if failed parse to the {@code LocalDateTime}
+     * @return current processing name
      * @since 3.0.0
      */
-    public static LocalDateTime toLocalDateTime(String localDateTime) {
-        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
-    }
+    String getProcessName();
 }

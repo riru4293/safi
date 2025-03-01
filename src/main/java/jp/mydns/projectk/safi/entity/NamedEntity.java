@@ -23,59 +23,72 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util;
+package jp.mydns.projectk.safi.entity;
 
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 
 /**
- * Utilities for date and time.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
+ * Common named values JPA entity. This class has name and validity period.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class TimeUtils {
+@MappedSuperclass
+public abstract class NamedEntity extends CommonEntity {
 
-    private TimeUtils() {
+    @Column(name = "name", length = 250)
+    protected String name;
+
+    @Embedded
+    protected ValidityPeriodEmb validityPeriod;
+
+    /**
+     * Get name of value.
+     *
+     * @return name of value. It may be {@code null}.
+     * @since 3.0.0
+     */
+    @Size(max = 250)
+    public String getName() {
+        return name;
     }
 
     /**
-     * Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
+     * Set name of value.
      *
-     * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
-     * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
+     * @param name name of value. It can be set {@code null}.
      * @since 3.0.0
      */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
-
-        if (localDateTime == null) {
-            return null;
-        }
-
-        return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
-     * Parse to the {@code LocalDateTime}.
+     * Get the {@code ValidityPeriodEmb}.
      *
-     * @param localDateTime string representation of the {@code LocalDateTime}
-     * @return the {@code LocalDateTime}
-     * @throws NullPointerException if {@code localDateTime} is {@code null}
-     * @throws DateTimeParseException if failed parse to the {@code LocalDateTime}
+     * @return the {@code ValidityPeriodEmb}
      * @since 3.0.0
      */
-    public static LocalDateTime toLocalDateTime(String localDateTime) {
-        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
+    @NotNull
+    @Valid
+    public ValidityPeriodEmb getValidityPeriod() {
+        return validityPeriod;
+    }
+
+    /**
+     * Set the {@code ValidityPeriodEmb}.
+     *
+     * @param validityPeriod the {@code ValidityPeriodEmb}
+     * @since 3.0.0
+     */
+    public void setValidityPeriod(ValidityPeriodEmb validityPeriod) {
+        this.validityPeriod = validityPeriod;
     }
 }

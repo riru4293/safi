@@ -23,59 +23,62 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util;
+package jp.mydns.projectk.safi.service;
 
+import jakarta.enterprise.context.RequestScoped;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
+import java.time.temporal.ChronoUnit;
 
 /**
- * Utilities for date and time.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
+ * Provides a real date-time.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class TimeUtils {
+@RequestScoped
+public class RealTimeService {
 
-    private TimeUtils() {
+    /**
+     * Get current time. Accuracy is seconds.
+     *
+     * @return current time, in that case timezone is UTC.
+     * @since 3.0.0
+     */
+    public OffsetDateTime getOffsetNow() {
+        return getExactlyOffsetNow().truncatedTo(ChronoUnit.SECONDS);
     }
 
     /**
-     * Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
+     * Get current time. Accuracy is seconds.
      *
-     * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
-     * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
+     * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
-
-        if (localDateTime == null) {
-            return null;
-        }
-
-        return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
+    public LocalDateTime getLocalNow() {
+        return getOffsetNow().toLocalDateTime();
     }
 
     /**
-     * Parse to the {@code LocalDateTime}.
+     * Get exactly current time. Can only be used when {@link #getOffsetNow()} has insufficient precision.
      *
-     * @param localDateTime string representation of the {@code LocalDateTime}
-     * @return the {@code LocalDateTime}
-     * @throws NullPointerException if {@code localDateTime} is {@code null}
-     * @throws DateTimeParseException if failed parse to the {@code LocalDateTime}
+     * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public static LocalDateTime toLocalDateTime(String localDateTime) {
-        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
+    public OffsetDateTime getExactlyOffsetNow() {
+        return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized());
+    }
+
+    /**
+     * Get exactly current time. Can only be used when {@link #getLocalNow()} has insufficient precision.
+     *
+     * @return current time, in that case timezone is UTC.
+     * @since 3.0.0
+     */
+    public LocalDateTime getExactlyLocalNow() {
+        return getExactlyOffsetNow().toLocalDateTime();
     }
 }

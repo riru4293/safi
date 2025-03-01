@@ -31,6 +31,36 @@ entity "t_asset" as t_asset {
 
 t_user ||--o{ t_asset : "id = user_id"
 
+entity "m_jobdef" as m_jobdef {
+    * id
+    --
+      from_ts
+      to_ts
+      ignored
+      job_kind
+      job_target
+      timeout
+      name
+      plugin
+      trnsdef
+      filtdef
+      job_props
+}
+
+entity "m_schedef" as m_schedef {
+    * id
+    --
+      jobdef_id
+      from_ts
+      to_ts
+      ignored
+      priority
+      name
+      val
+}
+
+m_jobdef ||--o{ m_schedef : "id = jobdef_id"
+
 entity "t_job" as t_job {
     * id
     --
@@ -43,9 +73,13 @@ entity "t_job" as t_job {
       end_ts
       props
       jobdef_id
+      jobdef
       schedef_id
-      srcdefs
+      schedef
       results
 }
+
+m_jobdef ||--o{ t_job : "id = jobdef_id"
+m_schedef ||--o{ t_job : "id = schedef_id"
 
 @enduml

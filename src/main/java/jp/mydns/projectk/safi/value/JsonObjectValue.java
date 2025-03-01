@@ -51,7 +51,7 @@ import java.util.Set;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 public class JsonObjectValue extends AbstractMap<String, JsonValue> implements JsonObject, Serializable {
 
@@ -64,7 +64,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
      *
      * @param value an any JSON object
      * @throws NullPointerException if {@code value} is {@code null}
-     * @since 1.0.0
+     * @since 3.0.0
      */
     public JsonObjectValue(JsonObject value) {
         this.value = Objects.requireNonNull(value);
@@ -73,7 +73,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public Set<Entry<String, JsonValue>> entrySet() {
@@ -83,7 +83,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonArray getJsonArray(String name) {
@@ -93,7 +93,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonObject getJsonObject(String name) {
@@ -103,7 +103,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonNumber getJsonNumber(String name) {
@@ -113,7 +113,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public JsonString getJsonString(String name) {
@@ -123,7 +123,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public String getString(String name) {
@@ -133,7 +133,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public String getString(String name, String defaultValue) {
@@ -143,7 +143,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public int getInt(String name) {
@@ -153,7 +153,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public int getInt(String name, int defaultValue) {
@@ -163,7 +163,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public boolean getBoolean(String name) {
@@ -173,7 +173,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public boolean getBoolean(String name, boolean defaultValue) {
@@ -183,7 +183,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public boolean isNull(String name) {
@@ -193,7 +193,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
     /**
      * {@inheritDoc}
      *
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public ValueType getValueType() {
@@ -204,7 +204,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
      * Returns a hash code value.
      *
      * @return a hash code value
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public int hashCode() {
@@ -227,7 +227,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
      * Returns a string representation.
      *
      * @return a string representation
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Override
     public String toString() {
@@ -239,7 +239,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
      *
      * @param stream the {@code ObjectOutputStream}
      * @throws IOException if occurs I/O error
-     * @since 1.0.0
+     * @since 3.0.0
      */
     private void writeObject(ObjectOutputStream stream) throws IOException {
         stream.defaultWriteObject();
@@ -252,7 +252,7 @@ public class JsonObjectValue extends AbstractMap<String, JsonValue> implements J
      * @param stream the {@code ObjectInputStream}
      * @throws IOException if occurs I/O error
      * @throws ClassNotFoundException if the class of a serialized object could not be found
-     * @since 1.0.0
+     * @since 3.0.0
      */
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();

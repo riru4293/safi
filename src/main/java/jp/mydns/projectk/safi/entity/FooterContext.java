@@ -23,59 +23,40 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util;
+package jp.mydns.projectk.safi.entity;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
 
 /**
- * Utilities for date and time.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
+ * Provides a footer values for {@link CommonEntity}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class TimeUtils {
-
-    private TimeUtils() {
-    }
+public interface FooterContext {
 
     /**
-     * Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
+     * Get real time of UTC time zone. Rounded down to the nearest millisecond.
      *
-     * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
-     * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
+     * @return real time
      * @since 3.0.0
      */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
-
-        if (localDateTime == null) {
-            return null;
-        }
-
-        return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
-    }
+    LocalDateTime getUtcNow();
 
     /**
-     * Parse to the {@code LocalDateTime}.
+     * Get login account id.
      *
-     * @param localDateTime string representation of the {@code LocalDateTime}
-     * @return the {@code LocalDateTime}
-     * @throws NullPointerException if {@code localDateTime} is {@code null}
-     * @throws DateTimeParseException if failed parse to the {@code LocalDateTime}
+     * @return account id
      * @since 3.0.0
      */
-    public static LocalDateTime toLocalDateTime(String localDateTime) {
-        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
-    }
+    String getAccountId();
+
+    /**
+     * Get current process name.
+     *
+     * @return process name
+     * @since 3.0.0
+     */
+    String getProcessName();
 }

@@ -35,7 +35,7 @@ import jakarta.persistence.PersistenceContext;
  *
  * @author riru
  * @version 3.0.0
- * @since 1.0.0
+ * @since 3.0.0
  */
 @RequestScoped
 public class EntityManagerProducer {
@@ -47,7 +47,7 @@ public class EntityManagerProducer {
      * Produces an the {@code EntityManager}.
      *
      * @return the {@code EntityManager}
-     * @since 1.0.0
+     * @since 3.0.0
      */
     @Produces
     @RequestScoped
