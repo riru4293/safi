@@ -43,16 +43,15 @@ import jakarta.ws.rs.core.Application;
  * @since 3.0.0
  */
 @ApplicationPath("api")
-//@OpenAPIDefinition(info = @Info(title = "SAFI", version = "3.0.0", description = "SAFI API",
-//        license = @License(name = "BSD", url = "https://opensource.org/licenses/BSD-2-Clause"),
-//        contact = @Contact(url = "https://project-k.mydns.jp", name = "riru", email = "riru4293@gmail.com")),
-//        servers = {
-//            @Server(url = "https://project-k.mydns.jp/safi/api"),
-//            @Server(url = "https://localhost/safi/api"),
-//            @Server(url = "http://localhost:8080/safi/api")
-//        })
-//@SecurityScheme(type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT",
-//        name = "Token issued by SAFI")
+@OpenAPIDefinition(info = @Info(title = "SAFI", version = "3.0.0", description = "SAFI API",
+    license = @License(name = "BSD", url = "https://opensource.org/licenses/BSD-2-Clause"),
+    contact = @Contact(url = "https://project-k.mydns.jp", name = "riru", email = "riru4293@gmail.com")),
+    servers = {
+        @Server(url = "https://project-k.mydns.jp/safi/api"),
+        @Server(url = "https://localhost/safi/api"),
+        @Server(url = "http://localhost:8080/safi/api")
+    })
+@SecurityScheme(type = SecuritySchemeType.HTTP, scheme = "bearer", bearerFormat = "JWT", name = "Token issued by SAFI")
 public class JakartaRestConfiguration extends Application {
 
 }
