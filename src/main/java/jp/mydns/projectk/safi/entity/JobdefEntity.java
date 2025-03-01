@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.entity;
 
+import jakarta.json.JsonValue;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -32,6 +33,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -46,6 +48,7 @@ import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
+import jp.mydns.projectk.safi.value.ValidityPeriod;
 
 /**
  * JPA entity for the <i>m_jobdef</i> table.
@@ -105,7 +108,7 @@ public class JobdefEntity extends CommonEntity {
 
     @Basic(optional = false)
     @Column(name = "job_props", nullable = false)
-    private JsonObjectValue jobProps;
+    private JsonObjectValue jobProperties;
 
     /**
      * Get job definition id.
@@ -367,18 +370,18 @@ public class JobdefEntity extends CommonEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonObjectValue getJobProps() {
-        return jobProps;
+    public JsonObjectValue getJobProperties() {
+        return jobProperties;
     }
 
     /**
      * Set job properties.
      *
-     * @param jobProps job properties
+     * @param jobProperties job properties
      * @since 3.0.0
      */
-    public void setJobProps(JsonObjectValue jobProps) {
-        this.jobProps = jobProps;
+    public void setJobProperties(JsonObjectValue jobProperties) {
+        this.jobProperties = jobProperties;
     }
 
     /**
@@ -415,7 +418,7 @@ public class JobdefEntity extends CommonEntity {
     public String toString() {
         return "JobdefEntity{" + "id=" + id + ", from=" + localFrom + ", to=" + localTo + ", ignored=" + ignored
             + ", jobKind=" + jobKind + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name
-            + ", pluginName=" + pluginName + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef + ", jobProps=" + jobProps
-            + '}';
+            + ", pluginName=" + pluginName + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef
+            + ", jobProperties=" + jobProperties + '}';
     }
 }

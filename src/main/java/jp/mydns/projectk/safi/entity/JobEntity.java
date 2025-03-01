@@ -98,7 +98,7 @@ public class JobEntity extends CommonEntity {
 
     @Basic(optional = false)
     @Column(name = "props", nullable = false, updatable = false)
-    private JsonObjectValue props;
+    private JsonObjectValue properties;
 
     @Basic(optional = false)
     @Column(name = "jobdef_id", nullable = false, updatable = false, length = 36)
@@ -299,18 +299,18 @@ public class JobEntity extends CommonEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonObjectValue getProps() {
-        return props;
+    public JsonObjectValue getProperties() {
+        return properties;
     }
 
     /**
      * Set job properties.
      *
-     * @param props job properties. Cannot update persisted value.
+     * @param properties job properties. Cannot update persisted value.
      * @since 3.0.0
      */
-    public void setProps(JsonObjectValue props) {
-        this.props = props;
+    public void setProperties(JsonObjectValue properties) {
+        this.properties = properties;
     }
 
     /**
@@ -418,22 +418,6 @@ public class JobEntity extends CommonEntity {
     }
 
     /**
-     * Apply default value when before persist.
-     *
-     * @since 3.0.0
-     */
-    @PrePersist
-    public void applyDefaults() {
-        if(status == null) {
-            status = JobStatus.SCHEDULE;
-        }
-
-        if(props == null) {
-            props = new JsonObjectValue(JsonValue.EMPTY_JSON_OBJECT);
-        }
-    }
-
-    /**
      * Returns a hash code value.
      *
      * @return a hash code value. It is generated from the primary key value.
@@ -467,7 +451,7 @@ public class JobEntity extends CommonEntity {
     public String toString() {
         return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target
             + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
-            + ", endTime=" + endTime + ", props=" + props + ", jobdefId=" + jobdefId + ", jobdef=" + jobdef
+            + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId + ", jobdef=" + jobdef
             + ", schedefId=" + schedefId + ", schedef=" + schedef + ", resultMessages=" + resultMessages + '}';
     }
 }
