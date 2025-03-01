@@ -28,6 +28,10 @@ package jp.mydns.projectk.safi.util;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 /**
  * Utilities for date and time.
@@ -61,5 +65,18 @@ public class TimeUtils {
         }
 
         return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
+    }
+
+    /**
+     * Parse to the {@code LocalDateTime}.
+     *
+     * @param localDateTime string representation of the {@code LocalDateTime}
+     * @return the {@code LocalDateTime}
+     * @throws NullPointerException if {@code localDateTime} is {@code null}
+     * @throws DateTimeParseException if failed parse to the {@code LocalDateTime}
+     * @since 3.0.0
+     */
+    public static LocalDateTime toLocalDateTime(String localDateTime) {
+        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
     }
 }
