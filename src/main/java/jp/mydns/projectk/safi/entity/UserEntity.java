@@ -28,16 +28,13 @@ package jp.mydns.projectk.safi.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Objects;
-import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
@@ -50,7 +47,7 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
 @Entity
 @Cacheable(false)
 @Table(name = "t_user")
-public class UserEntity extends CommonEntity {
+public class UserEntity extends NamedEntity {
 
     private static final long serialVersionUID = 2711050439353117979L;
 
@@ -61,12 +58,6 @@ public class UserEntity extends CommonEntity {
 
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
-
-    @Embedded
-    private ValidityPeriodEmb validityPeriod;
-
-    @Column(name = "name", length = 250)
-    private String name;
 
     @Basic(optional = false)
     @Column(name = "props")
@@ -116,49 +107,6 @@ public class UserEntity extends CommonEntity {
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    /**
-     * Get the {@code ValidityPeriodEmb}.
-     *
-     * @return the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    @NotNull
-    @Valid
-    public ValidityPeriodEmb getValidityPeriod() {
-        return validityPeriod;
-    }
-
-    /**
-     * Set the {@code ValidityPeriodEmb}.
-     *
-     * @param validityPeriod the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    public void setValidityPeriod(ValidityPeriodEmb validityPeriod) {
-        this.validityPeriod = validityPeriod;
-    }
-
-    /**
-     * Get user name.
-     *
-     * @return user name. It may be {@code null}.
-     * @since 3.0.0
-     */
-    @Size(max = 250)
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set user name.
-     *
-     * @param name user name. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**

@@ -28,13 +28,11 @@ package jp.mydns.projectk.safi.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -42,7 +40,6 @@ import java.time.Duration;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobTarget;
-import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
@@ -56,7 +53,7 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
 @Entity
 @Cacheable(false)
 @Table(name = "m_jobdef")
-public class JobdefEntity extends CommonEntity {
+public class JobdefEntity extends NamedEntity {
 
     private static final long serialVersionUID = -8597141002815361653L;
 
@@ -64,9 +61,6 @@ public class JobdefEntity extends CommonEntity {
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
-
-    @Embedded
-    private ValidityPeriodEmb validityPeriod;
 
     @Basic(optional = false)
     @Column(name = "job_kind", nullable = false, updatable = false, length = 20)
@@ -81,9 +75,6 @@ public class JobdefEntity extends CommonEntity {
     @Basic(optional = false)
     @Column(name = "timeout", nullable = false, length = 20)
     private Duration timeout;
-
-    @Column(name = "name", length = 250)
-    private String name;
 
     @Column(name = "plugin", length = 50)
     private String pluginName;
@@ -118,28 +109,6 @@ public class JobdefEntity extends CommonEntity {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Get the {@code ValidityPeriodEmb}.
-     *
-     * @return the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    @NotNull
-    @Valid
-    public ValidityPeriodEmb getValidityPeriod() {
-        return validityPeriod;
-    }
-
-    /**
-     * Set the {@code ValidityPeriodEmb}.
-     *
-     * @param validityPeriod the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    public void setValidityPeriod(ValidityPeriodEmb validityPeriod) {
-        this.validityPeriod = validityPeriod;
     }
 
     /**
@@ -204,27 +173,6 @@ public class JobdefEntity extends CommonEntity {
      */
     public void setTimeout(Duration timeout) {
         this.timeout = timeout;
-    }
-
-    /**
-     * Get job definition name.
-     *
-     * @return job definition name. It may be {@code null}.
-     * @since 3.0.0
-     */
-    @Size(max = 250)
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set job definition name.
-     *
-     * @param name job definition name. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**

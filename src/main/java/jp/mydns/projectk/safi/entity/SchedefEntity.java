@@ -28,16 +28,13 @@ package jp.mydns.projectk.safi.entity;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Objects;
-import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
@@ -50,7 +47,7 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
 @Entity
 @Cacheable(false)
 @Table(name = "m_schedef")
-public class SchedefEntity extends CommonEntity {
+public class SchedefEntity extends NamedEntity {
 
     private static final long serialVersionUID = 6291085973948685738L;
 
@@ -59,15 +56,9 @@ public class SchedefEntity extends CommonEntity {
     @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
 
-    @Embedded
-    private ValidityPeriodEmb validityPeriod;
-
     @Basic(optional = false)
     @Column(name = "priority", nullable = false, length = 1)
     private String priority;
-
-    @Column(name = "name", length = 250)
-    private String name;
 
     @Basic(optional = false)
     @Column(name = "val", nullable = false)
@@ -96,28 +87,6 @@ public class SchedefEntity extends CommonEntity {
     }
 
     /**
-     * Get the {@code ValidityPeriodEmb}.
-     *
-     * @return the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    @NotNull
-    @Valid
-    public ValidityPeriodEmb getValidityPeriod() {
-        return validityPeriod;
-    }
-
-    /**
-     * Set the {@code ValidityPeriodEmb}.
-     *
-     * @param validityPeriod the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    public void setValidityPeriod(ValidityPeriodEmb validityPeriod) {
-        this.validityPeriod = validityPeriod;
-    }
-
-    /**
      * Get schedule definition priority.
      *
      * @return schedule definition priority. In case of a conflict with another schedule definition, the one with the
@@ -138,27 +107,6 @@ public class SchedefEntity extends CommonEntity {
      */
     public void setPriority(String priority) {
         this.priority = priority;
-    }
-
-    /**
-     * Get job schedule definition name.
-     *
-     * @return job schedule definition name. It may be {@code null}.
-     * @since 3.0.0
-     */
-    @Size(max = 250)
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Set job schedule definition name.
-     *
-     * @param name job schedule definition name. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setName(String name) {
-        this.name = name;
     }
 
     /**
