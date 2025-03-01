@@ -390,8 +390,8 @@ public interface Condition {
             }
 
             return tmp.isMulti()
-                    ? new MultiBean(tmp.getOperation(), tmp.getChildren())
-                    : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue());
+                ? new MultiBean(tmp.getOperation(), tmp.getChildren())
+                : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue());
         }
 
         /**
@@ -514,6 +514,9 @@ public interface Condition {
              */
             @Override
             public List<Condition> getChildren() {
+                // Note: Returning {@code null} in the else case is as intended.
+                //       This item is not allowed to be {@code null}.
+                //       {@code null} is detected by the Bean Validation `@NotNull` constraint.
                 return Optional.ofNullable(children).map(Collections::unmodifiableList).orElse(null);
             }
 
@@ -550,7 +553,7 @@ public interface Condition {
         protected static class Bean implements Condition {
 
             private static final Set<String> multiOpNames = Stream.of(FilteringOperation.Multi.values())
-                    .map(Enum::name).collect(toUnmodifiableSet());
+                .map(Enum::name).collect(toUnmodifiableSet());
 
             private FilteringOperation operation;
             private String name;
@@ -648,7 +651,7 @@ public interface Condition {
             @Override
             public boolean isMulti() {
                 return Optional.ofNullable(operation).map(FilteringOperation::name)
-                        .filter(multiOpNames::contains).isPresent();
+                    .filter(multiOpNames::contains).isPresent();
             }
 
             /**
