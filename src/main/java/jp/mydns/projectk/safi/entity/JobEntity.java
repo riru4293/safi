@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.entity;
 
+import jakarta.json.JsonValue;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
@@ -32,6 +33,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -413,6 +415,22 @@ public class JobEntity extends CommonEntity {
      */
     public void setResultMessages(JsonArrayValue resultMessages) {
         this.resultMessages = resultMessages;
+    }
+
+    /**
+     * Apply default value when before persist.
+     *
+     * @since 3.0.0
+     */
+    @PrePersist
+    public void applyDefaults() {
+        if(status == null) {
+            status = JobStatus.SCHEDULE;
+        }
+
+        if(props == null) {
+            props = new JsonObjectValue(JsonValue.EMPTY_JSON_OBJECT);
+        }
     }
 
     /**
