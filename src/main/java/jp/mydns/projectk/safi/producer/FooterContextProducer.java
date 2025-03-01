@@ -43,11 +43,21 @@ import jp.mydns.projectk.safi.value.RequestContext;
 @RequestScoped
 public class FooterContextProducer {
 
-    @Inject
-    private RequestContext reqCtx;
+    private final RequestContext reqCtx;
+    private final RealTimeService realTimeSvc;
 
+    /**
+     * Constructor.
+     *
+     * @param reqCtx the {@code RequestContext}. It inject by CDI.
+     * @param realTimeSvc the {@code RealTimeService}. It inject by CDI.
+     * @since 3.0.0
+     */
     @Inject
-    private RealTimeService realTimeSvc;
+    public FooterContextProducer(RequestContext reqCtx, RealTimeService realTimeSvc) {
+        this.reqCtx = reqCtx;
+        this.realTimeSvc = realTimeSvc;
+    }
 
     /**
      * Produce the {@code FooterContext}.
@@ -69,7 +79,7 @@ public class FooterContextProducer {
 
         /**
          * Constructor.
-         * 
+         *
          * @param utcNow now as UTC
          * @param accountId logged account id
          * @param processName current processing name
