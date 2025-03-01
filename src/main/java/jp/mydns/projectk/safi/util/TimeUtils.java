@@ -25,11 +25,11 @@
  */
 package jp.mydns.projectk.safi.util;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 /**
@@ -72,7 +72,7 @@ public class TimeUtils {
      * @param localDateTime string representation of the {@code LocalDateTime}
      * @return the {@code LocalDateTime}
      * @throws NullPointerException if {@code localDateTime} is {@code null}
-     * @throws DateTimeParseException if failed parse to the {@code LocalDateTime}
+     * @throws DateTimeException if failed parse to the {@code LocalDateTime}
      * @since 3.0.0
      */
     public static LocalDateTime toLocalDateTime(String localDateTime) {
