@@ -77,7 +77,7 @@ class TimeUtilsTest {
      * @since 3.0.0
      */
     @Test
-    public void testToLocalDateTime() {
+    void testToLocalDateTime() {
 
         var expect = LocalDateTime.of(1999, 12, 31, 23, 48, 53, 123456);
 
@@ -92,7 +92,7 @@ class TimeUtilsTest {
      * @since 3.0.0
      */
     @Test
-    public void testToLocalDateTimeIfNull() {
+    void testToLocalDateTimeIfNull() {
 
         assertThatNullPointerException().isThrownBy(() -> TimeUtils.toLocalDateTime(null));
     }
@@ -103,7 +103,7 @@ class TimeUtilsTest {
      * @since 3.0.0
      */
     @Test
-    public void testToLocalDateTimeIfMalformed() {
+    void testToLocalDateTimeIfMalformed() {
 
         var malformed = "1999-13-32T27:78:92.123456";
 
