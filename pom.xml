@@ -56,7 +56,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.ulidj>1.0.4</version.ulidj>
         <version.assertj>3.27.3</version.assertj>
         <!--<version.mockito>5.2.0</version.mockito>-->
-        <!--<version.hibernate-validator>8.0.1.Final</version.hibernate-validator>-->
+        <version.hibernate-validator>8.0.1.Final</version.hibernate-validator>
         <version.expressly>5.0.0</version.expressly>
         <version.yasson>3.0.4</version.yasson>
         <!--<version.weld-junit5>4.0.1.Final</version.weld-junit5>-->
@@ -106,7 +106,7 @@ POSSIBILITY OF SUCH DAMAGE.
             </dependency>
 
             <!-- Swagger UI -->
-            <!-- License: APL-2.0 -->
+            <!-- License: ASL-2.0 -->
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>swagger-ui</artifactId>
@@ -143,7 +143,7 @@ POSSIBILITY OF SUCH DAMAGE.
         </dependency>
 
         <!-- Log4j implemented over SLF4J -->
-        <!-- License: APL-2.0 -->
+        <!-- License: ASL-2.0 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
@@ -151,7 +151,7 @@ POSSIBILITY OF SUCH DAMAGE.
         </dependency>
 
         <!-- Apache Commons Logging implemented over SLF4J -->
-        <!-- License: APL-2.0 -->
+        <!-- License: ASL-2.0 -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
@@ -167,7 +167,7 @@ POSSIBILITY OF SUCH DAMAGE.
         </dependency>
 
         <!-- Swagger Annotations for Jakarta EE -->
-        <!-- License: APL-2.0 -->
+        <!-- License: ASL-2.0 -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations-jakarta</artifactId>
@@ -185,7 +185,7 @@ POSSIBILITY OF SUCH DAMAGE.
         </dependency>
 
         <!-- Assertion utilities -->
-        <!-- License: APL-2.0 -->
+        <!-- License: ASL-2.0 -->
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -221,6 +221,14 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
+        <!-- Jakarta Bean Validation -->
+        <!-- License: ASL-2.0 -->
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${version.hibernate-validator}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!--        <dependency>
             <groupId>jp.mydns.project-k</groupId>
@@ -267,12 +275,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <version>${version.smallrye-config}</version>
             <scope>test</scope>
         </dependency>-->
-        <!--        <dependency>
-            <groupId>org.hibernate.validator</groupId>
-            <artifactId>hibernate-validator</artifactId>
-            <version>${version.hibernate-validator}</version>
-            <scope>test</scope>
-        </dependency>-->
+
 
         <!--        <dependency>
             <groupId>org.jboss.weld</groupId>
@@ -303,63 +306,63 @@ POSSIBILITY OF SUCH DAMAGE.
     <build>
         <pluginManagement>
             <plugins>
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
                     <version>${version.maven-clean}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${version.maven-compiler}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>${version.maven-install}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
                     <version>${version.maven-resources}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>${version.maven-javadoc}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${version.maven-surefire}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <version>${version.maven-war}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>${version.maven-dependency}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-antrun-plugin</artifactId>
@@ -373,7 +376,7 @@ POSSIBILITY OF SUCH DAMAGE.
                     <version>${version.jacoco}</version>
                 </plugin>
 
-                <!-- License: APL-2.0 -->
+                <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>io.swagger.core.v3</groupId>
                     <artifactId>swagger-maven-plugin-jakarta</artifactId>
