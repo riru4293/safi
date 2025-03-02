@@ -3,7 +3,7 @@ ${ErrorActionPreference} = 'Stop'
 
 # MariaDB
 ${PREFIX} = "${env:LOCALAPPDATA}\Programs\MariaDB"
-${VER} = '11.6.2'
+${VER} = '11.7.2'
 ${ORIGIN_NAME} = "mariadb-${VER}-winx64"
 ${NAME} = "${VER}"
 ${DEST} = "${PREFIX}\${NAME}"
