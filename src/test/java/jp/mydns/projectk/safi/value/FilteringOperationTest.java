@@ -45,15 +45,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class FilteringOperationTest {
 
     /**
-     * Test of name method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testName() {
-    }
-
-    /**
      * Test of asSingle method.
      *
      * @since 3.0.0
