@@ -102,7 +102,7 @@ class JsonArrayValueTest {
 
         assertThat(value).isEqualTo(raw);
     }
-    
+
     /**
      * Test of equals method if not same.
      *
@@ -115,7 +115,7 @@ class JsonArrayValueTest {
 
         assertThat(val1).isNotEqualTo(val2);
     }
-    
+
     /**
      * Test of equals method if other class.
      *
@@ -135,15 +135,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGet() {
+    void testGet() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.get(0);
         var result = val.get(0);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -153,15 +153,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testSize() {
+    void testSize() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.size();
         var result = val.size();
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -171,15 +171,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetJsonObject() {
+    void testGetJsonObject() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getJsonObject(4);
         var result = val.getJsonObject(4);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -189,15 +189,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetJsonArray() {
+    void testGetJsonArray() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getJsonArray(3);
         var result = val.getJsonArray(3);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -207,15 +207,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetJsonNumber() {
+    void testGetJsonNumber() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getJsonNumber(1);
         var result = val.getJsonNumber(1);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -225,15 +225,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetJsonString() {
+    void testGetJsonString() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getJsonString(2);
         var result = val.getJsonString(2);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -243,15 +243,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetValuesAs() {
+    void testGetValuesAs() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getValuesAs(JsonValue.class);
         var result = val.getValuesAs(JsonValue.class);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -261,15 +261,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetString_int() {
+    void testGetString_int() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getString(2);
         var result = val.getString(2);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -279,15 +279,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetString_int_String() {
+    void testGetString_int_String() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getString(0, "x");
         var result = val.getString(0, "x");
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -297,15 +297,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetInt_int() {
+    void testGetInt_int() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getInt(1);
         var result = val.getInt(1);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -315,15 +315,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetInt_int_int() {
+    void testGetInt_int_int() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getInt(0, 2);
         var result = val.getInt(0, 2);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -333,15 +333,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetBoolean_int() {
+    void testGetBoolean_int() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getBoolean(0);
         var result = val.getBoolean(0);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -351,15 +351,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetBoolean_int_boolean() {
+    void testGetBoolean_int_boolean() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getBoolean(0, false);
         var result = val.getBoolean(0, false);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -369,15 +369,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testIsNull() {
+    void testIsNull() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.isNull(0);
         var result = val.isNull(0);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -387,15 +387,15 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testGetValueType() {
+    void testGetValueType() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.getValueType();
         var result = val.getValueType();
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -405,12 +405,12 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testHashCode() {
+    void testHashCode() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         assertThat(val).hasSameHashCodeAs(src);
     }
 
@@ -420,14 +420,14 @@ class JsonArrayValueTest {
      * @since 3.0.0
      */
     @Test
-    public void testToString() {
+    void testToString() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
                 .add(JsonValue.EMPTY_JSON_OBJECT).build();
-        
+
         var val = new JsonArrayValue(src);
-        
+
         var expect = src.toString();
-        
+
         assertThat(val).hasToString(expect);
     }
 }
