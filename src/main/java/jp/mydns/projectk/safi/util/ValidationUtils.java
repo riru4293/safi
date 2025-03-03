@@ -27,16 +27,10 @@ package jp.mydns.projectk.safi.util;
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Path;
 import jakarta.validation.Validator;
-import java.util.AbstractMap;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-import static java.util.stream.Collectors.joining;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
-import static jp.mydns.projectk.safi.util.LambdaUtils.p;
 
 /**
  * Utilities for Jakarta Bean Validation.
@@ -80,24 +74,5 @@ public class ValidationUtils {
         }
 
         return value;
-    }
-
-    /**
-     * Extract violation message from the {@code ConstraintViolation}.
-     *
-     * @param violation the {@code ConstraintViolation}
-     * @return the key is the violation item name and the value is the violation content
-     * @since 3.0.0
-     */
-    public static Entry<String, String> toMessageEntry(ConstraintViolation<?> violation) {
-        Objects.requireNonNull(violation);
-
-        Path propPath = violation.getPropertyPath();
-
-        String name = StreamSupport.stream(propPath.spliterator(), false)
-            .filter(p(Objects::nonNull, Path.Node::getName))
-            .map(Path.Node::getName).collect(joining("."));
-
-        return new AbstractMap.SimpleImmutableEntry<>(name, violation.getMessage());
     }
 }
