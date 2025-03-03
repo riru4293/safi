@@ -25,107 +25,60 @@
  */
 package jp.mydns.projectk.safi.test.junit;
 
-import jakarta.validation.Configuration;
-import jakarta.validation.MessageInterpolator;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import java.util.Locale;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 
 /**
- * Resolve the {@link ValidatorFactory} and{@link Validator} type parameter in JUnit methods.
+ * Resolve the {@link Jsonb} type parameter in JUnit methods.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class ValidatorParameterResolver implements ParameterResolver, ExtensionContext.Store.CloseableResource {
+public class JsonbParameterResolver implements ParameterResolver, ExtensionContext.Store.CloseableResource {
 
-    private final ValidatorFactory factory;
-
-    public ValidatorParameterResolver() {
-        Configuration<?> conf = Validation.byDefaultProvider().configure();
-
-        var mi = new UsMessageInterpolator(conf.getDefaultMessageInterpolator());
-
-        // Note: Force use US locale.
-        this.factory = conf.messageInterpolator(mi).buildValidatorFactory();
-    }
+    private final Jsonb jsonb = JsonbBuilder.create();
 
     /**
-     * Returns a {@code true} if parameter class is {@code ValidatorFactory} or {@code Validator}.
+     * Returns a {@code true} if parameter class is {@code Jsonb}.
      *
      * @param pc the {@code ParameterContext}
      * @param ec the {@code ExtensionContext}
-     * @return {@code true} if parameter class is {@code ValidatorFactory} or {@code Validator}
+     * @return {@code true} if parameter class is {@code Jsonb}
      * @throws ParameterResolutionException no occurs
      * @since 3.0.0
      */
     @Override
     public boolean supportsParameter(ParameterContext pc, ExtensionContext ec) throws ParameterResolutionException {
-        return ValidatorFactory.class == pc.getParameter().getType()
-                || Validator.class == pc.getParameter().getType();
+        return Jsonb.class == pc.getParameter().getType();
     }
 
     /**
-     * Returns a {@code ValidatorFactory} or {@code Validator} instance.
+     * Returns a {@code Jsonb} instance.
      *
      * @param pc the {@code ParameterContext}
      * @param ec the {@code ExtensionContext}
-     * @return {@code ValidatorFactory} or {@code Validator}
+     * @return {@code Jsonb}
      * @throws ParameterResolutionException no occurs
      * @since 3.0.0
      */
     @Override
     public Object resolveParameter(ParameterContext pc, ExtensionContext ec) throws ParameterResolutionException {
-
-        Class<?> clazz = pc.getParameter().getType();
-        
-        if(clazz == ValidatorFactory.class) {
-            return factory;
-        } else if (clazz == Validator.class) {
-            return factory.getValidator();
-        }
-        
-        throw new ParameterResolutionException("Impossible.");
+        return jsonb;
     }
-    
+
     /**
-     * Close the {@code ValidatorFactory} instance.
+     * Close the {@code Jsonb} instance.
      *
      * @throws Exception if occurs any exception
      * @since 3.0.0
      */
     @Override
     public void close() throws Exception {
-        factory.close();
-    }
-
-    /**
-     * Force US locale {@code MessageInterpolator}.
-     *
-     * @since 3.0.0
-     */
-    private class UsMessageInterpolator implements MessageInterpolator {
-
-        private final MessageInterpolator origin;
-
-        public UsMessageInterpolator(MessageInterpolator origin) {
-            this.origin = origin;
-        }
-
-        @Override
-        public String interpolate(String tmpl, Context ctx) {
-            return interpolate(tmpl, ctx, Locale.US);
-        }
-
-        @Override
-        public String interpolate(String tmpl, Context ctx, Locale locale) {
-            return origin.interpolate(tmpl, ctx, Locale.US);
-        }
+        jsonb.close();
     }
 }
