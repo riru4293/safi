@@ -25,17 +25,10 @@
  */
 package jp.mydns.projectk.safi.entity;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Cacheable;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.util.Objects;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
  * JPA entity for the <i>t_user</i> table.
@@ -47,110 +40,9 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
 @Entity
 @Cacheable(false)
 @Table(name = "t_user")
-public class UserEntity extends NamedEntity {
+public class UserEntity extends ContentEntity {
 
     private static final long serialVersionUID = 2711050439353117979L;
-
-    @Id
-    @Basic(optional = false)
-    @Column(name = "id", nullable = false, updatable = false, length = 36)
-    private String id;
-
-    @Column(name = "enabled", nullable = false)
-    private boolean enabled;
-
-    @Basic(optional = false)
-    @Column(name = "props")
-    private JsonObjectValue properties;
-
-    @Basic(optional = false)
-    @Column(name = "digest", nullable = false, length = 128)
-    private String digest;
-
-    /**
-     * Get user id.
-     *
-     * @return user id
-     * @since 3.0.0
-     */
-    @NotBlank
-    @Size(max = 36)
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Set user id.
-     *
-     * @param id user id. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    /**
-     * Get the enabled state.
-     *
-     * @return {@code true} if enabled, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    /**
-     * Set the enabled state.
-     *
-     * @param enabled {@code true} if enabled, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    /**
-     * Get user properties.
-     *
-     * @return user properties
-     * @since 3.0.0
-     */
-    @NotNull
-    public JsonObjectValue getProperties() {
-        return properties;
-    }
-
-    /**
-     * Set user properties.
-     *
-     * @param properties user properties
-     * @since 3.0.0
-     */
-    public void setProperties(JsonObjectValue properties) {
-        this.properties = properties;
-    }
-
-    /**
-     * Get digest value of this entity.
-     *
-     * @return digest value
-     * @since 3.0.0
-     */
-    @NotBlank
-    @Size(max = 128)
-    public String getDigest() {
-        return digest;
-    }
-
-    /**
-     * Set digest value of this entity.
-     *
-     * @param digest digest value
-     * @since 3.0.0
-     */
-    public void setDigest(String digest) {
-        this.digest = digest;
-    }
 
     /**
      * Returns a hash code value.
