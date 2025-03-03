@@ -28,8 +28,8 @@ package jp.mydns.projectk.safi.util;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import jakarta.validation.groups.Default;
-import jp.mydns.projectk.safi.test.TestBean;
-import jp.mydns.projectk.safi.test.TestValidationGroup;
+import jp.mydns.projectk.safi.test.ForValidationTestBean;
+import jp.mydns.projectk.safi.test.ForValidationTestBean.TestValidation;
 import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -54,32 +54,22 @@ class ValidationUtilsTest {
      * @since 3.0.0
      */
     @Test
-    void testRequireValid(Validator validator) throws Throwable {
-        var bean = new TestBean();
-        bean.setPositiveIfTestNumber(-1);   // Invalid if TestValidationGroup.
+    void testRequireValid(Validator validator) {
+        var bean = new ForValidationTestBean();
+        bean.setPositiveIfTestNumber(-1);   // Invalid if TestValidation.
         bean.setNotEmptyString("notEmpty"); // Valid.
 
-        // Validation OK.
+        // Validation OK. Because use Default group with validation.
         ThrowingCallable ok = () -> ValidationUtils.requireValid(bean, validator, Default.class);
 
         assertThatCode(ok).doesNotThrowAnyException();
 
-        // Validation NG.
-        ThrowingCallable ng = () -> ValidationUtils.requireValid(bean, validator, TestValidationGroup.class);
+        // Validation NG. Because use TestValidation group with validation.
+        ThrowingCallable ng = () -> ValidationUtils.requireValid(bean, validator, TestValidation.class);
 
         assertThatThrownBy(ng).isInstanceOf(ConstraintViolationException.class)
             .asInstanceOf(InstanceOfAssertFactories.throwable(ConstraintViolationException.class))
             .extracting(ConstraintViolationException::getConstraintViolations)
             .asInstanceOf(InstanceOfAssertFactories.SET).isNotEmpty();
     }
-
-    /**
-     * Test of toMessageEntry method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testToMessageEntry() {
-    }
-
 }
