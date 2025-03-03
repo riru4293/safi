@@ -25,8 +25,12 @@
  */
 package jp.mydns.projectk.safi.test.junit;
 
+import jakarta.validation.Configuration;
+import jakarta.validation.MessageInterpolator;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import java.util.Locale;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.api.extension.ParameterResolutionException;
@@ -66,6 +70,43 @@ public class ValidatorParameterResolver implements ParameterResolver {
      */
     @Override
     public Object resolveParameter(ParameterContext pc, ExtensionContext ec) throws ParameterResolutionException {
-        return Validation.buildDefaultValidatorFactory().getValidator();
+
+        ExtensionContext.Store store = ec.getStore(ExtensionContext.Namespace.GLOBAL);
+
+        ValidatorFactory factory = ValidatorFactory.class.cast(store.getOrComputeIfAbsent(ValidatorFactory.class,
+            k -> {
+                Configuration<?> conf = Validation.byDefaultProvider().configure();
+
+                var mi = new TestMessageInterpolator(conf.getDefaultMessageInterpolator());
+
+                // Note: Force use US locale.
+                return conf.messageInterpolator(mi).buildValidatorFactory();
+            }));
+
+        return factory.getValidator();
+    }
+
+    /**
+     * Force US locale {@code MessageInterpolator}.
+     *
+     * @since 3.0.0
+     */
+    private class TestMessageInterpolator implements MessageInterpolator {
+
+        private final MessageInterpolator origin;
+
+        public TestMessageInterpolator(MessageInterpolator origin) {
+            this.origin = origin;
+        }
+
+        @Override
+        public String interpolate(String tmpl, Context ctx) {
+            return interpolate(tmpl, ctx, Locale.US);
+        }
+
+        @Override
+        public String interpolate(String tmpl, Context ctx, Locale locale) {
+            return origin.interpolate(tmpl, ctx, Locale.US);
+        }
     }
 }
