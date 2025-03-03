@@ -49,8 +49,8 @@ public class FooterContextProducer {
     /**
      * Constructor.
      *
-     * @param reqCtx the {@code RequestContext}. It inject by CDI.
-     * @param realTimeSvc the {@code RealTimeService}. It inject by CDI.
+     * @param reqCtx the {@code RequestContext}.
+     * @param realTimeSvc the {@code RealTimeService}
      * @since 3.0.0
      */
     @Inject
