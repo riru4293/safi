@@ -23,50 +23,70 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.test;
+package jp.mydns.projectk.safi.entity.convertor;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Positive;
+import java.time.Duration;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
- * For testing Java beans for Jakarta Bean Validation.
+ * Test of class {@code DurationConvertor}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class ForValidationTestBean {
+class DurationConvertorTest {
 
-    @Positive(groups = TestValidation.class)
-    private Number positiveIfTestNumber;
-
-    @NotEmpty
-    private String notEmptyString;
-
-    public Number getPositiveIfTestNumber() {
-        return positiveIfTestNumber;
-    }
-
-    public void setPositiveIfTestNumber(Number positiveIfTestNumber) {
-        this.positiveIfTestNumber = positiveIfTestNumber;
-    }
-
-    public String getNotEmptyString() {
-        return notEmptyString;
-    }
-
-    public void setNotEmptyString(String notEmptyString) {
-        this.notEmptyString = notEmptyString;
+    /**
+     * Test of convertToDatabaseColumn method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertToDatabaseColumn() {
+        var expect = "PT0S";
+        
+        var result = new DurationConvertor().convertToDatabaseColumn(Duration.ZERO);
+        
+        assertThat(result).isEqualTo(expect);
     }
 
     /**
-     * Validation group for testing.
+     * Test of convertToDatabaseColumn method if null.
      *
-     * @author riru
-     * @version 3.0.0
      * @since 3.0.0
      */
-    public interface TestValidation {
+    @Test
+    void testConvertToDatabaseColumnIfNull() {
+        var result = new DurationConvertor().convertToDatabaseColumn(null);
+        
+        assertThat(result).isNull();
+    }
 
+    /**
+     * Test of convertToEntityAttribute method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertToEntityAttribute() {
+        var expect = Duration.ZERO;
+        
+        var result = new DurationConvertor().convertToEntityAttribute("PT0S");
+        
+        assertThat(result).isEqualTo(expect);
+    }
+
+    /**
+     * Test of convertToEntityAttribute method if null.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertToEntityAttributeIfNull() {
+        var result = new DurationConvertor().convertToEntityAttribute(null);
+        
+        assertThat(result).isNull();
     }
 }

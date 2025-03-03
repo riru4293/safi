@@ -185,6 +185,6 @@ public class UserEntity extends NamedEntity {
     @Override
     public String toString() {
         return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", validityPeriod=" + validityPeriod
-            + ", name=" + name + ", properies=" + properties + ", digest=" + digest + '}';
+            + ", name=" + name + ", properties=" + properties + ", digest=" + digest + '}';
     }
 }

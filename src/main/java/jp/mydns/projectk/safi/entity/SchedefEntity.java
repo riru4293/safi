@@ -126,7 +126,7 @@ public class SchedefEntity extends NamedEntity {
      * @param value job schedule definition value
      * @since 3.0.0
      */
-    public void setJobProps(JsonObjectValue value) {
+    public void setValue(JsonObjectValue value) {
         this.value = value;
     }
 

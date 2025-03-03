@@ -42,6 +42,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  * Test of class {@code ValidationUtils}.
  *
  * @author riru
+ * @version 3.0.0
  * @since 3.0.0
  */
 @ExtendWith(ValidatorParameterResolver.class)

@@ -23,74 +23,75 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity;
+package jp.mydns.projectk.safi.entity.convertor;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
+import jp.mydns.projectk.safi.value.JsonObjectValue;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
- * Common named values JPA entity. This class has name and validity period.
+ * Test of class {@code JsonObjectConvertor}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@MappedSuperclass
-public abstract class NamedEntity extends CommonEntity {
-
-    private static final long serialVersionUID = -6229000110509598422L;
-
-    @Column(name = "name", length = 250)
-    protected String name;
-
-    @Embedded
-    protected ValidityPeriodEmb validityPeriod;
+class JsonObjectConvertorTest {
 
     /**
-     * Get name of value.
+     * Test of convertToDatabaseColumn method.
      *
-     * @return name of value. It may be {@code null}.
      * @since 3.0.0
      */
-    @Size(max = 250)
-    public String getName() {
-        return name;
+    @Test
+    void testConvertToDatabaseColumn() {
+        var expect = "{\"k\":\"v\"}";
+        
+        var result = new JsonObjectConvertor().convertToDatabaseColumn(new JsonObjectValue(Json.createObjectBuilder()
+            .add("k", "v").build()));
+        
+        assertThat(result).isEqualTo(expect);
     }
 
     /**
-     * Set name of value.
+     * Test of convertToDatabaseColumn method if null.
      *
-     * @param name name of value. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setName(String name) {
-        this.name = name;
+    @Test
+    void testConvertToDatabaseColumnIfNull() {
+        var result = new JsonObjectConvertor().convertToDatabaseColumn(null);
+        
+        assertThat(result).isEqualTo("{}");
     }
 
     /**
-     * Get the {@code ValidityPeriodEmb}.
+     * Test of convertToEntityAttribute method.
      *
-     * @return the {@code ValidityPeriodEmb}
      * @since 3.0.0
      */
-    @NotNull
-    @Valid
-    public ValidityPeriodEmb getValidityPeriod() {
-        return validityPeriod;
+    @Test
+    void testConvertToEntityAttribute() {
+        var expect = JsonValue.EMPTY_JSON_OBJECT;
+        
+        var result = new JsonObjectConvertor().convertToEntityAttribute("{}");
+        
+        assertThat(result).isEqualTo(expect);
     }
 
     /**
-     * Set the {@code ValidityPeriodEmb}.
+     * Test of convertToEntityAttribute method if null.
      *
-     * @param validityPeriod the {@code ValidityPeriodEmb}
      * @since 3.0.0
      */
-    public void setValidityPeriod(ValidityPeriodEmb validityPeriod) {
-        this.validityPeriod = validityPeriod;
+    @Test
+    void testConvertToEntityAttributeIfNull() {
+        var expect = JsonValue.EMPTY_JSON_OBJECT;
+        
+        var result = new JsonObjectConvertor().convertToEntityAttribute(null);
+        
+        assertThat(result).isEqualTo(expect);
     }
 }
