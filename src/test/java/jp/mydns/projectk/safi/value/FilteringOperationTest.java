@@ -65,7 +65,7 @@ class FilteringOperationTest {
      */
     @Test
     void testAsSingleIfIllegalClass() {
-        assertThatThrownBy(() -> FilteringOperation.Multi.AND.asSingle()).isInstanceOf(ClassCastException.class);
+        assertThatThrownBy(FilteringOperation.Multi.AND::asSingle).isInstanceOf(ClassCastException.class);
     }
 
     /**
@@ -89,7 +89,7 @@ class FilteringOperationTest {
      */
     @Test
     void testAsMultiIfIllegalClass() {
-        assertThatThrownBy(() -> FilteringOperation.Single.EQUAL.asMulti()).isInstanceOf(ClassCastException.class);
+        assertThatThrownBy(FilteringOperation.Single.EQUAL::asMulti).isInstanceOf(ClassCastException.class);
     }
 
     /**

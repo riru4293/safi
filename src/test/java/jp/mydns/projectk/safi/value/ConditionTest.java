@@ -88,10 +88,10 @@ class ConditionTest {
         var single = Condition.singleOf(FilteringOperation.Single.IS_NULL, "name", "value");
         var multi = Condition.multiOf(FilteringOperation.Multi.AND, List.of());
 
-        assertThatCode(() -> single.asSingle()).doesNotThrowAnyException();
+        assertThatCode(single::asSingle).doesNotThrowAnyException();
         assertThat(single.asSingle()).isInstanceOf(Condition.Single.class);
 
-        assertThatThrownBy(() -> multi.asSingle()).isInstanceOf(ClassCastException.class);
+        assertThatThrownBy(multi::asSingle).isInstanceOf(ClassCastException.class);
     }
 
     /**
@@ -104,10 +104,10 @@ class ConditionTest {
         var single = Condition.singleOf(FilteringOperation.Single.IS_NULL, "name", "value");
         var multi = Condition.multiOf(FilteringOperation.Multi.AND, List.of());
 
-        assertThatCode(() -> multi.asMulti()).doesNotThrowAnyException();
+        assertThatCode(multi::asMulti).doesNotThrowAnyException();
         assertThat(multi.asMulti()).isInstanceOf(Condition.Multi.class);
 
-        assertThatThrownBy(() -> single.asMulti()).isInstanceOf(ClassCastException.class);
+        assertThatThrownBy(single::asMulti).isInstanceOf(ClassCastException.class);
     }
 
     /**
@@ -207,7 +207,7 @@ class ConditionTest {
 
         assertThat(result).isEqualTo(expect);
     }
-    
+
     /**
      * Test of deserialize method if null, of class Deserializer.
      *
@@ -220,7 +220,7 @@ class ConditionTest {
 
         assertThat(deserialized).isNull();
     }
-    
+
     /**
      * Test of toString method if single.
      *
@@ -234,7 +234,7 @@ class ConditionTest {
 
         assertThat(val).hasToString(tmpl, "IS_NULL", "name", "value");
     }
-    
+
     /**
      * Test of toString method if multi.
      *
