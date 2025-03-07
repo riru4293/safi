@@ -79,10 +79,12 @@ public class JobdefEntity extends NamedEntity {
     @Column(name = "plugin", length = 50)
     private String pluginName;
 
-    @Column(name = "trnsdef")
+    @Basic(optional = false)
+    @Column(name = "trnsdef", nullable = false)
     private JsonObjectValue trnsdef;
 
-    @Column(name = "filtdef")
+    @Basic(optional = false)
+    @Column(name = "filtdef", nullable = false)
     private JsonObjectValue filtdef;
 
     @Basic(optional = false)
@@ -198,9 +200,10 @@ public class JobdefEntity extends NamedEntity {
     /**
      * Get transform definition.
      *
-     * @return transform definition. It may be {@code null}.
+     * @return transform definition
      * @since 3.0.0
      */
+    @NotNull
     public JsonObjectValue getTrnsdef() {
         return trnsdef;
     }
@@ -208,7 +211,7 @@ public class JobdefEntity extends NamedEntity {
     /**
      * Set transform definition.
      *
-     * @param trnsdef transform definition. It can be set {@code null}.
+     * @param trnsdef transform definition
      * @since 3.0.0
      */
     public void setTrnsdef(JsonObjectValue trnsdef) {
@@ -218,9 +221,10 @@ public class JobdefEntity extends NamedEntity {
     /**
      * Get filtering definition.
      *
-     * @return filtering definition. It may be {@code null}.
+     * @return filtering definition
      * @since 3.0.0
      */
+    @NotNull
     public JsonObjectValue getFiltdef() {
         return filtdef;
     }
@@ -228,7 +232,7 @@ public class JobdefEntity extends NamedEntity {
     /**
      * Set filtering definition.
      *
-     * @param filtdef filtering definition. It can be set {@code null}.
+     * @param filtdef filtering definition
      * @since 3.0.0
      */
     public void setFiltdef(JsonObjectValue filtdef) {

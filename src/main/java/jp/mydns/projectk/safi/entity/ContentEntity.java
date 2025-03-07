@@ -26,48 +26,46 @@
 package jp.mydns.projectk.safi.entity;
 
 import jakarta.persistence.Basic;
-import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.Objects;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
- * JPA entity for the <i>m_schedef</i> table.
+ * Common content JPA entity. This class has id, enabled status, properties and digest value.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@Entity
-@Cacheable(false)
-@Table(name = "m_schedef")
-public class SchedefEntity extends NamedEntity {
+@MappedSuperclass
+public abstract class ContentEntity extends NamedEntity {
 
-    private static final long serialVersionUID = 6291085973948685738L;
+    private static final long serialVersionUID = -4573193428404973991L;
 
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
-    private String id;
+    protected String id;
+
+    @Column(name = "enabled", nullable = false)
+    protected boolean enabled;
 
     @Basic(optional = false)
-    @Column(name = "priority", nullable = false, length = 1)
-    private String priority;
+    @Column(name = "props")
+    protected JsonObjectValue properties;
 
     @Basic(optional = false)
-    @Column(name = "val", nullable = false)
-    private JsonObjectValue value;
+    @Column(name = "digest", nullable = false, length = 128)
+    protected String digest;
 
     /**
-     * Get job schedule definition id.
+     * Get content id.
      *
-     * @return job schedule definition id
+     * @return content id
      * @since 3.0.0
      */
     @NotBlank
@@ -77,9 +75,9 @@ public class SchedefEntity extends NamedEntity {
     }
 
     /**
-     * Set job schedule definition id.
+     * Set content id.
      *
-     * @param id job schedule definition id. Cannot update persisted value.
+     * @param id content id. Cannot update persisted value.
      * @since 3.0.0
      */
     public void setId(String id) {
@@ -87,82 +85,65 @@ public class SchedefEntity extends NamedEntity {
     }
 
     /**
-     * Get schedule definition priority.
+     * Get the enabled state.
      *
-     * @return schedule definition priority. In case of a conflict with another schedule definition, the one with the
-     * higher priority will be used. The higher the value, the higher the priority.
+     * @return {@code true} if enabled, otherwise {@code false}.
      * @since 3.0.0
      */
-    @NotBlank
-    @Size(max = 1)
-    public String getPriority() {
-        return priority;
+    public boolean isEnabled() {
+        return enabled;
     }
 
     /**
-     * Set schedule definition priority.
+     * Set the enabled state.
      *
-     * @param priority schedule definition priority
+     * @param enabled {@code true} if enabled, otherwise {@code false}.
      * @since 3.0.0
      */
-    public void setPriority(String priority) {
-        this.priority = priority;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     /**
-     * Get job schedule definition value.
+     * Get content properties.
      *
-     * @return job schedule definition value
+     * @return content properties
      * @since 3.0.0
      */
     @NotNull
-    public JsonObjectValue getValue() {
-        return value;
+    public JsonObjectValue getProperties() {
+        return properties;
     }
 
     /**
-     * Set job schedule definition value.
+     * Set content properties.
      *
-     * @param value job schedule definition value
+     * @param properties content properties
      * @since 3.0.0
      */
-    public void setValue(JsonObjectValue value) {
-        this.value = value;
+    public void setProperties(JsonObjectValue properties) {
+        this.properties = properties;
     }
 
     /**
-     * Returns a hash code value.
+     * Get digest value of this entity.
      *
-     * @return a hash code value. It is generated from the primary key value.
+     * @return digest value
      * @since 3.0.0
      */
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    @NotBlank
+    @Size(max = 128)
+    public String getDigest() {
+        return digest;
     }
 
     /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
-     * key is match.
+     * Set digest value of this entity.
      *
-     * @param other an any object
-     * @return {@code true} if equals, otherwise {@code false}.
+     * @param digest digest value
      * @since 3.0.0
      */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof SchedefEntity o && Objects.equals(id, o.id);
-    }
-
-    /**
-     * Returns a string representation.
-     *
-     * @return a string representation
-     * @since 3.0.0
-     */
-    @Override
-    public String toString() {
-        return "SchedefEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", priority=" + priority
-            + ", name=" + name + ", value=" + value + '}';
+    public void setDigest(String digest) {
+        this.digest = digest;
     }
 }

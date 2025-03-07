@@ -26,54 +26,72 @@
 package jp.mydns.projectk.safi.entity.convertor;
 
 import jakarta.json.Json;
-import static jakarta.json.JsonValue.EMPTY_JSON_ARRAY;
-import jakarta.json.stream.JsonParsingException;
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
-import java.io.StringReader;
-import java.util.Optional;
+import jakarta.json.JsonValue;
 import jp.mydns.projectk.safi.value.JsonArrayValue;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
- * JPA attribute convertor for the {@code JsonArrayValue}. This convertor is applied automatically.
+ * Test of class {@code JsonArrayConvertor}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@Converter(autoApply = true)
-public final class JsonArrayConvertor implements AttributeConverter<JsonArrayValue, String> {
+class JsonArrayConvertorTest {
 
     /**
-     * Convert to database column type.
+     * Test of convertToDatabaseColumn method.
      *
-     * @param javaVal the {@code JsonArrayValue}
-     * @return {@code javaVal} that converted to string representation of {@code JsonArrayValue}. Returns {@code []} if
-     * {@code javaVal} is {@code null}.
      * @since 3.0.0
      */
-    @Override
-    public String convertToDatabaseColumn(JsonArrayValue javaVal) {
-        return Optional.ofNullable(javaVal).map(JsonArrayValue::toString).orElseGet(EMPTY_JSON_ARRAY::toString);
+    @Test
+    void testConvertToDatabaseColumn() {
+        var expect = "[\"m\",\"s\",\"g\"]";
+        
+        var result = new JsonArrayConvertor().convertToDatabaseColumn(new JsonArrayValue(Json.createArrayBuilder()
+            .add("m").add("s").add("g").build()));
+        
+        assertThat(result).isEqualTo(expect);
     }
 
     /**
-     * Convert to entity attribute type.
+     * Test of convertToDatabaseColumn method if null.
      *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonArrayValue}.
-     * @return {@code dbVal} as {@code JsonArrayValue}. Returns {@code EMPTY_JSON_ARRAY} if {@code dbVal} is
-     * {@code null}.
-     * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonArrayValue}
      * @since 3.0.0
      */
-    @Override
-    public JsonArrayValue convertToEntityAttribute(String dbVal) {
-        if (dbVal == null) {
-            return new JsonArrayValue(EMPTY_JSON_ARRAY);
-        }
+    @Test
+    void testConvertToDatabaseColumnIfNull() {
+        var result = new JsonArrayConvertor().convertToDatabaseColumn(null);
+        
+        assertThat(result).isEqualTo("[]");
+    }
 
-        try (var r = Json.createReader(new StringReader(dbVal))) {
-            return new JsonArrayValue(r.readArray());
-        }
+    /**
+     * Test of convertToEntityAttribute method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertToEntityAttribute() {
+        var expect = JsonValue.EMPTY_JSON_ARRAY;
+        
+        var result = new JsonArrayConvertor().convertToEntityAttribute("[]");
+        
+        assertThat(result).isEqualTo(expect);
+    }
+
+    /**
+     * Test of convertToEntityAttribute method if null.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertToEntityAttributeIfNull() {
+        var expect = JsonValue.EMPTY_JSON_ARRAY;
+        
+        var result = new JsonArrayConvertor().convertToEntityAttribute(null);
+        
+        assertThat(result).isEqualTo(expect);
     }
 }

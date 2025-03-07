@@ -23,60 +23,50 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity;
+package jp.mydns.projectk.safi.test;
 
-import jakarta.persistence.Cacheable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import java.util.Objects;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Positive;
 
 /**
- * JPA entity for the <i>t_user</i> table.
+ * For testing Java beans for Jakarta Bean Validation.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@Entity
-@Cacheable(false)
-@Table(name = "t_user")
-public class UserEntity extends ContentEntity {
+public class ForValidationTestBean {
 
-    private static final long serialVersionUID = 2711050439353117979L;
+    @Positive(groups = TestValidation.class)
+    private Number positiveIfTestNumber;
 
-    /**
-     * Returns a hash code value.
-     *
-     * @return a hash code value. It is generated from the primary key value.
-     * @since 3.0.0
-     */
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    @NotEmpty
+    private String notEmptyString;
+
+    public Number getPositiveIfTestNumber() {
+        return positiveIfTestNumber;
+    }
+
+    public void setPositiveIfTestNumber(Number positiveIfTestNumber) {
+        this.positiveIfTestNumber = positiveIfTestNumber;
+    }
+
+    public String getNotEmptyString() {
+        return notEmptyString;
+    }
+
+    public void setNotEmptyString(String notEmptyString) {
+        this.notEmptyString = notEmptyString;
     }
 
     /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
-     * key is match.
+     * Validation group for testing.
      *
-     * @param other an any object
-     * @return {@code true} if equals, otherwise {@code false}.
+     * @author riru
+     * @version 3.0.0
      * @since 3.0.0
      */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof UserEntity o && Objects.equals(id, o.id);
-    }
+    public interface TestValidation {
 
-    /**
-     * Returns a string representation.
-     *
-     * @return a string representation
-     * @since 3.0.0
-     */
-    @Override
-    public String toString() {
-        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", validityPeriod=" + validityPeriod
-            + ", name=" + name + ", properties=" + properties + ", digest=" + digest + '}';
     }
 }

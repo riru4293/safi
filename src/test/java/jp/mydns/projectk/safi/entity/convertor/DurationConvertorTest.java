@@ -23,59 +23,70 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util;
+package jp.mydns.projectk.safi.entity.convertor;
 
-import java.time.DateTimeException;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import java.util.Objects;
+import java.time.Duration;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
- * Utilities for date and time.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
+ * Test of class {@code DurationConvertor}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class TimeUtils {
+class DurationConvertorTest {
 
-    private TimeUtils() {
+    /**
+     * Test of convertToDatabaseColumn method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertToDatabaseColumn() {
+        var expect = "PT0S";
+        
+        var result = new DurationConvertor().convertToDatabaseColumn(Duration.ZERO);
+        
+        assertThat(result).isEqualTo(expect);
     }
 
     /**
-     * Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
+     * Test of convertToDatabaseColumn method if null.
      *
-     * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
-     * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
      * @since 3.0.0
      */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
-
-        if (localDateTime == null) {
-            return null;
-        }
-
-        return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
+    @Test
+    void testConvertToDatabaseColumnIfNull() {
+        var result = new DurationConvertor().convertToDatabaseColumn(null);
+        
+        assertThat(result).isNull();
     }
 
     /**
-     * Parse to the {@code LocalDateTime}.
+     * Test of convertToEntityAttribute method.
      *
-     * @param localDateTime string representation of the {@code LocalDateTime}
-     * @return the {@code LocalDateTime}
-     * @throws NullPointerException if {@code localDateTime} is {@code null}
-     * @throws DateTimeException if failed parse to the {@code LocalDateTime}
      * @since 3.0.0
      */
-    public static LocalDateTime toLocalDateTime(String localDateTime) {
-        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
+    @Test
+    void testConvertToEntityAttribute() {
+        var expect = Duration.ZERO;
+        
+        var result = new DurationConvertor().convertToEntityAttribute("PT0S");
+        
+        assertThat(result).isEqualTo(expect);
+    }
+
+    /**
+     * Test of convertToEntityAttribute method if null.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertToEntityAttributeIfNull() {
+        var result = new DurationConvertor().convertToEntityAttribute(null);
+        
+        assertThat(result).isNull();
     }
 }

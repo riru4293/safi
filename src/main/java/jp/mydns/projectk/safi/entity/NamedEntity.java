@@ -43,6 +43,8 @@ import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 @MappedSuperclass
 public abstract class NamedEntity extends CommonEntity {
 
+    private static final long serialVersionUID = -6229000110509598422L;
+
     @Column(name = "name", length = 250)
     protected String name;
 

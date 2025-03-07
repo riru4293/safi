@@ -35,7 +35,6 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -514,10 +513,7 @@ public interface Condition {
              */
             @Override
             public List<Condition> getChildren() {
-                // Note: Returning {@code null} in the else case is as intended.
-                //       This item is not allowed to be {@code null}.
-                //       {@code null} is detected by the Bean Validation `@NotNull` constraint.
-                return Optional.ofNullable(children).map(Collections::unmodifiableList).orElse(null);
+                return children;
             }
 
             /**

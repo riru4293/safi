@@ -25,10 +25,13 @@
  */
 package jp.mydns.projectk.safi.util;
 
+import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -66,5 +69,44 @@ class TimeUtilsTest {
         LocalDateTime nullValue = null;
 
         assertThat(TimeUtils.toOffsetDateTime(nullValue)).isNull();
+    }
+
+    /**
+     * Test of toLocalDateTime method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testToLocalDateTime() {
+
+        var expect = LocalDateTime.of(1999, 12, 31, 23, 48, 53, 123456);
+
+        var value = "1999-12-31T23:48:53.000123456";
+
+        assertThat(TimeUtils.toLocalDateTime(value)).isEqualTo(expect);
+    }
+
+    /**
+     * Test of toLocalDateTime method, if {@code null}.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testToLocalDateTimeIfNull() {
+
+        assertThatNullPointerException().isThrownBy(() -> TimeUtils.toLocalDateTime(null));
+    }
+
+    /**
+     * Test of toLocalDateTime method, if malformed.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testToLocalDateTimeIfMalformed() {
+
+        var malformed = "1999-13-32T27:78:92.123456";
+
+        assertThatThrownBy(() -> TimeUtils.toLocalDateTime(malformed)).hasCauseInstanceOf(DateTimeException.class);
     }
 }

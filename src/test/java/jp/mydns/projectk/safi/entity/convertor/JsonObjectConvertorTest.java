@@ -23,60 +23,75 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity;
+package jp.mydns.projectk.safi.entity.convertor;
 
-import jakarta.persistence.Cacheable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import java.util.Objects;
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
+import jp.mydns.projectk.safi.value.JsonObjectValue;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
 
 /**
- * JPA entity for the <i>t_user</i> table.
+ * Test of class {@code JsonObjectConvertor}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@Entity
-@Cacheable(false)
-@Table(name = "t_user")
-public class UserEntity extends ContentEntity {
-
-    private static final long serialVersionUID = 2711050439353117979L;
+class JsonObjectConvertorTest {
 
     /**
-     * Returns a hash code value.
+     * Test of convertToDatabaseColumn method.
      *
-     * @return a hash code value. It is generated from the primary key value.
      * @since 3.0.0
      */
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    @Test
+    void testConvertToDatabaseColumn() {
+        var expect = "{\"k\":\"v\"}";
+        
+        var result = new JsonObjectConvertor().convertToDatabaseColumn(new JsonObjectValue(Json.createObjectBuilder()
+            .add("k", "v").build()));
+        
+        assertThat(result).isEqualTo(expect);
     }
 
     /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
-     * key is match.
+     * Test of convertToDatabaseColumn method if null.
      *
-     * @param other an any object
-     * @return {@code true} if equals, otherwise {@code false}.
      * @since 3.0.0
      */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof UserEntity o && Objects.equals(id, o.id);
+    @Test
+    void testConvertToDatabaseColumnIfNull() {
+        var result = new JsonObjectConvertor().convertToDatabaseColumn(null);
+        
+        assertThat(result).isEqualTo("{}");
     }
 
     /**
-     * Returns a string representation.
+     * Test of convertToEntityAttribute method.
      *
-     * @return a string representation
      * @since 3.0.0
      */
-    @Override
-    public String toString() {
-        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", validityPeriod=" + validityPeriod
-            + ", name=" + name + ", properties=" + properties + ", digest=" + digest + '}';
+    @Test
+    void testConvertToEntityAttribute() {
+        var expect = JsonValue.EMPTY_JSON_OBJECT;
+        
+        var result = new JsonObjectConvertor().convertToEntityAttribute("{}");
+        
+        assertThat(result).isEqualTo(expect);
+    }
+
+    /**
+     * Test of convertToEntityAttribute method if null.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertToEntityAttributeIfNull() {
+        var expect = JsonValue.EMPTY_JSON_OBJECT;
+        
+        var result = new JsonObjectConvertor().convertToEntityAttribute(null);
+        
+        assertThat(result).isEqualTo(expect);
     }
 }

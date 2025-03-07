@@ -23,60 +23,62 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity;
+package jp.mydns.projectk.safi.test.junit;
 
-import jakarta.persistence.Cacheable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import java.util.Objects;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
 
 /**
- * JPA entity for the <i>t_user</i> table.
+ * Resolve the {@link Jsonb} type parameter in JUnit methods.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@Entity
-@Cacheable(false)
-@Table(name = "t_user")
-public class UserEntity extends ContentEntity {
+public class JsonbParameterResolver implements ParameterResolver, ExtensionContext.Store.CloseableResource {
 
-    private static final long serialVersionUID = 2711050439353117979L;
+    private final Jsonb jsonb = JsonbBuilder.create();
 
     /**
-     * Returns a hash code value.
+     * Returns a {@code true} if parameter class is {@code Jsonb}.
      *
-     * @return a hash code value. It is generated from the primary key value.
+     * @param pc the {@code ParameterContext}
+     * @param ec the {@code ExtensionContext}
+     * @return {@code true} if parameter class is {@code Jsonb}
+     * @throws ParameterResolutionException no occurs
      * @since 3.0.0
      */
     @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+    public boolean supportsParameter(ParameterContext pc, ExtensionContext ec) throws ParameterResolutionException {
+        return Jsonb.class == pc.getParameter().getType();
     }
 
     /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
-     * key is match.
+     * Returns a {@code Jsonb} instance.
      *
-     * @param other an any object
-     * @return {@code true} if equals, otherwise {@code false}.
+     * @param pc the {@code ParameterContext}
+     * @param ec the {@code ExtensionContext}
+     * @return {@code Jsonb}
+     * @throws ParameterResolutionException no occurs
      * @since 3.0.0
      */
     @Override
-    public boolean equals(Object other) {
-        return other instanceof UserEntity o && Objects.equals(id, o.id);
+    public Object resolveParameter(ParameterContext pc, ExtensionContext ec) throws ParameterResolutionException {
+        return jsonb;
     }
 
     /**
-     * Returns a string representation.
+     * Close the {@code Jsonb} instance.
      *
-     * @return a string representation
+     * @throws Exception if occurs any exception
      * @since 3.0.0
      */
     @Override
-    public String toString() {
-        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", validityPeriod=" + validityPeriod
-            + ", name=" + name + ", properties=" + properties + ", digest=" + digest + '}';
+    public void close() throws Exception {
+        jsonb.close();
     }
 }
