@@ -45,7 +45,7 @@ import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
- * Definition for creates a {@code Job}.
+ * Definition for creates a <i>Job</i>.
  *
  * <p>
  * Implementation requirements.
