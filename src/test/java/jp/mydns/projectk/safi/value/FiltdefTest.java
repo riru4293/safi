@@ -49,24 +49,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class FiltdefTest {
 
     /**
-     * Test of getTrnsdef method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetTrnsdef() {
-    }
-
-    /**
-     * Test of getCondition method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetCondition() {
-    }
-
-    /**
      * Test of deserialize method, of class Deserializer.
      *
      * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
