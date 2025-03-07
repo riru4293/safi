@@ -57,11 +57,11 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
  *     "$id": "https://project-k.mydns.jp/safi/filtdef.schema.json",
  *     "title": "Filtdef",
- *     "description": "An information for filtering the contents.",
+ *     "description": "Content filtering definition.",
  *     "type": "object",
  *     "properties": {
  *         "trnsdef": {
- *             "description": "Configuration for transformation.",
+ *             "description": "Transform definition for filtering.",
  *             "type": "object",
  *             "patternProperties": {
  *                 "^.+$": {
@@ -118,8 +118,8 @@ public interface Filtdef {
      */
     class Builder {
 
-        private Map<String, String> trnsdef;
-        private Condition condition;
+        private Map<String, String> trnsdef = Map.of();
+        private Condition condition = Condition.emptyCondition();
 
         /**
          * Set transform definition for filtering.

@@ -33,6 +33,7 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -54,11 +55,11 @@ public interface PersistableValue {
     /**
      * Get note for this value.
      *
-     * @return note for this value. It may be {@code null}.
+     * @return note for this value
      * @since 3.0.0
      */
     @Schema(description = "Note for this value.")
-    String getNote();
+    Optional<String> getNote();
 
     /**
      * Get version number for this value. Used for optimistic locking when updating this value. Incremented after
@@ -74,64 +75,56 @@ public interface PersistableValue {
     /**
      * Get registered time.
      *
-     * @return registered time. It may be {@code null}.
+     * @return registered time
      * @since 3.0.0
      */
     @Schema(description = "Registered time.")
-    @TimeRange
-    @TimeAccuracy
-    OffsetDateTime getRegisterTime();
+    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getRegisterTime();
 
     /**
      * Get account id who made this value.
      *
-     * @return account id. It may be {@code null}.
+     * @return account id
      * @since 3.0.0
      */
     @Schema(description = "Account id who made this value.")
-    @Size(max = 250)
-    String getRegisterAccountId();
+    Optional<@Size(max = 250) String> getRegisterAccountId();
 
     /**
      * Get name of the process who made this value.
      *
-     * @return process name. It may be {@code null}.
+     * @return process name
      * @since 3.0.0
      */
     @Schema(description = "Process name who made this value.")
-    @Size(max = 250)
-    String getRegisterProcessName();
+    Optional<@Size(max = 250) String> getRegisterProcessName();
 
     /**
      * Get updated time.
      *
-     * @return updated time. It may be {@code null}.
+     * @return updated time
      * @since 3.0.0
      */
     @Schema(description = "Updated time.")
-    @TimeRange
-    @TimeAccuracy
-    OffsetDateTime getUpdateTime();
+    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getUpdateTime();
 
     /**
      * Get account id who updated this value.
      *
-     * @return account id. It may be {@code null}.
+     * @return account id
      * @since 3.0.0
      */
     @Schema(description = "Account id who updated this value.")
-    @Size(max = 250)
-    String getUpdateAccountId();
+    Optional<@Size(max = 250) String> getUpdateAccountId();
 
     /**
      * Get name of the process who made this value.
      *
-     * @return process name. It may be {@code null}.
+     * @return process name
      * @since 3.0.0
      */
     @Schema(description = "Process name who updated this value.")
-    @Size(max = 250)
-    String getUpdateProcessName();
+    Optional<@Size(max = 250) String> getUpdateProcessName();
 
     /**
      * Abstract builder of the {@link PersistableValue}.
@@ -145,14 +138,14 @@ public interface PersistableValue {
     abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends PersistableValue> {
 
         protected final Class<B> builderType;
+        protected String note;
+        protected int version;
         protected OffsetDateTime registerTime;
         protected String registerAccountId;
         protected String registerProcessName;
         protected OffsetDateTime updateTime;
         protected String updateAccountId;
         protected String updateProcessName;
-        protected String note;
-        protected int version;
 
         protected AbstractBuilder(Class<B> builderType) {
             this.builderType = Objects.requireNonNull(builderType);
@@ -169,15 +162,39 @@ public interface PersistableValue {
         public B with(V src) {
             Objects.requireNonNull(src);
 
-            this.registerTime = src.getRegisterTime();
-            this.registerAccountId = src.getRegisterAccountId();
-            this.registerProcessName = src.getRegisterProcessName();
-            this.updateTime = src.getUpdateTime();
-            this.updateAccountId = src.getUpdateAccountId();
-            this.updateProcessName = src.getUpdateProcessName();
-            this.note = src.getNote();
+            this.note = src.getNote().orElse(null);
             this.version = src.getVersion();
+            this.registerTime = src.getRegisterTime().orElse(null);
+            this.registerAccountId = src.getRegisterAccountId().orElse(null);
+            this.registerProcessName = src.getRegisterProcessName().orElse(null);
+            this.updateTime = src.getUpdateTime().orElse(null);
+            this.updateAccountId = src.getUpdateAccountId().orElse(null);
+            this.updateProcessName = src.getUpdateProcessName().orElse(null);
 
+            return builderType.cast(this);
+        }
+
+        /**
+         * Set note for this value.
+         *
+         * @param note note for this value. It can be set {@code null}.
+         * @return updated this
+         * @since 3.0.0
+         */
+        public B withNote(String note) {
+            this.note = note;
+            return builderType.cast(this);
+        }
+
+        /**
+         * Set version number for this value.
+         *
+         * @param version version number. 0 means new value.
+         * @return updated this
+         * @since 3.0.0
+         */
+        public B withVersion(int version) {
+            this.version = version;
             return builderType.cast(this);
         }
 
@@ -254,30 +271,6 @@ public interface PersistableValue {
         }
 
         /**
-         * Set note for this value.
-         *
-         * @param note note for this value. It can be set {@code null}.
-         * @return updated this
-         * @since 3.0.0
-         */
-        public B withNote(String note) {
-            this.note = note;
-            return builderType.cast(this);
-        }
-
-        /**
-         * Set version number for this value.
-         *
-         * @param version version number. 0 means new value.
-         * @return updated this
-         * @since 3.0.0
-         */
-        public B withVersion(int version) {
-            this.version = version;
-            return builderType.cast(this);
-        }
-
-        /**
          * Build a new inspected instance.
          *
          * @param validator the {@code Validator}
@@ -298,14 +291,14 @@ public interface PersistableValue {
          */
         protected abstract static class AbstractBean implements PersistableValue {
 
+            protected String note;
+            protected int version;
             protected OffsetDateTime registerTime;
             protected String registerAccountId;
             protected String registerProcessName;
             protected OffsetDateTime updateTime;
             protected String updateAccountId;
             protected String updateProcessName;
-            protected String note;
-            protected int version;
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -322,14 +315,14 @@ public interface PersistableValue {
              * @since 3.0.0
              */
             protected AbstractBean(AbstractBuilder<?, ?> builder) {
+                this.note = builder.note;
+                this.version = builder.version;
                 this.registerTime = builder.registerTime;
                 this.registerAccountId = builder.registerAccountId;
                 this.registerProcessName = builder.registerProcessName;
                 this.updateTime = builder.updateTime;
                 this.updateAccountId = builder.updateAccountId;
                 this.updateProcessName = builder.updateProcessName;
-                this.note = builder.note;
-                this.version = builder.version;
             }
 
             /**
@@ -338,128 +331,8 @@ public interface PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public OffsetDateTime getRegisterTime() {
-                return registerTime;
-            }
-
-            /**
-             * Set registered time.
-             *
-             * @param registerTime registered time. It can be set {@code null}.
-             * @since 3.0.0
-             */
-            public void setRegisterTime(OffsetDateTime registerTime) {
-                this.registerTime = registerTime;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public String getRegisterAccountId() {
-                return registerAccountId;
-            }
-
-            /**
-             * Set account id who made this value.
-             *
-             * @param registerAccountId account id who made this value. It can be set {@code null}.
-             * @since 3.0.0
-             */
-            public void setRegisterAccountId(String registerAccountId) {
-                this.registerAccountId = registerAccountId;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public String getRegisterProcessName() {
-                return registerProcessName;
-            }
-
-            /**
-             * Set process name who made this value.
-             *
-             * @param registerProcessName process name who made this value. It can be set {@code null}.
-             * @since 3.0.0
-             */
-            public void setRegisterProcessName(String registerProcessName) {
-                this.registerProcessName = registerProcessName;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public OffsetDateTime getUpdateTime() {
-                return updateTime;
-            }
-
-            /**
-             * Set update time.
-             *
-             * @param updateTime update time. It can be set {@code null}.
-             * @since 3.0.0
-             */
-            public void setUpdateTime(OffsetDateTime updateTime) {
-                this.updateTime = updateTime;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public String getUpdateAccountId() {
-                return updateAccountId;
-            }
-
-            /**
-             * Set account id who updated this value.
-             *
-             * @param updateAccountId account id who updated this value. It can be set {@code null}.
-             * @since 3.0.0
-             */
-            public void setUpdateAccountId(String updateAccountId) {
-                this.updateAccountId = updateAccountId;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public String getUpdateProcessName() {
-                return updateProcessName;
-            }
-
-            /**
-             * Set process name who updated this value.
-             *
-             * @param updateProcessName process name who updated this value. It can be set {@code null}.
-             * @since 3.0.0
-             */
-            public void setUpdateProcessName(String updateProcessName) {
-                this.updateProcessName = updateProcessName;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public String getNote() {
-                return note;
+            public Optional<String> getNote() {
+                return Optional.ofNullable(note);
             }
 
             /**
@@ -490,6 +363,126 @@ public interface PersistableValue {
              */
             public void setVersion(int version) {
                 this.version = version;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<OffsetDateTime> getRegisterTime() {
+                return Optional.ofNullable(registerTime);
+            }
+
+            /**
+             * Set registered time.
+             *
+             * @param registerTime registered time. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setRegisterTime(OffsetDateTime registerTime) {
+                this.registerTime = registerTime;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<String> getRegisterAccountId() {
+                return Optional.ofNullable(registerAccountId);
+            }
+
+            /**
+             * Set account id who made this value.
+             *
+             * @param registerAccountId account id who made this value. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setRegisterAccountId(String registerAccountId) {
+                this.registerAccountId = registerAccountId;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<String> getRegisterProcessName() {
+                return Optional.ofNullable(registerProcessName);
+            }
+
+            /**
+             * Set process name who made this value.
+             *
+             * @param registerProcessName process name who made this value. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setRegisterProcessName(String registerProcessName) {
+                this.registerProcessName = registerProcessName;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<OffsetDateTime> getUpdateTime() {
+                return Optional.ofNullable(updateTime);
+            }
+
+            /**
+             * Set update time.
+             *
+             * @param updateTime update time. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setUpdateTime(OffsetDateTime updateTime) {
+                this.updateTime = updateTime;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<String> getUpdateAccountId() {
+                return Optional.ofNullable(updateAccountId);
+            }
+
+            /**
+             * Set account id who updated this value.
+             *
+             * @param updateAccountId account id who updated this value. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setUpdateAccountId(String updateAccountId) {
+                this.updateAccountId = updateAccountId;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<String> getUpdateProcessName() {
+                return Optional.ofNullable(updateProcessName);
+            }
+
+            /**
+             * Set process name who updated this value.
+             *
+             * @param updateProcessName process name who updated this value. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setUpdateProcessName(String updateProcessName) {
+                this.updateProcessName = updateProcessName;
             }
         }
     }

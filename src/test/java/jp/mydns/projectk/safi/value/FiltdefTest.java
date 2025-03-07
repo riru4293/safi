@@ -70,7 +70,6 @@ class FiltdefTest {
         assertThat(result).isEqualTo(expect);
     }
 
-
     /**
      * Test of toString method.
      *
@@ -81,8 +80,7 @@ class FiltdefTest {
     void testToString(Validator validator) {
         String tmpl = "Filtdef{trnsdef=%s, condition=%s}";
 
-        var val = new Filtdef.Builder().withTrnsdef(Map.of()).withFilter(Condition.emptyCondition())
-                .build(validator);
+        var val = new Filtdef.Builder().withTrnsdef(Map.of()).withFilter(Condition.emptyCondition()).build(validator);
 
         assertThat(val).hasToString(tmpl, Map.of(), Condition.emptyCondition());
     }
