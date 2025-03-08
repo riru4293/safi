@@ -36,7 +36,7 @@ import java.util.Objects;
 import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.ValidityPeriod;
+import jp.mydns.projectk.safi.value.ValidityPeriodValue;
 
 /**
  * Validity period as a built-in part of JPA entity.
@@ -72,11 +72,11 @@ public class ValidityPeriodEmb implements Serializable {
     /**
      * Constructor.
      *
-     * @param vp the {@code ValidityPeriod}
+     * @param vp the {@code ValidityPeriodValue}
      * @throws NullPointerException if {@code vp} is {@code null} or if {@code vp} contains {@code null}.
      * @since 3.0.0
      */
-    public ValidityPeriodEmb(ValidityPeriod vp) {
+    public ValidityPeriodEmb(ValidityPeriodValue vp) {
         Objects.requireNonNull(vp);
 
         localFrom = vp.getFrom().toLocalDateTime();

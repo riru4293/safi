@@ -201,14 +201,14 @@ public interface JobdefValue extends PersistableValue {
     String getId();
 
     /**
-     * Get the {@code ValidityPeriod}.
+     * Get the {@code ValidityPeriodValue}.
      *
-     * @return the {@code ValidityPeriod}
+     * @return the {@code ValidityPeriodValue}
      * @since 3.0.0
      */
     @NotNull
     @Valid
-    ValidityPeriod getValidityPeriod();
+    ValidityPeriodValue getValidityPeriod();
 
     /**
      * Get the {@code JobKind}.
@@ -290,7 +290,7 @@ public interface JobdefValue extends PersistableValue {
     JsonObject getJobProperties();
 
     /**
-     * Builder of the {@code Jobdef}.
+     * Builder of the {@code JobdefValue}.
      *
      * @author riru
      * @version 3.0.0
@@ -299,7 +299,7 @@ public interface JobdefValue extends PersistableValue {
     class Builder extends AbstractBuilder<Builder, JobdefValue> {
 
         private String id;
-        private ValidityPeriod validityPeriod;
+        private ValidityPeriodValue validityPeriod;
         private JobKind jobKind;
         private JobTarget jobTarget;
         private Duration timeout;
@@ -354,13 +354,13 @@ public interface JobdefValue extends PersistableValue {
         }
 
         /**
-         * Set the {@code ValidityPeriod}.
+         * Set the {@code ValidityPeriodValue}.
          *
-         * @param validityPeriod the {@code ValidityPeriod}
+         * @param validityPeriod the {@code ValidityPeriodValue}
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withValidityPeriod(ValidityPeriod validityPeriod) {
+        public Builder withValidityPeriod(ValidityPeriodValue validityPeriod) {
             this.validityPeriod = validityPeriod;
             return this;
         }
@@ -472,7 +472,7 @@ public interface JobdefValue extends PersistableValue {
         }
 
         /**
-         * Implements of the {@code Jobdef}.
+         * Implements of the {@code JobdefValue}.
          *
          * @author riru
          * @version 3.0.0
@@ -481,7 +481,7 @@ public interface JobdefValue extends PersistableValue {
         protected static class Bean extends AbstractBuilder.AbstractBean implements JobdefValue {
 
             private String id;
-            private ValidityPeriod validityPeriod;
+            private ValidityPeriodValue validityPeriod;
             private JobKind jobKind;
             private JobTarget jobTarget;
             private Duration timeout;
@@ -502,7 +502,7 @@ public interface JobdefValue extends PersistableValue {
             /**
              * Constructor.
              *
-             * @param builder the {@code Jobdef.Builder}
+             * @param builder the {@code JobdefValue.Builder}
              * @since 3.0.0
              */
             protected Bean(Builder builder) {
@@ -546,17 +546,17 @@ public interface JobdefValue extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public ValidityPeriod getValidityPeriod() {
+            public ValidityPeriodValue getValidityPeriod() {
                 return validityPeriod;
             }
 
             /**
-             * Set the {@code ValidityPeriod}.
+             * Set the {@code ValidityPeriodValue}.
              *
-             * @param validityPeriod the {@code ValidityPeriod}
+             * @param validityPeriod the {@code ValidityPeriodValue}
              * @since 3.0.0
              */
-            public void setValidityPeriod(ValidityPeriod validityPeriod) {
+            public void setValidityPeriod(ValidityPeriodValue validityPeriod) {
                 this.validityPeriod = validityPeriod;
             }
 
@@ -728,7 +728,7 @@ public interface JobdefValue extends PersistableValue {
              */
             @Override
             public String toString() {
-                return "Jobdef{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind=" + jobKind
+                return "JobdefValue{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind=" + jobKind
                     + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name
                     + ", pluginName=" + pluginName + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef
                     + ", jobProperties=" + jobProperties + ", version=" + version + '}';
@@ -737,7 +737,7 @@ public interface JobdefValue extends PersistableValue {
     }
 
     /**
-     * JSON deserializer for {@code Jobdef}.
+     * JSON deserializer for {@code JobdefValue}.
      *
      * @author riru
      * @version 3.0.0

@@ -61,7 +61,7 @@ class JobdefValueTest {
      */
     @Test
     void testBuild(Validator validator) {
-        var vp = new ValidityPeriod.Builder().build(validator);
+        var vp = new ValidityPeriodValue.Builder().build(validator);
         var filtdef = new Filtdef.Builder().build(validator);
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
@@ -145,10 +145,10 @@ class JobdefValueTest {
      */
     @Test
     void testToString(Validator validator) {
-        String tmpl = "Jobdef{id=%s, validityPeriod=%s, jobKind=%s, jobTarget=%s, timeout=%s, name=%s, pluginName=%s"
+        String tmpl = "JobdefValue{id=%s, validityPeriod=%s, jobKind=%s, jobTarget=%s, timeout=%s, name=%s, pluginName=%s"
                 + ", trnsdef=%s, filtdef=%s, jobProperties=%s, version=%s}";
 
-        var vp = new ValidityPeriod.Builder().build(validator);
+        var vp = new ValidityPeriodValue.Builder().build(validator);
         var filtdef = new Filtdef.Builder().build(validator);
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);

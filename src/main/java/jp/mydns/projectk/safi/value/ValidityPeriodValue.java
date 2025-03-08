@@ -97,9 +97,9 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(ValidityPeriod.Deserializer.class)
+@JsonbTypeDeserializer(ValidityPeriodValue.Deserializer.class)
 @Schema(name = "ValidityPeriod", description = "Validity period.")
-public interface ValidityPeriod {
+public interface ValidityPeriodValue {
 
     /**
      * Get begin date-time of validity period.
@@ -193,7 +193,7 @@ public interface ValidityPeriod {
     }
 
     /**
-     * Builder of the {@link ValidityPeriod}.
+     * Builder of the {@code ValidityPeriodValue}.
      *
      * @author riru
      * @version 3.0.0
@@ -213,7 +213,7 @@ public interface ValidityPeriod {
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 3.0.0
          */
-        public Builder with(ValidityPeriod src) {
+        public Builder with(ValidityPeriodValue src) {
             Objects.requireNonNull(src);
 
             this.from = src.getFrom();
@@ -269,18 +269,18 @@ public interface ValidityPeriod {
          * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public ValidityPeriod build(Validator validator, Class<?>... groups) {
+        public ValidityPeriodValue build(Validator validator, Class<?>... groups) {
             return ValidationUtils.requireValid(new Bean(this), validator, groups);
         }
 
         /**
-         * Implements of the {@code ValidityPeriod}.
+         * Implements of the {@code ValidityPeriodValue}.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class Bean implements ValidityPeriod {
+        protected static class Bean implements ValidityPeriodValue {
 
             private OffsetDateTime from;
             private OffsetDateTime to;
@@ -297,7 +297,7 @@ public interface ValidityPeriod {
             /**
              * Constructor.
              *
-             * @param builder the {@code ValidityPeriod.Builder}
+             * @param builder the {@code ValidityPeriodValue.Builder}
              * @since 3.0.0
              */
             protected Bean(Builder builder) {
@@ -386,7 +386,7 @@ public interface ValidityPeriod {
              */
             @Override
             public boolean equals(Object other) {
-                return other instanceof ValidityPeriod o && Objects.equals(from, o.getFrom())
+                return other instanceof ValidityPeriodValue o && Objects.equals(from, o.getFrom())
                         && Objects.equals(to, o.getTo()) && Objects.equals(ignored, o.isIgnored());
             }
 
@@ -398,39 +398,39 @@ public interface ValidityPeriod {
              */
             @Override
             public String toString() {
-                return "ValidityPeriod{" + "from=" + from + ", to=" + to + ", ignored=" + ignored + '}';
+                return "ValidityPeriodValue{" + "from=" + from + ", to=" + to + ", ignored=" + ignored + '}';
             }
         }
     }
 
     /**
-     * JSON deserializer for {@code ValidityPeriod}.
+     * JSON deserializer for {@code ValidityPeriodValue}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<ValidityPeriod> {
+    class Deserializer implements JsonbDeserializer<ValidityPeriodValue> {
 
         /**
          * {@inheritDoc} If an element is null because no value is provided, the default value is used.
          *
-         * @see ValidityPeriod#defaultFrom()
-         * @see ValidityPeriod#defaultTo()
-         * @see ValidityPeriod#defaultIgnored()
+         * @see ValidityPeriodValue#defaultFrom()
+         * @see ValidityPeriodValue#defaultTo()
+         * @see ValidityPeriodValue#defaultIgnored()
          * @since 3.0.0
          */
         @Override
-        public ValidityPeriod deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public ValidityPeriodValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
 
             var bean = dc.deserialize(Builder.Bean.class, jp);
 
             if (bean.getFrom() == null) {
-                bean.setFrom(ValidityPeriod.defaultFrom());
+                bean.setFrom(ValidityPeriodValue.defaultFrom());
             }
 
             if (bean.getTo() == null) {
-                bean.setTo(ValidityPeriod.defaultTo());
+                bean.setTo(ValidityPeriodValue.defaultTo());
             }
 
             return bean;

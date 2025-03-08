@@ -127,7 +127,7 @@ public interface PersistableValue {
     Optional<@Size(max = 250) String> getUpdateProcessName();
 
     /**
-     * Abstract builder of the {@link PersistableValue}.
+     * Abstract builder of the {@code PersistableValue}.
      *
      * @param <B> builder type
      * @param <V> value type

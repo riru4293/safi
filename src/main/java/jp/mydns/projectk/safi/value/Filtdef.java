@@ -110,7 +110,7 @@ public interface Filtdef {
     Condition getCondition();
 
     /**
-     * Builder of the {@link Filtdef}.
+     * Builder of the {@code Filtdef}.
      *
      * @author riru
      * @version 3.0.0
