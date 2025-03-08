@@ -71,7 +71,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *         },
  *         "condition": {
  *             "description": "Plugin execution arguments.",
- *             "$ref": "https://project-k.mydns.jp/safi/condition.schema.json"
+ *             "$ref": "https://project-k.mydns.jp/safi/filtering-condition.schema.json"
  *         },
  *         "required": [
  *             "trnsdef", "condition"
@@ -107,7 +107,7 @@ public interface Filtdef {
     @Schema(description = "Filtering condition.")
     @NotNull
     @Valid
-    Condition getCondition();
+    FilteringCondition getCondition();
 
     /**
      * Builder of the {@code Filtdef}.
@@ -119,7 +119,7 @@ public interface Filtdef {
     class Builder {
 
         private Map<String, String> trnsdef = Map.of();
-        private Condition condition = Condition.emptyCondition();
+        private FilteringCondition condition = FilteringCondition.empty();
 
         /**
          * Set transform definition for filtering.
@@ -140,7 +140,7 @@ public interface Filtdef {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withFilter(Condition condition) {
+        public Builder withFilter(FilteringCondition condition) {
             this.condition = condition;
             return this;
         }
@@ -169,7 +169,7 @@ public interface Filtdef {
         protected static class Bean implements Filtdef {
 
             private Map<String, String> trnsdef;
-            private Condition condition;
+            private FilteringCondition condition;
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -216,7 +216,7 @@ public interface Filtdef {
              * @since 3.0.0
              */
             @Override
-            public Condition getCondition() {
+            public FilteringCondition getCondition() {
                 return condition;
             }
 
@@ -226,7 +226,7 @@ public interface Filtdef {
              * @param condition filtering condition
              * @since 3.0.0
              */
-            public void setCondition(Condition condition) {
+            public void setCondition(FilteringCondition condition) {
                 this.condition = condition;
             }
 
