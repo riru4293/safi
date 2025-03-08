@@ -261,7 +261,7 @@ public class JsonArrayValue extends AbstractList<JsonValue> implements JsonArray
 
     private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         stream.defaultReadObject();
-        
+
         try (var r = Json.createReader(new StringReader(stream.readUTF()))) {
             value = r.readArray();
         }

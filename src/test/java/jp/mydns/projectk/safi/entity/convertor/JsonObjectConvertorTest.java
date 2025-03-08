@@ -48,10 +48,10 @@ class JsonObjectConvertorTest {
     @Test
     void testConvertToDatabaseColumn() {
         var expect = "{\"k\":\"v\"}";
-        
+
         var result = new JsonObjectConvertor().convertToDatabaseColumn(new JsonObjectValue(Json.createObjectBuilder()
             .add("k", "v").build()));
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -63,7 +63,7 @@ class JsonObjectConvertorTest {
     @Test
     void testConvertToDatabaseColumnIfNull() {
         var result = new JsonObjectConvertor().convertToDatabaseColumn(null);
-        
+
         assertThat(result).isEqualTo("{}");
     }
 
@@ -75,9 +75,9 @@ class JsonObjectConvertorTest {
     @Test
     void testConvertToEntityAttribute() {
         var expect = JsonValue.EMPTY_JSON_OBJECT;
-        
+
         var result = new JsonObjectConvertor().convertToEntityAttribute("{}");
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -89,9 +89,9 @@ class JsonObjectConvertorTest {
     @Test
     void testConvertToEntityAttributeIfNull() {
         var expect = JsonValue.EMPTY_JSON_OBJECT;
-        
+
         var result = new JsonObjectConvertor().convertToEntityAttribute(null);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 }

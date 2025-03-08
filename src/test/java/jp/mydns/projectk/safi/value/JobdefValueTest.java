@@ -62,40 +62,40 @@ class JobdefValueTest {
     @Test
     void testBuild(Validator validator) {
         var vp = new ValidityPeriodValue.Builder().build(validator);
-        var filtdef = new Filtdef.Builder().build(validator);
+        var filtdef = new FiltdefValue.Builder().build(validator);
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
 
         // Build value
         var val = new JobdefValue.Builder().withId("jobdef-id").withValidityPeriod(vp)
-                .withJobKind(JobKind.REBUILD).withJobTarget(JobTarget.ASSET).withTimeout(Duration.ZERO)
-                .withName("jobdef-name").withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
-                .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).withNote("note").withVersion(3).withRegisterTime(regTime)
-                .withRegisterAccountId("reg-id").withRegisterProcessName("reg-name").withUpdateTime(updTime)
-                .withUpdateAccountId("upd-id").withUpdateProcessName("upd-name")
-                .build(validator);
+            .withJobKind(JobKind.REBUILD).withJobTarget(JobTarget.ASSET).withTimeout(Duration.ZERO)
+            .withName("jobdef-name").withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
+            .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).withNote("note").withVersion(3).withRegisterTime(regTime)
+            .withRegisterAccountId("reg-id").withRegisterProcessName("reg-name").withUpdateTime(updTime)
+            .withUpdateAccountId("upd-id").withUpdateProcessName("upd-name")
+            .build(validator);
 
         // Rebuild same value
         val = new JobdefValue.Builder().with(val).build(validator);
 
         assertThat(val).returns("jobdef-id", JobdefValue::getId)
-                .returns(vp, JobdefValue::getValidityPeriod)
-                .returns(JobKind.REBUILD, JobdefValue::getJobKind)
-                .returns(JobTarget.ASSET, JobdefValue::getJobTarget)
-                .returns(Duration.ZERO, JobdefValue::getTimeout)
-                .satisfies(v -> assertThat(v.getName()).hasValue("jobdef-name"))
-                .satisfies(v -> assertThat(v.getPluginName()).hasValue("plg"))
-                .satisfies(v -> assertThat(v.getTrnsdef()).isEmpty())
-                .returns(filtdef, JobdefValue::getFiltdef)
-                .returns(JsonValue.EMPTY_JSON_OBJECT, JobdefValue::getJobProperties)
-                .satisfies(v -> assertThat(v.getNote()).hasValue("note"))
-                .returns(3, JobdefValue::getVersion)
-                .satisfies(v -> assertThat(v.getRegisterTime()).hasValue(regTime))
-                .satisfies(v -> assertThat(v.getRegisterAccountId()).hasValue("reg-id"))
-                .satisfies(v -> assertThat(v.getRegisterProcessName()).hasValue("reg-name"))
-                .satisfies(v -> assertThat(v.getUpdateTime()).hasValue(updTime))
-                .satisfies(v -> assertThat(v.getUpdateAccountId()).hasValue("upd-id"))
-                .satisfies(v -> assertThat(v.getUpdateProcessName()).hasValue("upd-name"));
+            .returns(vp, JobdefValue::getValidityPeriod)
+            .returns(JobKind.REBUILD, JobdefValue::getJobKind)
+            .returns(JobTarget.ASSET, JobdefValue::getJobTarget)
+            .returns(Duration.ZERO, JobdefValue::getTimeout)
+            .satisfies(v -> assertThat(v.getName()).hasValue("jobdef-name"))
+            .satisfies(v -> assertThat(v.getPluginName()).hasValue("plg"))
+            .satisfies(v -> assertThat(v.getTrnsdef()).isEmpty())
+            .returns(filtdef, JobdefValue::getFiltdef)
+            .returns(JsonValue.EMPTY_JSON_OBJECT, JobdefValue::getJobProperties)
+            .satisfies(v -> assertThat(v.getNote()).hasValue("note"))
+            .returns(3, JobdefValue::getVersion)
+            .satisfies(v -> assertThat(v.getRegisterTime()).hasValue(regTime))
+            .satisfies(v -> assertThat(v.getRegisterAccountId()).hasValue("reg-id"))
+            .satisfies(v -> assertThat(v.getRegisterProcessName()).hasValue("reg-name"))
+            .satisfies(v -> assertThat(v.getUpdateTime()).hasValue(updTime))
+            .satisfies(v -> assertThat(v.getUpdateAccountId()).hasValue("upd-id"))
+            .satisfies(v -> assertThat(v.getUpdateProcessName()).hasValue("upd-name"));
     }
 
     /**
@@ -107,26 +107,26 @@ class JobdefValueTest {
     @Test
     void testDeserialize(Jsonb jsonb) {
         JsonObject expect = Json.createObjectBuilder()
-                .add("id", "jobdef-id")
-                .add("validityPeriod", Json.createObjectBuilder()
-                        .add("from", "2000-01-01T00:00:00Z")
-                        .add("to", "2999-12-31T23:59:59Z")
-                        .add("ignored", false))
-                .add("jobKind", "REBUILD")
-                .add("jobTarget", "ASSET")
-                .add("timeout", "PT0S")
-                .add("name", "jobdef-name")
-                .add("pluginName", "plg")
-                .add("trnsdef", JsonValue.EMPTY_JSON_OBJECT)
-                .add("filtdef", Json.createObjectBuilder()
-                        .add("trnsdef", Json.createObjectBuilder().add("k1", "v1"))
-                        .add("condition", Json.createObjectBuilder()
-                                .add("operation", "AND").add("children", JsonValue.EMPTY_JSON_ARRAY)))
-                .add("jobProperties", Json.createObjectBuilder().add("p1", "A"))
-                .add("note", "note").add("version", 7)
-                .add("registerTime", "2222-12-30T00:12:34Z").add("registerAccountId", "rid").add("registerProcessName", "rnm")
-                .add("updateTime", "2134-11-20T10:12:11Z").add("updateAccountId", "uid").add("updateProcessName", "unm")
-                .build();
+            .add("id", "jobdef-id")
+            .add("validityPeriod", Json.createObjectBuilder()
+                .add("from", "2000-01-01T00:00:00Z")
+                .add("to", "2999-12-31T23:59:59Z")
+                .add("ignored", false))
+            .add("jobKind", "REBUILD")
+            .add("jobTarget", "ASSET")
+            .add("timeout", "PT0S")
+            .add("name", "jobdef-name")
+            .add("pluginName", "plg")
+            .add("trnsdef", JsonValue.EMPTY_JSON_OBJECT)
+            .add("filtdef", Json.createObjectBuilder()
+                .add("trnsdef", Json.createObjectBuilder().add("k1", "v1"))
+                .add("condition", Json.createObjectBuilder()
+                    .add("operation", "AND").add("children", JsonValue.EMPTY_JSON_ARRAY)))
+            .add("jobProperties", Json.createObjectBuilder().add("p1", "A"))
+            .add("note", "note").add("version", 7)
+            .add("registerTime", "2222-12-30T00:12:34Z").add("registerAccountId", "rid").add("registerProcessName", "rnm")
+            .add("updateTime", "2134-11-20T10:12:11Z").add("updateAccountId", "uid").add("updateProcessName", "unm")
+            .build();
 
         var deserialized = jsonb.fromJson(expect.toString(), JobdefValue.class);
 
@@ -146,22 +146,22 @@ class JobdefValueTest {
     @Test
     void testToString(Validator validator) {
         String tmpl = "JobdefValue{id=%s, validityPeriod=%s, jobKind=%s, jobTarget=%s, timeout=%s, name=%s, pluginName=%s"
-                + ", trnsdef=%s, filtdef=%s, jobProperties=%s, version=%s}";
+            + ", trnsdef=%s, filtdef=%s, jobProperties=%s, version=%s}";
 
         var vp = new ValidityPeriodValue.Builder().build(validator);
-        var filtdef = new Filtdef.Builder().build(validator);
+        var filtdef = new FiltdefValue.Builder().build(validator);
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
 
         var val = new JobdefValue.Builder().withId("jobdef-id").withValidityPeriod(vp).withJobKind(JobKind.REBUILD)
-                .withJobTarget(JobTarget.ASSET).withTimeout(Duration.ZERO).withName("jobdef-name").withPluginName("plg")
-                .withTrnsdef(Map.of()).withFiltdef(filtdef).withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
-                .withNote("note").withVersion(3)
-                .withRegisterTime(regTime).withRegisterAccountId("reg-id").withRegisterProcessName("reg-name")
-                .withUpdateTime(updTime).withUpdateAccountId("upd-id").withUpdateProcessName("upd-name")
-                .build(validator);
+            .withJobTarget(JobTarget.ASSET).withTimeout(Duration.ZERO).withName("jobdef-name").withPluginName("plg")
+            .withTrnsdef(Map.of()).withFiltdef(filtdef).withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
+            .withNote("note").withVersion(3)
+            .withRegisterTime(regTime).withRegisterAccountId("reg-id").withRegisterProcessName("reg-name")
+            .withUpdateTime(updTime).withUpdateAccountId("upd-id").withUpdateProcessName("upd-name")
+            .build(validator);
 
         assertThat(val).hasToString(tmpl, "jobdef-id", vp, JobKind.REBUILD, JobTarget.ASSET, Duration.ZERO, "jobdef-name",
-                "plg", Map.of(), filtdef, JsonValue.EMPTY_JSON_OBJECT, 3);
+            "plg", Map.of(), filtdef, JsonValue.EMPTY_JSON_OBJECT, 3);
     }
 }

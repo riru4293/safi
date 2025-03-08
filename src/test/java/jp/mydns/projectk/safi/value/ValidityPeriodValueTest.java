@@ -59,9 +59,9 @@ class ValidityPeriodValueTest {
     @Test
     void testIsEnabled_LocalDateTime(Validator validator) {
         var val = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2000, 1, 1, 0, 0, 1, 0, ZoneOffset.UTC))
-                .withIgnored(false).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2000, 1, 1, 0, 0, 1, 0, ZoneOffset.UTC))
+            .withIgnored(false).build(validator);
 
         var tooFew = LocalDateTime.of(1999, 12, 31, 23, 59, 59, 999_999_999);
         var minimum = LocalDateTime.of(2000, 1, 1, 0, 0, 0, 0);
@@ -83,9 +83,9 @@ class ValidityPeriodValueTest {
     @Test
     void testIsEnabled_OffsetDateTime(Validator validator) {
         var val = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2000, 1, 1, 0, 0, 1, 0, ZoneOffset.UTC))
-                .withIgnored(false).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2000, 1, 1, 0, 0, 1, 0, ZoneOffset.UTC))
+            .withIgnored(false).build(validator);
 
         var tooFew = OffsetDateTime.of(1999, 12, 31, 23, 59, 59, 999_999_999, ZoneOffset.UTC);
         var minimum = OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
@@ -107,9 +107,9 @@ class ValidityPeriodValueTest {
     @Test
     void testIsEnabledIfIgnored(Validator validator) {
         var val = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2000, 1, 1, 0, 0, 1, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2000, 1, 1, 0, 0, 1, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         var tooFew = OffsetDateTime.of(1999, 12, 31, 23, 59, 59, 999_999_999, ZoneOffset.UTC);
         var minimum = OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
@@ -165,15 +165,15 @@ class ValidityPeriodValueTest {
     @Test
     void testHashCode(Validator validator) {
         var expect = Objects.hash(
-                OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
-                OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC),
-                true
+            OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC),
+            OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC),
+            true
         );
 
         var val = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         assertThat(val).hasSameHashCodeAs(expect);
     }
@@ -187,14 +187,14 @@ class ValidityPeriodValueTest {
     @Test
     void testEquals(Validator validator) {
         var val1 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         var val2 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         assertThat(val1).isEqualTo(val2);
     }
@@ -208,14 +208,14 @@ class ValidityPeriodValueTest {
     @Test
     void testEqualsIfNotSameFrom(Validator validator) {
         var val1 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2002, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2002, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         var val2 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         assertThat(val1).isNotEqualTo(val2);
     }
@@ -229,14 +229,14 @@ class ValidityPeriodValueTest {
     @Test
     void testEqualsIfNotSameTo(Validator validator) {
         var val1 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2888, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2888, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         var val2 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         assertThat(val1).isNotEqualTo(val2);
     }
@@ -250,14 +250,14 @@ class ValidityPeriodValueTest {
     @Test
     void testEqualsIfNotSameIgnored(Validator validator) {
         var val1 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(false).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(false).build(validator);
 
         var val2 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(true).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(true).build(validator);
 
         assertThat(val1).isNotEqualTo(val2);
     }
@@ -271,9 +271,9 @@ class ValidityPeriodValueTest {
     @Test
     void testEqualsIfOtherClass(Validator validator) {
         var val1 = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(false).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(false).build(validator);
 
         var val2 = new Object();
 
@@ -291,9 +291,9 @@ class ValidityPeriodValueTest {
         String tmpl = "ValidityPeriodValue{from=%s, to=%s, ignored=%s}";
 
         var val = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(false).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(false).build(validator);
 
         assertThat(val).hasToString(tmpl, "2000-01-01T00:00Z", "2999-12-31T23:59:59Z", "false");
     }
@@ -307,9 +307,9 @@ class ValidityPeriodValueTest {
     @Test
     void testWith(Validator validator) {
         var expect = new ValidityPeriodValue.Builder()
-                .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
-                .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
-                .withIgnored(false).build(validator);
+            .withFrom(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
+            .withTo(OffsetDateTime.of(2999, 12, 31, 23, 59, 59, 0, ZoneOffset.UTC))
+            .withIgnored(false).build(validator);
 
         var val = new ValidityPeriodValue.Builder().with(expect).build(validator);
 
@@ -325,7 +325,7 @@ class ValidityPeriodValueTest {
     @Test
     void testDeserialize(Jsonb jsonb) {
         JsonObject expect = Json.createObjectBuilder().add("from", "2000-01-01T00:00:00Z")
-                .add("to", "2999-12-31T23:59:59Z").add("ignored", true).build();
+            .add("to", "2999-12-31T23:59:59Z").add("ignored", true).build();
 
         var deserialized = jsonb.fromJson(expect.toString(), ValidityPeriodValue.class);
 
@@ -345,7 +345,7 @@ class ValidityPeriodValueTest {
     @Test
     void testDeserializeIfEmptyJson(Jsonb jsonb) {
         JsonObject expect = Json.createObjectBuilder().add("from", "2000-01-01T00:00:00Z")
-                .add("to", "2999-12-31T23:59:59Z").add("ignored", false).build();
+            .add("to", "2999-12-31T23:59:59Z").add("ignored", false).build();
 
         var deserialized = jsonb.fromJson("{}", ValidityPeriodValue.class);
 

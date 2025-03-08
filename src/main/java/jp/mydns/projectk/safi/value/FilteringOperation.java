@@ -176,7 +176,7 @@ public interface FilteringOperation {
     class Deserializer implements JsonbDeserializer<FilteringOperation> {
 
         private static final Set<String> multiOpNames
-                = Stream.of(Multi.values()).map(Enum::name).collect(toUnmodifiableSet());
+            = Stream.of(Multi.values()).map(Enum::name).collect(toUnmodifiableSet());
 
         /**
          * {@inheritDoc}

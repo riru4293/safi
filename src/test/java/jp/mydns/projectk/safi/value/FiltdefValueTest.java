@@ -23,75 +23,65 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity.convertor;
+package jp.mydns.projectk.safi.value;
 
 import jakarta.json.Json;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
-import jp.mydns.projectk.safi.value.JsonArrayValue;
+import jakarta.json.bind.Jsonb;
+import jakarta.validation.Validator;
+import java.util.Map;
+import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
+import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- * Test of class {@code JsonArrayConvertor}.
+ * Test of class {@code FiltdefValue}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-class JsonArrayConvertorTest {
+@ExtendWith(JsonbParameterResolver.class)
+@ExtendWith(ValidatorParameterResolver.class)
+class FiltdefValueTest {
 
     /**
-     * Test of convertToDatabaseColumn method.
+     * Test of deserialize method, of class Deserializer.
      *
+     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
      * @since 3.0.0
      */
     @Test
-    void testConvertToDatabaseColumn() {
-        var expect = "[\"m\",\"s\",\"g\"]";
+    void testDeserialize(Jsonb jsonb) {
+        JsonObject expect = Json.createObjectBuilder()
+            .add("trnsdef", Json.createObjectBuilder().add("k1", "v1").add("k2", "v2").add("k3", "v3"))
+            .add("condition", Json.createObjectBuilder()
+                .add("operation", "AND").add("children", JsonValue.EMPTY_JSON_ARRAY)).build();
 
-        var result = new JsonArrayConvertor().convertToDatabaseColumn(new JsonArrayValue(Json.createArrayBuilder()
-            .add("m").add("s").add("g").build()));
+        var deserialized = jsonb.fromJson(expect.toString(), FiltdefValue.class);
+
+        var serialized = jsonb.toJson(deserialized);
+
+        var result = jsonb.fromJson(serialized, JsonObject.class);
 
         assertThat(result).isEqualTo(expect);
     }
 
     /**
-     * Test of convertToDatabaseColumn method if null.
+     * Test of toString method.
      *
+     * @param validator the {@code Validator}. This parameter resolved by {@code ValidatorParameterResolver}.
      * @since 3.0.0
      */
     @Test
-    void testConvertToDatabaseColumnIfNull() {
-        var result = new JsonArrayConvertor().convertToDatabaseColumn(null);
+    void testToString(Validator validator) {
+        String tmpl = "FiltdefValue{trnsdef=%s, condition=%s}";
 
-        assertThat(result).isEqualTo("[]");
-    }
+        var val = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(FilteringCondition.empty()).build(validator);
 
-    /**
-     * Test of convertToEntityAttribute method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testConvertToEntityAttribute() {
-        var expect = JsonValue.EMPTY_JSON_ARRAY;
-
-        var result = new JsonArrayConvertor().convertToEntityAttribute("[]");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of convertToEntityAttribute method if null.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testConvertToEntityAttributeIfNull() {
-        var expect = JsonValue.EMPTY_JSON_ARRAY;
-
-        var result = new JsonArrayConvertor().convertToEntityAttribute(null);
-
-        assertThat(result).isEqualTo(expect);
+        assertThat(val).hasToString(tmpl, Map.of(), FilteringCondition.empty());
     }
 }

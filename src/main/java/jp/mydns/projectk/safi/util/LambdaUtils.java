@@ -312,7 +312,7 @@ public final class LambdaUtils {
      */
     public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> toLinkedHashMap(BinaryOperator<V> mergeFunc) {
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue,
-                Objects.requireNonNull(mergeFunc), LinkedHashMap::new), Collections::unmodifiableMap);
+            Objects.requireNonNull(mergeFunc), LinkedHashMap::new), Collections::unmodifiableMap);
     }
 
     /**
@@ -340,7 +340,7 @@ public final class LambdaUtils {
      */
     public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> toTreeMap(BinaryOperator<V> mergeFunc) {
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue,
-                Objects.requireNonNull(mergeFunc), TreeMap::new), Collections::unmodifiableMap);
+            Objects.requireNonNull(mergeFunc), TreeMap::new), Collections::unmodifiableMap);
     }
 
     /**
@@ -366,7 +366,7 @@ public final class LambdaUtils {
      */
     public static <V> Collector<Map.Entry<String, V>, ?, Map<String, V>> toCaseInsensitiveMap(BinaryOperator<V> mergeFunc) {
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue, Objects.requireNonNull(mergeFunc),
-                () -> new TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER)), Collections::unmodifiableMap);
+            () -> new TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER)), Collections::unmodifiableMap);
     }
 
     /**

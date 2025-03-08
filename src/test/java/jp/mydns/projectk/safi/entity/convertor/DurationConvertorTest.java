@@ -46,9 +46,9 @@ class DurationConvertorTest {
     @Test
     void testConvertToDatabaseColumn() {
         var expect = "PT0S";
-        
+
         var result = new DurationConvertor().convertToDatabaseColumn(Duration.ZERO);
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -60,7 +60,7 @@ class DurationConvertorTest {
     @Test
     void testConvertToDatabaseColumnIfNull() {
         var result = new DurationConvertor().convertToDatabaseColumn(null);
-        
+
         assertThat(result).isNull();
     }
 
@@ -72,9 +72,9 @@ class DurationConvertorTest {
     @Test
     void testConvertToEntityAttribute() {
         var expect = Duration.ZERO;
-        
+
         var result = new DurationConvertor().convertToEntityAttribute("PT0S");
-        
+
         assertThat(result).isEqualTo(expect);
     }
 
@@ -86,7 +86,7 @@ class DurationConvertorTest {
     @Test
     void testConvertToEntityAttributeIfNull() {
         var result = new DurationConvertor().convertToEntityAttribute(null);
-        
+
         assertThat(result).isNull();
     }
 }

@@ -75,7 +75,7 @@ class FilteringConditionTest {
         var single = FilteringCondition.singleOf(FilteringOperation.Single.IS_NULL, "name", "value");
 
         assertThat(single).isInstanceOf(FilteringCondition.Single.class)
-                .returns(FilteringOperation.Single.IS_NULL, FilteringCondition::getOperation);
+            .returns(FilteringOperation.Single.IS_NULL, FilteringCondition::getOperation);
     }
 
     /**
@@ -120,9 +120,9 @@ class FilteringConditionTest {
         var single = FilteringCondition.singleOf(FilteringOperation.Single.IS_NULL, "name", "value");
 
         assertThat(single).isInstanceOf(FilteringCondition.Single.class)
-                .returns(FilteringOperation.Single.IS_NULL, FilteringCondition::getOperation)
-                .returns("name", FilteringCondition.Single::getName)
-                .returns("value", FilteringCondition.Single::getValue);
+            .returns(FilteringOperation.Single.IS_NULL, FilteringCondition::getOperation)
+            .returns("name", FilteringCondition.Single::getName)
+            .returns("value", FilteringCondition.Single::getValue);
 
         assertThatIllegalArgumentException().isThrownBy(() -> FilteringCondition.singleOf(FilteringOperation.Multi.OR, "", ""));
     }
@@ -140,12 +140,12 @@ class FilteringConditionTest {
         var multi = FilteringCondition.multiOf(FilteringOperation.Multi.AND, List.of(single1, single2));
 
         assertThat(multi).isInstanceOf(FilteringCondition.Multi.class)
-                .returns(FilteringOperation.Multi.AND, FilteringCondition::getOperation)
-                .extracting(FilteringCondition.Multi::getChildren).asInstanceOf(InstanceOfAssertFactories.LIST)
-                .containsExactly(single1, single2);
+            .returns(FilteringOperation.Multi.AND, FilteringCondition::getOperation)
+            .extracting(FilteringCondition.Multi::getChildren).asInstanceOf(InstanceOfAssertFactories.LIST)
+            .containsExactly(single1, single2);
 
         assertThatIllegalArgumentException()
-                .isThrownBy(() -> FilteringCondition.multiOf(FilteringOperation.Single.IS_NULL, List.of()));
+            .isThrownBy(() -> FilteringCondition.multiOf(FilteringOperation.Single.IS_NULL, List.of()));
     }
 
     /**
@@ -158,11 +158,11 @@ class FilteringConditionTest {
         var val = FilteringCondition.empty();
 
         assertThat(val).isInstanceOf(FilteringCondition.Multi.class)
-                .returns(FilteringOperation.Multi.AND, FilteringCondition::getOperation)
-                .returns(true, FilteringCondition::isMulti)
-                .hasToString("FilteringCondition.Empty{}")
-                .asInstanceOf(InstanceOfAssertFactories.type(FilteringCondition.Multi.class))
-                .extracting(FilteringCondition.Multi::getChildren).asInstanceOf(InstanceOfAssertFactories.LIST).isEmpty();
+            .returns(FilteringOperation.Multi.AND, FilteringCondition::getOperation)
+            .returns(true, FilteringCondition::isMulti)
+            .hasToString("FilteringCondition.Empty{}")
+            .asInstanceOf(InstanceOfAssertFactories.type(FilteringCondition.Multi.class))
+            .extracting(FilteringCondition.Multi::getChildren).asInstanceOf(InstanceOfAssertFactories.LIST).isEmpty();
     }
 
     /**
@@ -174,10 +174,10 @@ class FilteringConditionTest {
     @Test
     void testDeserialize(Jsonb jsonb) {
         JsonObject expect = Json.createObjectBuilder().add("operation", "AND")
-                .add("children", Json.createArrayBuilder()
-                        .add(Json.createObjectBuilder().add("operation", "EQUAL").add("name", "n1").add("value", "v1"))
-                        .add(Json.createObjectBuilder().add("operation", "EQUAL").add("name", "n2").add("value", "v2"))
-                ).build();
+            .add("children", Json.createArrayBuilder()
+                .add(Json.createObjectBuilder().add("operation", "EQUAL").add("name", "n1").add("value", "v1"))
+                .add(Json.createObjectBuilder().add("operation", "EQUAL").add("name", "n2").add("value", "v2"))
+            ).build();
 
         var deserialized = jsonb.fromJson(expect.toString(), FilteringCondition.class);
 
@@ -197,7 +197,7 @@ class FilteringConditionTest {
     @Test
     void testDeserializeIfEmptyJson(Jsonb jsonb) {
         JsonObject expect = Json.createObjectBuilder().add("operation", "AND")
-                .add("children", JsonValue.EMPTY_JSON_ARRAY).build();
+            .add("children", JsonValue.EMPTY_JSON_ARRAY).build();
 
         var deserialized = jsonb.fromJson("{}", FilteringCondition.class);
 

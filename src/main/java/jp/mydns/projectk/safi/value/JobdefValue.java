@@ -269,15 +269,15 @@ public interface JobdefValue extends PersistableValue {
     Map<String, String> getTrnsdef();
 
     /**
-     * Get the {@code Filtdef}.
+     * Get the {@code FiltdefValue}.
      *
-     * @return the {@code Filtdef}
+     * @return the {@code FiltdefValue}
      * @since 3.0.0
      */
     @Schema(description = "Content filtering definiton.")
     @NotNull
     @Valid
-    Filtdef getFiltdef();
+    FiltdefValue getFiltdef();
 
     /**
      * Get optional configurations at job execution.
@@ -306,7 +306,7 @@ public interface JobdefValue extends PersistableValue {
         private String name;
         private String pluginName;
         private Map<String, String> trnsdef;
-        private Filtdef filtdef;
+        private FiltdefValue filtdef;
         private JsonObject jobProperties;
 
         /**
@@ -444,7 +444,7 @@ public interface JobdefValue extends PersistableValue {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withFiltdef(Filtdef filtdef) {
+        public Builder withFiltdef(FiltdefValue filtdef) {
             this.filtdef = filtdef;
             return this;
         }
@@ -488,7 +488,7 @@ public interface JobdefValue extends PersistableValue {
             private String name;
             private String pluginName;
             private Map<String, String> trnsdef;
-            private Filtdef filtdef;
+            private FiltdefValue filtdef;
             private JsonObject jobProperties;
 
             /**
@@ -686,7 +686,7 @@ public interface JobdefValue extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public Filtdef getFiltdef() {
+            public FiltdefValue getFiltdef() {
                 return filtdef;
             }
 
@@ -696,7 +696,7 @@ public interface JobdefValue extends PersistableValue {
              * @param filtdef filtering setting
              * @since 3.0.0
              */
-            public void setFiltdef(Filtdef filtdef) {
+            public void setFiltdef(FiltdefValue filtdef) {
                 this.filtdef = filtdef;
             }
 

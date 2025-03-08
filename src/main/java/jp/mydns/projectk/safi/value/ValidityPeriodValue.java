@@ -387,7 +387,7 @@ public interface ValidityPeriodValue {
             @Override
             public boolean equals(Object other) {
                 return other instanceof ValidityPeriodValue o && Objects.equals(from, o.getFrom())
-                        && Objects.equals(to, o.getTo()) && Objects.equals(ignored, o.isIgnored());
+                    && Objects.equals(to, o.getTo()) && Objects.equals(ignored, o.isIgnored());
             }
 
             /**

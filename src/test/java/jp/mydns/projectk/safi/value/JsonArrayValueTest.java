@@ -54,18 +54,19 @@ class JsonArrayValueTest {
     void testSerialize() throws IOException, ClassNotFoundException {
 
         JsonArrayValue expect = new JsonArrayValue(Json.createArrayBuilder()
-                .add(JsonValue.NULL)
-                .add(JsonValue.TRUE)
-                .add(JsonValue.FALSE)
-                .add(777)
-                .add("string")
-                .add(Json.createArrayBuilder().add(1))
-                .add(Json.createObjectBuilder().add("key", "value"))
-                .build());
+            .add(JsonValue.NULL)
+            .add(JsonValue.TRUE)
+            .add(JsonValue.FALSE)
+            .add(777)
+            .add("string")
+            .add(Json.createArrayBuilder().add(1))
+            .add(Json.createObjectBuilder().add("key", "value"))
+            .build());
 
         // Serialize
         final byte[] serialized;
-        try (var baos = new ByteArrayOutputStream(); var oos = new ObjectOutputStream(baos);) {
+        try (var baos = new ByteArrayOutputStream();
+             var oos = new ObjectOutputStream(baos);) {
             oos.writeObject(expect);
             oos.flush();
             serialized = baos.toByteArray();
@@ -73,7 +74,8 @@ class JsonArrayValueTest {
 
         // De-serialize
         final JsonArrayValue result;
-        try (var bais = new ByteArrayInputStream(serialized); var ois = new ObjectInputStream(bais);) {
+        try (var bais = new ByteArrayInputStream(serialized);
+             var ois = new ObjectInputStream(bais);) {
             result = JsonArrayValue.class.cast(ois.readObject());
         }
 
@@ -88,14 +90,14 @@ class JsonArrayValueTest {
     @Test
     void testEquals() {
         JsonArray raw = Json.createArrayBuilder()
-                .add(JsonValue.NULL)
-                .add(JsonValue.TRUE)
-                .add(JsonValue.FALSE)
-                .add(777)
-                .add("hello")
-                .add(Json.createArrayBuilder().add(1))
-                .add(Json.createObjectBuilder().add("key", "value"))
-                .build();
+            .add(JsonValue.NULL)
+            .add(JsonValue.TRUE)
+            .add(JsonValue.FALSE)
+            .add(777)
+            .add("hello")
+            .add(Json.createArrayBuilder().add(1))
+            .add(Json.createObjectBuilder().add("key", "value"))
+            .build();
 
         // Wrap with JsonArrayValue
         JsonArrayValue value = new JsonArrayValue(raw);
@@ -137,7 +139,7 @@ class JsonArrayValueTest {
     @Test
     void testGet() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -155,7 +157,7 @@ class JsonArrayValueTest {
     @Test
     void testSize() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -173,7 +175,7 @@ class JsonArrayValueTest {
     @Test
     void testGetJsonObject() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -191,7 +193,7 @@ class JsonArrayValueTest {
     @Test
     void testGetJsonArray() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -209,7 +211,7 @@ class JsonArrayValueTest {
     @Test
     void testGetJsonNumber() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -227,7 +229,7 @@ class JsonArrayValueTest {
     @Test
     void testGetJsonString() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -245,7 +247,7 @@ class JsonArrayValueTest {
     @Test
     void testGetValuesAs() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -263,7 +265,7 @@ class JsonArrayValueTest {
     @Test
     void testGetString_int() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -281,7 +283,7 @@ class JsonArrayValueTest {
     @Test
     void testGetString_int_String() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -299,7 +301,7 @@ class JsonArrayValueTest {
     @Test
     void testGetInt_int() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -317,7 +319,7 @@ class JsonArrayValueTest {
     @Test
     void testGetInt_int_int() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -335,7 +337,7 @@ class JsonArrayValueTest {
     @Test
     void testGetBoolean_int() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -353,7 +355,7 @@ class JsonArrayValueTest {
     @Test
     void testGetBoolean_int_boolean() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -371,7 +373,7 @@ class JsonArrayValueTest {
     @Test
     void testIsNull() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -389,7 +391,7 @@ class JsonArrayValueTest {
     @Test
     void testGetValueType() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -407,7 +409,7 @@ class JsonArrayValueTest {
     @Test
     void testHashCode() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
@@ -422,7 +424,7 @@ class JsonArrayValueTest {
     @Test
     void testToString() {
         var src = Json.createArrayBuilder().add(true).add(7).add("hello").add(JsonValue.EMPTY_JSON_ARRAY)
-                .add(JsonValue.EMPTY_JSON_OBJECT).build();
+            .add(JsonValue.EMPTY_JSON_OBJECT).build();
 
         var val = new JsonArrayValue(src);
 
