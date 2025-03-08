@@ -33,8 +33,10 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
+import jakarta.ws.rs.core.UriInfo;
 import java.util.List;
 import jp.mydns.projectk.safi.entity.UserEntity;
 
@@ -52,6 +54,9 @@ public class TestResource {
     @Inject
     private EntityManager em;
 
+    @Context
+    private UriInfo uriInfo;
+
     /**
      * API communication check.
      *
@@ -62,6 +67,7 @@ public class TestResource {
     @Path("ping")
     @Produces(TEXT_PLAIN)
     public String ping() {
+        uriInfo.getAbsolutePath();
         return "Hello SAFI API.";
     }
 

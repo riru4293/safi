@@ -31,12 +31,9 @@ import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Objects;
-import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.ValidityPeriodValue;
 
 /**
  * Validity period as a built-in part of JPA entity.
@@ -52,92 +49,59 @@ public class ValidityPeriodEmb implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "from_ts", nullable = false)
-    private LocalDateTime localFrom;
+    private LocalDateTime from;
 
     @Basic(optional = false)
     @Column(name = "to_ts", nullable = false)
-    private LocalDateTime localTo;
+    private LocalDateTime to;
 
     @Column(name = "ignored", nullable = false)
     private boolean ignored;
 
     /**
-     * Constructor.
-     *
-     * @since 3.0.0
-     */
-    public ValidityPeriodEmb() {
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param vp the {@code ValidityPeriodValue}
-     * @throws NullPointerException if {@code vp} is {@code null} or if {@code vp} contains {@code null}.
-     * @since 3.0.0
-     */
-    public ValidityPeriodEmb(ValidityPeriodValue vp) {
-        Objects.requireNonNull(vp);
-
-        localFrom = vp.getFrom().toLocalDateTime();
-        localTo = vp.getTo().toLocalDateTime();
-        ignored = vp.isIgnored();
-    }
-
-    /**
      * Get begin date-time of enabled period.
      *
-     * @return begin date-time of enabled period
+     * @return begin date-time of enabled period. It timezone is UTC.
      * @since 3.0.0
      */
     @NotNull
     @TimeRange
     @TimeAccuracy
-    public LocalDateTime getLocalFrom() {
-        return localFrom;
+    public LocalDateTime getFrom() {
+        return from;
     }
 
     /**
      * Set begin date-time of enabled period.
      *
-     * @param from begin date-time of enabled period
+     * @param from begin date-time of enabled period. It timezone is UTC.
      * @since 3.0.0
      */
-    public void setLocalFrom(LocalDateTime from) {
-        this.localFrom = from;
+    public void setFrom(LocalDateTime from) {
+        this.from = from;
     }
 
     /**
      * Get end date-time of enabled period.
      *
-     * @return end date-time of enabled period
-     * @since 3.0.0
-     */
-    public OffsetDateTime getTo() {
-        return TimeUtils.toOffsetDateTime(localTo);
-    }
-
-    /**
-     * Get end date-time of enabled period.
-     *
-     * @return end date-time of enabled period
+     * @return end date-time of enabled period. It timezone is UTC.
      * @since 3.0.0
      */
     @NotNull
     @TimeRange
     @TimeAccuracy
-    public LocalDateTime getLocalTo() {
-        return localTo;
+    public LocalDateTime getTo() {
+        return to;
     }
 
     /**
      * Set end date-time of enabled period.
      *
-     * @param to end date-time of enabled period
+     * @param to end date-time of enabled period. It timezone is UTC.
      * @since 3.0.0
      */
-    public void setLocalTo(LocalDateTime to) {
-        this.localTo = to;
+    public void setTo(LocalDateTime to) {
+        this.to = to;
     }
 
     /**
@@ -168,7 +132,7 @@ public class ValidityPeriodEmb implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(localFrom, localTo, ignored);
+        return Objects.hash(from, to, ignored);
     }
 
     /**
@@ -181,9 +145,7 @@ public class ValidityPeriodEmb implements Serializable {
     @Override
     public boolean equals(Object other) {
         return this == other || other instanceof ValidityPeriodEmb o
-            && Objects.equals(localFrom, o.localFrom)
-            && Objects.equals(localTo, o.localTo)
-            && Objects.equals(ignored, o.ignored);
+            && Objects.equals(from, o.from) && Objects.equals(to, o.to) && Objects.equals(ignored, o.ignored);
     }
 
     /**
@@ -194,6 +156,6 @@ public class ValidityPeriodEmb implements Serializable {
      */
     @Override
     public String toString() {
-        return "ValidityPeriodEmd{" + "from=" + localFrom + ", to=" + localTo + ", ignored=" + ignored + '}';
+        return "ValidityPeriodEmd{" + "from=" + from + ", to=" + to + ", ignored=" + ignored + '}';
     }
 }

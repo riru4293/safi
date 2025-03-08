@@ -129,8 +129,8 @@ class JobdefEntityTest {
 
         var vp = new ValidityPeriodEmb();
         vp.setIgnored(true);
-        vp.setLocalFrom(LocalDateTime.of(2000, 1, 1, 0, 0));
-        vp.setLocalTo(LocalDateTime.of(2000, 1, 2, 0, 0));
+        vp.setFrom(LocalDateTime.of(2000, 1, 1, 0, 0));
+        vp.setTo(LocalDateTime.of(2000, 1, 2, 0, 0));
 
         var entity = new JobdefEntity();
         entity.setId("jobdef-id");

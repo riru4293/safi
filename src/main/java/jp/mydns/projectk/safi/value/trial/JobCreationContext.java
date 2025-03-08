@@ -23,20 +23,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.resource;
-
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.ws.rs.Path;
+package jp.mydns.projectk.safi.value.trial;
 
 /**
- * JAX-RS resource for <i>Job</i>.
  *
  * @author riru
- * @version 3.0.0
- * @since 3.0.0
  */
-@RequestScoped
-@Path("jobs")
-public class JobResource {
+public interface JobCreationContext {
 
 }
