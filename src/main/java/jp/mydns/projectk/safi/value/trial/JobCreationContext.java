@@ -26,9 +26,42 @@
 package jp.mydns.projectk.safi.value.trial;
 
 /**
+ * Information to create a new batch execution schedule as {@link Job}.
  *
+ * <pre>JSON Example:
+ * <code>
+ * {
+ *     "jobdefId": "jobdef-jobdefId",
+ *     "scheduleTime": "2000-01-01T00:00:00Z",
+ *     "plugdef": {
+ *         "name": "The plug-in name",
+ *         "args": {"arg-name": "arg-val"}
+ *     },
+ *     "filtdef": {
+ *         "trnsdef": {
+ *             "elementName": "element-value"
+ *         },
+ *         "condition": { "operation": "AND", "children": [] }
+ *     },
+ *     "trnsdef": {
+ *         "elementName": "element-value"
+ *     },
+ *     "options": {
+ *         "optionName1": "option-value",
+ *         "optionName2": {}
+ *     },
+ *     "note": "job-creation-memo"
+ * }
+ * </code></pre>
+ *
+ * @implSpec This and JSON can be converted bidirectionally.
  * @author riru
+ * @version 3.0.0
+ * @since 3.0.0
  */
+@JsonbTypeDeserializer(JobCreationContext.Deserializer.class)
+@Schema(name = "JobCreationContext",
+        description = "Information to create a new batch execution schedule as job.")
 public interface JobCreationContext {
 
 }
