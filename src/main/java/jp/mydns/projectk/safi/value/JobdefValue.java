@@ -185,9 +185,9 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(Jobdef.Deserializer.class)
+@JsonbTypeDeserializer(JobdefValue.Deserializer.class)
 @Schema(name = "Jobdef", description = "Definition for creates a job.")
-public interface Jobdef extends PersistableValue {
+public interface JobdefValue extends PersistableValue {
 
     /**
      * Get job definition id.
@@ -296,7 +296,7 @@ public interface Jobdef extends PersistableValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Builder extends AbstractBuilder<Builder, Jobdef> {
+    class Builder extends AbstractBuilder<Builder, JobdefValue> {
 
         private String id;
         private ValidityPeriod validityPeriod;
@@ -324,7 +324,7 @@ public interface Jobdef extends PersistableValue {
          * @since 3.0.0
          */
         @Override
-        public Builder with(Jobdef src) {
+        public Builder with(JobdefValue src) {
             super.with(src);
 
             this.id = src.getId();
@@ -467,7 +467,7 @@ public interface Jobdef extends PersistableValue {
          * @since 3.0.0
          */
         @Override
-        public Jobdef build(Validator validator, Class<?>... groups) {
+        public JobdefValue build(Validator validator, Class<?>... groups) {
             return ValidationUtils.requireValid(new Bean(this), validator, groups);
         }
 
@@ -478,7 +478,7 @@ public interface Jobdef extends PersistableValue {
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class Bean extends AbstractBuilder.AbstractBean implements Jobdef {
+        protected static class Bean extends AbstractBuilder.AbstractBean implements JobdefValue {
 
             private String id;
             private ValidityPeriod validityPeriod;
@@ -729,9 +729,9 @@ public interface Jobdef extends PersistableValue {
             @Override
             public String toString() {
                 return "Jobdef{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind=" + jobKind
-                        + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name
-                        + ", pluginName=" + pluginName + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef
-                        + ", jobProperties=" + jobProperties + ", version=" + version + '}';
+                    + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name
+                    + ", pluginName=" + pluginName + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef
+                    + ", jobProperties=" + jobProperties + ", version=" + version + '}';
             }
         }
     }
@@ -743,7 +743,7 @@ public interface Jobdef extends PersistableValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<Jobdef> {
+    class Deserializer implements JsonbDeserializer<JobdefValue> {
 
         /**
          * {@inheritDoc}
@@ -751,7 +751,7 @@ public interface Jobdef extends PersistableValue {
          * @since 3.0.0
          */
         @Override
-        public Jobdef deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public JobdefValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return dc.deserialize(Builder.Bean.class, jp);
         }
     }

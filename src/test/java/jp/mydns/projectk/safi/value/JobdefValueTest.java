@@ -43,7 +43,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- * Test of class {@code Jobdef}.
+ * Test of class {@code JobdefValue}.
  *
  * @author riru
  * @version 3.0.0
@@ -51,7 +51,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  */
 @ExtendWith(JsonbParameterResolver.class)
 @ExtendWith(ValidatorParameterResolver.class)
-class JobdefTest {
+class JobdefValueTest {
 
     /**
      * Test of build method, of class Builder.
@@ -67,7 +67,7 @@ class JobdefTest {
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
 
         // Build value
-        var val = new Jobdef.Builder().withId("jobdef-id").withValidityPeriod(vp)
+        var val = new JobdefValue.Builder().withId("jobdef-id").withValidityPeriod(vp)
                 .withJobKind(JobKind.REBUILD).withJobTarget(JobTarget.ASSET).withTimeout(Duration.ZERO)
                 .withName("jobdef-name").withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
                 .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).withNote("note").withVersion(3).withRegisterTime(regTime)
@@ -76,20 +76,20 @@ class JobdefTest {
                 .build(validator);
 
         // Rebuild same value
-        val = new Jobdef.Builder().with(val).build(validator);
+        val = new JobdefValue.Builder().with(val).build(validator);
 
-        assertThat(val).returns("jobdef-id", Jobdef::getId)
-                .returns(vp, Jobdef::getValidityPeriod)
-                .returns(JobKind.REBUILD, Jobdef::getJobKind)
-                .returns(JobTarget.ASSET, Jobdef::getJobTarget)
-                .returns(Duration.ZERO, Jobdef::getTimeout)
+        assertThat(val).returns("jobdef-id", JobdefValue::getId)
+                .returns(vp, JobdefValue::getValidityPeriod)
+                .returns(JobKind.REBUILD, JobdefValue::getJobKind)
+                .returns(JobTarget.ASSET, JobdefValue::getJobTarget)
+                .returns(Duration.ZERO, JobdefValue::getTimeout)
                 .satisfies(v -> assertThat(v.getName()).hasValue("jobdef-name"))
                 .satisfies(v -> assertThat(v.getPluginName()).hasValue("plg"))
                 .satisfies(v -> assertThat(v.getTrnsdef()).isEmpty())
-                .returns(filtdef, Jobdef::getFiltdef)
-                .returns(JsonValue.EMPTY_JSON_OBJECT, Jobdef::getJobProperties)
+                .returns(filtdef, JobdefValue::getFiltdef)
+                .returns(JsonValue.EMPTY_JSON_OBJECT, JobdefValue::getJobProperties)
                 .satisfies(v -> assertThat(v.getNote()).hasValue("note"))
-                .returns(3, Jobdef::getVersion)
+                .returns(3, JobdefValue::getVersion)
                 .satisfies(v -> assertThat(v.getRegisterTime()).hasValue(regTime))
                 .satisfies(v -> assertThat(v.getRegisterAccountId()).hasValue("reg-id"))
                 .satisfies(v -> assertThat(v.getRegisterProcessName()).hasValue("reg-name"))
@@ -128,7 +128,7 @@ class JobdefTest {
                 .add("updateTime", "2134-11-20T10:12:11Z").add("updateAccountId", "uid").add("updateProcessName", "unm")
                 .build();
 
-        var deserialized = jsonb.fromJson(expect.toString(), Jobdef.class);
+        var deserialized = jsonb.fromJson(expect.toString(), JobdefValue.class);
 
         var serialized = jsonb.toJson(deserialized);
 
@@ -153,7 +153,7 @@ class JobdefTest {
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
 
-        var val = new Jobdef.Builder().withId("jobdef-id").withValidityPeriod(vp).withJobKind(JobKind.REBUILD)
+        var val = new JobdefValue.Builder().withId("jobdef-id").withValidityPeriod(vp).withJobKind(JobKind.REBUILD)
                 .withJobTarget(JobTarget.ASSET).withTimeout(Duration.ZERO).withName("jobdef-name").withPluginName("plg")
                 .withTrnsdef(Map.of()).withFiltdef(filtdef).withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
                 .withNote("note").withVersion(3)
