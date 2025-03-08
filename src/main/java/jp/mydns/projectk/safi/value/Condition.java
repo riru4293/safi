@@ -66,8 +66,8 @@ import java.util.stream.Stream;
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
  *     "$id": "https://project-k.mydns.jp/safi/condition.schema.json",
- *     "title": "Filtdef",
- *     "description": "An information for filtering the contents.",
+ *     "title": "Condition",
+ *     "description": "Filtering condition.",
  *     "type": "object",
  *     "properties": {
  *         "operation": {
