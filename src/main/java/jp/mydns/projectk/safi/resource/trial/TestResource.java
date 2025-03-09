@@ -39,6 +39,7 @@ import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import jakarta.ws.rs.core.UriInfo;
 import java.util.List;
 import jp.mydns.projectk.safi.entity.UserEntity;
+import jp.mydns.projectk.safi.resource.filter.ProcessName;
 
 /**
  * JAX-RS resource for test.
@@ -66,6 +67,7 @@ public class TestResource {
     @GET
     @Path("ping")
     @Produces(TEXT_PLAIN)
+    @ProcessName("ping")
     public String ping() {
         uriInfo.getAbsolutePath();
         return "Hello SAFI API.";
