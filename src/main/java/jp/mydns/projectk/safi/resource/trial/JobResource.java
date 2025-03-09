@@ -44,7 +44,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
-import jp.mydns.projectk.safi.value.trial.JobCreationContext;
+import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobdefValue;
 
 /**

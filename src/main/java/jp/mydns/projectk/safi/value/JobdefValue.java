@@ -43,6 +43,7 @@ import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.validator.TimeAccuracy;
 
 /**
  * Definition for creates a <i>Job</i>.
@@ -122,7 +123,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *             }
  *         },
  *         "filtdef": {
- *             "description": "Content filtering definiton.",
+ *             "description": "Content filtering definition.",
  *             "$ref": "https://project-k.mydns.jp/safi/filtdef.schema.json"
  *         },
  *         "jobProperties": {
@@ -197,7 +198,7 @@ public interface JobdefValue extends PersistableValue {
      */
     @NotBlank
     @Size(max = 36)
-    @Schema(description = "Job definiton id.")
+    @Schema(description = "Job definition id.")
     String getId();
 
     /**
@@ -237,6 +238,7 @@ public interface JobdefValue extends PersistableValue {
      * @since 3.0.0
      */
     @NotNull
+    @TimeAccuracy
     @Schema(type = "string", description = "Job execution timeout.")
     Duration getTimeout();
 
@@ -246,7 +248,7 @@ public interface JobdefValue extends PersistableValue {
      * @return job definition name
      * @since 3.0.0
      */
-    @Schema(description = "Job definiton name.")
+    @Schema(description = "Job definition name.")
     Optional<@Size(max = 250) String> getName();
 
     /**
@@ -274,7 +276,7 @@ public interface JobdefValue extends PersistableValue {
      * @return the {@code FiltdefValue}
      * @since 3.0.0
      */
-    @Schema(description = "Content filtering definiton.")
+    @Schema(description = "Content filtering definition.")
     @NotNull
     @Valid
     FiltdefValue getFiltdef();
