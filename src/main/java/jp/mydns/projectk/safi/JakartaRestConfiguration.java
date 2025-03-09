@@ -45,7 +45,8 @@ import jakarta.ws.rs.core.Application;
 @ApplicationPath("api")
 @OpenAPIDefinition(info = @Info(title = "SAFI", version = "3.0.0", description = "SAFI API",
                                 license = @License(name = "BSD", url = "https://opensource.org/licenses/BSD-2-Clause"),
-                                contact = @Contact(url = "https://project-k.mydns.jp", name = "riru", email = "riru4293@gmail.com")),
+                                contact = @Contact(url = "https://project-k.mydns.jp", name = "riru",
+                                                   email = "riru4293@gmail.com")),
                    servers = {
                        @Server(url = "https://project-k.mydns.jp/safi/api"),
                        @Server(url = "https://localhost/safi/api"),

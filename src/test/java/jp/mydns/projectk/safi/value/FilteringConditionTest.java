@@ -124,7 +124,8 @@ class FilteringConditionTest {
             .returns("name", FilteringCondition.Single::getName)
             .returns("value", FilteringCondition.Single::getValue);
 
-        assertThatIllegalArgumentException().isThrownBy(() -> FilteringCondition.singleOf(FilteringOperation.Multi.OR, "", ""));
+        assertThatIllegalArgumentException().isThrownBy(() -> FilteringCondition.singleOf(FilteringOperation.Multi.OR,
+            "", ""));
     }
 
     /**

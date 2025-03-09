@@ -124,7 +124,8 @@ class JobdefValueTest {
                     .add("operation", "AND").add("children", JsonValue.EMPTY_JSON_ARRAY)))
             .add("jobProperties", Json.createObjectBuilder().add("p1", "A"))
             .add("note", "note").add("version", 7)
-            .add("registerTime", "2222-12-30T00:12:34Z").add("registerAccountId", "rid").add("registerProcessName", "rnm")
+            .add("registerTime", "2222-12-30T00:12:34Z").add("registerAccountId", "rid")
+            .add("registerProcessName", "rnm")
             .add("updateTime", "2134-11-20T10:12:11Z").add("updateAccountId", "uid").add("updateProcessName", "unm")
             .build();
 
@@ -145,7 +146,8 @@ class JobdefValueTest {
      */
     @Test
     void testToString(Validator validator) {
-        String tmpl = "JobdefValue{id=%s, validityPeriod=%s, jobKind=%s, jobTarget=%s, timeout=%s, name=%s, pluginName=%s"
+        String tmpl
+            = "JobdefValue{id=%s, validityPeriod=%s, jobKind=%s, jobTarget=%s, timeout=%s, name=%s, pluginName=%s"
             + ", trnsdef=%s, filtdef=%s, jobProperties=%s, version=%s}";
 
         var vp = new ValidityPeriodValue.Builder().build(validator);
@@ -161,7 +163,7 @@ class JobdefValueTest {
             .withUpdateTime(updTime).withUpdateAccountId("upd-id").withUpdateProcessName("upd-name")
             .build(validator);
 
-        assertThat(val).hasToString(tmpl, "jobdef-id", vp, JobKind.REBUILD, JobTarget.ASSET, Duration.ZERO, "jobdef-name",
-            "plg", Map.of(), filtdef, JsonValue.EMPTY_JSON_OBJECT, 3);
+        assertThat(val).hasToString(tmpl, "jobdef-id", vp, JobKind.REBUILD, JobTarget.ASSET, Duration.ZERO,
+            "jobdef-name", "plg", Map.of(), filtdef, JsonValue.EMPTY_JSON_OBJECT, 3);
     }
 }

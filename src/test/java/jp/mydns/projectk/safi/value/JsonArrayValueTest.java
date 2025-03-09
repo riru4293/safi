@@ -65,8 +65,7 @@ class JsonArrayValueTest {
 
         // Serialize
         final byte[] serialized;
-        try (var baos = new ByteArrayOutputStream();
-             var oos = new ObjectOutputStream(baos);) {
+        try (var baos = new ByteArrayOutputStream(); var oos = new ObjectOutputStream(baos);) {
             oos.writeObject(expect);
             oos.flush();
             serialized = baos.toByteArray();
@@ -74,8 +73,7 @@ class JsonArrayValueTest {
 
         // De-serialize
         final JsonArrayValue result;
-        try (var bais = new ByteArrayInputStream(serialized);
-             var ois = new ObjectInputStream(bais);) {
+        try (var bais = new ByteArrayInputStream(serialized); var ois = new ObjectInputStream(bais);) {
             result = JsonArrayValue.class.cast(ois.readObject());
         }
 

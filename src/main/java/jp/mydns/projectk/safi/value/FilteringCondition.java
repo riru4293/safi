@@ -469,7 +469,8 @@ public interface FilteringCondition {
              */
             @Override
             public String toString() {
-                return "FilteringCondition.Single{" + "operation=" + operation + ", name=" + name + ", value=" + value + '}';
+                return "FilteringCondition.Single{" + "operation=" + operation + ", name=" + name + ", value=" + value
+                    + '}';
             }
         }
 

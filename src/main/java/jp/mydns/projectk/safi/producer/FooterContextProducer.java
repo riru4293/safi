@@ -128,7 +128,8 @@ public class FooterContextProducer {
          */
         @Override
         public String toString() {
-            return "FooterContext{" + "utcNow=" + utcNow + ", accountId=" + accountId + ", processName=" + processName + '}';
+            return "FooterContext{" + "utcNow=" + utcNow + ", accountId=" + accountId + ", processName=" + processName
+                + '}';
         }
     }
 }

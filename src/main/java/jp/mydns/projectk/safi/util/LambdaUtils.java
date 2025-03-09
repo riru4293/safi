@@ -364,7 +364,9 @@ public final class LambdaUtils {
      * @throws NullPointerException if {@code mergeFunc} is {@code null}
      * @since 3.0.0
      */
-    public static <V> Collector<Map.Entry<String, V>, ?, Map<String, V>> toCaseInsensitiveMap(BinaryOperator<V> mergeFunc) {
+    public static <V> Collector<Map.Entry<String, V>, ?, Map<String, V>>
+        toCaseInsensitiveMap(BinaryOperator<V> mergeFunc) {
+
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue, Objects.requireNonNull(mergeFunc),
             () -> new TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER)), Collections::unmodifiableMap);
     }
