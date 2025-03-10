@@ -163,6 +163,7 @@ public interface FilteringCondition {
      * @since 3.0.0
      */
     @JsonbTransient
+    @Schema(hidden = true)
     boolean isMulti();
 
     /**
@@ -171,7 +172,7 @@ public interface FilteringCondition {
      * @return filtering operation
      * @since 3.0.0
      */
-    @Schema(description = "Filtering operation.")
+    @Schema(type = "string", description = "Filtering operation.")
     @NotNull
     FilteringOperation getOperation();
 

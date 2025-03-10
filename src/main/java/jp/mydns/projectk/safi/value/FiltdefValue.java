@@ -85,7 +85,10 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(FiltdefValue.Deserializer.class)
-@Schema(name = "Filtdef", description = "An information for filtering the content values.")
+@Schema(name = "Filtdef", description = "An information for filtering the content values.",
+    example = "{\"condition\":{\"operation\":\"AND\",\"children\":[{\"operation\":\"EQUAL\",\"name\":\"kind\","
+    + "\"value\":\"2\"},{\"operation\":\"PARTIAL_MATCH\",\"name\":\"name\",\"value\":\"taro\"}]},"
+    + "\"trnsdef\":{\"name\":\"[userName]\",\"kind\":\"[userType]\",\"id\":\"[userId]\"}}")
 public interface FiltdefValue {
 
     /**

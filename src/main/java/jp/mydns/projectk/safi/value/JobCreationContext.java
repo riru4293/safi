@@ -134,7 +134,7 @@ public interface JobCreationContext {
      * @return job schedule time
      * @since 3.0.0
      */
-    @Schema(description = "Job schedule time. Means current time if null.")
+    @Schema(description = "Job schedule time. Means current time if null.", example = "2000-01-01T00:00:00Z")
     Optional<@NotNull @TimeRange @TimeAccuracy OffsetDateTime> getScheduleTime();
 
     /**
@@ -143,7 +143,8 @@ public interface JobCreationContext {
      * @return job execution timeout
      * @since 3.0.0
      */
-    @Schema(description = "Job execution timeout. If not null, it overrides the value in the job definition.")
+    @Schema(type = "string", description = "Job execution timeout."
+        + " If not null, it overrides the value in the job definition.", example = "PT10M")
     Optional<@NotNull @TimeAccuracy Duration> getTimeout();
 
     /**
@@ -152,7 +153,7 @@ public interface JobCreationContext {
      * @return plugin name
      * @since 3.0.0
      */
-    @Schema(description = "Plugin name. If not null, it overrides the value in the job definition.")
+    @Schema(description = "Plugin name. If not null, it overrides the value in the job definition.", example = "PluginName")
     Optional<@Size(max = 50) String> getPluginName();
 
     /**
@@ -180,7 +181,8 @@ public interface JobCreationContext {
      * @return optional configurations at job execution
      * @since 3.0.0
      */
-    @Schema(description = "Optional configurations at job execution. If not null, it will be marged(overwrite) to value in the job definition.")
+    @Schema(description = "Optional configurations at job execution. If not null, it will be marged(overwrite) "
+        + "to value in the job definition.", example = "{\"propertyName\": \"propertyValue\"}")
     Optional<JsonObject> getJobProperties();
 
     /**
