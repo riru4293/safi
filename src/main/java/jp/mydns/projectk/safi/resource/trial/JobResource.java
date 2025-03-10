@@ -44,6 +44,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
+import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobdefValue;
 
@@ -79,8 +80,7 @@ public class JobResource {
 //                        headers = @Header(name = HttpHeaders.LOCATION, description = "Created job.",
 //                                schema = @Schema(type = "string", format = "uri")),
 //                        content = @Content(schema = @Schema(implementation = Job.class)))})
-//    @ConfigureProcessName
-//    @ProcessName("CreateJob")
+    @ProcessName("CreateJob")
     public Response createJob(@NotNull @Valid JobCreationContext ctx) {
 //        Jobdef jobdef = jobdefSvc.buildJobdef(ctx);
 //
@@ -89,6 +89,6 @@ public class JobResource {
 //        URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
 //
 //        return Response.created(location).entity(job).build();
-        return null;
+        return Response.ok().build();
     }
 }
