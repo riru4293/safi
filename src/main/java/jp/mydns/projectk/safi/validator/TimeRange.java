@@ -98,7 +98,10 @@ public @interface TimeRange {
         private long max;
 
         /**
-         * {@inheritDoc}
+         * Initialize the minimum and maximum values.
+         *
+         * @param annon the {@code TimeRange}
+         * @since 3.0.0
          */
         public void initialize(TimeRange annon) {
             this.min = annon.minEpochSecond();
