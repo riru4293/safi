@@ -65,6 +65,18 @@ public @interface TimeRange {
 
     Class<? extends Payload>[] payload() default {};
 
+    /**
+     * Minimum of range. It is epoch second. Default value indicates '2000-01-01T00:00:00'.
+     * @return time the element must be higher or equal to
+     */
+    long minEpochSecond() default 946684800L;
+
+    /**
+     * Maximum of range. It is epoch second. Default value indicates '2999-12-31T23:59:59'.
+     * @return time the element must be lower or equal to
+     */
+    long maxEpochSecond() default 32503679999L;
+
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
@@ -82,8 +94,19 @@ public @interface TimeRange {
      */
     abstract class AbstractValidator {
 
+        private long min;
+        private long max;
+
+        /**
+         * {@inheritDoc}
+         */
+        public void initialize(TimeRange annon) {
+            this.min = annon.minEpochSecond();
+            this.max = annon.maxEpochSecond();
+        }
+
         protected boolean isValid(long epochSecond) {
-            return epochSecond >= 946684800L && epochSecond <= 32503679999L;
+            return epochSecond >= min && epochSecond <= max;
         }
     }
 
@@ -109,7 +132,6 @@ public @interface TimeRange {
             }
 
             return isValid(value.toInstant(ZoneOffset.UTC).getEpochSecond());
-
         }
     }
 
