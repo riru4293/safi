@@ -28,10 +28,10 @@ package jp.mydns.projectk.safi.service.trial;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 import jp.mydns.projectk.safi.dao.JobdefDao;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.value.JobCreationContext;
@@ -47,17 +47,23 @@ import jp.mydns.projectk.safi.value.JobdefValue;
 @RequestScoped
 public class JobdefService {
 
+    private final Supplier<JobdefIOException> noFoundJobdef
+        = () -> new JobdefIOException("No found job definition.");
+
     private final JobdefDao jobdefDao;
+    private final ValidationService validationSvc;
 
     /**
      * Constructor.
      *
      * @param jobdefDao the {@code JobdefDao}
+     * @param validationSvc the {@code ValidationService}
      * @since 3.0.0
      */
     @Inject
-    public JobdefService(JobdefDao jobdefDao) {
+    public JobdefService(JobdefDao jobdefDao, ValidationService validationSvc) {
         this.jobdefDao = jobdefDao;
+        this.validationSvc = validationSvc;
     }
 
     /**
@@ -68,19 +74,37 @@ public class JobdefService {
      * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if malformed
      * return value.
      * @throws NullPointerException if any argument is {@code null}
+     * @throws JobdefIOException if not found valid job definition
      * @since 3.0.0
      */
-    public JobdefValue buildJobdef(@NotNull @Valid JobCreationContext ctx) {
+    public JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException {
         Objects.requireNonNull(ctx);
+
+        JobdefEntity origin = getValidJobdefEntity(ctx.getJobdefId()).orElseThrow(noFoundJobdef);
 
         return null;
     }
 
     private Optional<JobdefEntity> getValidJobdefEntity(String id) {
+        return jobdefDao.getJobdef(id).filter(validationSvc::isEnabled);
+    }
 
-        return jobdefDao.getJobdef(id);
-//        return Optional.ofNullable(id)
-//                .flatMap(jobdefDao::getJobdef)
-//                .filter(validationSvc::withinValidityPeriod);
+    /**
+     * Indicates that a jobdef I/O exception has occurred. For example, it doesn't exist, you don't have permission to
+     * modify it, and so on.
+     */
+    public class JobdefIOException extends IOException {
+
+        private static final long serialVersionUID = 7853095085270398570L;
+
+        /**
+         * Construct with error message.
+         *
+         * @param message error message. Keep in mind that this may be exposed to users. It must be an abstract message
+         * that can briefly describe the issue.
+         */
+        public JobdefIOException(String message) {
+            super(message);
+        }
     }
 }

@@ -35,6 +35,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -45,6 +46,8 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.service.trial.JobdefService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
@@ -97,7 +100,13 @@ public class JobResource {
 //                        content = @Content(schema = @Schema(implementation = Job.class)))})
     @ProcessName("CreateJob")
     public Response createJob(@NotNull @Valid JobCreationContext ctx) {
-        JobdefValue jobdef = jobdefSvc.buildJobdef(ctx);
+
+        final JobdefValue jobdef;
+        try {
+            jobdef = jobdefSvc.buildJobdef(ctx);
+        } catch (JobdefService.JobdefIOException ex) {
+            throw new BadRequestException(ex);
+        }
 //
 //        Job job = jobSvc.create(jobdef, ctx);
 //
