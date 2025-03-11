@@ -32,6 +32,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
@@ -45,6 +46,7 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
+import jp.mydns.projectk.safi.service.trial.JobdefService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobdefValue;
 
@@ -59,8 +61,21 @@ import jp.mydns.projectk.safi.value.JobdefValue;
 @Path("jobs")
 public class JobResource {
 
+    private final JobdefService jobdefSvc;
+
     @Context
     private UriInfo uriInfo;
+
+    /**
+     * Constructor.
+     *
+     * @param jobdefSvc the {@code JobdefService}
+     * @since 3.0.0
+     */
+    @Inject
+    public JobResource(JobdefService jobdefSvc) {
+        this.jobdefSvc = jobdefSvc;
+    }
 
     /**
      * Create new job. Used to manually schedule job execution.
@@ -82,7 +97,7 @@ public class JobResource {
 //                        content = @Content(schema = @Schema(implementation = Job.class)))})
     @ProcessName("CreateJob")
     public Response createJob(@NotNull @Valid JobCreationContext ctx) {
-//        Jobdef jobdef = jobdefSvc.buildJobdef(ctx);
+        JobdefValue jobdef = jobdefSvc.buildJobdef(ctx);
 //
 //        Job job = jobSvc.create(jobdef, ctx);
 //
