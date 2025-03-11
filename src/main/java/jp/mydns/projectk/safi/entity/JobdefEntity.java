@@ -40,6 +40,8 @@ import java.time.Duration;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobTarget;
+import jp.mydns.projectk.safi.validator.DurationRange;
+import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
 
@@ -162,6 +164,8 @@ public class JobdefEntity extends NamedEntity {
      * @since 3.0.0
      */
     @NotNull
+    @PositiveOrZeroDuration
+    @DurationRange(maxSecond = 86_399L/*23h59m59s*/)
     @TimeAccuracy
     public Duration getTimeout() {
         return timeout;

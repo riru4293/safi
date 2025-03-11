@@ -39,13 +39,10 @@ import static java.lang.annotation.ElementType.TYPE_USE;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.Duration;
 
 /**
- * Validates that the time is in the specified range. Supported types are {@code LocalDateTime} and
- * {@code OffsetDateTime}.
+ * Validates that the duration is in the specified range. Supported type is {@code Duration}.
  *
  * @author riru
  * @version 3.0.0
@@ -54,48 +51,45 @@ import java.time.ZoneOffset;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = {
-    TimeRange.LocalDateTimeValidator.class,
-    TimeRange.OffsetDateTimeValidator.class})
-public @interface TimeRange {
+@Constraint(validatedBy = {DurationRange.Validator.class})
+public @interface DurationRange {
 
-    String message() default "{jp.mydns.projectk.safi.validator.TimeRange.message}";
+    String message() default "{jp.mydns.projectk.safi.validator.DurationRange.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
 
     /**
-     * Minimum of range. It is epoch second. Default value indicates '2000-01-01T00:00:00'.
+     * Minimum of range. It is second. Default value is 0.
      *
-     * @return time the element must be higher or equal to
+     * @return second the element must be higher or equal to
      */
-    long minEpochSecond() default 946_684_800L;
+    long minSecond() default 0L;
 
     /**
-     * Maximum of range. It is epoch second. Default value indicates '2999-12-31T23:59:59'.
+     * Maximum of range. It is second. Default value is 9223372036854775807.
      *
-     * @return time the element must be lower or equal to
+     * @return second the element must be lower or equal to
      */
-    long maxEpochSecond() default 32_503_679_999L;
+    long maxSecond() default Long.MAX_VALUE;
 
     @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
     @Retention(RetentionPolicy.RUNTIME)
     @Documented
     @interface List {
 
-        TimeRange[] value();
+        DurationRange[] value();
     }
 
     /**
-     * A validator that checks that the time is in the specified range. Default range is 2000-01-01T00:00:00Z to
-     * 2999-12-31T23:59:59Z.
+     * A validator that checks that the time is in the specified range. Default range is 0 to 9223372036854775807.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    abstract class AbstractValidator {
+    class Validator implements ConstraintValidator<DurationRange, Duration> {
 
         private long min;
         private long max;
@@ -103,28 +97,14 @@ public @interface TimeRange {
         /**
          * Initialize the minimum and maximum values.
          *
-         * @param annon the {@code TimeRange}
+         * @param annon the {@code DurationRange}
          * @since 3.0.0
          */
-        public void initialize(TimeRange annon) {
-            this.min = annon.minEpochSecond();
-            this.max = annon.maxEpochSecond();
+        @Override
+        public void initialize(DurationRange annon) {
+            this.min = annon.minSecond();
+            this.max = annon.maxSecond();
         }
-
-        protected boolean isValid(long epochSecond) {
-            return epochSecond >= min && epochSecond <= max;
-        }
-    }
-
-    /**
-     * A validator that checks that the time is in the specified range. Default range is 2000-01-01T00:00:00Z to
-     * 2999-12-31T23:59:59Z.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class LocalDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, LocalDateTime> {
 
         /**
          * {@inheritDoc}
@@ -132,39 +112,14 @@ public @interface TimeRange {
          * @since 3.0.0
          */
         @Override
-        public boolean isValid(LocalDateTime value, ConstraintValidatorContext ctx) {
+        public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
 
             if (value == null) {
                 return true;
             }
 
-            return isValid(value.toInstant(ZoneOffset.UTC).getEpochSecond());
-        }
-    }
-
-    /**
-     * A validator that checks that the time is in the specified range. Default range is 2000-01-01T00:00:00Z to
-     * 2999-12-31T23:59:59Z.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class OffsetDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, OffsetDateTime> {
-
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isValid(OffsetDateTime value, ConstraintValidatorContext ctx) {
-
-            if (value == null) {
-                return true;
-            }
-
-            return isValid(value.toInstant().getEpochSecond());
+            long seconds = value.getSeconds();
+            return seconds >= min && seconds <= max;
         }
     }
 }

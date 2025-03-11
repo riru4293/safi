@@ -42,6 +42,7 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Optional;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.validator.DurationRange;
 import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
@@ -135,7 +136,8 @@ public interface JobCreationContext {
      * @since 3.0.0
      */
     @Schema(description = "Job schedule time. Means current time if null.", example = "2000-01-01T00:00:00Z")
-    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getScheduleTime();
+    Optional<@TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/) @TimeAccuracy OffsetDateTime>
+        getScheduleTime();
 
     /**
      * Get job execution timeout. If not null, it overrides the value in the job definition.
@@ -144,8 +146,9 @@ public interface JobCreationContext {
      * @since 3.0.0
      */
     @Schema(type = "string", description = "Job execution timeout."
-        + " If not null, it overrides the value in the job definition.", example = "PT10M")
-    Optional<@PositiveOrZeroDuration @TimeAccuracy Duration> getTimeout();
+            + " If not null, it overrides the value in the job definition.", example = "PT10M")
+    Optional<@PositiveOrZeroDuration @DurationRange(maxSecond = 86_399L/*23h59m59s*/) @TimeAccuracy Duration>
+        getTimeout();
 
     /**
      * Get plugin name. If not null, it overrides the value in the job definition.
@@ -153,7 +156,8 @@ public interface JobCreationContext {
      * @return plugin name
      * @since 3.0.0
      */
-    @Schema(description = "Plugin name. If not null, it overrides the value in the job definition.", example = "PluginName")
+    @Schema(description = "Plugin name. If not null, it overrides the value in the job definition.", example
+            = "PluginName")
     Optional<@Size(max = 50) String> getPluginName();
 
     /**

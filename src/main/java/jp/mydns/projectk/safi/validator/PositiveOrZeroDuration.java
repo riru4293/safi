@@ -51,8 +51,7 @@ import java.time.Duration;
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = {
-    PositiveOrZeroDuration.Validator.class})
+@Constraint(validatedBy = {PositiveOrZeroDuration.Validator.class})
 public @interface PositiveOrZeroDuration {
 
     String message() default "{jp.mydns.projectk.safi.validator.PositiveOrZeroDuration.message}";

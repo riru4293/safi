@@ -209,7 +209,7 @@ public class JobEntity extends CommonEntity {
      * @since 3.0.0
      */
     @NotNull
-    @TimeRange
+    @TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/)
     @TimeAccuracy
     public LocalDateTime getScheduleTime() {
         return scheduleTime;

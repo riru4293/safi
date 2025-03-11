@@ -43,6 +43,7 @@ import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.validator.DurationRange;
 import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 
@@ -240,6 +241,7 @@ public interface JobdefValue extends PersistableValue {
      */
     @NotNull
     @PositiveOrZeroDuration
+    @DurationRange(maxSecond = 86_399L/*23h59m59s*/)
     @TimeAccuracy
     @Schema(type = "string", description = "Job execution timeout.")
     Duration getTimeout();
