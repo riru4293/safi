@@ -35,7 +35,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.lang.reflect.Type;
 import java.time.Duration;
@@ -43,6 +42,7 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Optional;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -135,7 +135,7 @@ public interface JobCreationContext {
      * @since 3.0.0
      */
     @Schema(description = "Job schedule time. Means current time if null.", example = "2000-01-01T00:00:00Z")
-    Optional<@NotNull @TimeRange @TimeAccuracy OffsetDateTime> getScheduleTime();
+    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getScheduleTime();
 
     /**
      * Get job execution timeout. If not null, it overrides the value in the job definition.
@@ -145,7 +145,7 @@ public interface JobCreationContext {
      */
     @Schema(type = "string", description = "Job execution timeout."
         + " If not null, it overrides the value in the job definition.", example = "PT10M")
-    Optional<@NotNull @TimeAccuracy Duration> getTimeout();
+    Optional<@PositiveOrZeroDuration @TimeAccuracy Duration> getTimeout();
 
     /**
      * Get plugin name. If not null, it overrides the value in the job definition.
