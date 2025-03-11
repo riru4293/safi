@@ -190,7 +190,7 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  */
 @JsonbTypeDeserializer(JobdefValue.Deserializer.class)
 @Schema(name = "Jobdef", description = "Definition for creates a job.")
-public interface JobdefValue extends PersistableValue {
+public interface JobdefValue extends NamedValue {
 
     /**
      * Get job definition id.
@@ -202,16 +202,6 @@ public interface JobdefValue extends PersistableValue {
     @Size(max = 36)
     @Schema(description = "Job definition id.")
     String getId();
-
-    /**
-     * Get the {@code ValidityPeriodValue}.
-     *
-     * @return the {@code ValidityPeriodValue}
-     * @since 3.0.0
-     */
-    @NotNull
-    @Valid
-    ValidityPeriodValue getValidityPeriod();
 
     /**
      * Get the {@code JobKind}.
@@ -245,15 +235,6 @@ public interface JobdefValue extends PersistableValue {
     @TimeAccuracy
     @Schema(type = "string", description = "Job execution timeout.")
     Duration getTimeout();
-
-    /**
-     * Get job definition name.
-     *
-     * @return job definition name
-     * @since 3.0.0
-     */
-    @Schema(description = "Job definition name.")
-    Optional<@Size(max = 250) String> getName();
 
     /**
      * Get plugin name.
@@ -305,11 +286,9 @@ public interface JobdefValue extends PersistableValue {
     class Builder extends AbstractBuilder<Builder, JobdefValue> {
 
         private String id;
-        private ValidityPeriodValue validityPeriod;
         private JobKind jobKind;
         private JobTarget jobTarget;
         private Duration timeout;
-        private String name;
         private String pluginName;
         private Map<String, String> trnsdef;
         private FiltdefValue filtdef;
@@ -334,11 +313,9 @@ public interface JobdefValue extends PersistableValue {
             super.with(src);
 
             this.id = src.getId();
-            this.validityPeriod = src.getValidityPeriod();
             this.jobKind = src.getJobKind();
             this.jobTarget = src.getJobTarget();
             this.timeout = src.getTimeout();
-            this.name = src.getName().orElse(null);
             this.pluginName = src.getPluginName().orElse(null);
             this.trnsdef = src.getTrnsdef();
             this.filtdef = src.getFiltdef();
@@ -356,18 +333,6 @@ public interface JobdefValue extends PersistableValue {
          */
         public Builder withId(String id) {
             this.id = id;
-            return this;
-        }
-
-        /**
-         * Set the {@code ValidityPeriodValue}.
-         *
-         * @param validityPeriod the {@code ValidityPeriodValue}
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withValidityPeriod(ValidityPeriodValue validityPeriod) {
-            this.validityPeriod = validityPeriod;
             return this;
         }
 
@@ -404,18 +369,6 @@ public interface JobdefValue extends PersistableValue {
          */
         public Builder withTimeout(Duration timeout) {
             this.timeout = timeout;
-            return this;
-        }
-
-        /**
-         * Set job definition name.
-         *
-         * @param name job definition name
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withName(String name) {
-            this.name = name;
             return this;
         }
 
@@ -487,11 +440,9 @@ public interface JobdefValue extends PersistableValue {
         protected static class Bean extends AbstractBuilder.AbstractBean implements JobdefValue {
 
             private String id;
-            private ValidityPeriodValue validityPeriod;
             private JobKind jobKind;
             private JobTarget jobTarget;
             private Duration timeout;
-            private String name;
             private String pluginName;
             private Map<String, String> trnsdef;
             private FiltdefValue filtdef;
@@ -515,11 +466,9 @@ public interface JobdefValue extends PersistableValue {
                 super(builder);
 
                 this.id = builder.id;
-                this.validityPeriod = builder.validityPeriod;
                 this.jobKind = builder.jobKind;
                 this.jobTarget = builder.jobTarget;
                 this.timeout = builder.timeout;
-                this.name = builder.name;
                 this.pluginName = builder.pluginName;
                 this.trnsdef = builder.trnsdef;
                 this.filtdef = builder.filtdef;
@@ -544,26 +493,6 @@ public interface JobdefValue extends PersistableValue {
              */
             public void setId(String id) {
                 this.id = id;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public ValidityPeriodValue getValidityPeriod() {
-                return validityPeriod;
-            }
-
-            /**
-             * Set the {@code ValidityPeriodValue}.
-             *
-             * @param validityPeriod the {@code ValidityPeriodValue}
-             * @since 3.0.0
-             */
-            public void setValidityPeriod(ValidityPeriodValue validityPeriod) {
-                this.validityPeriod = validityPeriod;
             }
 
             /**
@@ -604,26 +533,6 @@ public interface JobdefValue extends PersistableValue {
              */
             public void setJobTarget(JobTarget jobTarget) {
                 this.jobTarget = jobTarget;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public Optional<String> getName() {
-                return Optional.ofNullable(name);
-            }
-
-            /**
-             * Set job definition name.
-             *
-             * @param name job definition name
-             * @since 3.0.0
-             */
-            public void setName(String name) {
-                this.name = name;
             }
 
             /**
