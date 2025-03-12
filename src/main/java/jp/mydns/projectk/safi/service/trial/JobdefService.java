@@ -27,12 +27,15 @@ package jp.mydns.projectk.safi.service.trial;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import jp.mydns.projectk.safi.dao.JobdefDao;
+import jp.mydns.projectk.safi.dxo.JobdefDxo;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobdefValue;
@@ -51,19 +54,25 @@ public class JobdefService {
         = () -> new JobdefIOException("No found job definition.");
 
     private final JobdefDao jobdefDao;
+    private final JobdefDxo jobdefDxo;
     private final ValidationService validationSvc;
+    private final JsonService jsonSvc;
 
     /**
      * Constructor.
      *
+     * @param jobdefDxo the {@code JobdefDxo}
      * @param jobdefDao the {@code JobdefDao}
      * @param validationSvc the {@code ValidationService}
+     * @param jsonSvc the {@code JsonService}
      * @since 3.0.0
      */
     @Inject
-    public JobdefService(JobdefDao jobdefDao, ValidationService validationSvc) {
+    public JobdefService(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc, JsonService jsonSvc) {
+        this.jobdefDxo = jobdefDxo;
         this.jobdefDao = jobdefDao;
         this.validationSvc = validationSvc;
+        this.jsonSvc = jsonSvc;
     }
 
     /**
@@ -80,9 +89,10 @@ public class JobdefService {
     public JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException {
         Objects.requireNonNull(ctx);
 
-        JobdefEntity origin = getValidJobdefEntity(ctx.getJobdefId()).orElseThrow(noFoundJobdef);
+        UnaryOperator<JsonObject> mergeJobCreationContext = b -> jsonSvc.merge(b, jsonSvc.toJsonObject(ctx));
 
-        return null;
+        return getValidJobdefEntity(ctx.getJobdefId()).map(jsonSvc::toJsonObject).map(mergeJobCreationContext)
+            .map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
     }
 
     private Optional<JobdefEntity> getValidJobdefEntity(String id) {
