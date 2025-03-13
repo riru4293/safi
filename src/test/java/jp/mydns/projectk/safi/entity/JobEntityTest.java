@@ -136,11 +136,11 @@ class JobEntityTest {
         entity.setLimitTime(LocalDateTime.of(2001, 2, 1, 0, 0));
         entity.setBeginTime(LocalDateTime.of(2002, 3, 1, 0, 0));
         entity.setEndTime(LocalDateTime.of(2003, 4, 1, 0, 0));
-        entity.setProperties(new JsonObjectValue(Json.createObjectBuilder().add("name", "props").build()));
+        entity.setProperties(JsonObjectValue.of(Json.createObjectBuilder().add("name", "props").build()));
         entity.setJobdefId("jobdef-id");
-        entity.setJobdef(new JsonObjectValue(Json.createObjectBuilder().add("name", "jobdef").build()));
+        entity.setJobdef(JsonObjectValue.of(Json.createObjectBuilder().add("name", "jobdef").build()));
         entity.setSchedefId("schedef-id");
-        entity.setSchedef(new JsonObjectValue(Json.createObjectBuilder().add("name", "schedef").build()));
+        entity.setSchedef(JsonObjectValue.of(Json.createObjectBuilder().add("name", "schedef").build()));
         entity.setResultMessages(new JsonArrayValue(Json.createArrayBuilder().add("result").build()));
 
         assertThat(entity).hasToString(tmpl, "job-id", "SUCCESS", "REBUILD", "ASSET", "2000-01-01T00:00",

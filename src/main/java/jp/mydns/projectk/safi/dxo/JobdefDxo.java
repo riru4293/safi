@@ -31,7 +31,7 @@ import jakarta.json.JsonObject;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Objects;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
-import jp.mydns.projectk.safi.service.trial.JsonService;
+import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.trial.ValidationService;
 import jp.mydns.projectk.safi.value.JobdefValue;
 

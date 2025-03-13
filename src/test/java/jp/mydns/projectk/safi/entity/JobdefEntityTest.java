@@ -140,9 +140,9 @@ class JobdefEntityTest {
         entity.setTimeout(Duration.ZERO);
         entity.setName("jobdef-name");
         entity.setPluginName("plugin-name");
-        entity.setTrnsdef(new JsonObjectValue(Json.createObjectBuilder().add("name", "trnsdef").build()));
-        entity.setFiltdef(new JsonObjectValue(Json.createObjectBuilder().add("name", "filtdef").build()));
-        entity.setJobProperties(new JsonObjectValue(Json.createObjectBuilder().add("name", "job-props").build()));
+        entity.setTrnsdef(JsonObjectValue.of(Json.createObjectBuilder().add("name", "trnsdef").build()));
+        entity.setFiltdef(JsonObjectValue.of(Json.createObjectBuilder().add("name", "filtdef").build()));
+        entity.setJobProperties(JsonObjectValue.of(Json.createObjectBuilder().add("name", "job-props").build()));
 
         assertThat(entity).hasToString(tmpl, "jobdef-id", vp, "REBUILD", "ASSET", "PT0S", "jobdef-name", "plugin-name",
             "{\"name\":\"trnsdef\"}", "{\"name\":\"filtdef\"}", "{\"name\":\"job-props\"}");

@@ -53,7 +53,7 @@ class JsonObjectValueTest {
     @Test
     void testSerialize() throws IOException, ClassNotFoundException {
 
-        JsonObjectValue expect = new JsonObjectValue(Json.createObjectBuilder()
+        JsonObjectValue expect = JsonObjectValue.of(Json.createObjectBuilder()
             .add("null", JsonValue.NULL)
             .add("true", JsonValue.TRUE)
             .add("false", JsonValue.FALSE)
@@ -98,9 +98,10 @@ class JsonObjectValueTest {
             .build();
 
         // Wrap with JsonObjectValue
-        JsonObjectValue value = new JsonObjectValue(raw);
+        JsonObjectValue val1 = JsonObjectValue.of(raw);
+        JsonObjectValue val2 = JsonObjectValue.of(raw);
 
-        assertThat(value).isEqualTo(raw);
+        assertThat(val1).isEqualTo(val2);
     }
 
     /**
@@ -110,8 +111,8 @@ class JsonObjectValueTest {
      */
     @Test
     void testEqualsIfNotSame() {
-        var val1 = new JsonObjectValue(JsonValue.EMPTY_JSON_OBJECT);
-        var val2 = new JsonObjectValue(Json.createObjectBuilder().add("k", true).build());
+        var val1 = JsonObjectValue.of(JsonValue.EMPTY_JSON_OBJECT);
+        var val2 = JsonObjectValue.of(Json.createObjectBuilder().add("k", true).build());
 
         assertThat(val1).isNotEqualTo(val2);
     }
@@ -123,244 +124,10 @@ class JsonObjectValueTest {
      */
     @Test
     void testEqualsIfOtherClass() {
-        var val1 = new JsonObjectValue(JsonValue.EMPTY_JSON_OBJECT);
+        var val1 = JsonObjectValue.of(JsonValue.EMPTY_JSON_OBJECT);
         var val2 = new Object();
 
         assertThat(val1).isNotEqualTo(val2);
-    }
-
-    /**
-     * Test of entrySet method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testEntrySet() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.entrySet();
-        var result = val.entrySet();
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getJsonArray method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetJsonArray() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getJsonArray("3");
-        var result = val.getJsonArray("3");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getJsonObject method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetJsonObject() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getJsonObject("4");
-        var result = val.getJsonObject("4");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getJsonNumber method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetJsonNumber() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getJsonNumber("1");
-        var result = val.getJsonNumber("1");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getJsonString method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetJsonString() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getJsonString("2");
-        var result = val.getJsonString("2");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getString method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetString_String() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getString("2");
-        var result = val.getString("2");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getString method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetString_String_String() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getString("0", "y");
-        var result = val.getString("0", "y");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getInt method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetInt_String() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getInt("1");
-        var result = val.getInt("1");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getInt method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetInt_String_int() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getInt("0", 5);
-        var result = val.getInt("0", 5);
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getBoolean method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetBoolean_String() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getBoolean("0");
-        var result = val.getBoolean("0");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getBoolean method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetBoolean_String_boolean() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getBoolean("5", false);
-        var result = val.getBoolean("5", false);
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of isNull method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testIsNull() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.isNull("5");
-        var result = val.isNull("5");
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of getValueType method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGetValueType() {
-        var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
-            .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
-
-        var val = new JsonObjectValue(src);
-
-        var expect = src.getValueType();
-        var result = val.getValueType();
-
-        assertThat(result).isEqualTo(expect);
     }
 
     /**
@@ -373,7 +140,7 @@ class JsonObjectValueTest {
         var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
             .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
 
-        var val = new JsonObjectValue(src);
+        var val = JsonObjectValue.of(src);
 
         assertThat(val).hasSameHashCodeAs(src);
     }
@@ -388,7 +155,7 @@ class JsonObjectValueTest {
         var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
             .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
 
-        var val = new JsonObjectValue(src);
+        var val = JsonObjectValue.of(src);
 
         var expect = src.toString();
 

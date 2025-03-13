@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.service.trial;
+package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -94,7 +94,7 @@ public class JsonService {
      * @since 3.0.0
      */
     public JsonObjectValue toJsonObjectValue(JsonObject o) {
-        return new JsonObjectValue(Objects.requireNonNull(o));
+        return JsonObjectValue.of(Objects.requireNonNull(o));
     }
 
     /**

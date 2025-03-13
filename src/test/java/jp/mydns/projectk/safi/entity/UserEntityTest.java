@@ -133,7 +133,7 @@ class UserEntityTest {
         entity.setEnabled(false);
         entity.setValidityPeriod(vp);
         entity.setName("user-name");
-        entity.setProperties(new JsonObjectValue(Json.createObjectBuilder().add("name", "user-props").build()));
+        entity.setProperties(JsonObjectValue.of(Json.createObjectBuilder().add("name", "user-props").build()));
         entity.setDigest("digest");
 
         assertThat(entity).hasToString(tmpl, "user-id", "false", vp, "user-name", "{\"name\":\"user-props\"}", "digest");

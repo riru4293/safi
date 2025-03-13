@@ -69,11 +69,11 @@ public final class JsonObjectConvertor implements AttributeConverter<JsonObjectV
     @Override
     public JsonObjectValue convertToEntityAttribute(String dbVal) {
         if (dbVal == null) {
-            return new JsonObjectValue(EMPTY_JSON_OBJECT);
+            return JsonObjectValue.of(EMPTY_JSON_OBJECT);
         }
 
         try (var r = Json.createReader(new StringReader(dbVal))) {
-            return new JsonObjectValue(r.readObject());
+            return JsonObjectValue.of(r.readObject());
         }
     }
 }

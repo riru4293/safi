@@ -26,239 +26,163 @@
 package jp.mydns.projectk.safi.value;
 
 import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
+import jakarta.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.serializer.DeserializationContext;
+import jakarta.json.bind.serializer.JsonbDeserializer;
+import jakarta.json.stream.JsonParser;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.util.AbstractMap;
+import java.lang.reflect.Type;
 import java.util.Objects;
-import java.util.Set;
 
 /**
- * The {@link JsonObject} that can be serialized. Exactly the same as the original except that it can be serialized.
+ * Wrapper of the {@link JsonObject}. This can be serialized.
  *
  * <p>
  * Implementation requirements.
  * <ul>
  * <li>This class is immutable and thread-safe.</li>
+ * <li>This class is serializable.</li>
  * </ul>
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class JsonObjectValue extends AbstractMap<String, JsonValue> implements JsonObject, Serializable {
-
-    private static final long serialVersionUID = 6337206561334398852L;
-
-    private transient JsonObject value; // Note: immutable
+@JsonbTypeDeserializer(JsonObjectValue.Deserializer.class)
+public interface JsonObjectValue extends Serializable {
 
     /**
-     * Construct with {@code JsonObject}.
+     * Build with {@code JsonObject}.
      *
      * @param value an any JSON object
+     * @return received as is
      * @throws NullPointerException if {@code value} is {@code null}
      * @since 3.0.0
      */
-    public JsonObjectValue(JsonObject value) {
-        this.value = Objects.requireNonNull(value);
+    static JsonObjectValue of(JsonObject value) {
+        return new Deserializer.Impl(Objects.requireNonNull(value));
     }
 
     /**
-     * {@inheritDoc}
+     * Get wrapped value.
      *
+     * @return wrapped value
      * @since 3.0.0
      */
-    @Override
-    public Set<Entry<String, JsonValue>> entrySet() {
-        return value.entrySet();
-    }
+    JsonObject unwrap();
 
     /**
-     * {@inheritDoc}
+     * JSON deserializer for {@code JsonObjectValue}.
      *
+     * @author riru
+     * @version 3.0.0
      * @since 3.0.0
      */
-    @Override
-    public JsonArray getJsonArray(String name) {
-        return value.getJsonArray(name);
-    }
+    public static class Deserializer implements JsonbDeserializer<JsonObjectValue> {
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public JsonObject getJsonObject(String name) {
-        return value.getJsonObject(name);
-    }
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public JsonObjectValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+            return new Impl(jp.getObject());
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public JsonNumber getJsonNumber(String name) {
-        return value.getJsonNumber(name);
-    }
+        protected static class Impl implements JsonObjectValue {
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public JsonString getJsonString(String name) {
-        return value.getJsonString(name);
-    }
+            private static final long serialVersionUID = 6337206561334398852L;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public String getString(String name) {
-        return value.getString(name);
-    }
+            private transient JsonObject value; // Note: immutable
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public String getString(String name, String defaultValue) {
-        return value.getString(name, defaultValue);
-    }
+            /**
+             * Construct with {@code JsonObject}.
+             *
+             * @param value an any JSON object
+             * @throws NullPointerException if {@code value} is {@code null}
+             * @since 3.0.0
+             */
+            public Impl(JsonObject value) {
+                this.value = Objects.requireNonNull(value);
+            }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public int getInt(String name) {
-        return value.getInt(name);
-    }
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public JsonObject unwrap() {
+                return value;
+            }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public int getInt(String name, int defaultValue) {
-        return value.getInt(name, defaultValue);
-    }
+            /**
+             * Returns a hash code value.
+             *
+             * @return a hash code value
+             * @since 3.0.0
+             */
+            @Override
+            public int hashCode() {
+                return value.hashCode();
+            }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public boolean getBoolean(String name) {
-        return value.getBoolean(name);
-    }
+            /**
+             * Indicates that specified object is equal to this one.
+             *
+             * @param other an any object
+             * @return {@code true} if matches otherwise {@code false}.
+             * @since 3.0.0
+             */
+            @Override
+            public boolean equals(Object other) {
+                return other instanceof JsonObjectValue o && value.equals(o.unwrap());
+            }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public boolean getBoolean(String name, boolean defaultValue) {
-        return value.getBoolean(name, defaultValue);
-    }
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 3.0.0
+             */
+            @Override
+            public String toString() {
+                return value.toString();
+            }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public boolean isNull(String name) {
-        return value.isNull(name);
-    }
+            /**
+             * Serialize this instance.
+             *
+             * @param stream the {@code ObjectOutputStream}
+             * @throws IOException if occurs I/O error
+             * @since 3.0.0
+             */
+            private void writeObject(ObjectOutputStream stream) throws IOException {
+                stream.defaultWriteObject();
+                stream.writeUTF(value.toString());
+            }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     */
-    @Override
-    public ValueType getValueType() {
-        return value.getValueType();
-    }
+            /**
+             * Deserialize this instance.
+             *
+             * @param stream the {@code ObjectInputStream}
+             * @throws IOException if occurs I/O error
+             * @throws ClassNotFoundException if the class of a serialized object could not be found
+             * @since 3.0.0
+             */
+            private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+                stream.defaultReadObject();
 
-    /**
-     * Returns a hash code value.
-     *
-     * @return a hash code value
-     * @since 3.0.0
-     */
-    @Override
-    public int hashCode() {
-        return value.hashCode();
-    }
-
-    /**
-     * Indicates that specified object is equal to this one.
-     *
-     * @param other an any object
-     * @return {@code true} if matches otherwise {@code false}.
-     * @since 3.0.0
-     */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof JsonObject o && value.equals(o);
-    }
-
-    /**
-     * Returns a string representation.
-     *
-     * @return a string representation
-     * @since 3.0.0
-     */
-    @Override
-    public String toString() {
-        return value.toString();
-    }
-
-    /**
-     * Serialize this instance.
-     *
-     * @param stream the {@code ObjectOutputStream}
-     * @throws IOException if occurs I/O error
-     * @since 3.0.0
-     */
-    private void writeObject(ObjectOutputStream stream) throws IOException {
-        stream.defaultWriteObject();
-        stream.writeUTF(value.toString());
-    }
-
-    /**
-     * Deserialize this instance.
-     *
-     * @param stream the {@code ObjectInputStream}
-     * @throws IOException if occurs I/O error
-     * @throws ClassNotFoundException if the class of a serialized object could not be found
-     * @since 3.0.0
-     */
-    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
-        stream.defaultReadObject();
-
-        try (var r = Json.createReader(new StringReader(stream.readUTF()))) {
-            value = r.readObject();
+                try (var r = Json.createReader(new StringReader(stream.readUTF()))) {
+                    value = r.readObject();
+                }
+            }
         }
     }
 }

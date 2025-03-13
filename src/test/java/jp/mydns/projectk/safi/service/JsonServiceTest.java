@@ -23,75 +23,86 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity.convertor;
+package jp.mydns.projectk.safi.service;
 
-import jakarta.json.Json;
-import jakarta.json.JsonValue;
+import jakarta.json.JsonObject;
+import jakarta.json.bind.Jsonb;
+import java.util.Map;
+import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import jp.mydns.projectk.safi.value.JsonObjectValue;
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- * Test of class {@code JsonObjectConvertor}.
+ * Test of class {@code JsonService}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-class JsonObjectConvertorTest {
+@ExtendWith(JsonbParameterResolver.class)
+class JsonServiceTest {
 
     /**
-     * Test of convertToDatabaseColumn method.
+     * Test of toJsonObject method.
      *
      * @since 3.0.0
      */
     @Test
-    void testConvertToDatabaseColumn() {
-        var expect = "{\"k\":\"v\"}";
-
-        var result = new JsonObjectConvertor().convertToDatabaseColumn(JsonObjectValue.of(Json.createObjectBuilder()
-            .add("k", "v").build()));
-
-        assertThat(result).isEqualTo(expect);
+    void testToJsonObject() {
     }
 
     /**
-     * Test of convertToDatabaseColumn method if null.
+     * Test of merge method.
      *
      * @since 3.0.0
      */
     @Test
-    void testConvertToDatabaseColumnIfNull() {
-        var result = new JsonObjectConvertor().convertToDatabaseColumn(null);
-
-        assertThat(result).isEqualTo("{}");
+    void testMerge() {
     }
 
     /**
-     * Test of convertToEntityAttribute method.
+     * Test of toJsonObjectValue method.
      *
      * @since 3.0.0
      */
     @Test
-    void testConvertToEntityAttribute() {
-        var expect = JsonObjectValue.of(JsonValue.EMPTY_JSON_OBJECT);
-
-        var result = new JsonObjectConvertor().convertToEntityAttribute("{}");
-
-        assertThat(result).isEqualTo(expect);
+    void testToJsonObjectValue_JsonObject() {
     }
 
     /**
-     * Test of convertToEntityAttribute method if null.
+     * Test of toJsonObjectValue method.
      *
      * @since 3.0.0
      */
     @Test
-    void testConvertToEntityAttributeIfNull() {
-        var expect = JsonObjectValue.of(JsonValue.EMPTY_JSON_OBJECT);
-
-        var result = new JsonObjectConvertor().convertToEntityAttribute(null);
-
-        assertThat(result).isEqualTo(expect);
+    void testToJsonObjectValue_Object() {
     }
+
+    /**
+     * Test of fromJsonObject method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testFromJsonObject() {
+    }
+
+    /**
+     * Test of convertViaJson method.
+     *
+     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertViaJson(Jsonb jsonb) {
+        var instance = new JsonService(jsonb);
+
+        var result = instance.convertViaJson(Map.of(1, "hello", 2, "hey"), JsonObjectValue.class);
+
+        System.out.println(result);
+
+        new JsonObjectValue.Deserializer();
+    }
+
 }

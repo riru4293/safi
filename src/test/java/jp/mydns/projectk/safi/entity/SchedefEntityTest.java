@@ -136,7 +136,7 @@ class SchedefEntityTest {
 
         entity.setPriority("7");
         entity.setName("schedef-name");
-        entity.setValue(new JsonObjectValue(Json.createObjectBuilder().add("name", "schedef").build()));
+        entity.setValue(JsonObjectValue.of(Json.createObjectBuilder().add("name", "schedef").build()));
 
         assertThat(entity).hasToString(tmpl, "schedef-id", vp, "7", "schedef-name", "{\"name\":\"schedef\"}");
     }

@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.service.trial;
 
+import jp.mydns.projectk.safi.service.JsonService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
