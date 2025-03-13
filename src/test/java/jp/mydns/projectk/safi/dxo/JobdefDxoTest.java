@@ -96,14 +96,4 @@ class JobdefDxoTest {
 
         assertThat(result).isEqualTo(expect);
     }
-
-    /**
-     * Test of toValue method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testToValue_JobdefEntity() {
-    }
-
 }
