@@ -117,3 +117,28 @@ CREATE TABLE           `m_schedef` (
   COMMENT='Jos schedule definition.'
   ENCRYPTED=YES ENCRYPTION_KEY_ID=4
 ;
+
+DROP   TABLE IF EXISTS `m_appconf`;
+CREATE TABLE           `m_appconf` (
+-- ---------------------+--------+--------+--------+-----------------------------------
+    `id`                  VARCHAR(     36) NOT NULL                                    COMMENT 'SAFI configuration id'
+  , `from_ts`            DATETIME          NOT NULL DEFAULT '2000-01-01 00:00:00'      COMMENT 'Begin date-time of enabled period.'
+  , `to_ts`              DATETIME          NOT NULL DEFAULT '2999-12-31 23:59:59'      COMMENT 'End date-time of enabled period.'
+  , `ignored`             BOOLEAN          NOT NULL DEFAULT FALSE                      COMMENT 'Ignore flag. True means ignore and the enabled state is disabled.'
+  , `name`                VARCHAR(    250)          COLLATE utf8mb4_unicode_ci         COMMENT 'SAFI configuration name'
+  , `val`                    JSON                                                      COMMENT 'SAFI configuration value'
+-- ---------------------+--------+--------+--------+-----------------------------------
+  , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
+  , `version`                 INT          NOT NULL DEFAULT 1                          COMMENT 'JPA entity version. Used for mutual exclusion control. Starts at 1 and increments with each update.'
+  , `reg_ts`             DATETIME                                                      COMMENT 'Registerd time'
+  , `reg_id`              VARCHAR(    250)                                             COMMENT 'The ID of the account that registered.'
+  , `reg_ap`              VARCHAR(    250)                                             COMMENT 'The name of the application that registered.'
+  , `upd_ts`             DATETIME                                                      COMMENT 'Updated time'
+  , `upd_id`              VARCHAR(    250)                                             COMMENT 'The ID of the account that updated.'
+  , `upd_ap`              VARCHAR(    250)                                             COMMENT 'The name of the application that updated.'
+-- ---------------------+--------+--------+--------+-----------------------------------
+  , PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT
+  COMMENT='SAFI configuration.'
+  ENCRYPTED=YES ENCRYPTION_KEY_ID=4
+;

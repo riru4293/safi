@@ -53,7 +53,6 @@ import jp.mydns.projectk.safi.value.JsonWrapper;
 public class JobdefDxo extends ValidityPeriodDxo {
 
     private final ValidationService validationSvc;
-
     private final JsonService jsonSvc;
 
     /**
