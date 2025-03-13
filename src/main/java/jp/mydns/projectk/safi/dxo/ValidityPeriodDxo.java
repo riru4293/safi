@@ -39,6 +39,24 @@ import jp.mydns.projectk.safi.value.ValidityPeriodValue;
 public abstract class ValidityPeriodDxo {
 
     /**
+     * Exchange to built-in part of JPA entity object from value object.
+     *
+     * @param value the {@code ValidityPeriodValue}. Constraint violations must be none.
+     * @return the {@code ValidityPeriodEmb}
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @since 3.0.0
+     */
+    protected ValidityPeriodEmb toValidityPeriodEmb(ValidityPeriodValue value) {
+        var emb = new ValidityPeriodEmb();
+
+        emb.setFrom(TimeUtils.toLocalDateTime(value.getFrom()));
+        emb.setTo(TimeUtils.toLocalDateTime(value.getTo()));
+        emb.setIgnored(value.isIgnored());
+        
+        return emb;
+    }
+
+    /**
      * Exchange to value object from built-in part of JPA entity.
      *
      * @param emb the {@code ValidityPeriodEmb}. Constraint violations must be none.

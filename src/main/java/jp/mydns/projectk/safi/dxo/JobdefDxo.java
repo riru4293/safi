@@ -70,16 +70,49 @@ public class JobdefDxo extends ValidityPeriodDxo {
     }
 
     /**
-     * Exchange to value object from JSON.
+     * Exchange to entity object from value.
      *
-     * @param jobdef job definition as JSON
-     * @return the {@code Jobdef}
-     * @throws NullPointerException if {@code jobdefAsJson} is {@code null}
-     * @throws ConstraintViolationException if {@code jobdefAsJson} has constraint violation
+     * @param value job definition value. Constraint violations must be none.
+     * @return the {@code JobdefEntity}
+     * @throws NullPointerException if {@code entity} is {@code null}
      * @since 3.0.0
      */
-    public JobdefValue toValue(JsonObject jobdef) {
-        return validationSvc.requireValid(jsonSvc.fromJsonValue(Objects.requireNonNull(jobdef), JobdefValue.class));
+    public JobdefEntity toEntity(JobdefValue value) {
+        var entity = new JobdefEntity();
+
+        entity.setId(value.getId());
+        entity.setValidityPeriod(toValidityPeriodEmb(value.getValidityPeriod()));
+        entity.setJobKind(value.getJobKind());
+        entity.setJobTarget(value.getJobTarget());
+        entity.setTimeout(value.getTimeout());
+        entity.setName(value.getName().orElse(null));
+        entity.setPluginName(value.getPluginName().orElse(null));
+        entity.setTrnsdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getTrnsdef())));
+        entity.setFiltdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getFiltdef())));
+        entity.setJobProperties(JsonWrapper.of(value.getJobProperties()));
+        entity.setNote(value.getNote().orElse(null));
+        entity.setVersion(value.getVersion());
+        entity.setRegTime(TimeUtils.toLocalDateTime(value.getRegisterTime().orElse(null)));
+        entity.setRegId(value.getRegisterAccountId().orElse(null));
+        entity.setRegName(value.getRegisterProcessName().orElse(null));
+        entity.setUpdTime(TimeUtils.toLocalDateTime(value.getUpdateTime().orElse(null)));
+        entity.setUpdId(value.getUpdateAccountId().orElse(null));
+        entity.setUpdName(value.getUpdateProcessName().orElse(null));
+
+        return entity;
+    }
+
+    /**
+     * Exchange to value object from JSON.
+     *
+     * @param json job definition as JSON
+     * @return the {@code Jobdef}
+     * @throws NullPointerException if {@code json} is {@code null}
+     * @throws ConstraintViolationException if {@code json} has constraint violation
+     * @since 3.0.0
+     */
+    public JobdefValue toValue(JsonObject json) {
+        return validationSvc.requireValid(jsonSvc.fromJsonValue(Objects.requireNonNull(json), JobdefValue.class));
     }
 
     /**

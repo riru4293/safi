@@ -78,4 +78,19 @@ public class TimeUtils {
     public static LocalDateTime toLocalDateTime(String localDateTime) {
         return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
     }
+
+    /**
+     * Exchange to the {@code LocalDateTime}. It time zone is UTC.
+     *
+     * @param offsetDateTime the {@code OffsetDateTime}. It can be set {@code null}.
+     * @return the {@code LocalDateTime}. {@code null} if {@code offsetDateTime} is {@code null}.
+     * @since 3.0.0
+     */
+    public static LocalDateTime toLocalDateTime(OffsetDateTime offsetDateTime) {
+        if (offsetDateTime == null) {
+            return null;
+        }
+
+        return offsetDateTime.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime();
+    }
 }
