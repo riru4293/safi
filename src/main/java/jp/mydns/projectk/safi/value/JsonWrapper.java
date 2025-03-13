@@ -26,7 +26,7 @@
 package jp.mydns.projectk.safi.value;
 
 import jakarta.json.Json;
-import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
@@ -40,7 +40,7 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * Wrapper of the {@link JsonObject}. This can be serialized.
+ * Wrapper of the {@link JsonValue}. This can be serialized.
  *
  * <p>
  * Implementation requirements.
@@ -53,18 +53,18 @@ import java.util.Objects;
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(JsonObjectValue.Deserializer.class)
-public interface JsonObjectValue extends Serializable {
+@JsonbTypeDeserializer(JsonWrapper.Deserializer.class)
+public interface JsonWrapper extends Serializable {
 
     /**
-     * Build with {@code JsonObject}.
+     * Build with {@code JsonValue}.
      *
      * @param value an any JSON object
      * @return received as is
      * @throws NullPointerException if {@code value} is {@code null}
      * @since 3.0.0
      */
-    static JsonObjectValue of(JsonObject value) {
+    static JsonWrapper of(JsonValue value) {
         return new Deserializer.Impl(Objects.requireNonNull(value));
     }
 
@@ -74,16 +74,16 @@ public interface JsonObjectValue extends Serializable {
      * @return wrapped value
      * @since 3.0.0
      */
-    JsonObject unwrap();
+    JsonValue unwrap();
 
     /**
-     * JSON deserializer for {@code JsonObjectValue}.
+     * JSON deserializer for {@code JsonWrapper}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    public static class Deserializer implements JsonbDeserializer<JsonObjectValue> {
+    public static class Deserializer implements JsonbDeserializer<JsonWrapper> {
 
         /**
          * {@inheritDoc}
@@ -91,24 +91,24 @@ public interface JsonObjectValue extends Serializable {
          * @since 3.0.0
          */
         @Override
-        public JsonObjectValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public JsonWrapper deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return new Impl(jp.getObject());
         }
 
-        protected static class Impl implements JsonObjectValue {
+        protected static class Impl implements JsonWrapper {
 
             private static final long serialVersionUID = 6337206561334398852L;
 
-            private transient JsonObject value; // Note: immutable
+            private transient JsonValue value; // Note: immutable
 
             /**
-             * Construct with {@code JsonObject}.
+             * Construct with {@code JsonValue}.
              *
              * @param value an any JSON object
              * @throws NullPointerException if {@code value} is {@code null}
              * @since 3.0.0
              */
-            public Impl(JsonObject value) {
+            public Impl(JsonValue value) {
                 this.value = Objects.requireNonNull(value);
             }
 
@@ -118,7 +118,7 @@ public interface JsonObjectValue extends Serializable {
              * @since 3.0.0
              */
             @Override
-            public JsonObject unwrap() {
+            public JsonValue unwrap() {
                 return value;
             }
 
@@ -142,7 +142,7 @@ public interface JsonObjectValue extends Serializable {
              */
             @Override
             public boolean equals(Object other) {
-                return other instanceof JsonObjectValue o && value.equals(o.unwrap());
+                return other instanceof JsonWrapper o && value.equals(o.unwrap());
             }
 
             /**
@@ -180,7 +180,7 @@ public interface JsonObjectValue extends Serializable {
                 stream.defaultReadObject();
 
                 try (var r = Json.createReader(new StringReader(stream.readUTF()))) {
-                    value = r.readObject();
+                    value = r.readValue();
                 }
             }
         }

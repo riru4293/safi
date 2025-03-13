@@ -31,9 +31,9 @@ import java.time.LocalDateTime;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
  * Test of class {@code JobdefEntity}.
@@ -140,9 +140,9 @@ class JobdefEntityTest {
         entity.setTimeout(Duration.ZERO);
         entity.setName("jobdef-name");
         entity.setPluginName("plugin-name");
-        entity.setTrnsdef(JsonObjectValue.of(Json.createObjectBuilder().add("name", "trnsdef").build()));
-        entity.setFiltdef(JsonObjectValue.of(Json.createObjectBuilder().add("name", "filtdef").build()));
-        entity.setJobProperties(JsonObjectValue.of(Json.createObjectBuilder().add("name", "job-props").build()));
+        entity.setTrnsdef(JsonWrapper.of(Json.createObjectBuilder().add("name", "trnsdef").build()));
+        entity.setFiltdef(JsonWrapper.of(Json.createObjectBuilder().add("name", "filtdef").build()));
+        entity.setJobProperties(JsonWrapper.of(Json.createObjectBuilder().add("name", "job-props").build()));
 
         assertThat(entity).hasToString(tmpl, "jobdef-id", vp, "REBUILD", "ASSET", "PT0S", "jobdef-name", "plugin-name",
             "{\"name\":\"trnsdef\"}", "{\"name\":\"filtdef\"}", "{\"name\":\"job-props\"}");

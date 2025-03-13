@@ -40,7 +40,7 @@ import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.util.trial.JsonValueUtils;
 import jp.mydns.projectk.safi.value.FiltdefValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
  * Data exchange processing for <i>Job definition</i>.
@@ -114,11 +114,12 @@ public class JobdefDxo extends ValidityPeriodDxo {
             .unsafeBuild();
     }
 
-    private Map<String, String> toTrnsdef(JsonObjectValue json) {
-        return json.unwrap().entrySet().stream().map(compute(JsonValueUtils::toString)).collect(toLinkedHashMap());
+    private Map<String, String> toTrnsdef(JsonWrapper json) {
+        return json.unwrap().asJsonObject().entrySet().stream().map(compute(JsonValueUtils::toString))
+            .collect(toLinkedHashMap());
     }
 
-    private FiltdefValue toFiltdef(JsonObjectValue json) {
+    private FiltdefValue toFiltdef(JsonWrapper json) {
         return jsonSvc.fromJsonValue(jsonSvc.toJsonValue(json), FiltdefValue.class);
     }
 }

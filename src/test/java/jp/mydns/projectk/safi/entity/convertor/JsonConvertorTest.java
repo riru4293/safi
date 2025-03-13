@@ -27,18 +27,18 @@ package jp.mydns.projectk.safi.entity.convertor;
 
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
- * Test of class {@code JsonObjectConvertor}.
+ * Test of class {@code JsonConvertor}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-class JsonObjectConvertorTest {
+class JsonConvertorTest {
 
     /**
      * Test of convertToDatabaseColumn method.
@@ -49,7 +49,7 @@ class JsonObjectConvertorTest {
     void testConvertToDatabaseColumn() {
         var expect = "{\"k\":\"v\"}";
 
-        var result = new JsonObjectConvertor().convertToDatabaseColumn(JsonObjectValue.of(Json.createObjectBuilder()
+        var result = new JsonConvertor().convertToDatabaseColumn(JsonWrapper.of(Json.createObjectBuilder()
             .add("k", "v").build()));
 
         assertThat(result).isEqualTo(expect);
@@ -62,9 +62,9 @@ class JsonObjectConvertorTest {
      */
     @Test
     void testConvertToDatabaseColumnIfNull() {
-        var result = new JsonObjectConvertor().convertToDatabaseColumn(null);
+        var result = new JsonConvertor().convertToDatabaseColumn(null);
 
-        assertThat(result).isEqualTo("{}");
+        assertThat(result).isNull();
     }
 
     /**
@@ -74,9 +74,9 @@ class JsonObjectConvertorTest {
      */
     @Test
     void testConvertToEntityAttribute() {
-        var expect = JsonObjectValue.of(JsonValue.EMPTY_JSON_OBJECT);
+        var expect = JsonWrapper.of(JsonValue.EMPTY_JSON_OBJECT);
 
-        var result = new JsonObjectConvertor().convertToEntityAttribute("{}");
+        var result = new JsonConvertor().convertToEntityAttribute("{}");
 
         assertThat(result).isEqualTo(expect);
     }
@@ -88,10 +88,9 @@ class JsonObjectConvertorTest {
      */
     @Test
     void testConvertToEntityAttributeIfNull() {
-        var expect = JsonObjectValue.of(JsonValue.EMPTY_JSON_OBJECT);
 
-        var result = new JsonObjectConvertor().convertToEntityAttribute(null);
+        var result = new JsonConvertor().convertToEntityAttribute(null);
 
-        assertThat(result).isEqualTo(expect);
+        assertThat(result).isNull();
     }
 }

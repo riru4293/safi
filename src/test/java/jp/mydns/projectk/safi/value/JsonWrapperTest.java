@@ -37,13 +37,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test of class {@code JsonObjectValue}.
+ * Test of class {@code JsonWrapper}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-class JsonObjectValueTest {
+class JsonWrapperTest {
 
     /**
      * Test serialize and deserialize.
@@ -53,7 +53,7 @@ class JsonObjectValueTest {
     @Test
     void testSerialize() throws IOException, ClassNotFoundException {
 
-        JsonObjectValue expect = JsonObjectValue.of(Json.createObjectBuilder()
+        JsonWrapper expect = JsonWrapper.of(Json.createObjectBuilder()
             .add("null", JsonValue.NULL)
             .add("true", JsonValue.TRUE)
             .add("false", JsonValue.FALSE)
@@ -72,9 +72,9 @@ class JsonObjectValueTest {
         }
 
         // Deserialize
-        final JsonObjectValue result;
+        final JsonWrapper result;
         try (var bais = new ByteArrayInputStream(serialized); var ois = new ObjectInputStream(bais);) {
-            result = JsonObjectValue.class.cast(ois.readObject());
+            result = JsonWrapper.class.cast(ois.readObject());
         }
 
         assertThat(result).isEqualTo(expect);
@@ -97,9 +97,9 @@ class JsonObjectValueTest {
             .add("object", Json.createObjectBuilder().add("key", "value"))
             .build();
 
-        // Wrap with JsonObjectValue
-        JsonObjectValue val1 = JsonObjectValue.of(raw);
-        JsonObjectValue val2 = JsonObjectValue.of(raw);
+        // Wrap with JsonWrapper
+        JsonWrapper val1 = JsonWrapper.of(raw);
+        JsonWrapper val2 = JsonWrapper.of(raw);
 
         assertThat(val1).isEqualTo(val2);
     }
@@ -111,8 +111,8 @@ class JsonObjectValueTest {
      */
     @Test
     void testEqualsIfNotSame() {
-        var val1 = JsonObjectValue.of(JsonValue.EMPTY_JSON_OBJECT);
-        var val2 = JsonObjectValue.of(Json.createObjectBuilder().add("k", true).build());
+        var val1 = JsonWrapper.of(JsonValue.EMPTY_JSON_OBJECT);
+        var val2 = JsonWrapper.of(Json.createObjectBuilder().add("k", true).build());
 
         assertThat(val1).isNotEqualTo(val2);
     }
@@ -124,7 +124,7 @@ class JsonObjectValueTest {
      */
     @Test
     void testEqualsIfOtherClass() {
-        var val1 = JsonObjectValue.of(JsonValue.EMPTY_JSON_OBJECT);
+        var val1 = JsonWrapper.of(JsonValue.EMPTY_JSON_OBJECT);
         var val2 = new Object();
 
         assertThat(val1).isNotEqualTo(val2);
@@ -140,7 +140,7 @@ class JsonObjectValueTest {
         var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
             .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
 
-        var val = JsonObjectValue.of(src);
+        var val = JsonWrapper.of(src);
 
         assertThat(val).hasSameHashCodeAs(src);
     }
@@ -155,7 +155,7 @@ class JsonObjectValueTest {
         var src = Json.createObjectBuilder().add("0", true).add("1", 7).add("2", "hello")
             .add("3", JsonValue.EMPTY_JSON_ARRAY).add("4", JsonValue.EMPTY_JSON_OBJECT).add("5", JsonValue.NULL).build();
 
-        var val = JsonObjectValue.of(src);
+        var val = JsonWrapper.of(src);
 
         var expect = src.toString();
 
