@@ -29,6 +29,7 @@ import jp.mydns.projectk.safi.service.JsonService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Objects;
@@ -90,10 +91,11 @@ public class JobdefService {
     public JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException {
         Objects.requireNonNull(ctx);
 
-        UnaryOperator<JsonObject> mergeJobCreationContext = b -> jsonSvc.merge(b, jsonSvc.toJsonObject(ctx));
+        UnaryOperator<JsonObject> overwriteCtx = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(ctx).
+            asJsonObject());
 
-        return getValidJobdefEntity(ctx.getJobdefId()).map(jsonSvc::toJsonObject).map(mergeJobCreationContext)
-            .map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
+        return getValidJobdefEntity(ctx.getJobdefId()).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject)
+            .map(overwriteCtx).map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
     }
 
     private Optional<JobdefEntity> getValidJobdefEntity(String id) {

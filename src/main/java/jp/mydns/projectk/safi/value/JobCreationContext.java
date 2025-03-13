@@ -301,7 +301,18 @@ public interface JobCreationContext {
          * @since 3.0.0
          */
         public JobCreationContext build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(new Bean(this), validator, groups);
+            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+        }
+
+        /**
+         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
+         * reliable.
+         *
+         * @return new unsafe instance
+         * @since 3.0.0
+         */
+        public JobCreationContext unsafeBuild() {
+            return new Bean(this);
         }
 
         /**

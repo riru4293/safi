@@ -28,11 +28,11 @@ package jp.mydns.projectk.safi.service;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbException;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.trial.JsonValueUtils;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
  * Provides JSON conversion.
@@ -58,58 +58,16 @@ public class JsonService {
     }
 
     /**
-     * Conversion to {@code JsonObject}. It is wrapper method of the
-     * {@link JsonValueUtils#toJsonObject(java.lang.Object, jakarta.json.bind.Jsonb)}.
+     * Conversion to {@code JsonValue}.
      *
-     * @param o source value
+     * @param value source value
      * @return converted value
      * @throws NullPointerException if {@code o} is {@code null}
      * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
      * @since 3.0.0
      */
-    public JsonObject toJsonObject(Object o) {
-        return JsonValueUtils.toJsonObject(Objects.requireNonNull(o), jsonb);
-    }
-
-    /**
-     * Merge two {@code JsonObject}. It is wrapper method of the
-     * {@link JsonValueUtils#merge(jakarta.json.JsonObject, jakarta.json.JsonObject)}.
-     *
-     * @param base base value
-     * @param ow overwrite value
-     * @return merged value
-     * @throws NullPointerException if any argument is {@code null}
-     * @since 3.0.0
-     */
-    public JsonObject merge(JsonObject base, JsonObject ow) {
-        return JsonValueUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
-    }
-
-    /**
-     * Returns a {@code JsonObjectValue} representation of the {@code o}.
-     *
-     * @param o the {@code JsonObject}
-     * @return {@code JsonObjectValue} representation of the {@code o}
-     * @throws NullPointerException if {@code o} is {@code null}
-     * @since 3.0.0
-     */
-    public JsonObjectValue toJsonObjectValue(JsonObject o) {
-        return JsonObjectValue.of(Objects.requireNonNull(o));
-    }
-
-    /**
-     * Conversion to {@code JsonObjectValue}.
-     *
-     * @param o source value
-     * @return converted value
-     * @throws NullPointerException if {@code o} is {@code null}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @see #toJsonObject(java.lang.Object)
-     * @see #toJsonObjectValue(jakarta.json.JsonObject)
-     * @since 3.0.0
-     */
-    public JsonObjectValue toJsonObjectValue(Object o) {
-        return toJsonObjectValue(toJsonObject(Objects.requireNonNull(o)));
+    public JsonValue toJsonValue(Object value) {
+        return JsonValueUtils.toJsonValue(Objects.requireNonNull(value), jsonb);
     }
 
     /**
@@ -123,22 +81,20 @@ public class JsonService {
      * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
      * @since 3.0.0
      */
-    public <T> T fromJsonObject(JsonObject json, Class<T> clazz) {
+    public <T> T fromJsonValue(JsonValue json, Class<T> clazz) {
         return jsonb.fromJson(Objects.requireNonNull(json).toString(), Objects.requireNonNull(clazz));
     }
 
     /**
-     * Convert to type of {@code T} via JSON.
+     * Merge two {@code JsonObject}.
      *
-     * @param <T> destination type. It should support deserialization from JSON.
-     * @param o source value. It should support serialization to JSON.
-     * @param clazz destination type
-     * @return converted value
+     * @param base base value
+     * @param ow overwrite value
+     * @return merged value
      * @throws NullPointerException if any argument is {@code null}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
      * @since 3.0.0
      */
-    public <T> T convertViaJson(Object o, Class<T> clazz) {
-        return jsonb.fromJson(toJsonObject(Objects.requireNonNull(o)).toString(), Objects.requireNonNull(clazz));
+    public JsonObject merge(JsonObject base, JsonObject ow) {
+        return JsonValueUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
     }
 }

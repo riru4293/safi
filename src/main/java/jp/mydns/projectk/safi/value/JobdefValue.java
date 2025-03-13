@@ -427,7 +427,17 @@ public interface JobdefValue extends NamedValue {
          */
         @Override
         public JobdefValue build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(new Bean(this), validator, groups);
+            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public JobdefValue unsafeBuild() {
+            return new Bean(this);
         }
 
         /**

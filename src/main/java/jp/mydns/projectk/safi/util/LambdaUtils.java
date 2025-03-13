@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.util;
 
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -400,5 +401,37 @@ public final class LambdaUtils {
      */
     public static <O, T> Supplier<T> supplier(Supplier<O> origin, Function<O, T> postConversion) {
         return () -> postConversion.apply(origin.get());
+    }
+
+    /**
+     * Compute the value of {@code Entry} using the specified function and return the result as new {@code Entry}. The
+     * original value is used for the key.
+     *
+     * @param <K> entry key type
+     * @param <I> input entry value type
+     * @param <O> output entry value type
+     * @param f computation function
+     * @return a new immutable entry using the computation result as a value
+     * <p>
+     * Usage example<pre>
+     * {@code // values to upper case
+     * Map<String, String> preMap = Map.of("k1", "v1", "k2", "v2");
+     * Map<String, String> postMap = preMap.entrySet().stream()
+     *     .map(compute(String::toUpperCase))
+     *     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+     *
+     * // Results are
+     * //   preMap  -> {"key-1", "val-1", "key-2", "val-2"}
+     * //   postMap -> {"key-1", "VAL-1", "key-2", "VAL-2"}
+     * }
+     * </pre>
+     *
+     * @throws NullPointerException if {@code f} is {@code null}
+     * @since 3.0.0
+     */
+    public static <K, I, O> Function<Map.Entry<K, I>, Map.Entry<K, O>> compute(Function<I, O> f) {
+        Objects.requireNonNull(f);
+
+        return e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), f.apply(e.getValue()));
     }
 }

@@ -283,6 +283,15 @@ public interface PersistableValue {
         public abstract V build(Validator validator, Class<?>... groups);
 
         /**
+         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
+         * reliable.
+         *
+         * @return new unsafe instance
+         * @since 3.0.0
+         */
+        public abstract V unsafeBuild();
+
+        /**
          * Abstract implements of the {@code PersistableValue}.
          *
          * @author riru

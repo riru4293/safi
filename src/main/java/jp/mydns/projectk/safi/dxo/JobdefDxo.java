@@ -29,11 +29,18 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.validation.ConstraintViolationException;
+import java.util.Map;
 import java.util.Objects;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.trial.ValidationService;
+import static jp.mydns.projectk.safi.util.LambdaUtils.compute;
+import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
+import jp.mydns.projectk.safi.util.TimeUtils;
+import jp.mydns.projectk.safi.util.trial.JsonValueUtils;
+import jp.mydns.projectk.safi.value.FiltdefValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
+import jp.mydns.projectk.safi.value.JsonObjectValue;
 
 /**
  * Data exchange processing for <i>Job definition</i>.
@@ -43,7 +50,7 @@ import jp.mydns.projectk.safi.value.JobdefValue;
  * @since 3.0.0
  */
 @RequestScoped
-public class JobdefDxo {
+public class JobdefDxo extends ValidityPeriodDxo {
 
     private final ValidationService validationSvc;
 
@@ -72,19 +79,46 @@ public class JobdefDxo {
      * @since 3.0.0
      */
     public JobdefValue toValue(JsonObject jobdef) {
-        return validationSvc.requireValid(jsonSvc.fromJsonObject(Objects.requireNonNull(jobdef), JobdefValue.class));
+        return validationSvc.requireValid(jsonSvc.fromJsonValue(Objects.requireNonNull(jobdef), JobdefValue.class));
     }
 
     /**
      * Exchange to value object from entity.
      *
-     * @param entity the {@code JobdefEntity}
+     * @param entity the {@code JobdefEntity}. Constraint violations must be none.
      * @return the {@code Jobdef}
      * @throws NullPointerException if {@code entity} is {@code null}
      * @throws ConstraintViolationException if {@code entity} has constraint violation
      * @since 3.0.0
      */
     public JobdefValue toValue(JobdefEntity entity) {
-        return validationSvc.requireValid(jsonSvc.convertViaJson(Objects.requireNonNull(entity), JobdefValue.class));
+        return new JobdefValue.Builder()
+            .withId(entity.getId())
+            .withValidityPeriod(toValidityPeriodValue(entity.getValidityPeriod()))
+            .withJobKind(entity.getJobKind())
+            .withJobTarget(entity.getJobTarget())
+            .withTimeout(entity.getTimeout())
+            .withName(entity.getName())
+            .withPluginName(entity.getPluginName())
+            .withTrnsdef(toTrnsdef(entity.getTrnsdef()))
+            .withFiltdef(toFiltdef(entity.getFiltdef()))
+            .withJobProperties(entity.getJobProperties().unwrap().asJsonObject())
+            .withNote(entity.getNote())
+            .withVersion(entity.getVersion())
+            .withRegisterTime(TimeUtils.toOffsetDateTime(entity.getRegTime()))
+            .withRegisterAccountId(entity.getRegId())
+            .withRegisterProcessName(entity.getRegName())
+            .withUpdateTime(TimeUtils.toOffsetDateTime(entity.getUpdTime()))
+            .withUpdateAccountId(entity.getUpdId())
+            .withUpdateProcessName(entity.getUpdName())
+            .unsafeBuild();
+    }
+
+    private Map<String, String> toTrnsdef(JsonObjectValue json) {
+        return json.unwrap().entrySet().stream().map(compute(JsonValueUtils::toString)).collect(toLinkedHashMap());
+    }
+
+    private FiltdefValue toFiltdef(JsonObjectValue json) {
+        return jsonSvc.fromJsonValue(jsonSvc.toJsonValue(json), FiltdefValue.class);
     }
 }

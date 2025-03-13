@@ -171,6 +171,20 @@ public class JsonValueUtils {
     }
 
     /**
+     * Conversion to {@code JsonValue}.
+     *
+     * @param value conversion source
+     * @param jsonb the {@code Jsonb}
+     * @return converted value
+     * @throws NullPointerException if any argument is {@code null}
+     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+     * @since 3.0.0
+     */
+    public static JsonValue toJsonValue(Object value, Jsonb jsonb) {
+        return jsonb.fromJson(Objects.requireNonNull(jsonb).toJson(Objects.requireNonNull(value)), JsonValue.class);
+    }
+
+    /**
      * Make a value stream from JSON array.
      *
      * @param jsonArray JSON array
@@ -223,19 +237,5 @@ public class JsonValueUtils {
 
         return Stream.of(originEntries, mergedEntries, owEntries).flatMap(identity())
             .collect(JsonCollectors.toJsonObject());
-    }
-
-    /**
-     * Conversion to {@code JsonObject}.
-     *
-     * @param value conversion source
-     * @param jsonb the {@code Jsonb}
-     * @return converted value
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @since 3.0.0
-     */
-    public static JsonObject toJsonObject(Object value, Jsonb jsonb) {
-        return jsonb.fromJson(Objects.requireNonNull(jsonb).toJson(Objects.requireNonNull(value)), JsonObject.class);
     }
 }
