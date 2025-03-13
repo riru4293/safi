@@ -28,8 +28,12 @@ package jp.mydns.projectk.safi.value;
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
+import jakarta.json.bind.annotation.JsonbTypeSerializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
+import jakarta.json.bind.serializer.JsonbSerializer;
+import jakarta.json.bind.serializer.SerializationContext;
+import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -83,7 +87,7 @@ public interface JsonWrapper extends Serializable {
      * @version 3.0.0
      * @since 3.0.0
      */
-    public static class Deserializer implements JsonbDeserializer<JsonWrapper> {
+    class Deserializer implements JsonbDeserializer<JsonWrapper> {
 
         /**
          * {@inheritDoc}
@@ -92,9 +96,10 @@ public interface JsonWrapper extends Serializable {
          */
         @Override
         public JsonWrapper deserialize(JsonParser jp, DeserializationContext dc, Type type) {
-            return new Impl(jp.getObject());
+            return new Impl(dc.deserialize(JsonValue.class, jp));
         }
 
+        @JsonbTypeSerializer(JsonWrapper.Serializer.class)
         protected static class Impl implements JsonWrapper {
 
             private static final long serialVersionUID = 6337206561334398852L;
@@ -183,6 +188,26 @@ public interface JsonWrapper extends Serializable {
                     value = r.readValue();
                 }
             }
+        }
+    }
+
+    /**
+     * JSON serializer for {@code JsonWrapper}.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    class Serializer implements JsonbSerializer<JsonWrapper> {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public void serialize(JsonWrapper obj, JsonGenerator generator, SerializationContext ctx) {
+            generator.write(obj.unwrap());
         }
     }
 }

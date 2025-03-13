@@ -28,13 +28,16 @@ package jp.mydns.projectk.safi.value;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
+import jakarta.json.bind.Jsonb;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Test of class {@code JsonWrapper}.
@@ -43,6 +46,7 @@ import org.junit.jupiter.api.Test;
  * @version 3.0.0
  * @since 3.0.0
  */
+@ExtendWith(JsonbParameterResolver.class)
 class JsonWrapperTest {
 
     /**
@@ -160,5 +164,25 @@ class JsonWrapperTest {
         var expect = src.toString();
 
         assertThat(val).hasToString(expect);
+    }
+
+    /**
+     * Test of deserialize method, of class Deserializer.
+     *
+     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
+     * @since 3.0.0
+     */
+    @Test
+    void testDeserialize(Jsonb jsonb) {
+        JsonObject expect = Json.createObjectBuilder().add("from", "2000-01-01T00:00:00Z")
+            .add("to", "2999-12-31T23:59:59Z").add("ignored", true).build();
+
+        var deserialized = jsonb.fromJson(expect.toString(), JsonWrapper.class);
+
+        var serialized = jsonb.toJson(deserialized);
+
+        var result = jsonb.fromJson(serialized, JsonObject.class);
+
+        assertThat(result).isEqualTo(expect);
     }
 }
