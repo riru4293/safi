@@ -59,7 +59,7 @@ class JsonServiceTest {
     void testToJsonValue(Jsonb jsonb) {
         var expect = List.of(Json.createValue(1), JsonValue.NULL, Json.createValue("hello"), JsonValue.TRUE);
 
-        var instance = new JsonService(jsonb);
+        var instance = new JsonService.Impl(jsonb);
 
         var val = new ArrayList<Object>();
         val.add(1);
@@ -88,7 +88,7 @@ class JsonServiceTest {
         expect.add("hello");
         expect.add(true);
 
-        var instance = new JsonService(jsonb);
+        var instance = new JsonService.Impl(jsonb);
 
         var val = Json.createArrayBuilder().add(Json.createValue(1)).add(JsonValue.NULL).add(Json.createValue("hello"))
             .add(JsonValue.TRUE).build();
@@ -111,7 +111,7 @@ class JsonServiceTest {
         var base = Json.createObjectBuilder().add("k1", "foo").add("k2", "foo").build();
         var ow = Json.createObjectBuilder().add("k2", "var").add("k3", "baz").build();
 
-        var instance = new JsonService(jsonb);
+        var instance = new JsonService.Impl(jsonb);
 
         var result = instance.merge(base, ow);
 

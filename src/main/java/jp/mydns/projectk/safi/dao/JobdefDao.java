@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.dao;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
@@ -43,21 +44,7 @@ import jp.mydns.projectk.safi.entity.JobdefEntity_;
  * @version 3.0.0
  * @since 3.0.0
  */
-@RequestScoped
-public class JobdefDao {
-
-    private final EntityManager em;
-
-    /**
-     * Constructor.
-     *
-     * @param em the {@code EntityManager}
-     * @since 3.0.0
-     */
-    @Inject
-    public JobdefDao(EntityManager em) {
-        this.em = em;
-    }
+public interface JobdefDao {
 
     /**
      * Get a job definition entity.
@@ -67,12 +54,46 @@ public class JobdefDao {
      * @throws PersistenceException if the query execution was failed
      * @since 3.0.0
      */
-    public Optional<JobdefEntity> getJobdef(String id) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<JobdefEntity> cq = cb.createQuery(JobdefEntity.class);
+     Optional<JobdefEntity> getJobdef(String id);
 
-        Root<JobdefEntity> mJobdef = cq.from(JobdefEntity.class);
+    /**
+     * Implements of the {@code JobdefDao}.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    @Typed(JobdefDao.class)
+    @RequestScoped
+    class Impl implements JobdefDao {
 
-        return em.createQuery(cq.where(cb.equal(mJobdef.get(JobdefEntity_.id), id))).getResultStream().findFirst();
+        private final EntityManager em;
+
+        /**
+         * Constructor.
+         *
+         * @param em the {@code EntityManager}
+         * @since 3.0.0
+         */
+        @Inject
+        public Impl(EntityManager em) {
+            this.em = em;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws PersistenceException if the query execution was failed
+         * @since 3.0.0
+         */
+        @Override
+        public Optional<JobdefEntity> getJobdef(String id) {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<JobdefEntity> cq = cb.createQuery(JobdefEntity.class);
+
+            Root<JobdefEntity> mJobdef = cq.from(JobdefEntity.class);
+
+            return em.createQuery(cq.where(cb.equal(mJobdef.get(JobdefEntity_.id), id))).getResultStream().findFirst();
+        }
     }
 }

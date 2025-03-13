@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.dxo;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.validation.ConstraintViolationException;
@@ -49,24 +50,7 @@ import jp.mydns.projectk.safi.value.JsonWrapper;
  * @version 3.0.0
  * @since 3.0.0
  */
-@RequestScoped
-public class JobdefDxo extends ValidityPeriodDxo {
-
-    private final ValidationService validationSvc;
-    private final JsonService jsonSvc;
-
-    /**
-     * Constructor.
-     *
-     * @param validationSvc the {@code ValidationService}
-     * @param jsonSvc the {@code JsonService}
-     * @since 3.0.0
-     */
-    @Inject
-    public JobdefDxo(ValidationService validationSvc, JsonService jsonSvc) {
-        this.validationSvc = validationSvc;
-        this.jsonSvc = jsonSvc;
-    }
+public interface JobdefDxo {
 
     /**
      * Exchange to entity object from value.
@@ -76,30 +60,7 @@ public class JobdefDxo extends ValidityPeriodDxo {
      * @throws NullPointerException if {@code entity} is {@code null}
      * @since 3.0.0
      */
-    public JobdefEntity toEntity(JobdefValue value) {
-        var entity = new JobdefEntity();
-
-        entity.setId(value.getId());
-        entity.setValidityPeriod(toValidityPeriodEmb(value.getValidityPeriod()));
-        entity.setJobKind(value.getJobKind());
-        entity.setJobTarget(value.getJobTarget());
-        entity.setTimeout(value.getTimeout());
-        entity.setName(value.getName().orElse(null));
-        entity.setPluginName(value.getPluginName().orElse(null));
-        entity.setTrnsdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getTrnsdef())));
-        entity.setFiltdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getFiltdef())));
-        entity.setJobProperties(JsonWrapper.of(value.getJobProperties()));
-        entity.setNote(value.getNote().orElse(null));
-        entity.setVersion(value.getVersion());
-        entity.setRegTime(TimeUtils.toLocalDateTime(value.getRegisterTime().orElse(null)));
-        entity.setRegId(value.getRegisterAccountId().orElse(null));
-        entity.setRegName(value.getRegisterProcessName().orElse(null));
-        entity.setUpdTime(TimeUtils.toLocalDateTime(value.getUpdateTime().orElse(null)));
-        entity.setUpdId(value.getUpdateAccountId().orElse(null));
-        entity.setUpdName(value.getUpdateProcessName().orElse(null));
-
-        return entity;
-    }
+     JobdefEntity toEntity(JobdefValue value);
 
     /**
      * Exchange to value object from JSON.
@@ -110,9 +71,7 @@ public class JobdefDxo extends ValidityPeriodDxo {
      * @throws ConstraintViolationException if {@code json} has constraint violation
      * @since 3.0.0
      */
-    public JobdefValue toValue(JsonObject json) {
-        return validationSvc.requireValid(jsonSvc.fromJsonValue(Objects.requireNonNull(json), JobdefValue.class));
-    }
+     JobdefValue toValue(JsonObject json);
 
     /**
      * Exchange to value object from entity.
@@ -122,35 +81,116 @@ public class JobdefDxo extends ValidityPeriodDxo {
      * @throws NullPointerException if {@code entity} is {@code null}
      * @since 3.0.0
      */
-    public JobdefValue toValue(JobdefEntity entity) {
-        return new JobdefValue.Builder()
-            .withId(entity.getId())
-            .withValidityPeriod(toValidityPeriodValue(entity.getValidityPeriod()))
-            .withJobKind(entity.getJobKind())
-            .withJobTarget(entity.getJobTarget())
-            .withTimeout(entity.getTimeout())
-            .withName(entity.getName())
-            .withPluginName(entity.getPluginName())
-            .withTrnsdef(toTrnsdef(entity.getTrnsdef()))
-            .withFiltdef(toFiltdef(entity.getFiltdef()))
-            .withJobProperties(entity.getJobProperties().unwrap().asJsonObject())
-            .withNote(entity.getNote())
-            .withVersion(entity.getVersion())
-            .withRegisterTime(TimeUtils.toOffsetDateTime(entity.getRegTime()))
-            .withRegisterAccountId(entity.getRegId())
-            .withRegisterProcessName(entity.getRegName())
-            .withUpdateTime(TimeUtils.toOffsetDateTime(entity.getUpdTime()))
-            .withUpdateAccountId(entity.getUpdId())
-            .withUpdateProcessName(entity.getUpdName())
-            .unsafeBuild();
-    }
+     JobdefValue toValue(JobdefEntity entity);
 
-    private Map<String, String> toTrnsdef(JsonWrapper json) {
-        return json.unwrap().asJsonObject().entrySet().stream().map(compute(JsonValueUtils::toString))
-            .collect(toLinkedHashMap());
-    }
+    /**
+     * Implements of the {@code JobdefDxo}.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    @Typed(JobdefDxo.class)
+    @RequestScoped
+    class Impl extends ValidityPeriodDxo implements JobdefDxo {
 
-    private FiltdefValue toFiltdef(JsonWrapper json) {
-        return jsonSvc.fromJsonValue(jsonSvc.toJsonValue(json), FiltdefValue.class);
+        private final ValidationService validationSvc;
+        private final JsonService jsonSvc;
+
+        /**
+         * Constructor.
+         *
+         * @param validationSvc the {@code ValidationService}
+         * @param jsonSvc the {@code JsonService}
+         * @since 3.0.0
+         */
+        @Inject
+        public Impl(ValidationService validationSvc, JsonService jsonSvc) {
+            this.validationSvc = validationSvc;
+            this.jsonSvc = jsonSvc;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code entity} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public JobdefEntity toEntity(JobdefValue value) {
+            var entity = new JobdefEntity();
+
+            entity.setId(value.getId());
+            entity.setValidityPeriod(toValidityPeriodEmb(value.getValidityPeriod()));
+            entity.setJobKind(value.getJobKind());
+            entity.setJobTarget(value.getJobTarget());
+            entity.setTimeout(value.getTimeout());
+            entity.setName(value.getName().orElse(null));
+            entity.setPluginName(value.getPluginName().orElse(null));
+            entity.setTrnsdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getTrnsdef())));
+            entity.setFiltdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getFiltdef())));
+            entity.setJobProperties(JsonWrapper.of(value.getJobProperties()));
+            entity.setNote(value.getNote().orElse(null));
+            entity.setVersion(value.getVersion());
+            entity.setRegTime(TimeUtils.toLocalDateTime(value.getRegisterTime().orElse(null)));
+            entity.setRegId(value.getRegisterAccountId().orElse(null));
+            entity.setRegName(value.getRegisterProcessName().orElse(null));
+            entity.setUpdTime(TimeUtils.toLocalDateTime(value.getUpdateTime().orElse(null)));
+            entity.setUpdId(value.getUpdateAccountId().orElse(null));
+            entity.setUpdName(value.getUpdateProcessName().orElse(null));
+
+            return entity;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code json} is {@code null}
+         * @throws ConstraintViolationException if {@code json} has constraint violation
+         * @since 3.0.0
+         */
+        @Override
+        public JobdefValue toValue(JsonObject json) {
+            return validationSvc.requireValid(jsonSvc.fromJsonValue(Objects.requireNonNull(json), JobdefValue.class));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code entity} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public JobdefValue toValue(JobdefEntity entity) {
+            return new JobdefValue.Builder()
+                .withId(entity.getId())
+                .withValidityPeriod(toValidityPeriodValue(entity.getValidityPeriod()))
+                .withJobKind(entity.getJobKind())
+                .withJobTarget(entity.getJobTarget())
+                .withTimeout(entity.getTimeout())
+                .withName(entity.getName())
+                .withPluginName(entity.getPluginName())
+                .withTrnsdef(toTrnsdef(entity.getTrnsdef()))
+                .withFiltdef(toFiltdef(entity.getFiltdef()))
+                .withJobProperties(entity.getJobProperties().unwrap().asJsonObject())
+                .withNote(entity.getNote())
+                .withVersion(entity.getVersion())
+                .withRegisterTime(TimeUtils.toOffsetDateTime(entity.getRegTime()))
+                .withRegisterAccountId(entity.getRegId())
+                .withRegisterProcessName(entity.getRegName())
+                .withUpdateTime(TimeUtils.toOffsetDateTime(entity.getUpdTime()))
+                .withUpdateAccountId(entity.getUpdId())
+                .withUpdateProcessName(entity.getUpdName())
+                .unsafeBuild();
+        }
+
+        private Map<String, String> toTrnsdef(JsonWrapper json) {
+            return json.unwrap().asJsonObject().entrySet().stream().map(compute(JsonValueUtils::toString))
+                .collect(toLinkedHashMap());
+        }
+
+        private FiltdefValue toFiltdef(JsonWrapper json) {
+            return jsonSvc.fromJsonValue(jsonSvc.toJsonValue(json), FiltdefValue.class);
+        }
     }
 }

@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
@@ -41,21 +42,7 @@ import jp.mydns.projectk.safi.util.JsonValueUtils;
  * @version 3.0.0
  * @since 3.0.0
  */
-@RequestScoped
-public class JsonService {
-
-    private final Jsonb jsonb;
-
-    /**
-     * Constructor.
-     *
-     * @param jsonb the {@code Jsonb}
-     * @since 3.0.0
-     */
-    @Inject
-    public JsonService(Jsonb jsonb) {
-        this.jsonb = jsonb;
-    }
+public interface JsonService {
 
     /**
      * Conversion to {@code JsonValue}.
@@ -66,9 +53,7 @@ public class JsonService {
      * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
      * @since 3.0.0
      */
-    public JsonValue toJsonValue(Object value) {
-        return JsonValueUtils.toJsonValue(Objects.requireNonNull(value), jsonb);
-    }
+    public JsonValue toJsonValue(Object value);
 
     /**
      * Deserialize to {@code T} from JSON.
@@ -81,9 +66,7 @@ public class JsonService {
      * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
      * @since 3.0.0
      */
-    public <T> T fromJsonValue(JsonValue json, Class<T> clazz) {
-        return jsonb.fromJson(Objects.requireNonNull(json).toString(), Objects.requireNonNull(clazz));
-    }
+    public <T> T fromJsonValue(JsonValue json, Class<T> clazz);
 
     /**
      * Merge two {@code JsonObject}.
@@ -94,7 +77,65 @@ public class JsonService {
      * @throws NullPointerException if any argument is {@code null}
      * @since 3.0.0
      */
-    public JsonObject merge(JsonObject base, JsonObject ow) {
-        return JsonValueUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
+    public JsonObject merge(JsonObject base, JsonObject ow);
+
+    /**
+     * Implements the {@code JsonService}.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    @Typed(JsonService.class)
+    @RequestScoped
+    public class Impl implements JsonService {
+
+        private final Jsonb jsonb;
+
+        /**
+         * Constructor.
+         *
+         * @param jsonb the {@code Jsonb}
+         * @since 3.0.0
+         */
+        @Inject
+        public Impl(Jsonb jsonb) {
+            this.jsonb = jsonb;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+         * @since 3.0.0
+         */
+        @Override
+        public JsonValue toJsonValue(Object value) {
+            return JsonValueUtils.toJsonValue(Objects.requireNonNull(value), jsonb);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if any argument is {@code null}
+         * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+         * @since 3.0.0
+         */
+        @Override
+        public <T> T fromJsonValue(JsonValue json, Class<T> clazz) {
+            return jsonb.fromJson(Objects.requireNonNull(json).toString(), Objects.requireNonNull(clazz));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if any argument is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public JsonObject merge(JsonObject base, JsonObject ow) {
+            return JsonValueUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
+        }
     }
 }

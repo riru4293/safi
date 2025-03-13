@@ -86,9 +86,9 @@ class JobdefDxoTest {
             .add("updateTime", "2134-11-20T10:12:11Z").add("updateAccountId", "uid").add("updateProcessName", "unm")
             .build();
 
-        var validationSvc = new ValidationService(validator, appTimeSvc);
-        var jsonSvc = new JsonService(jsonb);
-        var instance = new JobdefDxo(validationSvc, jsonSvc);
+        var validationSvc = new ValidationService.Impl(validator, appTimeSvc);
+        var jsonSvc = new JsonService.Impl(jsonb);
+        var instance = new JobdefDxo.Impl(validationSvc, jsonSvc);
 
         var val = instance.toValue(expect);
         var entity = instance.toEntity(val);

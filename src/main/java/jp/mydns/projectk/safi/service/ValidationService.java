@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
@@ -43,24 +44,7 @@ import jp.mydns.projectk.safi.value.NamedValue;
  * @version 3.0.0
  * @since 3.0.0
  */
-@RequestScoped
-public class ValidationService {
-
-    private final Validator validator;
-    private final AppTimeService appTimeService;
-
-    /**
-     * Constructor.
-     *
-     * @param validator the {@code Validator}
-     * @param appTimeService the {@code AppTimeService}
-     * @since 3.0.0
-     */
-    @Inject
-    public ValidationService(Validator validator, AppTimeService appTimeService) {
-        this.validator = validator;
-        this.appTimeService = appTimeService;
-    }
+public interface ValidationService {
 
     /**
      * Validate that it is within the validity period.
@@ -70,10 +54,7 @@ public class ValidationService {
      * @throws NullPointerException if {@code value} is {@code null}
      * @since 3.0.0
      */
-    public boolean isEnabled(NamedValue value) {
-        return isEnabled(value.getValidityPeriod().getFrom(), value.getValidityPeriod().getTo(),
-            value.getValidityPeriod().isIgnored());
-    }
+    public boolean isEnabled(NamedValue value);
 
     /**
      * Validate that it is within the validity period.
@@ -83,17 +64,7 @@ public class ValidationService {
      * @throws NullPointerException if {@code entity} is {@code null}
      * @since 3.0.0
      */
-    public boolean isEnabled(NamedEntity entity) {
-        return isEnabled(OffsetDateTime.of(entity.getValidityPeriod().getFrom(), ZoneOffset.UTC),
-            OffsetDateTime.of(entity.getValidityPeriod().getTo(), ZoneOffset.UTC),
-            entity.getValidityPeriod().isIgnored());
-    }
-
-    private boolean isEnabled(OffsetDateTime from, OffsetDateTime to, boolean ignored) {
-        OffsetDateTime refTime = appTimeService.getOffsetNow();
-
-        return !ignored && !from.isAfter(refTime) && !to.isBefore(refTime);
-    }
+    public boolean isEnabled(NamedEntity entity);
 
     /**
      * Validate that the value is valid.
@@ -106,7 +77,76 @@ public class ValidationService {
      * @throws ConstraintViolationException if {@code value} has constraint violation
      * @since 3.0.0
      */
-    public <V> V requireValid(V value, Class<?>... groups) {
-        return ValidationUtils.requireValid(value, validator, groups);
+    public <V> V requireValid(V value, Class<?>... groups);
+
+    /**
+     * Implements of the {@code ValidationService}.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    @Typed(ValidationService.class)
+    @RequestScoped
+    public class Impl implements ValidationService {
+
+        private final Validator validator;
+        private final AppTimeService appTimeService;
+
+        /**
+         * Constructor.
+         *
+         * @param validator the {@code Validator}
+         * @param appTimeService the {@code AppTimeService}
+         * @since 3.0.0
+         */
+        @Inject
+        public Impl(Validator validator, AppTimeService appTimeService) {
+            this.validator = validator;
+            this.appTimeService = appTimeService;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public boolean isEnabled(NamedValue value) {
+            return isEnabled(value.getValidityPeriod().getFrom(), value.getValidityPeriod().getTo(),
+                value.getValidityPeriod().isIgnored());
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code entity} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public boolean isEnabled(NamedEntity entity) {
+            return isEnabled(OffsetDateTime.of(entity.getValidityPeriod().getFrom(), ZoneOffset.UTC),
+                OffsetDateTime.of(entity.getValidityPeriod().getTo(), ZoneOffset.UTC),
+                entity.getValidityPeriod().isIgnored());
+        }
+
+        private boolean isEnabled(OffsetDateTime from, OffsetDateTime to, boolean ignored) {
+            OffsetDateTime refTime = appTimeService.getOffsetNow();
+
+            return !ignored && !from.isAfter(refTime) && !to.isBefore(refTime);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if any argument is {@code null}
+         * @throws ConstraintViolationException if {@code value} has constraint violation
+         * @since 3.0.0
+         */
+        @Override
+        public <V> V requireValid(V value, Class<?>... groups) {
+            return ValidationUtils.requireValid(value, validator, groups);
+        }
     }
 }

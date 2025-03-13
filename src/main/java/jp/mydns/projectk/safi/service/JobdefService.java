@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
@@ -48,58 +49,7 @@ import jp.mydns.projectk.safi.value.JobdefValue;
  * @version 3.0.0
  * @since 3.0.0
  */
-@RequestScoped
-public class JobdefService {
-
-    private final Supplier<JobdefIOException> noFoundJobdef
-        = () -> new JobdefIOException("No found job definition.");
-
-    private final JobdefDao jobdefDao;
-    private final JobdefDxo jobdefDxo;
-    private final ValidationService validationSvc;
-    private final JsonService jsonSvc;
-
-    /**
-     * Constructor.
-     *
-     * @param jobdefDxo the {@code JobdefDxo}
-     * @param jobdefDao the {@code JobdefDao}
-     * @param validationSvc the {@code ValidationService}
-     * @param jsonSvc the {@code JsonService}
-     * @since 3.0.0
-     */
-    @Inject
-    public JobdefService(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc, JsonService jsonSvc) {
-        this.jobdefDxo = jobdefDxo;
-        this.jobdefDao = jobdefDao;
-        this.validationSvc = validationSvc;
-        this.jsonSvc = jsonSvc;
-    }
-
-    /**
-     * Build the {@code JobdefValue} from the {@code JobCreationContext}.
-     *
-     * @param ctx the {@code JobCreationContext}
-     * @return the {@code JobdefValue}
-     * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if malformed
-     * return value.
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws JobdefIOException if not found valid job definition
-     * @since 3.0.0
-     */
-    public JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException {
-        Objects.requireNonNull(ctx);
-
-        UnaryOperator<JsonObject> overwriteCtx = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(ctx).
-            asJsonObject());
-
-        return getValidJobdefEntity(ctx.getJobdefId()).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject)
-            .map(overwriteCtx).map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
-    }
-
-    private Optional<JobdefEntity> getValidJobdefEntity(String id) {
-        return jobdefDao.getJobdef(id).filter(validationSvc::isEnabled);
-    }
+public interface JobdefService {
 
     /**
      * Indicates that a jobdef I/O exception has occurred. For example, it doesn't exist, you don't have permission to
@@ -109,7 +59,7 @@ public class JobdefService {
      * @version 3.0.0
      * @since 3.0.0
      */
-    public class JobdefIOException extends IOException {
+    class JobdefIOException extends IOException {
 
         private static final long serialVersionUID = 7853095085270398570L;
 
@@ -123,5 +73,81 @@ public class JobdefService {
         public JobdefIOException(String message) {
             super(message);
         }
+    }
+
+    /**
+     * Build the {@code JobdefValue} from the {@code JobCreationContext}.
+     *
+     * @param ctx the {@code JobCreationContext}
+     * @return the {@code JobdefValue}
+     * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if malformed
+     * return value.
+     * @throws NullPointerException if any argument is {@code null}
+     * @throws JobdefIOException if not found valid job definition
+     * @since 3.0.0
+     */
+    JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException;
+
+    /**
+     * Implements of the {@code JobdefService}.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    @Typed(JobdefService.class)
+    @RequestScoped
+    class Impl implements JobdefService {
+
+        private final Supplier<JobdefIOException> noFoundJobdef
+            = () -> new JobdefIOException("No found job definition.");
+
+        private final JobdefDao jobdefDao;
+        private final JobdefDxo jobdefDxo;
+        private final ValidationService validationSvc;
+        private final JsonService jsonSvc;
+
+        /**
+         * Constructor.
+         *
+         * @param jobdefDxo the {@code JobdefDxo}
+         * @param jobdefDao the {@code JobdefDao}
+         * @param validationSvc the {@code ValidationService}
+         * @param jsonSvc the {@code JsonService}
+         * @since 3.0.0
+         */
+        @Inject
+        public Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
+            JsonService jsonSvc) {
+            this.jobdefDxo = jobdefDxo;
+            this.jobdefDao = jobdefDao;
+            this.validationSvc = validationSvc;
+            this.jsonSvc = jsonSvc;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if
+         * malformed return value.
+         * @throws NullPointerException if any argument is {@code null}
+         * @throws JobdefIOException if not found valid job definition
+         * @since 3.0.0
+         */
+        @Override
+        public JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException {
+            Objects.requireNonNull(ctx);
+
+            UnaryOperator<JsonObject> overwriteCtx = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(ctx).
+                asJsonObject());
+
+            return getValidJobdefEntity(ctx.getJobdefId()).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject)
+                .map(overwriteCtx).map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
+        }
+
+        private Optional<JobdefEntity> getValidJobdefEntity(String id) {
+            return jobdefDao.getJobdef(id).filter(validationSvc::isEnabled);
+        }
+
     }
 }

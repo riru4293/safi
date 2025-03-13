@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.service.trial;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -38,21 +39,7 @@ import jp.mydns.projectk.safi.service.RealTimeService;
  * @version 3.0.0
  * @since 3.0.0
  */
-@RequestScoped
-public class AppTimeService {
-
-    private final RealTimeService realTimeSvc;
-
-    /**
-     * Constructor.
-     *
-     * @param realTimeSvc the {@code RealTimeService}
-     * @since 3.0.0
-     */
-    @Inject
-    public AppTimeService(RealTimeService realTimeSvc) {
-        this.realTimeSvc = realTimeSvc;
-    }
+public interface AppTimeService {
 
     /**
      * Get current time. Accuracy is seconds.
@@ -60,10 +47,7 @@ public class AppTimeService {
      * @return current time inside the application.
      * @since 3.0.0
      */
-    public OffsetDateTime getOffsetNow() {
-        // ToDo: Must be implemented.
-        return realTimeSvc.getOffsetNow();
-    }
+     OffsetDateTime getOffsetNow();
 
     /**
      * Get current time. Accuracy is seconds.
@@ -71,8 +55,53 @@ public class AppTimeService {
      * @return current time inside the application, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public LocalDateTime getLocalNow() {
-        // ToDo: Must be implemented.
-        return realTimeSvc.getLocalNow();
+     LocalDateTime getLocalNow();
+
+    /**
+     * Implements of the {@code AppTimeService}
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    @Typed(AppTimeService.class)
+    @RequestScoped
+     class Impl implements AppTimeService {
+
+        private final RealTimeService realTimeSvc;
+
+        /**
+         * Constructor.
+         *
+         * @param realTimeSvc the {@code RealTimeService}
+         * @since 3.0.0
+         */
+        @Inject
+        public Impl(RealTimeService realTimeSvc) {
+            this.realTimeSvc = realTimeSvc;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public OffsetDateTime getOffsetNow() {
+            // ToDo: Must be implemented.
+            return realTimeSvc.getOffsetNow();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @return current time inside the application, in that case timezone is UTC.
+         * @since 3.0.0
+         */
+        @Override
+        public LocalDateTime getLocalNow() {
+            // ToDo: Must be implemented.
+            return realTimeSvc.getLocalNow();
+        }
     }
 }
