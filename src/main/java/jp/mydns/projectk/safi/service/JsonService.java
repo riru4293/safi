@@ -32,7 +32,7 @@ import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbException;
 import java.util.Objects;
-import jp.mydns.projectk.safi.util.trial.JsonValueUtils;
+import jp.mydns.projectk.safi.util.JsonValueUtils;
 
 /**
  * Provides JSON conversion.
@@ -62,7 +62,7 @@ public class JsonService {
      *
      * @param value source value
      * @return converted value
-     * @throws NullPointerException if {@code o} is {@code null}
+     * @throws NullPointerException if {@code value} is {@code null}
      * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
      * @since 3.0.0
      */

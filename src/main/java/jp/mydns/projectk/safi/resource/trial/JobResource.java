@@ -49,7 +49,7 @@ import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
-import jp.mydns.projectk.safi.service.trial.JobdefService;
+import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobdefValue;
 

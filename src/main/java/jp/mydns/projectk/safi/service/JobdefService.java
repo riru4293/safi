@@ -23,9 +23,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.service.trial;
+package jp.mydns.projectk.safi.service;
 
-import jp.mydns.projectk.safi.service.JsonService;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -105,6 +104,10 @@ public class JobdefService {
     /**
      * Indicates that a jobdef I/O exception has occurred. For example, it doesn't exist, you don't have permission to
      * modify it, and so on.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
      */
     public class JobdefIOException extends IOException {
 
@@ -115,6 +118,7 @@ public class JobdefService {
          *
          * @param message error message. Keep in mind that this may be exposed to users. It must be an abstract message
          * that can briefly describe the issue.
+         * @since 3.0.0
          */
         public JobdefIOException(String message) {
             super(message);

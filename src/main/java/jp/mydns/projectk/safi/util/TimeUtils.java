@@ -84,6 +84,7 @@ public class TimeUtils {
      *
      * @param offsetDateTime the {@code OffsetDateTime}. It can be set {@code null}.
      * @return the {@code LocalDateTime}. {@code null} if {@code offsetDateTime} is {@code null}.
+     * @throws DateTimeException if the result exceeds the supported date range
      * @since 3.0.0
      */
     public static LocalDateTime toLocalDateTime(OffsetDateTime offsetDateTime) {

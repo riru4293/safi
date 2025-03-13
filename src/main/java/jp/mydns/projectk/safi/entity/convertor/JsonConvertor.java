@@ -33,7 +33,7 @@ import java.io.StringReader;
 import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
- * JPA attribute convertor for the {@code JsonWrapper}.This convertor is applied automatically.
+ * JPA attribute convertor for the {@code JsonWrapper}. This convertor is applied automatically.
  *
  * @author riru
  * @version 3.0.0

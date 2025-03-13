@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util.trial;
+package jp.mydns.projectk.safi.util;
 
 import jakarta.json.Json;
 import jakarta.json.JsonException;
@@ -214,6 +214,7 @@ public class JsonValueUtils {
      * @param ow overwrite value
      * @return merged value
      * @throws NullPointerException if any argument is {@code null}
+     * @since 3.0.0
      */
     public static JsonObject merge(JsonObject base, JsonObject ow) {
         Objects.requireNonNull(base);

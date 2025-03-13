@@ -33,11 +33,11 @@ import java.util.Map;
 import java.util.Objects;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.service.JsonService;
-import jp.mydns.projectk.safi.service.trial.ValidationService;
+import jp.mydns.projectk.safi.service.ValidationService;
 import static jp.mydns.projectk.safi.util.LambdaUtils.compute;
 import static jp.mydns.projectk.safi.util.LambdaUtils.toLinkedHashMap;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.util.trial.JsonValueUtils;
+import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.value.FiltdefValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
 import jp.mydns.projectk.safi.value.JsonWrapper;
@@ -121,7 +121,6 @@ public class JobdefDxo extends ValidityPeriodDxo {
      * @param entity the {@code JobdefEntity}. Constraint violations must be none.
      * @return the {@code Jobdef}
      * @throws NullPointerException if {@code entity} is {@code null}
-     * @throws ConstraintViolationException if {@code entity} has constraint violation
      * @since 3.0.0
      */
     public JobdefValue toValue(JobdefEntity entity) {

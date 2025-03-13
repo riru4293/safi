@@ -32,7 +32,7 @@ import jakarta.json.bind.Jsonb;
 import jakarta.validation.Validator;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.trial.AppTimeService;
-import jp.mydns.projectk.safi.service.trial.ValidationService;
+import jp.mydns.projectk.safi.service.ValidationService;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
 import static org.assertj.core.api.Assertions.assertThat;
