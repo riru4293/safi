@@ -26,12 +26,10 @@
 package jp.mydns.projectk.safi.entity.convertor;
 
 import jakarta.json.Json;
-import static jakarta.json.JsonValue.EMPTY_JSON_OBJECT;
 import jakarta.json.stream.JsonParsingException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.io.StringReader;
-import java.util.Optional;
 import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
