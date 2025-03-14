@@ -37,18 +37,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.lang.reflect.Type;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.util.ValidationUtils;
-import jp.mydns.projectk.safi.validator.DurationRange;
-import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.trial.SchedefValue;
@@ -353,12 +348,12 @@ public interface JobValue extends PersistableValue {
     Optional<@Valid SchedefValue> getSchedef();
 
     /**
-     * Get result messages.
+     * Get job execution result messages.
      *
      * @return result messages
      * @since 3.0.0
      */
-    @Schema(description = "Result messages.")
+    @Schema(description = "Job execution result messages.")
     Optional<List<String>> getResultMessages();
 
     /**
@@ -374,10 +369,10 @@ public interface JobValue extends PersistableValue {
         private JobStatus status;
         private JobKind kind;
         private JobTarget target;
-        private LocalDateTime scheduleTime;
-        private LocalDateTime limitTime;
-        private LocalDateTime beginTime;
-        private LocalDateTime endTime;
+        private OffsetDateTime scheduleTime;
+        private OffsetDateTime limitTime;
+        private OffsetDateTime beginTime;
+        private OffsetDateTime endTime;
         private JsonObject properties;
         private String jobdefId;
         private JobdefValue jobdef;
@@ -407,19 +402,24 @@ public interface JobValue extends PersistableValue {
             this.status = src.getStatus();
             this.kind = src.getKind();
             this.target = src.getTarget();
-            this.timeout = src.getTimeout();
-            this.pluginName = src.getPluginName().orElse(null);
-            this.trnsdef = src.getTrnsdef();
-            this.filtdef = src.getFiltdef();
-            this.jobProperties = src.getJobProperties();
+            this.scheduleTime = src.getScheduleTime();
+            this.limitTime = src.getLimitTime();
+            this.beginTime = src.getBeginTime().orElse(null);
+            this.endTime = src.getEndTime().orElse(null);
+            this.properties = src.getProperties();
+            this.jobdefId = src.getJobdefId();
+            this.jobdef = src.getJobdef();
+            this.schedefId = src.getSchedefId().orElse(null);
+            this.schedef = src.getSchedef().orElse(null);
+            this.resultMessages = src.getResultMessages().orElse(null);
 
             return builderType.cast(this);
         }
 
         /**
-         * Set job definition id.
+         * Set job id.
          *
-         * @param id job definition id
+         * @param id job id
          * @return updated this
          * @since 3.0.0
          */
@@ -429,86 +429,158 @@ public interface JobValue extends PersistableValue {
         }
 
         /**
-         * Set the {@code JobKind}.
+         * Set the {@code JobStatus}.
          *
-         * @param jobKind the {@code JobKind}
+         * @param status the {@code JobStatus}
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withJobKind(JobKind jobKind) {
-            this.jobKind = jobKind;
+        public Builder withStatus(JobStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        /**
+         * Set the {@code JobKind}.
+         *
+         * @param kind the {@code JobKind}
+         * @return updated this
+         * @since 3.0.0
+         */
+        public Builder withKind(JobKind kind) {
+            this.kind = kind;
             return this;
         }
 
         /**
          * Set the {@code JobTarget}.
          *
-         * @param contentKind the {@code JobTarget}
+         * @param target the {@code JobTarget}
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withJobTarget(JobTarget contentKind) {
-            this.jobTarget = contentKind;
+        public Builder withTarget(JobTarget target) {
+            this.target = target;
             return this;
         }
 
         /**
-         * Set job execution timeout.
+         * Set job schedule time.
          *
-         * @param timeout job execution timeout
+         * @param scheduleTime job schedule time
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withTimeout(Duration timeout) {
-            this.timeout = timeout;
+        public Builder withScheduleTime(OffsetDateTime scheduleTime) {
+            this.scheduleTime = scheduleTime;
             return this;
         }
 
         /**
-         * Set plugin name.
+         * Set job execution limit time.
          *
-         * @param pluginName plugin name
+         * @param limitTime job execution limit time
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withPluginName(String pluginName) {
-            this.pluginName = pluginName;
+        public Builder withLimitTime(OffsetDateTime limitTime) {
+            this.limitTime = limitTime;
             return this;
         }
 
         /**
-         * Set transform definition.
+         * Set job execution begin time.
          *
-         * @param trnsdef transform definition
+         * @param beginTime job execution begin time. It can be set {@code null}.
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withTrnsdef(Map<String, String> trnsdef) {
-            this.trnsdef = trnsdef;
+        public Builder withBeginTime(OffsetDateTime beginTime) {
+            this.beginTime = beginTime;
             return this;
         }
 
         /**
-         * Set filtering definition.
+         * Set job execution end time.
          *
-         * @param filtdef filtering definition
+         * @param endTime job execution end time. It can be set {@code null}.
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withFiltdef(FiltdefValue filtdef) {
-            this.filtdef = filtdef;
+        public Builder withEndTime(OffsetDateTime endTime) {
+            this.endTime = endTime;
             return this;
         }
 
         /**
          * Set optional configurations at job execution.
          *
-         * @param jobProperties optional configurations at job execution
+         * @param properties optional configurations at job execution
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withJobProperties(JsonObject jobProperties) {
-            this.jobProperties = jobProperties;
+        public Builder withProperties(JsonObject properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        /**
+         * Set job definition id.
+         *
+         * @param jobdefId job definition id
+         * @return updated this
+         * @since 3.0.0
+         */
+        public Builder withJobdefId(String jobdefId) {
+            this.jobdefId = jobdefId;
+            return this;
+        }
+
+        /**
+         * Set job definition.
+         *
+         * @param jobdef job definition
+         * @return updated this
+         * @since 3.0.0
+         */
+        public Builder withJobdef(JobdefValue jobdef) {
+            this.jobdef = jobdef;
+            return this;
+        }
+
+        /**
+         * Set schedule definition id.
+         *
+         * @param schedefId schedule definition id. It can be set {@code null}.
+         * @return updated this
+         * @since 3.0.0
+         */
+        public Builder withSchedefId(String schedefId) {
+            this.schedefId = schedefId;
+            return this;
+        }
+
+        /**
+         * Set schedule definition.
+         *
+         * @param schedef schedule definition. It can be set {@code null}.
+         * @return updated this
+         * @since 3.0.0
+         */
+        public Builder withSchedef(SchedefValue schedef) {
+            this.schedef = schedef;
+            return this;
+        }
+
+        /**
+         * Set result messages.
+         *
+         * @param resultMessages job execution result messages. It can be set {@code null}.
+         * @return updated this
+         * @since 3.0.0
+         */
+        public Builder withResultMessages(List<String> resultMessages) {
+            this.resultMessages = resultMessages;
             return this;
         }
 
@@ -533,7 +605,7 @@ public interface JobValue extends PersistableValue {
         }
 
         /**
-         * Implements of the {@code JobdefValue}.
+         * Implements of the {@code JobValue}.
          *
          * @author riru
          * @version 3.0.0
@@ -542,13 +614,19 @@ public interface JobValue extends PersistableValue {
         protected static class Bean extends AbstractBuilder.AbstractBean implements JobValue {
 
             private String id;
-            private JobKind jobKind;
-            private JobTarget jobTarget;
-            private Duration timeout;
-            private String pluginName;
-            private Map<String, String> trnsdef;
-            private FiltdefValue filtdef;
-            private JsonObject jobProperties;
+            private JobStatus status;
+            private JobKind kind;
+            private JobTarget target;
+            private OffsetDateTime scheduleTime;
+            private OffsetDateTime limitTime;
+            private OffsetDateTime beginTime;
+            private OffsetDateTime endTime;
+            private JsonObject properties;
+            private String jobdefId;
+            private JobdefValue jobdef;
+            private String schedefId;
+            private SchedefValue schedef;
+            private List<String> resultMessages;
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -568,13 +646,19 @@ public interface JobValue extends PersistableValue {
                 super(builder);
 
                 this.id = builder.id;
-                this.jobKind = builder.jobKind;
-                this.jobTarget = builder.jobTarget;
-                this.timeout = builder.timeout;
-                this.pluginName = builder.pluginName;
-                this.trnsdef = builder.trnsdef;
-                this.filtdef = builder.filtdef;
-                this.jobProperties = builder.jobProperties;
+                this.status = builder.status;
+                this.kind = builder.kind;
+                this.target = builder.target;
+                this.scheduleTime = builder.scheduleTime;
+                this.limitTime = builder.limitTime;
+                this.beginTime = builder.beginTime;
+                this.endTime = builder.endTime;
+                this.properties = builder.properties;
+                this.jobdefId = builder.jobdefId;
+                this.jobdef = builder.jobdef;
+                this.schedefId = builder.schedefId;
+                this.schedef = builder.schedef;
+                this.resultMessages = builder.resultMessages;
             }
 
             /**
@@ -603,18 +687,38 @@ public interface JobValue extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public JobKind getJobKind() {
-                return jobKind;
+            public JobStatus getStatus() {
+                return status;
+            }
+
+            /**
+             * Set the {@code JobStatus}.
+             *
+             * @param status the {@code JobStatus}
+             * @since 3.0.0
+             */
+            public void setStatus(JobStatus status) {
+                this.status = status;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public JobKind getKind() {
+                return kind;
             }
 
             /**
              * Set the {@code JobKind}.
              *
-             * @param jobKind the {@code JobKind}
+             * @param kind the {@code JobKind}
              * @since 3.0.0
              */
-            public void setJobKind(JobKind jobKind) {
-                this.jobKind = jobKind;
+            public void setJobKind(JobKind kind) {
+                this.kind = kind;
             }
 
             /**
@@ -623,18 +727,18 @@ public interface JobValue extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public JobTarget getJobTarget() {
-                return jobTarget;
+            public JobTarget getTarget() {
+                return target;
             }
 
             /**
              * Set the {@code JobTarget}.
              *
-             * @param jobTarget the {@code JobTarget}
+             * @param target the {@code JobTarget}
              * @since 3.0.0
              */
-            public void setJobTarget(JobTarget jobTarget) {
-                this.jobTarget = jobTarget;
+            public void setTarget(JobTarget target) {
+                this.target = target;
             }
 
             /**
@@ -643,38 +747,18 @@ public interface JobValue extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public Duration getTimeout() {
-                return timeout;
+            public OffsetDateTime getScheduleTime() {
+                return scheduleTime;
             }
 
             /**
-             * Set job execution timeout.
+             * Set job schedule time.
              *
-             * @param timeout job execution timeout
+             * @param scheduleTime job schedule time
              * @since 3.0.0
              */
-            public void setTimeout(Duration timeout) {
-                this.timeout = timeout;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public Optional<String> getPluginName() {
-                return Optional.ofNullable(pluginName);
-            }
-
-            /**
-             * Set plugin name.
-             *
-             * @param pluginName plugin name
-             * @since 3.0.0
-             */
-            public void setPluginName(String pluginName) {
-                this.pluginName = pluginName;
+            public void setScheduleTime(OffsetDateTime scheduleTime) {
+                this.scheduleTime = scheduleTime;
             }
 
             /**
@@ -683,38 +767,18 @@ public interface JobValue extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public Map<String, String> getTrnsdef() {
-                return trnsdef;
+            public OffsetDateTime getLimitTime() {
+                return limitTime;
             }
 
             /**
-             * Set transform definition.
+             * Set job execution limit time.
              *
-             * @param trnsdef transform definition
+             * @param limitTime job execution limit time
              * @since 3.0.0
              */
-            public void setTrnsdef(Map<String, String> trnsdef) {
-                this.trnsdef = trnsdef;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public FiltdefValue getFiltdef() {
-                return filtdef;
-            }
-
-            /**
-             * Set filtering setting.
-             *
-             * @param filtdef filtering setting
-             * @since 3.0.0
-             */
-            public void setFiltdef(FiltdefValue filtdef) {
-                this.filtdef = filtdef;
+            public void setLimitTime(OffsetDateTime limitTime) {
+                this.limitTime = limitTime;
             }
 
             /**
@@ -723,18 +787,146 @@ public interface JobValue extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public JsonObject getJobProperties() {
-                return jobProperties;
+            public Optional<OffsetDateTime> getBeginTime() {
+                return Optional.ofNullable(beginTime);
+            }
+
+            /**
+             * Set job execution begin time.
+             *
+             * @param beginTime job execution begin time. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setBeginTime(OffsetDateTime beginTime) {
+                this.beginTime = beginTime;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<OffsetDateTime> getEndTime() {
+                return Optional.ofNullable(endTime);
+            }
+
+            /**
+             * Set job execution end time.
+             *
+             * @param endTime job execution end time. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setEndTime(OffsetDateTime endTime) {
+                this.endTime = endTime;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public JsonObject getProperties() {
+                return properties;
             }
 
             /**
              * Set optional configurations at job execution.
              *
-             * @param jobProperties optional configurations at job execution
+             * @param properties optional configurations at job execution
              * @since 3.0.0
              */
-            public void setJobProperties(JsonObject jobProperties) {
-                this.jobProperties = jobProperties;
+            public void setProperties(JsonObject properties) {
+                this.properties = properties;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public String getJobdefId() {
+                return jobdefId;
+            }
+
+            public void setJobdefId(String jobdefId) {
+                this.jobdefId = jobdefId;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public JobdefValue getJobdef() {
+                return jobdef;
+            }
+
+            public void setJobdef(JobdefValue jobdef) {
+                this.jobdef = jobdef;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<String> getSchedefId() {
+                return Optional.ofNullable(schedefId);
+            }
+
+            /**
+             * Set schedule definition id.
+             *
+             * @param schedefId schedule definition id. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setSchedefId(String schedefId) {
+                this.schedefId = schedefId;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<SchedefValue> getSchedef() {
+                return Optional.ofNullable(schedef);
+            }
+
+            /**
+             * Set schedule definition.
+             *
+             * @param schedef schedule definition. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setSchedef(SchedefValue schedef) {
+                this.schedef = schedef;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<List<String>> getResultMessages() {
+                return Optional.ofNullable(resultMessages);
+            }
+
+            /**
+             * Set job execution result messages.
+             *
+             * @param resultMessages job execution result messages. It can be set {@code null}.
+             * @since 3.0.0
+             */
+            public void setResultMessages(List<String> resultMessages) {
+                this.resultMessages = resultMessages;
             }
 
             /**
@@ -745,16 +937,17 @@ public interface JobValue extends PersistableValue {
              */
             @Override
             public String toString() {
-                return "JobdefValue{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind=" + jobKind
-                    + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name
-                    + ", pluginName=" + pluginName + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef
-                    + ", jobProperties=" + jobProperties + ", version=" + version + '}';
+                return "JobValue{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target
+                    + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
+                    + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId
+                    + ", jobdef=" + jobdef + ", schedefId=" + schedefId + ", schedef=" + schedef
+                    + ", resultMessages=" + resultMessages + '}';
             }
         }
     }
 
     /**
-     * JSON deserializer for {@code JobdefValue}.
+     * JSON deserializer for {@code JobValue}.
      *
      * @author riru
      * @version 3.0.0

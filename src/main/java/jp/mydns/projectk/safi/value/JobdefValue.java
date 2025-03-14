@@ -351,12 +351,12 @@ public interface JobdefValue extends NamedValue {
         /**
          * Set the {@code JobTarget}.
          *
-         * @param contentKind the {@code JobTarget}
+         * @param jobTarget the {@code JobTarget}
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withJobTarget(JobTarget contentKind) {
-            this.jobTarget = contentKind;
+        public Builder withJobTarget(JobTarget jobTarget) {
+            this.jobTarget = jobTarget;
             return this;
         }
 
