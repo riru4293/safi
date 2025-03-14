@@ -405,8 +405,8 @@ public interface JobValue extends PersistableValue {
 
             this.id = src.getId();
             this.status = src.getStatus();
-            this.jobKind = src.getJobKind();
-            this.jobTarget = src.getJobTarget();
+            this.kind = src.getKind();
+            this.target = src.getTarget();
             this.timeout = src.getTimeout();
             this.pluginName = src.getPluginName().orElse(null);
             this.trnsdef = src.getTrnsdef();
