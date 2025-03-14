@@ -57,58 +57,6 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/schemas/job-creation-context.schema.json",
- *     "title": "JobCreationContext",
- *     "description": "Information to create a Job.",
- *     "type": "object",
- *     "properties": {
- *         "jobdefId": {
- *             "description": "Job definition id to use.",
- *             "type": "string",
- *             "minLength": 1,
- *             "maxLength": 36
- *         },
- *         "scheduleTime": {
- *             "description": "Job schedule time. Means current time if null.",
- *             "type": "string",
- *             "format": "date-time"
- *         },
- *         "timeout": {
- *             "description": "Job execution timeout. If not null, it overrides the value in the job definition.",
- *             "type": "string",
- *             "format": "duration"
- *         },
- *         "pluginName": {
- *             "description": "Plugin name. If not null, it overrides the value in the job definition.",
- *             "type": "string",
- *             "maxLength": 50
- *         },
- *         "trnsdef": {
- *             "description": "Content transform definition. If not null, it overrides the value in the job definition.",
- *             "type": "object",
- *             "patternProperties": {
- *                 "^.+$": {
- *                     "type": "string"
- *                 }
- *             }
- *         },
- *         "filtdef": {
- *             "description": "Content filtering definition. If not null, it overrides the value in the job definition.",
- *             "$ref": "https://project-k.mydns.jp/safi/schemas/filtdef.schema.json"
- *         },
- *         "jobProperties": {
- *             "description": "Optional configurations at job execution. If not null, it will be marged(overwrite) to value in the job definition.",
- *             "type": "object"
- *         }
- *     },
- *     "required": ["jobdefId"]
- * }
- * </code></pre>
  * <a href="{@docRoot}/../schemas/job-creation-context.schema.json">Json schema is here</a>
  *
  * @author riru

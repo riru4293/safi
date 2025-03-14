@@ -50,33 +50,6 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/schemas/filtdef.schema.json",
- *     "title": "Filtdef",
- *     "description": "Content filtering definition.",
- *     "type": "object",
- *     "properties": {
- *         "trnsdef": {
- *             "description": "Transform definition for filtering.",
- *             "type": "object",
- *             "patternProperties": {
- *                 "^.+$": {
- *                     "type": "string"
- *                 }
- *             }
- *         },
- *         "condition": {
- *             "description": "Plugin execution arguments.",
- *             "$ref": "https://project-k.mydns.jp/safi/schemas/filtering-condition.schema.json"
- *         }
- *     },
- *     "required": ["trnsdef", "condition"]
- * }
- * </code></pre>
  * <a href="{@docRoot}/../schemas/filtdef.schema.json">Json schema is here</a>
  *
  * @author riru

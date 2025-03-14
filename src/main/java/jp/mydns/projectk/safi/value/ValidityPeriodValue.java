@@ -57,37 +57,6 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/schemas/validity-period.schema.json",
- *     "title": "ValidityPeriod",
- *     "description": "Validity period.",
- *     "type": "object",
- *     "properties": {
- *         "from": {
- *             "description": "Begin date-time of validity period.",
- *             "type": "string",
- *             "format": "date-time",
- *             "default": "2000-01-01T00:00:00Z"
- *         },
- *         "to": {
- *             "description": "End date-time of validity period.",
- *             "type": "string",
- *             "format": "date-time",
- *             "default": "2999-12-31T23:59:59Z"
- *         },
- *         "ignored": {
- *             "description": "Flag that forbidden to be valid.",
- *             "type": "boolean",
- *             "default": false
- *         }
- *     },
- *     "required": ["from", "to", "ignored"]
- * }
- * </code></pre>
  * <a href="{@docRoot}/../schemas/validity-period.schema.json">Json schema is here</a>
  *
  * @author riru

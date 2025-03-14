@@ -60,63 +60,6 @@ import java.util.stream.Stream;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/schemas/filtering-condition.schema.json",
- *     "title": "FilteringCondition",
- *     "description": "Filtering condition.",
- *     "type": "object",
- *     "properties": {
- *         "operation": {
- *             "description": "Filtering operation.",
- *             "type": "string",
- *             "enum": ["EQUAL", "FORWARD_MATCH", "PARTIAL_MATCH", "BACKWARD_MATCH", "GRATER_THAN", "LESS_THAN", "IS_NULL", "AND", "OR", "NOT_OR"]
- *         },
- *         "name": {
- *             "description": "Name of element to be filtered.",
- *             "type": "string",
- *             "minLength": 1
- *         },
- *         "value": {
- *             "description": "Value to filter.",
- *             "type": "string"
- *         },
- *         "children": {
- *             "description": "Chile filtering condition collection.",
- *             "$ref": "https://project-k.mydns.jp/safi/schemas/filtering-condition.schema.json"
- *         }
- *     },
- *     "required": [
- *         "operation"
- *     ],
- *     "allOf": [
- *         {
- *             "if": {
- *                 "properties": {
- *                     "operation": {
- *                         "pattern": "[(AND)|(OR)|(NOT_OR)]"
- *                     }
- *                 }
- *             },
- *             "then": {
- *                 "required": ["children"],
- *                 "not": {
- *                     "required": ["name", "value"]
- *                 }
- *             },
- *             "else": {
- *                 "required": ["name", "value"],
- *                 "not": {
- *                     "required": ["children"]
- *                 }
- *             }
- *         }
- *     ]
- * }
- * </code></pre>
  * <a href="{@docRoot}/../schemas/filtering-condition.schema.json">Json schema is here</a>
  *
  * @author riru
