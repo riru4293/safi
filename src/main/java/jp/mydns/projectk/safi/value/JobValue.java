@@ -191,6 +191,7 @@ import jp.mydns.projectk.safi.value.trial.SchedefValue;
  *     ]
  * }
  * </code></pre>
+ * <a href="{@docRoot}/../schemas/job.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0

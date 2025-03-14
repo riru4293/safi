@@ -109,6 +109,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *     "required": ["jobdefId"]
  * }
  * </code></pre>
+ * <a href="{@docRoot}/../schemas/job-creation-context.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0

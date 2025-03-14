@@ -117,6 +117,7 @@ import java.util.stream.Stream;
  *     ]
  * }
  * </code></pre>
+ * <a href="{@docRoot}/../schemas/filtering-condition.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0

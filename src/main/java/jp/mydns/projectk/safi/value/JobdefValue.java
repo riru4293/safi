@@ -172,6 +172,7 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  *     ]
  * }
  * </code></pre>
+ * <a href="{@docRoot}/../schemas/jobdef.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0

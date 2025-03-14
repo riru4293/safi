@@ -88,6 +88,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *     "required": ["from", "to", "ignored"]
  * }
  * </code></pre>
+ * <a href="{@docRoot}/../schemas/validity-period.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0

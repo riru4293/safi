@@ -77,6 +77,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *     "required": ["trnsdef", "condition"]
  * }
  * </code></pre>
+ * <a href="{@docRoot}/../schemas/filtdef.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0
