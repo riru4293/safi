@@ -53,7 +53,14 @@ import jp.mydns.projectk.safi.value.JobdefValue;
  */
 public interface JobResource {
 
-    public Response createJob(JobCreationContext ctx);
+    /**
+     * Create new job. Used to manually schedule job execution.
+     *
+     * @param ctx the {@code JobCreationContext}
+     * @return created job
+     * @since 3.0.0
+     */
+    public Response createJob(@NotNull @Valid JobCreationContext ctx);
 
     /**
      * JAX-RS resource for <i>Job</i>.
