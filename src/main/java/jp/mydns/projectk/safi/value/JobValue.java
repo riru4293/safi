@@ -77,53 +77,37 @@ import jp.mydns.projectk.safi.value.trial.SchedefValue;
  *         "status": {
  *             "description": "Job status.",
  *             "type": "string",
- *             "enum": [
- *                 "SCHEDULE",
- *                 "RUNNING",
- *                 "SUCCESS",
- *                 "FAILURE",
- *                 "ABORT"
- *             ]
+ *             "enum": ["SCHEDULE", "RUNNING", "SUCCESS", "FAILURE", "ABORT"]
  *         },
  *         "kind": {
  *             "description": "Job kind.",
  *             "type": "string",
- *             "enum": [
- *                 "IMPORT",
- *                 "EXPORT",
- *                 "REBUILD"
- *             ]
+ *             "enum": ["IMPORT", "EXPORT", "REBUILD"]
  *         },
  *         "target": {
  *             "description": "Target content type.",
  *             "type": "string",
- *             "enum": [
- *                 "USER",
- *                 "ASSET",
- *                 "BELONG_ORG",
- *                 "ORG1",
- *                 "ORG2",
- *                 "BELONG_GRP",
- *                 "GRP",
- *                 "PER_USER",
- *                 "PER_ASSET"
- *             ]
+ *             "enum": ["USER", "ASSET", "BELONG_ORG", "ORG1", "ORG2", "BELONG_GRP", "GRP", "PER_USER", "PER_ASSET"]
  *         },
  *         "scheduleTime": {
  *             "description": "Job schedule time.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "limitTime": {
  *             "description": "Limit time at job execution.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "beginTime": {
  *             "description": "Begin time at job execution.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "endTime": {
  *             "description": "End time at job execution.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "properties": {
  *             "description": "Optional configurations at job execution.",
@@ -164,7 +148,8 @@ import jp.mydns.projectk.safi.value.trial.SchedefValue;
  *         },
  *         "registerTime": {
  *             "description": "Registered time. This value for reference only, setting it does not persist the value.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "registerAccountId": {
  *             "description": "Registered account id. This value for reference only, setting it does not persist the value.",
@@ -178,7 +163,8 @@ import jp.mydns.projectk.safi.value.trial.SchedefValue;
  *         },
  *         "updateTime": {
  *             "description": "Update time. This value for reference only, setting it does not persist the value.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "updateAccountId": {
  *             "description": "Update account id. This value for reference only, setting it does not persist the value.",

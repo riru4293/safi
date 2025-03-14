@@ -75,7 +75,8 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *         },
  *         "scheduleTime": {
  *             "description": "Job schedule time. Means current time if null.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "timeout": {
  *             "description": "Job execution timeout. If not null, it overrides the value in the job definition.",
@@ -104,9 +105,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *             "type": "object"
  *         }
  *     },
- *     "required": [
- *         "jobdefId"
- *     ]
+ *     "required": ["jobdefId"]
  * }
  * </code></pre>
  *

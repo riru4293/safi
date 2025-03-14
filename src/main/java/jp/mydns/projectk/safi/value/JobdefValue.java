@@ -80,26 +80,12 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  *         "jobKind": {
  *             "description": "Job kind.",
  *             "type": "string",
- *             "enum": [
- *                 "IMPORT",
- *                 "EXPORT",
- *                 "REBUILD"
- *             ]
+ *             "enum": ["IMPORT", "EXPORT", "REBUILD"]
  *         },
  *         "jobTarget": {
  *             "description": "Target content type.",
  *             "type": "string",
- *             "enum": [
- *                 "USER",
- *                 "ASSET",
- *                 "BELONG_ORG",
- *                 "ORG1",
- *                 "ORG2",
- *                 "BELONG_GRP",
- *                 "GRP",
- *                 "PER_USER",
- *                 "PER_ASSET"
- *             ]
+ *             "enum": ["USER", "ASSET", "BELONG_ORG", "ORG1", "ORG2", "BELONG_GRP", "GRP", "PER_USER", "PER_ASSET"]
  *         },
  *         "timeout": {
  *             "description": "Job execution timeout.",
@@ -143,7 +129,8 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  *         },
  *         "registerTime": {
  *             "description": "Registered time. This value for reference only, setting it does not persist the value.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "registerAccountId": {
  *             "description": "Registered account id. This value for reference only, setting it does not persist the value.",
@@ -157,7 +144,8 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  *         },
  *         "updateTime": {
  *             "description": "Update time. This value for reference only, setting it does not persist the value.",
- *             "type": "date-time"
+ *             "type": "string",
+ *             "format": "date-time"
  *         },
  *         "updateAccountId": {
  *             "description": "Update account id. This value for reference only, setting it does not persist the value.",

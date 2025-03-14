@@ -23,9 +23,5 @@
             }
         }
     },
-    "required": [
-        "from",
-        "to",
-        "ignored"
-    ]
+    "required": ["from", "to", "ignored"]
 }

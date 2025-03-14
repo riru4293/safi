@@ -85,11 +85,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *             }
  *         }
  *     },
- *     "required": [
- *         "from",
- *         "to",
- *         "ignored"
- *     ]
+ *     "required": ["from", "to", "ignored"]
  * }
  * </code></pre>
  *

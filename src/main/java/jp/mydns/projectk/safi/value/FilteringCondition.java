@@ -73,18 +73,7 @@ import java.util.stream.Stream;
  *         "operation": {
  *             "description": "Filtering operation.",
  *             "type": "string",
- *             "enum": [
- *                 "EQUAL",
- *                 "FORWARD_MATCH",
- *                 "PARTIAL_MATCH",
- *                 "BACKWARD_MATCH",
- *                 "GRATER_THAN",
- *                 "LESS_THAN",
- *                 "IS_NULL",
- *                 "AND",
- *                 "OR",
- *                 "NOT_OR"
- *             ]
+ *             "enum": ["EQUAL", "FORWARD_MATCH", "PARTIAL_MATCH", "BACKWARD_MATCH", "GRATER_THAN", "LESS_THAN", "IS_NULL", "AND", "OR", "NOT_OR"]
  *         },
  *         "name": {
  *             "description": "Name of element to be filtered.",
@@ -113,34 +102,16 @@ import java.util.stream.Stream;
  *                 }
  *             },
  *             "then": {
- *                 "required": [
- *                     "children"
- *                 ],
- *                 "allOf": [
- *                     {
- *                         "not": {
- *                             "required": [
- *                                 "name",
- *                                 "value"
- *                             ]
- *                         }
- *                     }
- *                 ]
+ *                 "required": ["children"],
+ *                 "not": {
+ *                     "required": ["name", "value"]
+ *                 }
  *             },
  *             "else": {
- *                 "required": [
- *                     "name",
- *                     "value"
- *                 ],
- *                 "allOf": [
- *                     {
- *                         "not": {
- *                             "required": [
- *                                 "children"
- *                             ]
- *                         }
- *                     }
- *                 ]
+ *                 "required": ["name", "value"],
+ *                 "not": {
+ *                     "required": ["children"]
+ *                 }
  *             }
  *         }
  *     ]
