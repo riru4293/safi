@@ -42,7 +42,7 @@ CREATE TABLE           `t_job` (
   , `jobdef`                 JSON          NOT NULL                                    COMMENT 'Source job definition'
   , `schedef_id`          VARCHAR(     36)                                             COMMENT 'Source schedule definition id.'
   , `schedef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Source schedule definition'
-  , `results`                JSON          NOT NULL DEFAULT '[]'                       COMMENT 'Result messages array. Expects the format: ["msg1", "msg2"].'
+  , `results`                JSON                                                      COMMENT 'Result messages array. Expects the format: ["msg1", "msg2"].'
 -- ---------------------+--------+--------+--------+-----------------------------------
   , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
   , `version`                 INT          NOT NULL DEFAULT 1                          COMMENT 'JPA entity version. Used for mutual exclusion control. Starts at 1 and increments with each update.'

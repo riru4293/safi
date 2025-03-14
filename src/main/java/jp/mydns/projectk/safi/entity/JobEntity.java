@@ -112,8 +112,7 @@ public class JobEntity extends CommonEntity {
     @Column(name = "schedef", nullable = false, updatable = false)
     private JsonWrapper schedef;
 
-    @Basic(optional = false)
-    @Column(name = "results", nullable = false, insertable = false)
+    @Column(name = "results", insertable = false)
     private JsonWrapper resultMessages;
 
     /**
@@ -400,10 +399,9 @@ public class JobEntity extends CommonEntity {
     /**
      * Get result messages.
      *
-     * @return result messages
+     * @return result messages. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotNull
     public JsonWrapper getResultMessages() {
         return resultMessages;
     }
