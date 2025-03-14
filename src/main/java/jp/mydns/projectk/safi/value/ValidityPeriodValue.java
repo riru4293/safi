@@ -62,7 +62,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * <pre><code>
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/validity-period.schema.json",
+ *     "$id": "https://project-k.mydns.jp/safi/schemas/validity-period.schema.json",
  *     "title": "ValidityPeriod",
  *     "description": "Validity period.",
  *     "type": "object",

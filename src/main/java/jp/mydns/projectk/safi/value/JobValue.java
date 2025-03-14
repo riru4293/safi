@@ -63,7 +63,7 @@ import jp.mydns.projectk.safi.value.trial.SchedefValue;
  * <pre><code>
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/job.schema.json",
+ *     "$id": "https://project-k.mydns.jp/safi/schemas/job.schema.json",
  *     "title": "Job",
  *     "description": "Job information.",
  *     "type": "object",
@@ -137,7 +137,7 @@ import jp.mydns.projectk.safi.value.trial.SchedefValue;
  *         },
  *         "jobdef": {
  *             "description": "Job definition.",
- *             "$ref": "https://project-k.mydns.jp/safi/jobdef.schema.json"
+ *             "$ref": "https://project-k.mydns.jp/safi/schemas/jobdef.schema.json"
  *         },
  *         "schedefId": {
  *             "description": "Schedule definition id.",
@@ -147,7 +147,7 @@ import jp.mydns.projectk.safi.value.trial.SchedefValue;
  *         },
  *         "schedef": {
  *             "description": "Schedule definition.",
- *             "$ref": "https://project-k.mydns.jp/safi/schedef.schema.json"
+ *             "$ref": "https://project-k.mydns.jp/safi/schemas/schedef.schema.json"
  *         },
  *         "resultMessages": {
  *             "description": "Result messages.",

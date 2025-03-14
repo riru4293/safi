@@ -55,7 +55,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * <pre><code>
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/filtdef.schema.json",
+ *     "$id": "https://project-k.mydns.jp/safi/schemas/filtdef.schema.json",
  *     "title": "Filtdef",
  *     "description": "Content filtering definition.",
  *     "type": "object",
@@ -71,7 +71,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *         },
  *         "condition": {
  *             "description": "Plugin execution arguments.",
- *             "$ref": "https://project-k.mydns.jp/safi/filtering-condition.schema.json"
+ *             "$ref": "https://project-k.mydns.jp/safi/schemas/filtering-condition.schema.json"
  *         },
  *         "required": [
  *             "trnsdef", "condition"

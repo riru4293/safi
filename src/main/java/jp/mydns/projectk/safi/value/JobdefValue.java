@@ -62,7 +62,7 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  * <pre><code>
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/jobdef.schema.json",
+ *     "$id": "https://project-k.mydns.jp/safi/schemas/jobdef.schema.json",
  *     "title": "Jobdef",
  *     "description": "Definition for creates a Job.",
  *     "type": "object",
@@ -75,7 +75,7 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  *         },
  *         "validityPeriod": {
  *             "description": "Validity period.",
- *             "$ref": "https://project-k.mydns.jp/safi/validity-period.schema.json"
+ *             "$ref": "https://project-k.mydns.jp/safi/schemas/validity-period.schema.json"
  *         },
  *         "jobKind": {
  *             "description": "Job kind.",
@@ -126,7 +126,7 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  *         },
  *         "filtdef": {
  *             "description": "Content filtering definition.",
- *             "$ref": "https://project-k.mydns.jp/safi/filtdef.schema.json"
+ *             "$ref": "https://project-k.mydns.jp/safi/schemas/filtdef.schema.json"
  *         },
  *         "jobProperties": {
  *             "description": "Optional configurations at job execution.",

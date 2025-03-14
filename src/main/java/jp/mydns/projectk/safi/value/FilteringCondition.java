@@ -65,7 +65,7 @@ import java.util.stream.Stream;
  * <pre><code>
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/filtering-condition.schema.json",
+ *     "$id": "https://project-k.mydns.jp/safi/schemas/filtering-condition.schema.json",
  *     "title": "FilteringCondition",
  *     "description": "Filtering condition.",
  *     "type": "object",
@@ -97,7 +97,7 @@ import java.util.stream.Stream;
  *         },
  *         "children": {
  *             "description": "Chile filtering condition collection.",
- *             "$ref": "https://project-k.mydns.jp/safi/filtering-condition.schema.json"
+ *             "$ref": "https://project-k.mydns.jp/safi/schemas/filtering-condition.schema.json"
  *         }
  *     },
  *     "required": [

@@ -62,7 +62,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * <pre><code>
  * {
  *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/job-creation-context.schema.json",
+ *     "$id": "https://project-k.mydns.jp/safi/schemas/job-creation-context.schema.json",
  *     "title": "JobCreationContext",
  *     "description": "Information to create a Job.",
  *     "type": "object",
@@ -97,7 +97,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *         },
  *         "filtdef": {
  *             "description": "Content filtering definition. If not null, it overrides the value in the job definition.",
- *             "$ref": "https://project-k.mydns.jp/safi/filtdef.schema.json"
+ *             "$ref": "https://project-k.mydns.jp/safi/schemas/filtdef.schema.json"
  *         },
  *         "jobProperties": {
  *             "description": "Optional configurations at job execution. If not null, it will be marged(overwrite) to value in the job definition.",

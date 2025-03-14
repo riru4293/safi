@@ -1,0 +1,143 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://project-k.mydns.jp/safi/schemas/job.schema.json",
+    "title": "Job",
+    "description": "Job information.",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "Job id.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+        },
+        "status": {
+            "description": "Job status.",
+            "type": "string",
+            "enum": [
+                "SCHEDULE",
+                "RUNNING",
+                "SUCCESS",
+                "FAILURE",
+                "ABORT"
+            ]
+        },
+        "kind": {
+            "description": "Job kind.",
+            "type": "string",
+            "enum": [
+                "IMPORT",
+                "EXPORT",
+                "REBUILD"
+            ]
+        },
+        "target": {
+            "description": "Target content type.",
+            "type": "string",
+            "enum": [
+                "USER",
+                "ASSET",
+                "BELONG_ORG",
+                "ORG1",
+                "ORG2",
+                "BELONG_GRP",
+                "GRP",
+                "PER_USER",
+                "PER_ASSET"
+            ]
+        },
+        "scheduleTime": {
+            "description": "Job schedule time.",
+            "type": "date-time"
+        },
+        "limitTime": {
+            "description": "Limit time at job execution.",
+            "type": "date-time"
+        },
+        "beginTime": {
+            "description": "Begin time at job execution.",
+            "type": "date-time"
+        },
+        "endTime": {
+            "description": "End time at job execution.",
+            "type": "date-time"
+        },
+        "properties": {
+            "description": "Optional configurations at job execution.",
+            "type": "object"
+        },
+        "jobdefId": {
+            "description": "Job definition id.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+        },
+        "jobdef": {
+            "description": "Job definition.",
+            "$ref": "https://project-k.mydns.jp/safi/schemas/jobdef.schema.json"
+        },
+        "schedefId": {
+            "description": "Schedule definition id.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+        },
+        "schedef": {
+            "description": "Schedule definition.",
+            "$ref": "https://project-k.mydns.jp/safi/schemas/schedef.schema.json"
+        },
+        "resultMessages": {
+            "description": "Result messages.",
+            "type": "array"
+        },
+        "note": {
+            "description": "Note of this value.",
+            "type": "string"
+        },
+        "version": {
+            "description": "Entity version stored in database. 0 if not yet stored.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "registerTime": {
+            "description": "Registered time. This value for reference only, setting it does not persist the value.",
+            "type": "date-time"
+        },
+        "registerAccountId": {
+            "description": "Registered account id. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "registerProcessName": {
+            "description": "Registered process name. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "updateTime": {
+            "description": "Update time. This value for reference only, setting it does not persist the value.",
+            "type": "date-time"
+        },
+        "updateAccountId": {
+            "description": "Update account id. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "updateProcessName": {
+            "description": "Update peocess name. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        }
+    },
+    "required": [
+        "id",
+        "status",
+        "kind",
+        "target",
+        "scheduleTime",
+        "limitTime",
+        "properties",
+        "jobdefId",
+        "jobdef",
+        "version"
+    ]
+}
