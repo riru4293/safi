@@ -141,8 +141,8 @@ public interface JobdefService {
             UnaryOperator<JsonObject> overwriteCtx = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(ctx).
                 asJsonObject());
 
-            return getValidJobdefEntity(ctx.getJobdefId()).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject)
-                .map(overwriteCtx).map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
+            return getValidJobdefEntity(ctx.getJobdefId()).map(jobdefDxo::toValue).map(jsonSvc::toJsonValue)
+                .map(JsonValue::asJsonObject).map(overwriteCtx).map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
         }
 
         private Optional<JobdefEntity> getValidJobdefEntity(String id) {
