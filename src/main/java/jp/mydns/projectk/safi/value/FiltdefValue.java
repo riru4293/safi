@@ -72,9 +72,9 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  *         "condition": {
  *             "description": "Plugin execution arguments.",
  *             "$ref": "https://project-k.mydns.jp/safi/schemas/filtering-condition.schema.json"
- *         },
- *         "required": ["trnsdef", "condition"]
- *     }
+ *         }
+ *     },
+ *     "required": ["trnsdef", "condition"]
  * }
  * </code></pre>
  *
