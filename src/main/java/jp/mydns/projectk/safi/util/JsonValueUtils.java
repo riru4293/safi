@@ -195,7 +195,7 @@ public class JsonValueUtils {
      * @since 3.0.0
      */
     public static Stream<JsonValue> toStream(InputStream jsonArray) {
-        JsonParser jp = Json.createParser(Objects.requireNonNull(jsonArray));
+        JsonParser jp = newJsonParser(Objects.requireNonNull(jsonArray));
 
         if (!jp.hasNext() || jp.next() != JsonParser.Event.START_ARRAY) {
             jp.close();
@@ -203,6 +203,10 @@ public class JsonValueUtils {
         }
 
         return jp.getArrayStream().onClose(jp::close);
+    }
+
+    private static JsonParser newJsonParser(InputStream is) {
+        return Json.createParser(is);
     }
 
     /**
