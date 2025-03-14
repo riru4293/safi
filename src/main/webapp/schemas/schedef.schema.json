@@ -1,0 +1,209 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://project-k.mydns.jp/safi/schemas/schedef.schema.json",
+    "title": "Jobdef",
+    "description": "Definition for Job scheduling.",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "Schedule definition id.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+        },
+        "jobdefId": {
+            "description": "Job definition id.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+        },
+        "validityPeriod": {
+            "description": "Validity period.",
+            "$ref": "https://project-k.mydns.jp/safi/schemas/validity-period.schema.json"
+        },
+        "priority": {
+            "description": "Scheduling priority. The larger the number, the higher the priority.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1
+        },
+        "name": {
+            "description": "Job definition name.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "value": {
+            "description": "Schedule definition value.",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": ["DAILY", "WEEKLY", "MONTHLY_DAYS", "MONTHLY_WEEKDAYS", "ONCE", "CANCEL"]
+                },
+                "from": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "to": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "months": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 12
+                },
+                "weeks": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 5
+                },
+                "weekdays": {
+                    "type": "string",
+                    "enum": ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]
+                },
+                "days": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 31
+                },
+                "datetime": {
+                    "type": "string",
+                    "format": "date-time"
+                },
+                "interval": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            },
+            "required": [
+                "type"
+            ],
+
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "DAILY"
+                    }
+                }
+            },
+            "then": {
+                "required": ["datetime", "interval"],
+                "not": {
+                    "required": ["from", "to", "months", "weeks", "weekdays", "days"]
+                }
+            },
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "WEEKLY"
+                    }
+                }
+            },
+            "then": {
+                "required": ["weekdays", "datetime", "interval"],
+                "not": {
+                    "required": ["from", "to", "months", "weeks", "days"]
+                }
+            },
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "MONTHLY_DAYS"
+                    }
+                }
+            },
+            "then": {
+                "required": ["months", "days"],
+                "not": {
+                    "required": [
+                        "from", "to", "weeks", "weekdays", "datetime", "interval"
+                    ]
+                }
+            },
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "MONTHLY_WEEKDAYS"
+                    }
+                }
+            },
+            "then": {
+                "required": ["months", "weeks", "weekdays", "datetime"],
+                "not": {
+                    "required": ["from", "to", "days", "interval"]
+                }
+            },
+            "if": {
+                "properties": {
+                    "type": {
+                        "const": "ONCE"
+                    }
+                }
+            },
+            "then": {
+                "required": ["datetime"],
+                "not": {
+                    "required": [
+                        "from", "to", "months", "weeks", "weekdays", "days", "interval"
+                    ]
+                }
+            },
+            "else": {
+                "required": ["from", "to"],
+                "not": {
+                    "required": [
+                        "months", "weeks", "weekdays", "days", "datetime", "interval"
+                    ]
+                }
+            }
+        },
+        "note": {
+            "description": "Note of this value.",
+            "type": "string"
+        },
+        "version": {
+            "description": "Entity version stored in database. 0 if not yet stored.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "registerTime": {
+            "description": "Registered time. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "registerAccountId": {
+            "description": "Registered account id. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "registerProcessName": {
+            "description": "Registered process name. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "updateTime": {
+            "description": "Update time. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "updateAccountId": {
+            "description": "Update account id. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "updateProcessName": {
+            "description": "Update peocess name. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        }
+    },
+    "required": [
+        "id",
+        "jobdefId",
+        "validityPeriod",
+        "priority",
+        "value",
+        "version"
+    ]
+}
