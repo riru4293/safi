@@ -53,7 +53,7 @@ import jp.mydns.projectk.safi.value.JobdefValue;
  */
 public interface JobResource {
 
-    public Response createJob(@NotNull @Valid JobCreationContext ctx);
+    public Response createJob(JobCreationContext ctx);
 
     /**
      * JAX-RS resource for <i>Job</i>.
