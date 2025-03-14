@@ -38,14 +38,20 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.lang.reflect.Type;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
+import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.DurationRange;
 import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
+import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.value.trial.SchedefValue;
 
 /**
  * <i>Job</i> information. {@code Job} representations that life cycle of one batch process.
@@ -210,8 +216,101 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(JobValue.Deserializer.class)
-@Schema(name = "Jobdef", description = "Definition for creates a job.")
-public interface JobValue extends NamedValue {
+@Schema(name = "Job", description = "Job information. Job representations that life cycle of one batch process.")
+public interface JobValue extends PersistableValue {
+
+    /**
+     * Get job id.
+     *
+     * @return job id
+     * @since 3.0.0
+     */
+    @NotBlank
+    @Size(max = 36)
+    @Schema(description = "Job id.")
+    String getId();
+
+    /**
+     * Get the {@code JobStatus}.
+     *
+     * @return the {@code JobStatus}
+     * @since 3.0.0
+     */
+    @NotNull
+    @Schema(description = "Job status.")
+    JobStatus getStatus();
+
+    /**
+     * Get the {@code JobKind}.
+     *
+     * @return the {@code JobKind}
+     * @since 3.0.0
+     */
+    @NotNull
+    @Schema(description = "Job kind.")
+    JobKind getKind();
+
+    /**
+     * Get the {@code JobTarget}.
+     *
+     * @return the {@code JobTarget}
+     * @since 3.0.0
+     */
+    @NotNull
+    @Schema(description = "Target content type.")
+    JobTarget getTarget();
+
+    /**
+     * Get job schedule time.
+     *
+     * @return job schedule time
+     * @since 3.0.0
+     */
+    @NotNull
+    @TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/)
+    @TimeAccuracy
+    @Schema(description = "Job schedule time.")
+    OffsetDateTime getScheduleTime();
+
+    /**
+     * Get limit time at job execution.
+     *
+     * @return limit time at job execution
+     * @since 3.0.0
+     */
+    @NotNull
+    @TimeRange
+    @TimeAccuracy
+    @Schema(description = "Limit time at job execution.")
+    OffsetDateTime getLimitTime();
+
+    /**
+     * Get begin time at job execution.
+     *
+     * @return begin time
+     * @since 3.0.0
+     */
+    @Schema(description = "Begin time at job execution.")
+    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getBeginTime();
+
+    /**
+     * Get end time at job execution.
+     *
+     * @return end time
+     * @since 3.0.0
+     */
+    @Schema(description = "End time at job execution.")
+    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getEndTime();
+
+    /**
+     * Get optional configurations at job execution.
+     *
+     * @return optional configurations at job execution
+     * @since 3.0.0
+     */
+    @Schema(description = "Optional configurations at job execution.")
+    @NotNull
+    JsonObject getProperties();
 
     /**
      * Get job definition id.
@@ -222,83 +321,48 @@ public interface JobValue extends NamedValue {
     @NotBlank
     @Size(max = 36)
     @Schema(description = "Job definition id.")
-    String getId();
+    String getJobdefId();
 
     /**
-     * Get the {@code JobKind}.
+     * Get job definition.
      *
-     * @return the {@code JobKind}
+     * @return job definition
      * @since 3.0.0
      */
-    @NotNull
-    @Schema(description = "Job kind.")
-    JobKind getJobKind();
-
-    /**
-     * Get the {@code JobTarget}.
-     *
-     * @return the {@code JobTarget}
-     * @since 3.0.0
-     */
-    @NotNull
-    @Schema(description = "Target content type.")
-    JobTarget getJobTarget();
-
-    /**
-     * Get job execution timeout.
-     *
-     * @return job execution timeout
-     * @since 3.0.0
-     */
-    @NotNull
-    @PositiveOrZeroDuration
-    @DurationRange(maxSecond = 86_399L/*23h59m59s*/)
-    @TimeAccuracy
-    @Schema(type = "string", description = "Job execution timeout.")
-    Duration getTimeout();
-
-    /**
-     * Get plugin name.
-     *
-     * @return plugin name
-     * @since 3.0.0
-     */
-    @Schema(description = "The name of the plugin that processes the content.")
-    Optional<@Size(max = 50) String> getPluginName();
-
-    /**
-     * Get content transform definition.
-     *
-     * @return content transform definition
-     * @since 3.0.0
-     */
-    @Schema(description = "Content transform definition.")
-    @NotNull
-    Map<String, String> getTrnsdef();
-
-    /**
-     * Get the {@code FiltdefValue}.
-     *
-     * @return the {@code FiltdefValue}
-     * @since 3.0.0
-     */
-    @Schema(description = "Content filtering definition.")
     @NotNull
     @Valid
-    FiltdefValue getFiltdef();
+    @Schema(description = "Job definition.")
+    JobdefValue getJobdef();
 
     /**
-     * Get optional configurations at job execution.
+     * Get schedule definition id.
      *
-     * @return optional configurations at job execution
+     * @return schedule definition id
      * @since 3.0.0
      */
-    @Schema(description = "Optional configurations at job execution.")
-    @NotNull
-    JsonObject getJobProperties();
+    @Schema(description = "Schedule definition id.")
+    Optional<@Size(max = 36) String> getSchedefId();
 
     /**
-     * Builder of the {@code JobdefValue}.
+     * Get schedule definition.
+     *
+     * @return schedule definition
+     * @since 3.0.0
+     */
+    @Schema(description = "Schedule definition.")
+    Optional<@Valid SchedefValue> getSchedef();
+
+    /**
+     * Get result messages.
+     *
+     * @return result messages
+     * @since 3.0.0
+     */
+    @Schema(description = "Result messages.")
+    Optional<List<String>> getResultMessages();
+
+    /**
+     * Builder of the {@code JobValue}.
      *
      * @author riru
      * @version 3.0.0
@@ -307,13 +371,19 @@ public interface JobValue extends NamedValue {
     class Builder extends AbstractBuilder<Builder, JobValue> {
 
         private String id;
-        private JobKind jobKind;
-        private JobTarget jobTarget;
-        private Duration timeout;
-        private String pluginName;
-        private Map<String, String> trnsdef;
-        private FiltdefValue filtdef;
-        private JsonObject jobProperties;
+        private JobStatus status;
+        private JobKind kind;
+        private JobTarget target;
+        private LocalDateTime scheduleTime;
+        private LocalDateTime limitTime;
+        private LocalDateTime beginTime;
+        private LocalDateTime endTime;
+        private JsonObject properties;
+        private String jobdefId;
+        private JobdefValue jobdef;
+        private String schedefId;
+        private SchedefValue schedef;
+        private List<String> resultMessages;
 
         /**
          * Constructor.
@@ -334,6 +404,7 @@ public interface JobValue extends NamedValue {
             super.with(src);
 
             this.id = src.getId();
+            this.status = src.getStatus();
             this.jobKind = src.getJobKind();
             this.jobTarget = src.getJobTarget();
             this.timeout = src.getTimeout();
