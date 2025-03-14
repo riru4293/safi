@@ -68,7 +68,7 @@ public interface PersistableValue {
      * @return version number. 0 means new value.
      * @since 3.0.0
      */
-    @Schema(description = "Version number for this value.")
+    @Schema(description = "Version number for this value.", defaultValue = "0", minimum = "0")
     @PositiveOrZero(groups = {Default.class})
     int getVersion();
 
