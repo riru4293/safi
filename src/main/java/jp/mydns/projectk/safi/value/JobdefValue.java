@@ -89,7 +89,8 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  *         },
  *         "timeout": {
  *             "description": "Job execution timeout.",
- *             "type": "duration"
+ *             "type": "string",
+ *             "format": "duration"
  *         },
  *         "name": {
  *             "description": "Job definition name.",

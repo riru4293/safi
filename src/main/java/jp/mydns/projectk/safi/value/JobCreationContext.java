@@ -80,7 +80,8 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  *         },
  *         "timeout": {
  *             "description": "Job execution timeout. If not null, it overrides the value in the job definition.",
- *             "type": "duration"
+ *             "type": "string",
+ *             "format": "duration"
  *         },
  *         "pluginName": {
  *             "description": "Plugin name. If not null, it overrides the value in the job definition.",
