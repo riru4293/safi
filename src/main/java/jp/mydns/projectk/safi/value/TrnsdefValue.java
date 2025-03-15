@@ -48,6 +48,8 @@ import java.util.Objects;
  */
 @Schema(name = "Trnsdef", description
         = """
+The key is the property name after transformation, and the value is the transformation expression. Details of the expression are as follows.
+
 # Trunsform expression syntax
 
 | Element              | Syntax              | Description |
@@ -99,7 +101,7 @@ public class TrnsdefValue extends LinkedHashMap<String, String> {
     }
 
     @Schema(hidden = true)
-    protected boolean empty;
+    protected boolean empty; // Note: For supress "empty" property in OpenAPI.
 
     /**
      * {@inheritDoc}
