@@ -83,7 +83,7 @@ The key is the property name after transformation, and the value is the transfor
 | Step.3 | __\\`taro\\`__ & \\`'s number is \\` & __\\`PP01\\`__ |
 | Result | __taro's number is PP01__ |""",
         example = "{\"name\":\"toTitleCase([firstName]) & ` ` & toTitleCase([lastName])\", \"id\":\"[userId]\"}",
-        type = "object", additionalItems = String.class, additionalProperties = Schema.AdditionalPropertiesValue.FALSE)
+        type = "object", additionalPropertiesSchema = String.class)
 public class TrnsdefValue extends LinkedHashMap<String, String> {
 
     /**
@@ -99,9 +99,6 @@ public class TrnsdefValue extends LinkedHashMap<String, String> {
         val.putAll(m);
         return val;
     }
-
-    @Schema(hidden = true)
-    protected boolean empty; // Note: For supress "empty" property in OpenAPI.
 
     /**
      * {@inheritDoc}
