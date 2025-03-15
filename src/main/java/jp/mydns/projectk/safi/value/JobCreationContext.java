@@ -39,7 +39,6 @@ import jakarta.validation.constraints.Size;
 import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.OffsetDateTime;
-import java.util.Map;
 import java.util.Optional;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.DurationRange;
@@ -116,7 +115,7 @@ public interface JobCreationContext {
      * @since 3.0.0
      */
     @Schema(description = "Content transform definition. If not null, it overrides the value in the job definition.")
-    Optional<Map<String, String>> getTrnsdef();
+    Optional<TrnsdefValue> getTrnsdef();
 
     /**
      * Get content filtering definition. If not null, it overrides the value in the job definition..
@@ -151,7 +150,7 @@ public interface JobCreationContext {
         private OffsetDateTime scheduleTime;
         private Duration timeout;
         private String pluginName;
-        private Map<String, String> trnsdef;
+        private TrnsdefValue trnsdef;
         private FiltdefValue filtdef;
         private JsonObject jobProperties;
 
@@ -210,7 +209,7 @@ public interface JobCreationContext {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withTrnsdef(Map<String, String> trnsdef) {
+        public Builder withTrnsdef(TrnsdefValue trnsdef) {
             this.trnsdef = trnsdef;
             return this;
         }
@@ -277,7 +276,7 @@ public interface JobCreationContext {
             private OffsetDateTime scheduleTime;
             private Duration timeout;
             private String pluginName;
-            private Map<String, String> trnsdef;
+            private TrnsdefValue trnsdef;
             private FiltdefValue filtdef;
             private JsonObject jobProperties;
 
@@ -391,7 +390,7 @@ public interface JobCreationContext {
              * @since 3.0.0
              */
             @Override
-            public Optional<Map<String, String>> getTrnsdef() {
+            public Optional<TrnsdefValue> getTrnsdef() {
                 return Optional.ofNullable(trnsdef);
             }
 
@@ -401,7 +400,7 @@ public interface JobCreationContext {
              * @param trnsdef transform definition
              * @since 3.0.0
              */
-            public void setTrnsdef(Map<String, String> trnsdef) {
+            public void setTrnsdef(TrnsdefValue trnsdef) {
                 this.trnsdef = trnsdef;
             }
 

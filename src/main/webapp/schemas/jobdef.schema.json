@@ -42,12 +42,7 @@
         },
         "trnsdef": {
             "description": "Content transform definition.",
-            "type": "object",
-            "patternProperties": {
-                "^.+$": {
-                    "type": "string"
-                }
-            }
+            "$ref": "https://project-k.mydns.jp/safi/schemas/trnsdef.schema.json"
         },
         "filtdef": {
             "description": "Content filtering definition.",

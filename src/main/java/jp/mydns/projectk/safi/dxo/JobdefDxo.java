@@ -42,6 +42,7 @@ import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.value.FiltdefValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
 import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.TrnsdefValue;
 
 /**
  * Data exchange processing for <i>Job definition</i>.
@@ -60,7 +61,7 @@ public interface JobdefDxo {
      * @throws NullPointerException if {@code entity} is {@code null}
      * @since 3.0.0
      */
-     JobdefEntity toEntity(JobdefValue value);
+    JobdefEntity toEntity(JobdefValue value);
 
     /**
      * Exchange to value object from JSON.
@@ -71,7 +72,7 @@ public interface JobdefDxo {
      * @throws ConstraintViolationException if {@code json} has constraint violation
      * @since 3.0.0
      */
-     JobdefValue toValue(JsonObject json);
+    JobdefValue toValue(JsonObject json);
 
     /**
      * Exchange to value object from entity.
@@ -81,7 +82,7 @@ public interface JobdefDxo {
      * @throws NullPointerException if {@code entity} is {@code null}
      * @since 3.0.0
      */
-     JobdefValue toValue(JobdefEntity entity);
+    JobdefValue toValue(JobdefEntity entity);
 
     /**
      * Implements of the {@code JobdefDxo}.
@@ -184,9 +185,9 @@ public interface JobdefDxo {
                 .unsafeBuild();
         }
 
-        private Map<String, String> toTrnsdef(JsonWrapper json) {
-            return json.unwrap().asJsonObject().entrySet().stream().map(compute(JsonValueUtils::toString))
-                .collect(toLinkedHashMap());
+        private TrnsdefValue toTrnsdef(JsonWrapper json) {
+            return TrnsdefValue.of(json.unwrap().asJsonObject().entrySet().stream()
+                .map(compute(JsonValueUtils::toString)).collect(toLinkedHashMap()));
         }
 
         private FiltdefValue toFiltdef(JsonWrapper json) {

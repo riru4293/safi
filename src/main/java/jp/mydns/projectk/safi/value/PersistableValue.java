@@ -80,7 +80,7 @@ public interface PersistableValue {
      */
     @Schema(description = "Registered time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
             accessMode = Schema.AccessMode.READ_ONLY)
-    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getRegisterTime();
+    Optional<@TimeRange(groups = {Default.class}) @TimeAccuracy(groups = {Default.class}) OffsetDateTime> getRegisterTime();
 
     /**
      * Get account id who made this value.
@@ -88,8 +88,9 @@ public interface PersistableValue {
      * @return account id
      * @since 3.0.0
      */
-    @Schema(description = "Account id who made this value.", accessMode = Schema.AccessMode.READ_ONLY)
-    Optional<@Size(max = 250) String> getRegisterAccountId();
+    @Schema(description = "Account id who made this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getRegisterAccountId();
 
     /**
      * Get name of the process who made this value.
@@ -97,8 +98,9 @@ public interface PersistableValue {
      * @return process name
      * @since 3.0.0
      */
-    @Schema(description = "Process name who made this value.", accessMode = Schema.AccessMode.READ_ONLY)
-    Optional<@Size(max = 250) String> getRegisterProcessName();
+    @Schema(description = "Process name who made this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getRegisterProcessName();
 
     /**
      * Get updated time.
@@ -108,7 +110,7 @@ public interface PersistableValue {
      */
     @Schema(description = "Updated time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
             accessMode = Schema.AccessMode.READ_ONLY)
-    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getUpdateTime();
+    Optional<@TimeRange(groups = {Default.class}) @TimeAccuracy(groups = {Default.class}) OffsetDateTime> getUpdateTime();
 
     /**
      * Get account id who updated this value.
@@ -116,8 +118,9 @@ public interface PersistableValue {
      * @return account id
      * @since 3.0.0
      */
-    @Schema(description = "Account id who updated this value.", accessMode = Schema.AccessMode.READ_ONLY)
-    Optional<@Size(max = 250) String> getUpdateAccountId();
+    @Schema(description = "Account id who updated this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getUpdateAccountId();
 
     /**
      * Get name of the process who made this value.
@@ -125,8 +128,9 @@ public interface PersistableValue {
      * @return process name
      * @since 3.0.0
      */
-    @Schema(description = "Process name who updated this value.", accessMode = Schema.AccessMode.READ_ONLY)
-    Optional<@Size(max = 250) String> getUpdateProcessName();
+    @Schema(description = "Process name who updated this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getUpdateProcessName();
 
     /**
      * Abstract builder of the {@code PersistableValue}.

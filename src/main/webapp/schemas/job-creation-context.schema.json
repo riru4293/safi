@@ -28,12 +28,7 @@
         },
         "trnsdef": {
             "description": "Content transform definition. If not null, it overrides the value in the job definition.",
-            "type": "object",
-            "patternProperties": {
-                "^.+$": {
-                    "type": "string"
-                }
-            }
+            "$ref": "https://project-k.mydns.jp/safi/schemas/trnsdef.schema.json"
         },
         "filtdef": {
             "description": "Content filtering definition. If not null, it overrides the value in the job definition.",

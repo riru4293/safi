@@ -39,9 +39,9 @@ import java.util.Map;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
- * An information for filtering the content values.It has a transform definition and filtering condition, and is used to
- * determine whether the transform result matches the filtering condition. If transform definition is {@code null}, no
- * transformation is performed and the input is passed to the filtering process as is.
+ * An information for filtering the content values. It has a transform definition and filtering condition, and is used
+ * to determine whether the transform result matches the filtering condition. If transform definition is {@code null},
+ * no transformation is performed and the input is passed to the filtering process as is.
  *
  * <p>
  * Implementation requirements.
@@ -58,9 +58,9 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  */
 @JsonbTypeDeserializer(FiltdefValue.Deserializer.class)
 @Schema(name = "Filtdef", description = "An information for filtering the content values.",
-    example = "{\"condition\":{\"operation\":\"AND\",\"children\":[{\"operation\":\"EQUAL\",\"name\":\"kind\","
-    + "\"value\":\"2\"},{\"operation\":\"PARTIAL_MATCH\",\"name\":\"name\",\"value\":\"taro\"}]},"
-    + "\"trnsdef\":{\"name\":\"[userName]\",\"kind\":\"[userType]\",\"id\":\"[userId]\"}}")
+        example = "{\"condition\":{\"operation\":\"AND\",\"children\":[{\"operation\":\"EQUAL\",\"name\":\"kind\","
+        + "\"value\":\"2\"},{\"operation\":\"PARTIAL_MATCH\",\"name\":\"name\",\"value\":\"taro\"}]},"
+        + "\"trnsdef\":{\"name\":\"[userName]\",\"kind\":\"[userType]\",\"id\":\"[userId]\"}}")
 public interface FiltdefValue {
 
     /**

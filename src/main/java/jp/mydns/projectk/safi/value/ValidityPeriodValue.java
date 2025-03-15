@@ -64,7 +64,8 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(ValidityPeriodValue.Deserializer.class)
-@Schema(name = "ValidityPeriod", description = "Validity period.")
+@Schema(name = "ValidityPeriod", description = "It has a validity period and an ignore flag, the combination of which"
+        + " indicates whether a value that has this as a property is valid or invalid.")
 public interface ValidityPeriodValue {
 
     /**
@@ -73,7 +74,8 @@ public interface ValidityPeriodValue {
      * @return begin date-time of validity period
      * @since 3.0.0
      */
-    @Schema(example = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period.")
+    @Schema(defaultValue = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period."
+        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -85,7 +87,8 @@ public interface ValidityPeriodValue {
      * @return end date-time of validity period
      * @since 3.0.0
      */
-    @Schema(example = "2999-12-31T23:59:59Z", description = "End date-time of validity period.")
+    @Schema(defaultValue = "2999-12-31T23:59:59Z", description = "End date-time of validity period."
+        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -97,7 +100,7 @@ public interface ValidityPeriodValue {
      * @return {@code true} if forbidden to be valid, otherwise {@code false}.
      * @since 3.0.0
      */
-    @Schema(example = "false", description = "Flag that forbidden to be valid. true if forbidden.")
+    @Schema(defaultValue = "false", description = "Flag that forbidden to be valid. true if forbidden.")
     boolean isIgnored();
 
     /**

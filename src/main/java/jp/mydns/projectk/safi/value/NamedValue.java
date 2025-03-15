@@ -29,6 +29,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import java.util.Optional;
 
 /**
@@ -52,7 +53,7 @@ public interface NamedValue extends PersistableValue {
      * @return the {@code ValidityPeriodValue}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = {Default.class})
     @Valid
     ValidityPeriodValue getValidityPeriod();
 
@@ -62,8 +63,8 @@ public interface NamedValue extends PersistableValue {
      * @return name
      * @since 3.0.0
      */
-    @Schema(description = "Name of value.")
-    Optional<@Size(max = 250) String> getName();
+    @Schema(description = "Name of value.", maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getName();
 
     /**
      * Abstract builder of the {@code NamedValue}.

@@ -33,12 +33,11 @@ import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.Duration;
-import java.util.Map;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
@@ -73,9 +72,9 @@ public interface JobdefValue extends NamedValue {
      * @return job definition id
      * @since 3.0.0
      */
-    @NotBlank
-    @Size(max = 36)
-    @Schema(description = "Job definition id.")
+    @NotNull
+    @Size(min = 1, max = 36)
+    @Schema(description = "Job definition id.", example = "test")
     String getId();
 
     /**
@@ -84,7 +83,7 @@ public interface JobdefValue extends NamedValue {
      * @return the {@code JobKind}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = {Default.class})
     @Schema(description = "Job kind.")
     JobKind getJobKind();
 
@@ -94,7 +93,7 @@ public interface JobdefValue extends NamedValue {
      * @return the {@code JobTarget}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = {Default.class})
     @Schema(description = "Target content type.")
     JobTarget getJobTarget();
 
@@ -104,11 +103,11 @@ public interface JobdefValue extends NamedValue {
      * @return job execution timeout
      * @since 3.0.0
      */
-    @NotNull
-    @PositiveOrZeroDuration
-    @DurationRange(maxSecond = 86_399L/*23h59m59s*/)
-    @TimeAccuracy
-    @Schema(type = "string", description = "Job execution timeout.")
+    @NotNull(groups = {Default.class})
+    @PositiveOrZeroDuration(groups = {Default.class})
+    @DurationRange(maxSecond = 86_399L/*23h59m59s*/, groups = {Default.class})
+    @TimeAccuracy(groups = {Default.class})
+    @Schema(type = "string", description = "Job execution timeout. Values from PT0S to PT23H59M59S can be specified.")
     Duration getTimeout();
 
     /**
@@ -117,8 +116,8 @@ public interface JobdefValue extends NamedValue {
      * @return plugin name
      * @since 3.0.0
      */
-    @Schema(description = "The name of the plugin that processes the content.")
-    Optional<@Size(max = 50) String> getPluginName();
+    @Schema(description = "The name of the plugin that processes the content. It is case insensitive.", maxLength = 50)
+    Optional<@Size(max = 50, groups = {Default.class}) String> getPluginName();
 
     /**
      * Get content transform definition.
@@ -126,9 +125,8 @@ public interface JobdefValue extends NamedValue {
      * @return content transform definition
      * @since 3.0.0
      */
-    @Schema(description = "Content transform definition.")
-    @NotNull
-    Map<String, String> getTrnsdef();
+    @NotNull(groups = {Default.class})
+    TrnsdefValue getTrnsdef();
 
     /**
      * Get the {@code FiltdefValue}.
@@ -137,7 +135,7 @@ public interface JobdefValue extends NamedValue {
      * @since 3.0.0
      */
     @Schema(description = "Content filtering definition.")
-    @NotNull
+    @NotNull(groups = {Default.class})
     @Valid
     FiltdefValue getFiltdef();
 
@@ -148,7 +146,7 @@ public interface JobdefValue extends NamedValue {
      * @since 3.0.0
      */
     @Schema(description = "Optional configurations at job execution.")
-    @NotNull
+    @NotNull(groups = {Default.class})
     JsonObject getJobProperties();
 
     /**
@@ -165,7 +163,7 @@ public interface JobdefValue extends NamedValue {
         private JobTarget jobTarget;
         private Duration timeout;
         private String pluginName;
-        private Map<String, String> trnsdef;
+        private TrnsdefValue trnsdef;
         private FiltdefValue filtdef;
         private JsonObject jobProperties;
 
@@ -266,7 +264,7 @@ public interface JobdefValue extends NamedValue {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withTrnsdef(Map<String, String> trnsdef) {
+        public Builder withTrnsdef(TrnsdefValue trnsdef) {
             this.trnsdef = trnsdef;
             return this;
         }
@@ -329,7 +327,7 @@ public interface JobdefValue extends NamedValue {
             private JobTarget jobTarget;
             private Duration timeout;
             private String pluginName;
-            private Map<String, String> trnsdef;
+            private TrnsdefValue trnsdef;
             private FiltdefValue filtdef;
             private JsonObject jobProperties;
 
@@ -466,7 +464,7 @@ public interface JobdefValue extends NamedValue {
              * @since 3.0.0
              */
             @Override
-            public Map<String, String> getTrnsdef() {
+            public TrnsdefValue getTrnsdef() {
                 return trnsdef;
             }
 
@@ -476,7 +474,7 @@ public interface JobdefValue extends NamedValue {
              * @param trnsdef transform definition
              * @since 3.0.0
              */
-            public void setTrnsdef(Map<String, String> trnsdef) {
+            public void setTrnsdef(TrnsdefValue trnsdef) {
                 this.trnsdef = trnsdef;
             }
 

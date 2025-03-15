@@ -28,8 +28,6 @@ package jp.mydns.projectk.safi.resource.trial;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -37,9 +35,11 @@ import jakarta.ws.rs.core.Context;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import jakarta.ws.rs.core.UriInfo;
-import java.util.List;
-import jp.mydns.projectk.safi.entity.UserEntity;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
+import jp.mydns.projectk.safi.value.JobValue;
+import jp.mydns.projectk.safi.value.JobdefValue;
+import jp.mydns.projectk.safi.value.TrnsdefValue;
+import jp.mydns.projectk.safi.value.trial.SchedefValue;
 
 /**
  * JAX-RS resource for test.
@@ -74,15 +74,30 @@ public class TestResource {
     }
 
     @GET
-    @Path("contents")
+    @Path("jobdef")
     @Produces(APPLICATION_JSON)
-    public List<UserEntity> getContents() {
+    public JobdefValue getJobdef() {
+        return null;
+    }
 
-        em.clear();
+    @GET
+    @Path("schedef")
+    @Produces(APPLICATION_JSON)
+    public SchedefValue getSchedef() {
+        return null;
+    }
 
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<UserEntity> cq = cb.createQuery(UserEntity.class);
+    @GET
+    @Path("job")
+    @Produces(APPLICATION_JSON)
+    public JobValue getJob() {
+        return null;
+    }
 
-        return em.createQuery(cq).getResultList();
+    @GET
+    @Path("trnsdef")
+    @Produces(APPLICATION_JSON)
+    public TrnsdefValue getTrnsdef() {
+        return null;
     }
 }

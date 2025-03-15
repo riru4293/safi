@@ -60,18 +60,19 @@ class JobCreationContextTest {
     @Test
     void testBuild(Validator validator) {
         var scheduleTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
+        var trnsdef = new TrnsdefValue();
         var filtdef = new FiltdefValue.Builder().build(validator);
 
         // Build value
         var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
-            .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
+            .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(trnsdef).withFiltdef(filtdef)
             .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).build(validator);
 
         assertThat(val).returns("jobdef-id", JobCreationContext::getJobdefId)
             .satisfies(v -> assertThat(v.getScheduleTime()).hasValue(scheduleTime))
             .satisfies(v -> assertThat(v.getTimeout()).hasValue(Duration.ZERO))
             .satisfies(v -> assertThat(v.getPluginName()).hasValue("plg"))
-            .satisfies(v -> assertThat(v.getTrnsdef()).hasValue(Map.of()))
+            .satisfies(v -> assertThat(v.getTrnsdef()).hasValue(trnsdef))
             .satisfies(v -> assertThat(v.getFiltdef()).hasValue(filtdef))
             .satisfies(v -> assertThat(v.getJobProperties()).hasValue(JsonValue.EMPTY_JSON_OBJECT));
     }
@@ -121,7 +122,7 @@ class JobCreationContextTest {
         var filtdef = new FiltdefValue.Builder().build(validator);
 
         var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
-            .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
+            .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(new TrnsdefValue()).withFiltdef(filtdef)
             .withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
             .build(validator);
 
