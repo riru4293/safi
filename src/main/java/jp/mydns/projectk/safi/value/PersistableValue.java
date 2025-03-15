@@ -62,8 +62,8 @@ public interface PersistableValue {
     Optional<String> getNote();
 
     /**
-     * Get version number for this value. Used for optimistic locking when updating this value. Incremented after
-     * update.
+     * Get version number for this value. Used for optimistic locking when updating this value. Please set to 0 for
+     * creation, set to the same value as when getting for update.
      *
      * @return version number. 0 means new value.
      * @since 3.0.0
@@ -78,7 +78,8 @@ public interface PersistableValue {
      * @return registered time
      * @since 3.0.0
      */
-    @Schema(description = "Registered time.")
+    @Schema(description = "Registered time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
+            accessMode = Schema.AccessMode.READ_ONLY)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getRegisterTime();
 
     /**
@@ -87,7 +88,7 @@ public interface PersistableValue {
      * @return account id
      * @since 3.0.0
      */
-    @Schema(description = "Account id who made this value.")
+    @Schema(description = "Account id who made this value.", accessMode = Schema.AccessMode.READ_ONLY)
     Optional<@Size(max = 250) String> getRegisterAccountId();
 
     /**
@@ -96,7 +97,7 @@ public interface PersistableValue {
      * @return process name
      * @since 3.0.0
      */
-    @Schema(description = "Process name who made this value.")
+    @Schema(description = "Process name who made this value.", accessMode = Schema.AccessMode.READ_ONLY)
     Optional<@Size(max = 250) String> getRegisterProcessName();
 
     /**
@@ -105,7 +106,8 @@ public interface PersistableValue {
      * @return updated time
      * @since 3.0.0
      */
-    @Schema(description = "Updated time.")
+    @Schema(description = "Updated time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
+            accessMode = Schema.AccessMode.READ_ONLY)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getUpdateTime();
 
     /**
@@ -114,7 +116,7 @@ public interface PersistableValue {
      * @return account id
      * @since 3.0.0
      */
-    @Schema(description = "Account id who updated this value.")
+    @Schema(description = "Account id who updated this value.", accessMode = Schema.AccessMode.READ_ONLY)
     Optional<@Size(max = 250) String> getUpdateAccountId();
 
     /**
@@ -123,7 +125,7 @@ public interface PersistableValue {
      * @return process name
      * @since 3.0.0
      */
-    @Schema(description = "Process name who updated this value.")
+    @Schema(description = "Process name who updated this value.", accessMode = Schema.AccessMode.READ_ONLY)
     Optional<@Size(max = 250) String> getUpdateProcessName();
 
     /**
