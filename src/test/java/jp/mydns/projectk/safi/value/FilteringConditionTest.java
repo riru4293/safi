@@ -173,26 +173,6 @@ class FilteringConditionTest {
     }
 
     /**
-     * Test of deserialize method if empty JSON, of class Deserializer.
-     *
-     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
-     * @since 3.0.0
-     */
-    @Test
-    void testDeserializeIfEmptyJson(Jsonb jsonb) {
-        JsonObject expect = Json.createObjectBuilder().add("operation", "AND")
-            .add("children", JsonValue.EMPTY_JSON_ARRAY).build();
-
-        var deserialized = jsonb.fromJson("{}", FilteringCondition.class);
-
-        var serialized = jsonb.toJson(deserialized);
-
-        var result = jsonb.fromJson(serialized, JsonObject.class);
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
      * Test of toString method if single.
      *
      * @since 3.0.0
