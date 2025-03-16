@@ -34,6 +34,7 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Map;
 import jp.mydns.projectk.safi.util.ValidationUtils;
@@ -69,9 +70,8 @@ public interface FiltdefValue {
      * @return transform definition for filtering
      * @since 3.0.0
      */
-    @Schema(description = "Transform definition for filtering.")
-    @NotNull
-    Map<String, String> getTrnsdef();
+    @NotNull(groups = Default.class)
+    TrnsdefValue getTrnsdef();
 
     /**
      * Get filtering condition.
@@ -79,8 +79,7 @@ public interface FiltdefValue {
      * @return filtering condition
      * @since 3.0.0
      */
-    @Schema(description = "Filtering condition.")
-    @NotNull
+    @NotNull(groups = Default.class)
     @Valid
     FilteringCondition getCondition();
 
@@ -93,7 +92,7 @@ public interface FiltdefValue {
      */
     class Builder {
 
-        private Map<String, String> trnsdef = Map.of();
+        private TrnsdefValue trnsdef = TrnsdefValue.of(Map.of());
         private FilteringCondition condition = FilteringCondition.empty();
 
         /**
@@ -103,7 +102,7 @@ public interface FiltdefValue {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withTrnsdef(Map<String, String> trnsdef) {
+        public Builder withTrnsdef(TrnsdefValue trnsdef) {
             this.trnsdef = trnsdef;
             return this;
         }
@@ -154,7 +153,7 @@ public interface FiltdefValue {
          */
         protected static class Bean implements FiltdefValue {
 
-            private Map<String, String> trnsdef;
+            private TrnsdefValue trnsdef;
             private FilteringCondition condition;
 
             /**
@@ -182,7 +181,7 @@ public interface FiltdefValue {
              * @since 3.0.0
              */
             @Override
-            public Map<String, String> getTrnsdef() {
+            public TrnsdefValue getTrnsdef() {
                 return trnsdef;
             }
 
@@ -192,7 +191,7 @@ public interface FiltdefValue {
              * @param trnsdef transform definition for filtering
              * @since 3.0.0
              */
-            public void setTrnsdef(Map<String, String> trnsdef) {
+            public void setTrnsdef(TrnsdefValue trnsdef) {
                 this.trnsdef = trnsdef;
             }
 
