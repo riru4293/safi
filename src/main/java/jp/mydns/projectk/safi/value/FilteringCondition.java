@@ -67,7 +67,23 @@ import java.util.stream.Stream;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(FilteringCondition.Deserializer.class)
-@Schema(description = "Filtering condition.",
+@Schema(description
+    = """
+Filtering condition.
+
+# Examples
+
+## Case userName property is equal to taro
+```
+{"operation": "EQUAL", "name": "userName", "value": "taro"}
+```
+
+## Case userName property is equal to taro or jiro
+```
+{"operation": "OR", "children": [
+    {"operation": "EQUAL", "name": "userName", "value": "taro"},
+    {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
+```""",
         oneOf = {FilteringCondition.Single.class, FilteringCondition.Multi.class})
 public interface FilteringCondition {
 

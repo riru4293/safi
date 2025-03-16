@@ -84,7 +84,8 @@ public interface JobCreationContext {
      * @return job schedule time
      * @since 3.0.0
      */
-    @Schema(description = "Job schedule time. Means current time if null.", example = "2000-01-01T00:00:00Z")
+    @Schema(description = "Job schedule time. Means current time if null."
+        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T00:00:00Z can be specified.", example = "2000-01-01T00:00:00Z")
     Optional<@TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/) @TimeAccuracy OffsetDateTime>
         getScheduleTime();
 
@@ -94,7 +95,7 @@ public interface JobCreationContext {
      * @return job execution timeout
      * @since 3.0.0
      */
-    @Schema(type = "string", description = "Job execution timeout."
+    @Schema(type = "string", description = "Job execution timeout. Values from PT0S to PT23H59M59S can be specified."
             + " If not null, it overrides the value in the job definition.", example = "PT10M")
     Optional<@PositiveOrZeroDuration @DurationRange(maxSecond = 86_399L/*23h59m59s*/) @TimeAccuracy Duration>
         getTimeout();
