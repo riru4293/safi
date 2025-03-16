@@ -164,8 +164,7 @@ The key is the property name after transformation, and the value is the transfor
 | Result | __taro's number is PP01__ |""",
             example = "{\"name\":\"toTitleCase([firstName]) & ` ` & toTitleCase([lastName])\", \"id\":\"[userId]\"}",
             type = "object", additionalPropertiesSchema = String.class)
-    @NotNull(groups = {Default.class})
-    Map<String, String> getTrnsdef();
+    Optional<Map<String, String>> getTrnsdef();
 
     /**
      * Get the {@code FiltdefValue}.
@@ -173,9 +172,7 @@ The key is the property name after transformation, and the value is the transfor
      * @return the {@code FiltdefValue}
      * @since 3.0.0
      */
-    @NotNull(groups = {Default.class})
-    @Valid
-    FiltdefValue getFiltdef();
+    Optional<@Valid FiltdefValue> getFiltdef();
 
     /**
      * Get optional configurations at job execution.
@@ -228,8 +225,8 @@ The key is the property name after transformation, and the value is the transfor
             this.jobTarget = src.getJobTarget();
             this.timeout = src.getTimeout();
             this.pluginName = src.getPluginName().orElse(null);
-            this.trnsdef = src.getTrnsdef();
-            this.filtdef = src.getFiltdef();
+            this.trnsdef = src.getTrnsdef().orElse(null);
+            this.filtdef = src.getFiltdef().orElse(null);
             this.jobProperties = src.getJobProperties();
 
             return builderType.cast(this);
@@ -502,8 +499,8 @@ The key is the property name after transformation, and the value is the transfor
              * @since 3.0.0
              */
             @Override
-            public Map<String, String> getTrnsdef() {
-                return trnsdef;
+            public Optional<Map<String, String>> getTrnsdef() {
+                return Optional.ofNullable(trnsdef);
             }
 
             /**
@@ -522,8 +519,8 @@ The key is the property name after transformation, and the value is the transfor
              * @since 3.0.0
              */
             @Override
-            public FiltdefValue getFiltdef() {
-                return filtdef;
+            public Optional<FiltdefValue> getFiltdef() {
+                return Optional.ofNullable(filtdef);
             }
 
             /**
