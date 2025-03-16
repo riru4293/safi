@@ -157,7 +157,7 @@ public interface JobValue extends PersistableValue {
      * @return optional configurations at job execution
      * @since 3.0.0
      */
-    @Schema(description = "Optional configurations at job execution.")
+    @Schema(ref = "#/components/schemas/Jobdef/properties/jobProperties")
     @NotNull
     JsonObject getProperties();
 

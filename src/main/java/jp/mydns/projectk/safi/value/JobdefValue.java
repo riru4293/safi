@@ -64,8 +64,7 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(JobdefValue.Deserializer.class)
-@Schema($id = "https://project-k.mydns.jp/safi/schemas/jobdef.schema.json",
-        name = "Jobdef", description = "Definition for creates a job.")
+@Schema(name = "Jobdef", description = "Definition for creates a job.")
 public interface JobdefValue extends NamedValue {
 
     /**
@@ -128,7 +127,7 @@ public interface JobdefValue extends NamedValue {
      * @since 3.0.0
      */
     @Schema(description
-            = """
+        = """
 The key is the property name after transformation, and the value is the transformation expression. Details of the expression are as follows.
 
 # Trunsform expression syntax
@@ -174,7 +173,6 @@ The key is the property name after transformation, and the value is the transfor
      * @return the {@code FiltdefValue}
      * @since 3.0.0
      */
-    @Schema(description = "Content filtering definition.")
     @NotNull(groups = {Default.class})
     @Valid
     FiltdefValue getFiltdef();
@@ -185,7 +183,7 @@ The key is the property name after transformation, and the value is the transfor
      * @return optional configurations at job execution
      * @since 3.0.0
      */
-    @Schema(description = "Optional configurations at job execution.")
+    @Schema(description = "Optional configurations at job execution.", example = "{}")
     @NotNull(groups = {Default.class})
     JsonObject getJobProperties();
 

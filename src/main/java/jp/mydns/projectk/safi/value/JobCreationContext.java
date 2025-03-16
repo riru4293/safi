@@ -105,8 +105,8 @@ public interface JobCreationContext {
      * @return plugin name
      * @since 3.0.0
      */
-    @Schema(description = "Plugin name. If not null, it overrides the value in the job definition.", example
-            = "PluginName")
+    @Schema(description = "Plugin name. If not null, it overrides the value in the job definition.",
+            example = "PluginName")
     Optional<@Size(max = 50) String> getPluginName();
 
     /**
@@ -117,7 +117,7 @@ public interface JobCreationContext {
      */
     @Schema(description = "Content transform definition. If not null, it overrides the value in the job definition.",
             ref = "#/components/schemas/Jobdef/properties/trnsdef")
-    Optional<Map<String ,String>> getTrnsdef();
+    Optional<Map<String, String>> getTrnsdef();
 
     /**
      * Get content filtering definition. If not null, it overrides the value in the job definition..
@@ -129,14 +129,14 @@ public interface JobCreationContext {
     Optional<@Valid FiltdefValue> getFiltdef();
 
     /**
-     * Get optional configurations at job execution. If not null, it will be marged(overwrite) to value in the job
+     * Get optional configurations at job execution. If not null, it will be merged(overwrite) to value in the job
      * definition.
      *
      * @return optional configurations at job execution
      * @since 3.0.0
      */
     @Schema(description = "Optional configurations at job execution. If not null, it will be marged(overwrite) "
-        + "to value in the job definition.", example = "{\"propertyName\": \"propertyValue\"}")
+        + "to value in the job definition.", ref = "#/components/schemas/Jobdef/properties/jobProperties")
     Optional<JsonObject> getJobProperties();
 
     /**
@@ -152,7 +152,7 @@ public interface JobCreationContext {
         private OffsetDateTime scheduleTime;
         private Duration timeout;
         private String pluginName;
-        private Map<String ,String> trnsdef;
+        private Map<String, String> trnsdef;
         private FiltdefValue filtdef;
         private JsonObject jobProperties;
 
@@ -211,7 +211,7 @@ public interface JobCreationContext {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withTrnsdef(Map<String ,String> trnsdef) {
+        public Builder withTrnsdef(Map<String, String> trnsdef) {
             this.trnsdef = trnsdef;
             return this;
         }
@@ -278,7 +278,7 @@ public interface JobCreationContext {
             private OffsetDateTime scheduleTime;
             private Duration timeout;
             private String pluginName;
-            private Map<String ,String> trnsdef;
+            private Map<String, String> trnsdef;
             private FiltdefValue filtdef;
             private JsonObject jobProperties;
 
@@ -392,7 +392,7 @@ public interface JobCreationContext {
              * @since 3.0.0
              */
             @Override
-            public Optional<Map<String ,String>> getTrnsdef() {
+            public Optional<Map<String, String>> getTrnsdef() {
                 return Optional.ofNullable(trnsdef);
             }
 
@@ -402,7 +402,7 @@ public interface JobCreationContext {
              * @param trnsdef transform definition
              * @since 3.0.0
              */
-            public void setTrnsdef(Map<String ,String> trnsdef) {
+            public void setTrnsdef(Map<String, String> trnsdef) {
                 this.trnsdef = trnsdef;
             }
 

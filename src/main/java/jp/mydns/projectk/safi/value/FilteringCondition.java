@@ -67,7 +67,8 @@ import java.util.stream.Stream;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(FilteringCondition.Deserializer.class)
-@Schema(description = "Filtering condition.")
+@Schema(description = "Filtering condition.",
+        oneOf = {FilteringCondition.Single.class, FilteringCondition.Multi.class})
 public interface FilteringCondition {
 
     /**
@@ -87,7 +88,8 @@ public interface FilteringCondition {
      * @return filtering operation
      * @since 3.0.0
      */
-    @Schema(type = "string", description = "Filtering operation.")
+    @Schema(type = "string", description = "Filtering operation.",
+            oneOf = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
     @NotNull
     FilteringOperation getOperation();
 
