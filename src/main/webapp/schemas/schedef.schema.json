@@ -32,46 +32,55 @@
             "type": "string",
             "maxLength": 250
         },
-        "value": {
-            "description": "Schedule definition value.",
+        "config": {
+            "description": "Schedule definition config.",
             "type": "object",
             "properties": {
-                "type": {
+                "kind": {
+                    "description": "Schedule definition kind.",
                     "type": "string",
                     "enum": ["DAILY", "WEEKLY", "MONTHLY_DAYS", "MONTHLY_WEEKDAYS", "ONCE", "CANCEL"]
                 },
                 "from": {
+                    "description": "Begin time of scheduling period.",
                     "type": "string",
                     "format": "date-time"
                 },
                 "to": {
+                    "description": "End time of scheduling period.",
                     "type": "string",
                     "format": "date-time"
                 },
                 "months": {
+                    "description": "Target month of scheduling.",
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 12
                 },
                 "weeks": {
+                    "description": "Target weeks of scheduling.",
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 5
                 },
                 "weekdays": {
+                    "description": "Target weekdays of scheduling.",
                     "type": "string",
                     "enum": ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]
                 },
                 "days": {
+                    "description": "Target days of scheduling.",
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 31
                 },
                 "datetime": {
+                    "description": "Time of scheduling.",
                     "type": "string",
                     "format": "date-time"
                 },
                 "interval": {
+                    "description": "Interal period of scheduling.",
                     "type": "integer",
                     "minimum": 1
                 }

@@ -25,22 +25,112 @@
  */
 package jp.mydns.projectk.safi.value.trial;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
+import java.time.DayOfWeek;
+import java.time.Month;
+import java.time.OffsetDateTime;
+import java.util.List;
 import jp.mydns.projectk.safi.constant.SchedefKing;
-import jp.mydns.projectk.safi.entity.SchedefEntity;
-import jp.mydns.projectk.safi.value.ValidityPeriodValue;
+import jp.mydns.projectk.safi.value.NamedValue;
 
 /**
- * Schedule definition.
+ * Definition for <i>Job</i> scheduling.
  *
- * @implSpec This class is immutable and thread-safe.
+ * <p>
+ * Implementation requirements.
+ * <ul>
+ * <li>This class is immutable and thread-safe.</li>
+ * <li>This and JSON can be converted bidirectionally.</li>
+ * </ul>
+ *
+ * <a href="{@docRoot}/../schemas/schedef.schema.json">Json schema is here</a>
+ *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class SchedefValue {
+//@JsonbTypeDeserializer(SchedefValue.Deserializer.class)
+@Schema(name = "Schedef", description = "Definition for Job scheduling.")
+public interface SchedefValue extends NamedValue {
+
+    interface Config {
+
+        SchedefKing getKind();
+
+        interface Daily extends Config {
+
+            OffsetDateTime getDateTime();
+
+            Integer getInterval();
+        }
+
+        interface Weekly extends Config {
+
+            List<DayOfWeek> getWeekDays();
+
+            OffsetDateTime getDateTime();
+
+            Integer getInterval();
+        }
+
+        interface MonthlyDays extends Config {
+
+            List<Month> getMonths();
+
+            List<Integer> getDays();
+
+            OffsetDateTime getDateTime();
+        }
+
+        interface MonthlyWeekDays extends Config {
+
+            List<Month> getMonths();
+
+            Integer getWeeks();
+
+            List<DayOfWeek> getWeekDays();
+
+            OffsetDateTime getDateTime();
+        }
+
+        interface Once extends Config {
+
+            OffsetDateTime getDateTime();
+        }
+
+        interface Cancel extends Config {
+
+            OffsetDateTime getFrom();
+
+            OffsetDateTime getTo();
+        }
+    }
+
+    /**
+     * Get schedule definition id.
+     *
+     * @return schedule definition id
+     * @since 3.0.0
+     */
+    @NotNull
+    @Size(min = 1, max = 36)
+    @Schema(description = "Schedule definition id.", example = "test")
+    String getId();
+
+    /**
+     * Get schedule configuration.
+     *
+     * @return schedule configuration
+     * @since 3.0.0
+     */
+    @Schema(description = "Schedule configuration.", example
+            = "{\"type\": \"DAILY\", \"interval\": 1, \"datetime\": \"2700-10-10T07:09:42Z\"}")
+    @NotNull(groups = {Default.class})
+    JsonObject getConfig();
 
 //    private final String id;
 //    private final String jobdefId;

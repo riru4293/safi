@@ -61,8 +61,8 @@ public class SchedefEntity extends NamedEntity {
     private String priority;
 
     @Basic(optional = false)
-    @Column(name = "val", nullable = false)
-    private JsonWrapper value;
+    @Column(name = "conf", nullable = false)
+    private JsonWrapper config;
 
     /**
      * Get job schedule definition id.
@@ -79,7 +79,7 @@ public class SchedefEntity extends NamedEntity {
     /**
      * Set job schedule definition id.
      *
-     * @param id job schedule definition id. Cannot update persisted value.
+     * @param id job schedule definition id. Cannot update persisted config.
      * @since 3.0.0
      */
     public void setId(String id) {
@@ -90,7 +90,7 @@ public class SchedefEntity extends NamedEntity {
      * Get schedule definition priority.
      *
      * @return schedule definition priority. In case of a conflict with another schedule definition, the one with the
-     * higher priority will be used. The higher the value, the higher the priority.
+ higher priority will be used. The higher the config, the higher the priority.
      * @since 3.0.0
      */
     @NotBlank
@@ -110,30 +110,30 @@ public class SchedefEntity extends NamedEntity {
     }
 
     /**
-     * Get job schedule definition value.
+     * Get job schedule definition config.
      *
-     * @return job schedule definition value
+     * @return job schedule definition config
      * @since 3.0.0
      */
     @NotNull
-    public JsonWrapper getValue() {
-        return value;
+    public JsonWrapper getConfig() {
+        return config;
     }
 
     /**
-     * Set job schedule definition value.
+     * Set job schedule definition config.
      *
-     * @param value job schedule definition value
+     * @param config job schedule definition config
      * @since 3.0.0
      */
-    public void setValue(JsonWrapper value) {
-        this.value = value;
+    public void setConfig(JsonWrapper config) {
+        this.config = config;
     }
 
     /**
-     * Returns a hash code value.
+     * Returns a hash code config.
      *
-     * @return a hash code value. It is generated from the primary key value.
+     * @return a hash code config. It is generated from the primary key config.
      * @since 3.0.0
      */
     @Override
@@ -163,6 +163,6 @@ public class SchedefEntity extends NamedEntity {
     @Override
     public String toString() {
         return "SchedefEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", priority=" + priority
-            + ", name=" + name + ", value=" + value + '}';
+            + ", name=" + name + ", config=" + config + '}';
     }
 }
