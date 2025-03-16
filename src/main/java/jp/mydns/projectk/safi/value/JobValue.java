@@ -74,8 +74,8 @@ public interface JobValue extends PersistableValue {
      * @return job id
      * @since 3.0.0
      */
-    @NotBlank
-    @Size(max = 36)
+    @NotNull
+    @Size(min = 1, max = 36)
     @Schema(description = "Job id.")
     String getId();
 
@@ -167,8 +167,8 @@ public interface JobValue extends PersistableValue {
      * @return job definition id
      * @since 3.0.0
      */
-    @NotBlank
-    @Size(max = 36)
+    @NotNull
+    @Size(min = 1, max = 36)
     @Schema(description = "Job definition id.")
     String getJobdefId();
 

@@ -32,7 +32,6 @@ import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
@@ -285,7 +284,7 @@ public interface FilteringCondition {
          * @return target name
          * @since 3.0.0
          */
-        @NotBlank(groups = Default.class)
+        @NotNull(groups = Default.class)
         String getName();
 
         /**

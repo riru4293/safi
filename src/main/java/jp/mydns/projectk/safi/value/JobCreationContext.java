@@ -34,7 +34,7 @@ import jakarta.json.stream.JsonParser;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.lang.reflect.Type;
 import java.time.Duration;
@@ -73,8 +73,8 @@ public interface JobCreationContext {
      * @return job definition id
      * @since 3.0.0
      */
-    @NotBlank
-    @Size(max = 36)
+    @NotNull
+    @Size(min = 1, max = 36)
     @Schema(description = "Job definition id to use.")
     String getJobdefId();
 
