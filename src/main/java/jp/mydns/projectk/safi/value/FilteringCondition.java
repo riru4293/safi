@@ -180,61 +180,6 @@ public interface FilteringCondition {
     }
 
     /**
-     * Get the {@code FilteringCondition} that have no effect
-     *
-     * @return empty condition
-     * @since 3.0.0
-     */
-    static FilteringCondition empty() {
-        return new Multi() {
-
-            /**
-             * {@inheritDoc}
-             *
-             * @return empty
-             * @since 3.0.0
-             */
-            @Override
-            public List<FilteringCondition> getChildren() {
-                return List.of();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @return {@code true}
-             * @since 3.0.0
-             */
-            @Override
-            public boolean isMulti() {
-                return true;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @return the {@code FilteringOperation.Multi.AND}
-             * @since 3.0.0
-             */
-            @Override
-            public FilteringOperation getOperation() {
-                return FilteringOperation.Multi.AND;
-            }
-
-            /**
-             * Returns a string representation.
-             *
-             * @return a string representation
-             * @since 3.0.0
-             */
-            @Override
-            public String toString() {
-                return "FilteringCondition.Empty{}";
-            }
-        };
-    }
-
-    /**
      * Combination of filtering conditions.
      *
      * <p>
@@ -331,14 +276,6 @@ public interface FilteringCondition {
         public FilteringCondition deserialize(JsonParser jp, DeserializationContext dc, Type type) {
 
             Bean tmp = dc.deserialize(Bean.class, jp);
-
-            if (tmp == null) {
-                return null;
-            }
-
-            if (tmp.isEmpty()) {
-                return empty();
-            }
 
             return tmp.isMulti()
                 ? new MultiBean(tmp.getOperation(), tmp.getChildren())
@@ -601,16 +538,6 @@ public interface FilteringCondition {
             public boolean isMulti() {
                 return Optional.ofNullable(operation).map(FilteringOperation::name)
                     .filter(multiOpNames::contains).isPresent();
-            }
-
-            /**
-             * Returns a {@code true} if all elements are {@code null}.
-             *
-             * @return {@code true} if all elements are {@code null}, otherwise {@code false}.
-             * @since 3.0.0
-             */
-            public boolean isEmpty() {
-                return Stream.of(name, operation, value, children).allMatch(Objects::isNull);
             }
         }
     }

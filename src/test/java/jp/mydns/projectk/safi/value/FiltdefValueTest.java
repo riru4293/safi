@@ -30,6 +30,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.validation.Validator;
+import java.util.List;
 import java.util.Map;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
@@ -80,8 +81,10 @@ class FiltdefValueTest {
     void testToString(Validator validator) {
         String tmpl = "FiltdefValue{trnsdef=%s, condition=%s}";
 
-        var val = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(FilteringCondition.empty()).build(validator);
+        var filter = FilteringCondition.multiOf(FilteringOperation.Multi.NOT_OR, List.of());
 
-        assertThat(val).hasToString(tmpl, Map.of(), FilteringCondition.empty());
+        var val = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(filter).build(validator);
+
+        assertThat(val).hasToString(tmpl, Map.of(), filter);
     }
 }
