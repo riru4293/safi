@@ -69,7 +69,7 @@ class JobdefValueTest {
         // Build value
         var val = new JobdefValue.Builder().withId("jobdef-id").withValidityPeriod(vp)
             .withJobKind(JobKind.REBUILD).withJobTarget(JobTarget.ASSET).withTimeout(Duration.ZERO)
-            .withName("jobdef-name").withPluginName("plg").withTrnsdef(new TrnsdefValue()).withFiltdef(filtdef)
+            .withName("jobdef-name").withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
             .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).withNote("note").withVersion(3).withRegisterTime(regTime)
             .withRegisterAccountId("reg-id").withRegisterProcessName("reg-name").withUpdateTime(updTime)
             .withUpdateAccountId("upd-id").withUpdateProcessName("upd-name")
@@ -157,7 +157,7 @@ class JobdefValueTest {
 
         var val = new JobdefValue.Builder().withId("jobdef-id").withValidityPeriod(vp).withJobKind(JobKind.REBUILD)
             .withJobTarget(JobTarget.ASSET).withTimeout(Duration.ZERO).withName("jobdef-name").withPluginName("plg")
-            .withTrnsdef(new TrnsdefValue()).withFiltdef(filtdef).withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
+            .withTrnsdef(Map.of()).withFiltdef(filtdef).withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
             .withNote("note").withVersion(3)
             .withRegisterTime(regTime).withRegisterAccountId("reg-id").withRegisterProcessName("reg-name")
             .withUpdateTime(updTime).withUpdateAccountId("upd-id").withUpdateProcessName("upd-name")

@@ -38,6 +38,7 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.Duration;
+import java.util.Map;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
@@ -63,7 +64,8 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(JobdefValue.Deserializer.class)
-@Schema(name = "Jobdef", description = "Definition for creates a job.")
+@Schema($id = "https://project-k.mydns.jp/safi/schemas/jobdef.schema.json",
+        name = "Jobdef", description = "Definition for creates a job.")
 public interface JobdefValue extends NamedValue {
 
     /**
@@ -125,8 +127,46 @@ public interface JobdefValue extends NamedValue {
      * @return content transform definition
      * @since 3.0.0
      */
+    @Schema(description
+            = """
+The key is the property name after transformation, and the value is the transformation expression. Details of the expression are as follows.
+
+# Trunsform expression syntax
+
+| Element              | Syntax              | Description |
+|----------------------|---------------------|-------------|
+| Literal element      | \\`literal-value\\` | The literal value is enclosed by \\`. If you want to escape it, prefix it with \\. |
+| Input element        | [input-value-name]  | The input value encloses its name in [ and ]. |
+| Function element     | func(arg, arg)      | Function consists of a function name followed by arguments enclosed in ( and ). The arguments are separated by , and the number varies depending on the function. The argument is any kind of the element that "Input" or "Literal" or "Function". |
+| Elements joiner      | &                   | Joiner concatenates the values before and after the element. Also, there must be white space before and after the Joiner. |
+
+# Trunsform example
+
+## Premise
+
+- Original values: {"id": " 01 ", "name": "taro"}
+- Trunsform expression: [name] & \\`'s number is \\` & LPAD( TRIM( [id] ), \\`4\\`, \\`P\\` )
+- Functions
+  - TRIM
+    - syntax: TRIM( arg-value )
+    - description: Trim leading and trailing spaces from arguments.
+  - LPAD
+    - syntax: LPAD( arg-value, arg-length, arg-padding-char )
+    - description: Pads a string to the left with the specified characters until the specified number of digits is reached.
+
+## Process of calculating
+
+| Step   | Interpretation of the expression |
+|--------|----------------------------------|
+| Step.0 | [name] & \\`'s number is \\` & LPAD( TRIM( [id] ), \\`4\\`, \\`P\\` ) |
+| Step.1 | [name] & \\`'s number is \\` & LPAD( TRIM( __\\` 01 \\`__ ), \\`4\\`, \\`P\\` ) |
+| Step.2 | [name] & \\`'s number is \\` & LPAD( __\\`01\\`__, \\`4\\`, \\`P\\` ) |
+| Step.3 | __\\`taro\\`__ & \\`'s number is \\` & __\\`PP01\\`__ |
+| Result | __taro's number is PP01__ |""",
+            example = "{\"name\":\"toTitleCase([firstName]) & ` ` & toTitleCase([lastName])\", \"id\":\"[userId]\"}",
+            type = "object", additionalPropertiesSchema = String.class)
     @NotNull(groups = {Default.class})
-    TrnsdefValue getTrnsdef();
+    Map<String, String> getTrnsdef();
 
     /**
      * Get the {@code FiltdefValue}.
@@ -163,7 +203,7 @@ public interface JobdefValue extends NamedValue {
         private JobTarget jobTarget;
         private Duration timeout;
         private String pluginName;
-        private TrnsdefValue trnsdef;
+        private Map<String, String> trnsdef;
         private FiltdefValue filtdef;
         private JsonObject jobProperties;
 
@@ -264,7 +304,7 @@ public interface JobdefValue extends NamedValue {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withTrnsdef(TrnsdefValue trnsdef) {
+        public Builder withTrnsdef(Map<String, String> trnsdef) {
             this.trnsdef = trnsdef;
             return this;
         }
@@ -327,7 +367,7 @@ public interface JobdefValue extends NamedValue {
             private JobTarget jobTarget;
             private Duration timeout;
             private String pluginName;
-            private TrnsdefValue trnsdef;
+            private Map<String, String> trnsdef;
             private FiltdefValue filtdef;
             private JsonObject jobProperties;
 
@@ -464,7 +504,7 @@ public interface JobdefValue extends NamedValue {
              * @since 3.0.0
              */
             @Override
-            public TrnsdefValue getTrnsdef() {
+            public Map<String, String> getTrnsdef() {
                 return trnsdef;
             }
 
@@ -474,7 +514,7 @@ public interface JobdefValue extends NamedValue {
              * @param trnsdef transform definition
              * @since 3.0.0
              */
-            public void setTrnsdef(TrnsdefValue trnsdef) {
+            public void setTrnsdef(Map<String, String> trnsdef) {
                 this.trnsdef = trnsdef;
             }
 

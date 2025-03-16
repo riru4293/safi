@@ -60,7 +60,7 @@ class JobCreationContextTest {
     @Test
     void testBuild(Validator validator) {
         var scheduleTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
-        var trnsdef = new TrnsdefValue();
+        var trnsdef = Map.<String, String>of();
         var filtdef = new FiltdefValue.Builder().build(validator);
 
         // Build value
@@ -122,7 +122,7 @@ class JobCreationContextTest {
         var filtdef = new FiltdefValue.Builder().build(validator);
 
         var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
-            .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(new TrnsdefValue()).withFiltdef(filtdef)
+            .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
             .withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
             .build(validator);
 

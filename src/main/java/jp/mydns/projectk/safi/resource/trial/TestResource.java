@@ -38,7 +38,6 @@ import jakarta.ws.rs.core.UriInfo;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
-import jp.mydns.projectk.safi.value.TrnsdefValue;
 import jp.mydns.projectk.safi.value.trial.SchedefValue;
 
 /**
@@ -91,13 +90,6 @@ public class TestResource {
     @Path("job")
     @Produces(APPLICATION_JSON)
     public JobValue getJob() {
-        return null;
-    }
-
-    @GET
-    @Path("trnsdef")
-    @Produces(APPLICATION_JSON)
-    public TrnsdefValue getTrnsdef() {
         return null;
     }
 }

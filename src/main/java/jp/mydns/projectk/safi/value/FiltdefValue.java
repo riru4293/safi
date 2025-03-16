@@ -71,7 +71,8 @@ public interface FiltdefValue {
      * @since 3.0.0
      */
     @NotNull(groups = Default.class)
-    TrnsdefValue getTrnsdef();
+    @Schema(ref = "#/components/schemas/Jobdef/properties/trnsdef")
+    Map<String, String> getTrnsdef();
 
     /**
      * Get filtering condition.
@@ -92,7 +93,7 @@ public interface FiltdefValue {
      */
     class Builder {
 
-        private TrnsdefValue trnsdef = TrnsdefValue.of(Map.of());
+        private Map<String, String> trnsdef = Map.of();
         private FilteringCondition condition = FilteringCondition.empty();
 
         /**
@@ -102,7 +103,7 @@ public interface FiltdefValue {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withTrnsdef(TrnsdefValue trnsdef) {
+        public Builder withTrnsdef(Map<String, String> trnsdef) {
             this.trnsdef = trnsdef;
             return this;
         }
@@ -153,7 +154,7 @@ public interface FiltdefValue {
          */
         protected static class Bean implements FiltdefValue {
 
-            private TrnsdefValue trnsdef;
+            private Map<String, String> trnsdef;
             private FilteringCondition condition;
 
             /**
@@ -181,7 +182,7 @@ public interface FiltdefValue {
              * @since 3.0.0
              */
             @Override
-            public TrnsdefValue getTrnsdef() {
+            public Map<String, String> getTrnsdef() {
                 return trnsdef;
             }
 
@@ -191,7 +192,7 @@ public interface FiltdefValue {
              * @param trnsdef transform definition for filtering
              * @since 3.0.0
              */
-            public void setTrnsdef(TrnsdefValue trnsdef) {
+            public void setTrnsdef(Map<String, String> trnsdef) {
                 this.trnsdef = trnsdef;
             }
 
