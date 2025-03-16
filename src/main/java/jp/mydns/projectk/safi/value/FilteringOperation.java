@@ -51,7 +51,9 @@ import java.util.stream.Stream;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(FilteringOperation.Deserializer.class)
-@Schema(name = "FilteringOperation", description = "Filtering operation.")
+@Schema(name = "FilteringOperation", description = "Filtering operation.",
+        subTypes = {FilteringOperation.Single.class, FilteringOperation.Multi.class},
+        oneOf = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
 public interface FilteringOperation {
 
     /**
@@ -93,6 +95,7 @@ public interface FilteringOperation {
      * @version 3.0.0
      * @since 3.0.0
      */
+    @Schema(name = "FilteringOperation.Single", description = "Signle filtering operation.")
     enum Single implements FilteringOperation {
         /**
          * Indicates a equal.
@@ -145,6 +148,7 @@ public interface FilteringOperation {
      * @version 3.0.0
      * @since 3.0.0
      */
+    @Schema(name = "FilteringOperation.Multi", description = "Multiple filtering operation.")
     enum Multi implements FilteringOperation {
         /**
          * Indicates a logical product.

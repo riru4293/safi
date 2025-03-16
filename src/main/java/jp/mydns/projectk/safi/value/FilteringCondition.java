@@ -88,8 +88,8 @@ public interface FilteringCondition {
      * @return filtering operation
      * @since 3.0.0
      */
-    @Schema(type = "string", description = "Filtering operation.",
-            oneOf = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
+    @Schema(description = "Filtering operation.",
+            subTypes = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
     @NotNull
     FilteringOperation getOperation();
 
@@ -231,8 +231,17 @@ public interface FilteringCondition {
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(description = "Combination of filtering conditions.")
+    @Schema(name = "FilteringCondition.Multi", description = "Combination of filtering conditions.")
     interface Multi extends FilteringCondition {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Schema(implementation = FilteringOperation.Multi.class)
+        @Override
+        public FilteringOperation getOperation();
 
         /**
          * Get child conditions.
@@ -257,8 +266,17 @@ public interface FilteringCondition {
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(description = "A single filtering condition.")
+    @Schema(name = "FilteringCondition.Single", description = "A single filtering condition.")
     public interface Single extends FilteringCondition {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Schema(implementation = FilteringOperation.Single.class)
+        @Override
+        public FilteringOperation getOperation();
 
         /**
          * Get filtering target name.
