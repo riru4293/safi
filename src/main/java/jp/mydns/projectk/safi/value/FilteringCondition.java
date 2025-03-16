@@ -34,6 +34,7 @@ import jakarta.json.stream.JsonParser;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
@@ -90,7 +91,7 @@ public interface FilteringCondition {
      */
     @Schema(description = "Filtering operation.",
             subTypes = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
-    @NotNull
+    @NotNull(groups = Default.class)
     FilteringOperation getOperation();
 
     /**
@@ -250,7 +251,7 @@ public interface FilteringCondition {
          * @since 3.0.0
          */
         @NotNull
-        List<@NotNull @Valid FilteringCondition> getChildren();
+        List<@NotNull(groups = Default.class) @Valid FilteringCondition> getChildren();
     }
 
     /**
@@ -284,7 +285,7 @@ public interface FilteringCondition {
          * @return target name
          * @since 3.0.0
          */
-        @NotBlank
+        @NotBlank(groups = Default.class)
         String getName();
 
         /**
@@ -293,7 +294,7 @@ public interface FilteringCondition {
          * @return filtering value
          * @since 3.0.0
          */
-        @NotNull
+        @NotNull(groups = Default.class)
         String getValue();
     }
 

@@ -31,6 +31,7 @@ import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Set;
 import static java.util.stream.Collectors.toUnmodifiableSet;
@@ -63,7 +64,7 @@ public interface FilteringOperation {
      * @since 3.0.0
      */
     @Schema(description = "Filtering operation name.")
-    @NotNull
+    @NotNull(groups = Default.class)
     String name();
 
     /**
