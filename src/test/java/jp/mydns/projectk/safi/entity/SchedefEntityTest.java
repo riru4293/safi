@@ -121,7 +121,7 @@ class SchedefEntityTest {
      */
     @Test
     void testToString() {
-        String tmpl = "SchedefEntity{id=%s, validityPeriod=%s, priority=%s, name=%s, config=%s}";
+        String tmpl = "SchedefEntity{id=%s, validityPeriod=%s, priority=%s, name=%s, trigger=%s}";
 
         var vp = new ValidityPeriodEmb();
 
@@ -136,7 +136,7 @@ class SchedefEntityTest {
 
         entity.setPriority("7");
         entity.setName("schedef-name");
-        entity.setConfig(JsonWrapper.of(Json.createObjectBuilder().add("name", "schedef").build()));
+        entity.setTrigger(JsonWrapper.of(Json.createObjectBuilder().add("name", "schedef").build()));
 
         assertThat(entity).hasToString(tmpl, "schedef-id", vp, "7", "schedef-name", "{\"name\":\"schedef\"}");
     }
