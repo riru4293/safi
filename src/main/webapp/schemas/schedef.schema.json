@@ -1,7 +1,7 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://project-k.mydns.jp/safi/schemas/schedef.schema.json",
-    "title": "Jobdef",
+    "title": "Schedef",
     "description": "Definition for Job scheduling.",
     "type": "object",
     "properties": {
@@ -28,12 +28,12 @@
             "maxLength": 1
         },
         "name": {
-            "description": "Job definition name.",
+            "description": "Schedule definition name.",
             "type": "string",
             "maxLength": 250
         },
         "trigger": {
-            "description": "Schedule trigger.",
+            "description": "Schedule trigger configuration.",
             "type": "object",
             "properties": {
                 "kind": {
@@ -63,8 +63,8 @@
                     "minimum": 1,
                     "maximum": 5
                 },
-                "weekdays": {
-                    "description": "Target weekdays of scheduling.",
+                "weekDays": {
+                    "description": "Target weekDays of scheduling.",
                     "type": "string",
                     "enum": ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]
                 },
@@ -75,12 +75,12 @@
                     "maximum": 31
                 },
                 "anchorTime": {
-                    "description": "Scheduling anchor time.",
+                    "description": "Anchor time of scheduling.",
                     "type": "string",
                     "format": "date-time"
                 },
                 "interval": {
-                    "description": "Interal period of scheduling.",
+                    "description": "Repeat interval for scheduling.",
                     "type": "integer",
                     "minimum": 1
                 }
@@ -97,9 +97,9 @@
                 }
             },
             "then": {
-                "required": ["datetime", "interval"],
+                "required": ["anchorTime", "interval"],
                 "not": {
-                    "required": ["from", "to", "months", "weeks", "weekdays", "days"]
+                    "required": ["from", "to", "months", "weeks", "weekDays", "days"]
                 }
             },
             "if": {
@@ -110,7 +110,7 @@
                 }
             },
             "then": {
-                "required": ["weekdays", "datetime", "interval"],
+                "required": ["weekDays", "anchorTime", "interval"],
                 "not": {
                     "required": ["from", "to", "months", "weeks", "days"]
                 }
@@ -126,7 +126,7 @@
                 "required": ["months", "days"],
                 "not": {
                     "required": [
-                        "from", "to", "weeks", "weekdays", "datetime", "interval"
+                        "from", "to", "weeks", "weekDays", "anchorTime", "interval"
                     ]
                 }
             },
@@ -138,7 +138,7 @@
                 }
             },
             "then": {
-                "required": ["months", "weeks", "weekdays", "datetime"],
+                "required": ["months", "weeks", "weekDays", "anchorTime"],
                 "not": {
                     "required": ["from", "to", "days", "interval"]
                 }
@@ -151,10 +151,10 @@
                 }
             },
             "then": {
-                "required": ["datetime"],
+                "required": ["anchorTime"],
                 "not": {
                     "required": [
-                        "from", "to", "months", "weeks", "weekdays", "days", "interval"
+                        "from", "to", "months", "weeks", "weekDays", "days", "interval"
                     ]
                 }
             },
@@ -162,7 +162,7 @@
                 "required": ["from", "to"],
                 "not": {
                     "required": [
-                        "months", "weeks", "weekdays", "days", "datetime", "interval"
+                        "months", "weeks", "weekDays", "days", "anchorTime", "interval"
                     ]
                 }
             }
