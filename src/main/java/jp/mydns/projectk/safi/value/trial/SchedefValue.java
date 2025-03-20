@@ -31,21 +31,29 @@ import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import jakarta.validation.Validator;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.Month;
 import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.Set;
+import java.util.Objects;
 import jp.mydns.projectk.safi.constant.SchedefKing;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.validator.TimeAccuracy;
+import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.NamedValue;
 
 /**
- * Definition for <i>Job</i> scheduling.
+ * Definition for <i>Job</i> scheduling. With this definition, the schedule that can be created is limited to the period
+ * between {@literal 2000-01-01T00:00:00Z} and {@literal 2999-12-31T23:59:59Z}.
  *
  * <p>
  * Implementation requirements.
@@ -60,11 +68,70 @@ import jp.mydns.projectk.safi.value.NamedValue;
  * @version 3.0.0
  * @since 3.0.0
  */
-//@JsonbTypeDeserializer(SchedefValue.Deserializer.class)
+@JsonbTypeDeserializer(SchedefValue.Deserializer.class)
 @Schema(name = "Schedef", description = "Definition for Job scheduling.")
 public interface SchedefValue extends NamedValue {
 
-    @JsonbTypeDeserializer(Trigger.Deserializer.class)
+    /**
+     * Get schedule definition id.
+     *
+     * @return schedule definition id
+     * @since 3.0.0
+     */
+    @NotNull
+    @Size(min = 1, max = 36)
+    @Schema(description = "Schedule definition id.", example = "test")
+    String getId();
+
+    /**
+     * Get job definition id.
+     *
+     * @return job definition id
+     * @since 3.0.0
+     */
+    @NotNull(groups = {Default.class})
+    @Size(min = 1, max = 36, groups = {Default.class})
+    @Schema(description = "Job definition id.", example = "test")
+    String getJobdefId();
+
+    /**
+     * Get scheduling priority. The larger the number, the higher the priority.
+     *
+     * @return scheduling priority
+     * @since 3.0.0
+     */
+    @NotNull(groups = {Default.class})
+    @Size(min = 1, max = 1, groups = {Default.class})
+    @Schema(description = "Scheduling priority. The larger the number, the higher the priority.", example = "F")
+    String getPriority();
+
+    /**
+     * Get schedule trigger configuration.
+     *
+     * @return schedule trigger configuration
+     * @since 3.0.0
+     */
+    @NotNull(groups = {Default.class})
+    @Valid
+    Trigger getTrigger();
+
+    /**
+     * Schedule trigger configuration.
+     *
+     * <p>
+     * Implementation requirements.
+     * <ul>
+     * <li>This class is immutable and thread-safe.</li>
+     * <li>This and JSON can be converted bidirectionally.</li>
+     * </ul>
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    @JsonbTypeDeserializer(SchedefValue.Trigger.Deserializer.class)
+    @Schema(name = "ScheduleTrigger", description = "Schedule trigger configuration.",
+        example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}")
     interface Trigger {
 
         /**
@@ -73,67 +140,45 @@ public interface SchedefValue extends NamedValue {
          * @return the {@code SchedefKing}
          * @since 3.0.0
          */
+        @NotNull(groups = {Default.class})
         SchedefKing getKind();
 
         /**
-         * Daily schedule trigger.
+         * Get anchor time of scheduling.
+         *
+         * @return anchor time of scheduling
+         * @since 3.0.0
+         */
+        @NotNull(groups = {Default.class})
+        @TimeRange(groups = {Default.class})
+        @TimeAccuracy(groups = {Default.class})
+        OffsetDateTime getAnchorTime();
+
+        /**
+         * Daily schedule trigger configuration.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        interface Daily extends Trigger {
+        interface DailyTrigger extends Trigger {
 
             /**
-             * Get scheduling anchor time.
-             *
-             * @return scheduling anchor time
-             * @since 3.0.0
-             */
-            OffsetDateTime getAnchorTime();
-
-            /**
-             * Get scheduling interval.
-             *
-             * @return scheduling interval
-             * @since 3.0.0
-             */
-            Integer getInterval();
-
-            /**
-             * Builder of the {@code Daily}.
+             * Builder of the {@code DailyTrigger}.
              *
              * @author riru
              * @version 3.0.0
              * @since 3.0.0
              */
-            class Builder {
-
-                private OffsetDateTime anchorTime;
-                private Integer interval;
+            class Builder extends AbstractBuilder<Builder, DailyTrigger> {
 
                 /**
-                 * Set scheduling anchor time.
+                 * Constructor.
                  *
-                 * @param dateTime scheduling anchor time
-                 * @return updated this
                  * @since 3.0.0
                  */
-                public Builder withDateTime(OffsetDateTime dateTime) {
-                    this.anchorTime = dateTime;
-                    return this;
-                }
-
-                /**
-                 * Set scheduling interval.
-                 *
-                 * @param interval scheduling interval
-                 * @return updated this
-                 * @since 3.0.0
-                 */
-                public Builder withInterval(Integer interval) {
-                    this.interval = interval;
-                    return this;
+                public Builder() {
+                    super(Builder.class, SchedefKing.DAILY);
                 }
 
                 /**
@@ -146,7 +191,8 @@ public interface SchedefValue extends NamedValue {
                  * @throws ConstraintViolationException if occurred constraint violations when building
                  * @since 3.0.0
                  */
-                public Daily build(Validator validator, Class<?>... groups) {
+                @Override
+                public DailyTrigger build(Validator validator, Class<?>... groups) {
                     return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
                 }
 
@@ -157,21 +203,19 @@ public interface SchedefValue extends NamedValue {
                  * @return new unsafe instance
                  * @since 3.0.0
                  */
-                public Daily unsafeBuild() {
+                @Override
+                public DailyTrigger unsafeBuild() {
                     return new Builder.Bean(this);
                 }
 
                 /**
-                 * Implements of the {@code Daily}.
+                 * Implements of the {@code DailyTrigger}.
                  *
                  * @author riru
                  * @version 3.0.0
                  * @since 3.0.0
                  */
-                protected static class Bean implements Daily {
-
-                    private OffsetDateTime anchorTime;
-                    private Integer interval;
+                protected static class Bean extends AbstractBuilder.AbstractBean implements DailyTrigger {
 
                     /**
                      * Constructor. Used only for deserialization from JSON.
@@ -188,55 +232,30 @@ public interface SchedefValue extends NamedValue {
                      * @since 3.0.0
                      */
                     protected Bean(Builder builder) {
-                        this.anchorTime = builder.anchorTime;
-                        this.interval = builder.interval;
-                    }
-
-                    @Override
-                    public SchedefKing getKind() {
-                        return SchedefKing.DAILY;
+                        super(builder);
                     }
 
                     /**
-                     * Get scheduling anchor time.
+                     * Returns a hash code value.
                      *
-                     * @return scheduling anchor time
+                     * @return a hash code value
                      * @since 3.0.0
                      */
                     @Override
-                    public OffsetDateTime getAnchorTime() {
-                        return anchorTime;
+                    public int hashCode() {
+                        return Objects.hash(kind, anchorTime);
                     }
 
                     /**
-                     * Set scheduling anchor time.
+                     * Indicates that specified object is equal duration this one.
                      *
-                     * @param anchorTime scheduling anchor time
-                     * @since 3.0.0
-                     */
-                    public void setAnchorTime(OffsetDateTime anchorTime) {
-                        this.anchorTime = anchorTime;
-                    }
-
-                    /**
-                     * Get scheduling interval.
-                     *
-                     * @return scheduling interval
+                     * @param other an any object
+                     * @return {@code true} if matches otherwise {@code false}.
                      * @since 3.0.0
                      */
                     @Override
-                    public Integer getInterval() {
-                        return interval;
-                    }
-
-                    /**
-                     * Set scheduling interval.
-                     *
-                     * @param interval scheduling interval
-                     * @since 3.0.0
-                     */
-                    public void setInterval(Integer interval) {
-                        this.interval = interval;
+                    public boolean equals(Object other) {
+                        return other instanceof DailyTrigger o && Objects.equals(anchorTime, o.getAnchorTime());
                     }
 
                     /**
@@ -247,56 +266,636 @@ public interface SchedefValue extends NamedValue {
                      */
                     @Override
                     public String toString() {
-                        return "Daily{" + "dateTime=" + anchorTime + ", interval=" + interval + '}';
+                        return "DailyTrigger{anchorTime=" + anchorTime + '}';
                     }
-
                 }
             }
         }
 
+        /**
+         * Weekly schedule trigger configuration.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
         interface Weekly extends Trigger {
 
-            List<DayOfWeek> getWeekDays();
+            /**
+             * Get target weekDays of scheduling.
+             *
+             * @return target weekDays of scheduling
+             * @since 3.0.0
+             */
+            @NotNull(groups = {Default.class})
+            Set<@NotNull(groups = {Default.class}) DayOfWeek> getWeekDays();
 
+            /**
+             * Get anchor time of scheduling.
+             *
+             * @return anchor time of scheduling
+             * @since 3.0.0
+             */
+            @NotNull(groups = {Default.class})
+            @TimeRange(groups = {Default.class})
+            @TimeAccuracy(groups = {Default.class})
             OffsetDateTime getAnchorTime();
 
-            Integer getInterval();
+            /**
+             * Builder of the {@code Weekly}.
+             *
+             * @author riru
+             * @version 3.0.0
+             * @since 3.0.0
+             */
+            class Builder {
+
+                private Set<DayOfWeek> weekDays;
+                private OffsetDateTime anchorTime;
+
+                /**
+                 * Set target weekDays of scheduling.
+                 *
+                 * @param weekDays target weekDays of scheduling
+                 * @return updated this
+                 * @since 3.0.0
+                 */
+                public Builder withWeekDays(Set<DayOfWeek> weekDays) {
+                    this.weekDays = weekDays;
+                    return this;
+                }
+
+                /**
+                 * Set anchor time of scheduling.
+                 *
+                 * @param anchorTime anchor time of scheduling
+                 * @return updated this
+                 * @since 3.0.0
+                 */
+                public Builder withAnchorTime(OffsetDateTime anchorTime) {
+                    this.anchorTime = anchorTime;
+                    return this;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @throws NullPointerException if any argument is {@code null}
+                 * @throws ConstraintViolationException if occurred constraint violations when building
+                 * @since 3.0.0
+                 */
+                public Weekly build(Validator validator, Class<?>... groups) {
+                    return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                public Weekly unsafeBuild() {
+                    return new Builder.Bean(this);
+                }
+
+                /**
+                 * Implements of the {@code Weekly}.
+                 *
+                 * @author riru
+                 * @version 3.0.0
+                 * @since 3.0.0
+                 */
+                protected static class Bean implements Weekly {
+
+                    private Set<DayOfWeek> weekDays;
+                    private OffsetDateTime anchorTime;
+
+                    /**
+                     * Constructor. Used only for deserialization from JSON.
+                     *
+                     * @since 3.0.0
+                     */
+                    protected Bean() {
+                    }
+
+                    /**
+                     * Constructor.
+                     *
+                     * @param builder the {@code Builder}
+                     * @since 3.0.0
+                     */
+                    protected Bean(Builder builder) {
+                        this.weekDays = builder.weekDays;
+                        this.anchorTime = builder.anchorTime;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public SchedefKing getKind() {
+                        return SchedefKing.WEEKLY;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public Set<DayOfWeek> getWeekDays() {
+                        return weekDays;
+                    }
+
+                    /**
+                     * Set target weekDays of scheduling.
+                     *
+                     * @param weekDays target weekDays of scheduling
+                     * @since 3.0.0
+                     */
+                    public void setWeekDays(Set<DayOfWeek> weekDays) {
+                        this.weekDays = weekDays;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public OffsetDateTime getAnchorTime() {
+                        return anchorTime;
+                    }
+
+                    /**
+                     * Set anchor time of scheduling.
+                     *
+                     * @param anchorTime anchor time of scheduling
+                     * @since 3.0.0
+                     */
+                    public void setAnchorTime(OffsetDateTime anchorTime) {
+                        this.anchorTime = anchorTime;
+                    }
+
+                    /**
+                     * Returns a hash code value.
+                     *
+                     * @return a hash code value
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public int hashCode() {
+                        return Objects.hash(SchedefKing.WEEKLY, weekDays, anchorTime);
+                    }
+
+                    /**
+                     * Indicates that specified object is equal duration this one.
+                     *
+                     * @param other an any object
+                     * @return {@code true} if matches otherwise {@code false}.
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public boolean equals(Object other) {
+                        return other instanceof Weekly o && Objects.equals(weekDays, o.getWeekDays())
+                            && Objects.equals(anchorTime, o.getAnchorTime());
+                    }
+
+                    /**
+                     * Returns a string representation.
+                     *
+                     * @return a string representation
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public String toString() {
+                        return "Weekly{" + "weekDays=" + weekDays + "anchorTime=" + anchorTime + '}';
+                    }
+                }
+            }
         }
 
+        /**
+         * Monthly days schedule trigger configuration.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
         interface MonthlyDays extends Trigger {
 
-            List<Month> getMonths();
+            /**
+             * Get target months of scheduling.
+             *
+             * @return target months of scheduling
+             * @since 3.0.0
+             */
+            @NotNull(groups = {Default.class})
+            Set<@NotNull(groups = {Default.class}) Month> getMonths();
 
-            List<Integer> getDays();
+            /**
+             * Get target days of scheduling.
+             *
+             * @return target days of scheduling
+             * @since 3.0.0
+             */
+            Set<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
+            @Max(value = 31, groups = {Default.class}) Integer> getDays();
 
-            OffsetDateTime getAnchorTime();
+            /**
+             * Builder of the {@code MonthlyDays}.
+             *
+             * @author riru
+             * @version 3.0.0
+             * @since 3.0.0
+             */
+            class Builder {
+
+                private Set<Month> months;
+                private Set<Integer> days;
+                private OffsetDateTime anchorTime;
+
+                /**
+                 * Set target months of scheduling.
+                 *
+                 * @param months target weekDays of scheduling
+                 * @return updated this
+                 * @since 3.0.0
+                 */
+                public Builder withMonths(Set<Month> months) {
+                    this.months = months;
+                    return this;
+                }
+
+                /**
+                 * Set target days of scheduling.
+                 *
+                 * @param days target weekDays of scheduling
+                 * @return updated this
+                 * @since 3.0.0
+                 */
+                public Builder withDays(Set<Integer> days) {
+                    this.days = days;
+                    return this;
+                }
+
+                /**
+                 * Set anchor time of scheduling.
+                 *
+                 * @param anchorTime anchor time of scheduling
+                 * @return updated this
+                 * @since 3.0.0
+                 */
+                public Builder withAnchorTime(OffsetDateTime anchorTime) {
+                    this.anchorTime = anchorTime;
+                    return this;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @throws NullPointerException if any argument is {@code null}
+                 * @throws ConstraintViolationException if occurred constraint violations when building
+                 * @since 3.0.0
+                 */
+                public MonthlyDays build(Validator validator, Class<?>... groups) {
+                    return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                public MonthlyDays unsafeBuild() {
+                    return new Builder.Bean(this);
+                }
+
+                /**
+                 * Implements of the {@code MonthlyDays}.
+                 *
+                 * @author riru
+                 * @version 3.0.0
+                 * @since 3.0.0
+                 */
+                protected static class Bean implements MonthlyDays {
+
+                    private Set<Month> months;
+                    private Set<Integer> days;
+                    private OffsetDateTime anchorTime;
+
+                    /**
+                     * Constructor. Used only for deserialization from JSON.
+                     *
+                     * @since 3.0.0
+                     */
+                    protected Bean() {
+                    }
+
+                    /**
+                     * Constructor.
+                     *
+                     * @param builder the {@code Builder}
+                     * @since 3.0.0
+                     */
+                    protected Bean(Builder builder) {
+                        this.months = builder.months;
+                        this.days = builder.days;
+                        this.anchorTime = builder.anchorTime;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public SchedefKing getKind() {
+                        return SchedefKing.MONTHLY_DAYS;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public Set<Month> getMonths() {
+                        return months;
+                    }
+
+                    /**
+                     * Set target months of scheduling.
+                     *
+                     * @param months target weekDays of scheduling
+                     * @since 3.0.0
+                     */
+                    public void setMonths(Set<Month> months) {
+                        this.months = months;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public Set<Integer> getDays() {
+                        return days;
+                    }
+
+                    /**
+                     * Set target days of scheduling.
+                     *
+                     * @param days target weekDays of scheduling
+                     * @since 3.0.0
+                     */
+                    public void setDays(Set<Integer> days) {
+                        this.days = days;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public OffsetDateTime getAnchorTime() {
+                        return anchorTime;
+                    }
+
+                    /**
+                     * Set anchor time of scheduling.
+                     *
+                     * @param anchorTime anchor time of scheduling
+                     * @since 3.0.0
+                     */
+                    public void setAnchorTime(OffsetDateTime anchorTime) {
+                        this.anchorTime = anchorTime;
+                    }
+
+                    /**
+                     * Returns a hash code value.
+                     *
+                     * @return a hash code value
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public int hashCode() {
+                        return Objects.hash(SchedefKing.MONTHLY_DAYS, months, days, anchorTime);
+                    }
+
+                    /**
+                     * Indicates that specified object is equal duration this one.
+                     *
+                     * @param other an any object
+                     * @return {@code true} if matches otherwise {@code false}.
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public boolean equals(Object other) {
+                        return other instanceof MonthlyDays o && Objects.equals(months, o.getMonths())
+                            && Objects.equals(days, o.getDays()) && Objects.equals(anchorTime, o.getAnchorTime());
+                    }
+
+                    /**
+                     * Returns a string representation.
+                     *
+                     * @return a string representation
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public String toString() {
+                        return "MonthlyDays{" + "months=" + months + "days=" + days + "anchorTime=" + anchorTime + '}';
+                    }
+                }
+
+            }
         }
 
+        /**
+         * Monthly weekdays schedule trigger configuration.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
         interface MonthlyWeekDays extends Trigger {
 
-            List<Month> getMonths();
+            /**
+             * Get target months of scheduling.
+             *
+             * @return target months of scheduling
+             * @since 3.0.0
+             */
+            @NotNull(groups = {Default.class})
+            Set<@NotNull(groups = {Default.class}) Month> getMonths();
 
-            List<Integer> getWeeks();
+            /**
+             * Get target week numbers of scheduling.
+             *
+             * @return target months of scheduling
+             * @since 3.0.0
+             */
+            @NotNull(groups = {Default.class})
+            Set<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
+            @Max(value = 5, groups = {Default.class}) Integer> getWeeks();
 
-            List<DayOfWeek> getWeekDays();
+            Set<DayOfWeek> getWeekDays();
 
-            OffsetDateTime getAnchorTime();
         }
 
         interface Once extends Trigger {
 
-            OffsetDateTime getAnchorTime();
         }
 
         interface Cancel extends Trigger {
 
-            OffsetDateTime getFrom();
-
-            OffsetDateTime getTo();
+            Duration getDuration();
         }
 
         /**
-         * JSON deserializer for {@code FilteringOperation}.
+         * Abstract builder of the {@code Trigger}.
+         *
+         * @param <B> builder type
+         * @param <V> value type
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
+        abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends Trigger> {
+
+            protected final Class<B> builderType;
+            protected final SchedefKing kind;
+            protected OffsetDateTime anchorTime;
+
+            protected AbstractBuilder(Class<B> builderType, SchedefKing kind) {
+                this.builderType = Objects.requireNonNull(builderType);
+                this.kind = Objects.requireNonNull(kind);
+            }
+
+            /**
+             * Set all properties from {@code src}.
+             *
+             * @param src source value
+             * @return updated this
+             * @throws NullPointerException if {@code src} is {@code null}
+             * @since 3.0.0
+             */
+            public B with(V src) {
+                this.anchorTime = Objects.requireNonNull(src).getAnchorTime();
+                return builderType.cast(this);
+            }
+
+            /**
+             * Set anchor time of scheduling.
+             *
+             * @param anchorTime anchor time of scheduling
+             * @return updated this
+             * @since 3.0.0
+             */
+            public B withAnchorTime(OffsetDateTime anchorTime) {
+                this.anchorTime = anchorTime;
+                return builderType.cast(this);
+            }
+
+            /**
+             * Build a new inspected instance.
+             *
+             * @param validator the {@code Validator}
+             * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+             * @return new inspected instance
+             * @throws NullPointerException if any argument is {@code null}
+             * @throws ConstraintViolationException if occurred constraint violations when building
+             * @since 3.0.0
+             */
+            public abstract V build(Validator validator, Class<?>... groups);
+
+            /**
+             * Build a new instance. It instance may not meet that constraint. Use only if the original value is
+             * completely reliable.
+             *
+             * @return new unsafe instance
+             * @since 3.0.0
+             */
+            public abstract V unsafeBuild();
+
+            /**
+             * Abstract implements of the {@code Trigger}.
+             *
+             * @author riru
+             * @version 3.0.0
+             * @since 3.0.0
+             */
+            protected abstract static class AbstractBean implements Trigger {
+
+                protected SchedefKing kind;
+                protected OffsetDateTime anchorTime;
+
+                /**
+                 * Constructor. Used only for deserialization from JSON.
+                 *
+                 * @since 3.0.0
+                 */
+                protected AbstractBean() {
+                }
+
+                /**
+                 * Constructor.
+                 *
+                 * @param builder the {@code SchedefValue.AbstractBuilder}
+                 * @since 3.0.0
+                 */
+                protected AbstractBean(AbstractBuilder<?, ?> builder) {
+                    this.kind = builder.kind;
+                    this.anchorTime = builder.anchorTime;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public SchedefKing getKind() {
+                    return kind;
+                }
+
+                /**
+                 * Set schedule definition kind.
+                 *
+                 * @param kind schedule definition kind
+                 * @since 3.0.0
+                 */
+                public void setKind(SchedefKing kind) {
+                    this.kind = kind;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public OffsetDateTime getAnchorTime() {
+                    return anchorTime;
+                }
+
+                /**
+                 * Set anchor time of scheduling.
+                 *
+                 * @param anchorTime anchor time of scheduling
+                 * @since 3.0.0
+                 */
+                public void setAnchorTime(OffsetDateTime anchorTime) {
+                    this.anchorTime = anchorTime;
+                }
+            }
+        }
+
+        /**
+         * JSON deserializer for {@code Trigger}.
          *
          * @author riru
          * @version 3.0.0
@@ -317,23 +916,21 @@ public interface SchedefValue extends NamedValue {
                     case null ->
                         tmp;
                     case DAILY ->
-                        new Daily.Builder().withDateTime(tmp.getAnchorTime()).withInterval(tmp.getInterval()).unsafeBuild();
+                        new DailyTrigger.Builder().withAnchorTime(tmp.getAnchorTime()).unsafeBuild();
                     default ->
                         throw new UnsupportedOperationException();
                 };
             }
 
-            protected class Bean implements Daily, Weekly, MonthlyDays, MonthlyWeekDays, Once, Cancel {
+            protected class Bean implements DailyTrigger, Weekly, MonthlyDays, MonthlyWeekDays, Once, Cancel {
 
                 private SchedefKing kind;
-                private OffsetDateTime from;
-                private OffsetDateTime to;
-                private List<Month> months;
-                private List<Integer> weeks;
-                private List<DayOfWeek> weekDays;
-                private List<Integer> days;
+                private Duration duration;
+                private Set<Month> months;
+                private Set<Integer> weeks;
+                private Set<DayOfWeek> weekDays;
+                private Set<Integer> days;
                 private OffsetDateTime anchorTime;
-                private Integer interval;
 
                 @Override
                 public SchedefKing getKind() {
@@ -344,51 +941,43 @@ public interface SchedefValue extends NamedValue {
                     this.kind = kind;
                 }
 
-                public OffsetDateTime getFrom() {
-                    return from;
+                public Duration getDuration() {
+                    return duration;
                 }
 
-                public void setFrom(OffsetDateTime from) {
-                    this.from = from;
+                public void setDuration(Duration duration) {
+                    this.duration = duration;
                 }
 
-                public OffsetDateTime getTo() {
-                    return to;
-                }
-
-                public void setTo(OffsetDateTime to) {
-                    this.to = to;
-                }
-
-                public List<Month> getMonths() {
+                public Set<Month> getMonths() {
                     return months;
                 }
 
-                public void setMonths(List<Month> months) {
+                public void setMonths(Set<Month> months) {
                     this.months = months;
                 }
 
-                public List<Integer> getWeeks() {
+                public Set<Integer> getWeeks() {
                     return weeks;
                 }
 
-                public void setWeeks(List<Integer> weeks) {
+                public void setWeeks(Set<Integer> weeks) {
                     this.weeks = weeks;
                 }
 
-                public List<DayOfWeek> getWeekDays() {
+                public Set<DayOfWeek> getWeekDays() {
                     return weekDays;
                 }
 
-                public void setWeekDays(List<DayOfWeek> weekDays) {
+                public void setWeekDays(Set<DayOfWeek> weekDays) {
                     this.weekDays = weekDays;
                 }
 
-                public List<Integer> getDays() {
+                public Set<Integer> getDays() {
                     return days;
                 }
 
-                public void setDays(List<Integer> days) {
+                public void setDays(Set<Integer> days) {
                     this.days = days;
                 }
 
@@ -400,38 +989,22 @@ public interface SchedefValue extends NamedValue {
                 public void setAnchorTime(OffsetDateTime anchorTime) {
                     this.anchorTime = anchorTime;
                 }
-
-                @Override
-                public Integer getInterval() {
-                    return interval;
-                }
-
-                public void setInterval(Integer interval) {
-                    this.interval = interval;
-                }
             }
         }
     }
 
     /**
-     * Get schedule definition id.
+     * JSON deserializer for {@code SchedefValue}.
      *
-     * @return schedule definition id
+     * @author riru
+     * @version 3.0.0
      * @since 3.0.0
      */
-    @NotNull
-    @Size(min = 1, max = 36)
-    @Schema(description = "Schedule definition id.", example = "test")
-    String getId();
+    class Deserializer implements JsonbDeserializer<SchedefValue> {
 
-    /**
-     * Get schedule configuration.
-     *
-     * @return schedule configuration
-     * @since 3.0.0
-     */
-    @Schema(description = "Schedule configuration.", example
-        = "{\"type\": \"DAILY\", \"interval\": 1, \"dateTime\": \"2700-10-10T07:09:42Z\"}")
-    @NotNull(groups = {Default.class})
-    Trigger getTrigger();
+        @Override
+        public SchedefValue deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+    }
 }

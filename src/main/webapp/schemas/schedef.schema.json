@@ -41,15 +41,10 @@
                     "type": "string",
                     "enum": ["DAILY", "WEEKLY", "MONTHLY_DAYS", "MONTHLY_WEEKDAYS", "ONCE", "CANCEL"]
                 },
-                "from": {
-                    "description": "Begin time of scheduling period.",
+                "duration": {
+                    "description": "Schedule duration.",
                     "type": "string",
-                    "format": "date-time"
-                },
-                "to": {
-                    "description": "End time of scheduling period.",
-                    "type": "string",
-                    "format": "date-time"
+                    "format": "duration"
                 },
                 "months": {
                     "description": "Target month of scheduling.",
@@ -78,11 +73,6 @@
                     "description": "Anchor time of scheduling.",
                     "type": "string",
                     "format": "date-time"
-                },
-                "interval": {
-                    "description": "Repeat interval for scheduling.",
-                    "type": "integer",
-                    "minimum": 1
                 }
             },
             "required": [
@@ -97,9 +87,9 @@
                 }
             },
             "then": {
-                "required": ["anchorTime", "interval"],
+                "required": ["anchorTime"],
                 "not": {
-                    "required": ["from", "to", "months", "weeks", "weekDays", "days"]
+                    "required": ["duration", "months", "weeks", "weekDays", "days"]
                 }
             },
             "if": {
@@ -110,9 +100,9 @@
                 }
             },
             "then": {
-                "required": ["weekDays", "anchorTime", "interval"],
+                "required": ["weekDays", "anchorTime"],
                 "not": {
-                    "required": ["from", "to", "months", "weeks", "days"]
+                    "required": ["duration", "months", "weeks", "days"]
                 }
             },
             "if": {
@@ -125,9 +115,7 @@
             "then": {
                 "required": ["months", "days"],
                 "not": {
-                    "required": [
-                        "from", "to", "weeks", "weekDays", "anchorTime", "interval"
-                    ]
+                    "required": ["duration", "weeks", "weekDays", "anchorTime"]
                 }
             },
             "if": {
@@ -140,7 +128,7 @@
             "then": {
                 "required": ["months", "weeks", "weekDays", "anchorTime"],
                 "not": {
-                    "required": ["from", "to", "days", "interval"]
+                    "required": ["duration", "days"]
                 }
             },
             "if": {
@@ -153,17 +141,13 @@
             "then": {
                 "required": ["anchorTime"],
                 "not": {
-                    "required": [
-                        "from", "to", "months", "weeks", "weekDays", "days", "interval"
-                    ]
+                    "required": ["duration", "months", "weeks", "weekDays", "days"]
                 }
             },
             "else": {
-                "required": ["from", "to"],
+                "required": ["anchorTime", "duration"],
                 "not": {
-                    "required": [
-                        "months", "weeks", "weekDays", "days", "anchorTime", "interval"
-                    ]
+                    "required": ["months", "weeks", "weekDays", "days"]
                 }
             }
         },
