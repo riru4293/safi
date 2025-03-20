@@ -131,7 +131,7 @@ public interface SchedefValue extends NamedValue {
      */
     @JsonbTypeDeserializer(SchedefValue.Trigger.Deserializer.class)
     @Schema(name = "ScheduleTrigger", description = "Schedule trigger configuration.",
-        example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}")
+            example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}")
     interface Trigger {
 
         /**
@@ -243,7 +243,7 @@ public interface SchedefValue extends NamedValue {
                      */
                     @Override
                     public int hashCode() {
-                        return Objects.hash(kind, anchorTime);
+                        return Objects.hash(anchorTime);
                     }
 
                     /**
@@ -279,7 +279,7 @@ public interface SchedefValue extends NamedValue {
          * @version 3.0.0
          * @since 3.0.0
          */
-        interface Weekly extends Trigger {
+        interface WeeklyTrigger extends Trigger {
 
             /**
              * Get target weekDays of scheduling.
@@ -291,27 +291,36 @@ public interface SchedefValue extends NamedValue {
             Set<@NotNull(groups = {Default.class}) DayOfWeek> getWeekDays();
 
             /**
-             * Get anchor time of scheduling.
-             *
-             * @return anchor time of scheduling
-             * @since 3.0.0
-             */
-            @NotNull(groups = {Default.class})
-            @TimeRange(groups = {Default.class})
-            @TimeAccuracy(groups = {Default.class})
-            OffsetDateTime getAnchorTime();
-
-            /**
-             * Builder of the {@code Weekly}.
+             * Builder of the {@code WeeklyTrigger}.
              *
              * @author riru
              * @version 3.0.0
              * @since 3.0.0
              */
-            class Builder {
+            class Builder extends AbstractBuilder<Builder, WeeklyTrigger> {
 
                 private Set<DayOfWeek> weekDays;
-                private OffsetDateTime anchorTime;
+
+                /**
+                 * Constructor.
+                 *
+                 * @since 3.0.0
+                 */
+                public Builder() {
+                    super(Builder.class, SchedefKing.WEEKLY);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public Builder with(WeeklyTrigger src) {
+                    super.with(src);
+                    this.weekDays = src.getWeekDays();
+                    return this;
+                }
 
                 /**
                  * Set target weekDays of scheduling.
@@ -326,48 +335,42 @@ public interface SchedefValue extends NamedValue {
                 }
 
                 /**
-                 * Set anchor time of scheduling.
+                 * Build a new inspected instance.
                  *
-                 * @param anchorTime anchor time of scheduling
-                 * @return updated this
-                 * @since 3.0.0
-                 */
-                public Builder withAnchorTime(OffsetDateTime anchorTime) {
-                    this.anchorTime = anchorTime;
-                    return this;
-                }
-
-                /**
-                 * {@inheritDoc}
-                 *
+                 * @param validator the {@code Validator}
+                 * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+                 * @return new inspected instance
                  * @throws NullPointerException if any argument is {@code null}
                  * @throws ConstraintViolationException if occurred constraint violations when building
                  * @since 3.0.0
                  */
-                public Weekly build(Validator validator, Class<?>... groups) {
+                @Override
+                public WeeklyTrigger build(Validator validator, Class<?>... groups) {
                     return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
                 }
 
                 /**
-                 * {@inheritDoc}
+                 * Build a new instance. It instance may not meet that constraint. Use only if the original value is
+                 * completely reliable.
                  *
+                 * @return new unsafe instance
                  * @since 3.0.0
                  */
-                public Weekly unsafeBuild() {
+                @Override
+                public WeeklyTrigger unsafeBuild() {
                     return new Builder.Bean(this);
                 }
 
                 /**
-                 * Implements of the {@code Weekly}.
+                 * Implements of the {@code WeeklyTrigger}.
                  *
                  * @author riru
                  * @version 3.0.0
                  * @since 3.0.0
                  */
-                protected static class Bean implements Weekly {
+                protected static class Bean extends AbstractBuilder.AbstractBean implements WeeklyTrigger {
 
                     private Set<DayOfWeek> weekDays;
-                    private OffsetDateTime anchorTime;
 
                     /**
                      * Constructor. Used only for deserialization from JSON.
@@ -384,18 +387,8 @@ public interface SchedefValue extends NamedValue {
                      * @since 3.0.0
                      */
                     protected Bean(Builder builder) {
+                        super(builder);
                         this.weekDays = builder.weekDays;
-                        this.anchorTime = builder.anchorTime;
-                    }
-
-                    /**
-                     * {@inheritDoc}
-                     *
-                     * @since 3.0.0
-                     */
-                    @Override
-                    public SchedefKing getKind() {
-                        return SchedefKing.WEEKLY;
                     }
 
                     /**
@@ -419,26 +412,6 @@ public interface SchedefValue extends NamedValue {
                     }
 
                     /**
-                     * {@inheritDoc}
-                     *
-                     * @since 3.0.0
-                     */
-                    @Override
-                    public OffsetDateTime getAnchorTime() {
-                        return anchorTime;
-                    }
-
-                    /**
-                     * Set anchor time of scheduling.
-                     *
-                     * @param anchorTime anchor time of scheduling
-                     * @since 3.0.0
-                     */
-                    public void setAnchorTime(OffsetDateTime anchorTime) {
-                        this.anchorTime = anchorTime;
-                    }
-
-                    /**
                      * Returns a hash code value.
                      *
                      * @return a hash code value
@@ -446,7 +419,7 @@ public interface SchedefValue extends NamedValue {
                      */
                     @Override
                     public int hashCode() {
-                        return Objects.hash(SchedefKing.WEEKLY, weekDays, anchorTime);
+                        return Objects.hash(weekDays, anchorTime);
                     }
 
                     /**
@@ -458,7 +431,7 @@ public interface SchedefValue extends NamedValue {
                      */
                     @Override
                     public boolean equals(Object other) {
-                        return other instanceof Weekly o && Objects.equals(weekDays, o.getWeekDays())
+                        return other instanceof WeeklyTrigger o && Objects.equals(weekDays, o.getWeekDays())
                             && Objects.equals(anchorTime, o.getAnchorTime());
                     }
 
@@ -483,7 +456,7 @@ public interface SchedefValue extends NamedValue {
          * @version 3.0.0
          * @since 3.0.0
          */
-        interface MonthlyDays extends Trigger {
+        interface MonthlyDaysTrigger extends Trigger {
 
             /**
              * Get target months of scheduling.
@@ -504,17 +477,38 @@ public interface SchedefValue extends NamedValue {
             @Max(value = 31, groups = {Default.class}) Integer> getDays();
 
             /**
-             * Builder of the {@code MonthlyDays}.
+             * Builder of the {@code MonthlyDaysTrigger}.
              *
              * @author riru
              * @version 3.0.0
              * @since 3.0.0
              */
-            class Builder {
+            class Builder extends AbstractBuilder<Builder, MonthlyDaysTrigger> {
 
                 private Set<Month> months;
                 private Set<Integer> days;
-                private OffsetDateTime anchorTime;
+
+                /**
+                 * Constructor.
+                 *
+                 * @since 3.0.0
+                 */
+                public Builder() {
+                    super(Builder.class, SchedefKing.MONTHLY_DAYS);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public Builder with(MonthlyDaysTrigger src) {
+                    super.with(src);
+                    this.months = src.getMonths();
+                    this.days = src.getDays();
+                    return this;
+                }
 
                 /**
                  * Set target months of scheduling.
@@ -541,49 +535,43 @@ public interface SchedefValue extends NamedValue {
                 }
 
                 /**
-                 * Set anchor time of scheduling.
+                 * Build a new inspected instance.
                  *
-                 * @param anchorTime anchor time of scheduling
-                 * @return updated this
-                 * @since 3.0.0
-                 */
-                public Builder withAnchorTime(OffsetDateTime anchorTime) {
-                    this.anchorTime = anchorTime;
-                    return this;
-                }
-
-                /**
-                 * {@inheritDoc}
-                 *
+                 * @param validator the {@code Validator}
+                 * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+                 * @return new inspected instance
                  * @throws NullPointerException if any argument is {@code null}
                  * @throws ConstraintViolationException if occurred constraint violations when building
                  * @since 3.0.0
                  */
-                public MonthlyDays build(Validator validator, Class<?>... groups) {
+                @Override
+                public WeeklyTrigger build(Validator validator, Class<?>... groups) {
                     return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
                 }
 
                 /**
-                 * {@inheritDoc}
+                 * Build a new instance. It instance may not meet that constraint. Use only if the original value is
+                 * completely reliable.
                  *
+                 * @return new unsafe instance
                  * @since 3.0.0
                  */
-                public MonthlyDays unsafeBuild() {
+                @Override
+                public MonthlyDaysTrigger unsafeBuild() {
                     return new Builder.Bean(this);
                 }
 
                 /**
-                 * Implements of the {@code MonthlyDays}.
+                 * Implements of the {@code MonthlyDaysTrigger}.
                  *
                  * @author riru
                  * @version 3.0.0
                  * @since 3.0.0
                  */
-                protected static class Bean implements MonthlyDays {
+                protected static class Bean extends AbstractBuilder.AbstractBean implements MonthlyDaysTrigger {
 
                     private Set<Month> months;
                     private Set<Integer> days;
-                    private OffsetDateTime anchorTime;
 
                     /**
                      * Constructor. Used only for deserialization from JSON.
@@ -600,19 +588,9 @@ public interface SchedefValue extends NamedValue {
                      * @since 3.0.0
                      */
                     protected Bean(Builder builder) {
+                        super(builder);
                         this.months = builder.months;
                         this.days = builder.days;
-                        this.anchorTime = builder.anchorTime;
-                    }
-
-                    /**
-                     * {@inheritDoc}
-                     *
-                     * @since 3.0.0
-                     */
-                    @Override
-                    public SchedefKing getKind() {
-                        return SchedefKing.MONTHLY_DAYS;
                     }
 
                     /**
@@ -648,31 +626,11 @@ public interface SchedefValue extends NamedValue {
                     /**
                      * Set target days of scheduling.
                      *
-                     * @param days target weekDays of scheduling
+                     * @param days target days of scheduling
                      * @since 3.0.0
                      */
                     public void setDays(Set<Integer> days) {
                         this.days = days;
-                    }
-
-                    /**
-                     * {@inheritDoc}
-                     *
-                     * @since 3.0.0
-                     */
-                    @Override
-                    public OffsetDateTime getAnchorTime() {
-                        return anchorTime;
-                    }
-
-                    /**
-                     * Set anchor time of scheduling.
-                     *
-                     * @param anchorTime anchor time of scheduling
-                     * @since 3.0.0
-                     */
-                    public void setAnchorTime(OffsetDateTime anchorTime) {
-                        this.anchorTime = anchorTime;
                     }
 
                     /**
@@ -683,7 +641,7 @@ public interface SchedefValue extends NamedValue {
                      */
                     @Override
                     public int hashCode() {
-                        return Objects.hash(SchedefKing.MONTHLY_DAYS, months, days, anchorTime);
+                        return Objects.hash(months, days, anchorTime);
                     }
 
                     /**
@@ -695,7 +653,7 @@ public interface SchedefValue extends NamedValue {
                      */
                     @Override
                     public boolean equals(Object other) {
-                        return other instanceof MonthlyDays o && Objects.equals(months, o.getMonths())
+                        return other instanceof MonthlyDaysTrigger o && Objects.equals(months, o.getMonths())
                             && Objects.equals(days, o.getDays()) && Objects.equals(anchorTime, o.getAnchorTime());
                     }
 
@@ -707,10 +665,9 @@ public interface SchedefValue extends NamedValue {
                      */
                     @Override
                     public String toString() {
-                        return "MonthlyDays{" + "months=" + months + "days=" + days + "anchorTime=" + anchorTime + '}';
+                        return "MonthlyDaysTrigger{months=" + months + "days=" + days + "anchorTime=" + anchorTime + '}';
                     }
                 }
-
             }
         }
 
@@ -922,7 +879,8 @@ public interface SchedefValue extends NamedValue {
                 };
             }
 
-            protected class Bean implements DailyTrigger, Weekly, MonthlyDays, MonthlyWeekDays, Once, Cancel {
+            protected class Bean implements DailyTrigger, WeeklyTrigger, MonthlyDaysTrigger, MonthlyWeekDays, Once,
+                Cancel {
 
                 private SchedefKing kind;
                 private Duration duration;
