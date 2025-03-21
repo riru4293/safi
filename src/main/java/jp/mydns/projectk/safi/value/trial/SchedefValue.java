@@ -450,13 +450,13 @@ public interface SchedefValue extends NamedValue {
         }
 
         /**
-         * Monthly days schedule trigger configuration.
+         * Monthly schedule trigger configuration.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        interface MonthlyDaysTrigger extends Trigger {
+        interface MonthlyTrigger extends Trigger {
 
             /**
              * Get target months of scheduling.
@@ -466,6 +466,94 @@ public interface SchedefValue extends NamedValue {
              */
             @NotNull(groups = {Default.class})
             Set<@NotNull(groups = {Default.class}) Month> getMonths();
+
+            /**
+             * Abstract builder of the {@code MonthlyTrigger}.
+             *
+             * @param <B> builder type
+             * @param <V> value type
+             * @author riru
+             * @version 3.0.0
+             * @since 3.0.0
+             */
+            abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends MonthlyTrigger>
+                extends Trigger.AbstractBuilder<B, V> {
+
+                protected Set<Month> months;
+
+                protected AbstractBuilder(Class<B> builderType, SchedefKing kind) {
+                    super(builderType, kind);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @throws NullPointerException if {@code src} is {@code null}
+                 * @since 3.0.0
+                 */
+                @Override
+                public B with(V src) {
+                    super.with(src);
+                    this.months = src.getMonths();
+                    return builderType.cast(this);
+                }
+
+                /**
+                 * Set target months of scheduling.
+                 *
+                 * @param months target weekDays of scheduling
+                 * @return updated this
+                 * @since 3.0.0
+                 */
+                public B withMonths(Set<Month> months) {
+                    this.months = months;
+                    return builderType.cast(this);
+                }
+
+                protected abstract static class AbstractBean extends Trigger.AbstractBuilder.AbstractBean
+                    implements MonthlyTrigger {
+
+                    protected Set<Month> months;
+
+                    protected AbstractBean() {
+                    }
+
+                    protected AbstractBean(MonthlyTrigger.AbstractBuilder<?, ?> builder) {
+                        super(builder);
+                        this.months = builder.months;
+                    }
+
+                    /**
+                     * {@inheritDoc}
+                     *
+                     * @since 3.0.0
+                     */
+                    @Override
+                    public Set<Month> getMonths() {
+                        return months;
+                    }
+
+                    /**
+                     * Set target months of scheduling.
+                     *
+                     * @param months target weekDays of scheduling
+                     * @since 3.0.0
+                     */
+                    public void setMonths(Set<Month> months) {
+                        this.months = months;
+                    }
+                }
+            }
+        }
+
+        /**
+         * Monthly days schedule trigger configuration.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
+        interface MonthlyDaysTrigger extends MonthlyTrigger {
 
             /**
              * Get target days of scheduling.
@@ -545,7 +633,7 @@ public interface SchedefValue extends NamedValue {
                  * @since 3.0.0
                  */
                 @Override
-                public WeeklyTrigger build(Validator validator, Class<?>... groups) {
+                public MonthlyDaysTrigger build(Validator validator, Class<?>... groups) {
                     return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
                 }
 
@@ -678,16 +766,7 @@ public interface SchedefValue extends NamedValue {
          * @version 3.0.0
          * @since 3.0.0
          */
-        interface MonthlyWeekDays extends Trigger {
-
-            /**
-             * Get target months of scheduling.
-             *
-             * @return target months of scheduling
-             * @since 3.0.0
-             */
-            @NotNull(groups = {Default.class})
-            Set<@NotNull(groups = {Default.class}) Month> getMonths();
+        interface MonthlyWeekDays extends MonthlyTrigger {
 
             /**
              * Get target week numbers of scheduling.
