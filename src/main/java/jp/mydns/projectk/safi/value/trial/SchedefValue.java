@@ -133,7 +133,7 @@ public interface SchedefValue extends NamedValue {
     @Schema(name = "ScheduleTrigger", description = "Schedule trigger configuration.",
             example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}",
             oneOf = {Trigger.DailyTrigger.class, Trigger.WeeklyTrigger.class, Trigger.MonthlyDaysTrigger.class,
-                Trigger.MonthlyWeekDaysTrigger.class, Trigger.Once.class, Trigger.Cancel.class})
+                Trigger.MonthlyWeekDaysTrigger.class, Trigger.OnceTrigger.class, Trigger.CancelTrigger.class})
     interface Trigger {
 
         /**
@@ -756,11 +756,11 @@ public interface SchedefValue extends NamedValue {
             }
         }
 
-        interface Once extends Trigger {
+        interface OnceTrigger extends Trigger {
 
         }
 
-        interface Cancel extends Trigger {
+        interface CancelTrigger extends Trigger {
 
             Duration getDuration();
         }
@@ -933,8 +933,7 @@ public interface SchedefValue extends NamedValue {
             }
 
             protected class Bean implements DailyTrigger, WeeklyTrigger, MonthlyDaysTrigger, MonthlyWeekDaysTrigger,
-                Once,
-                Cancel {
+                OnceTrigger, CancelTrigger {
 
                 private SchedefKing kind;
                 private Duration duration;
@@ -953,6 +952,7 @@ public interface SchedefValue extends NamedValue {
                     this.kind = kind;
                 }
 
+                @Override
                 public Duration getDuration() {
                     return duration;
                 }
@@ -961,6 +961,7 @@ public interface SchedefValue extends NamedValue {
                     this.duration = duration;
                 }
 
+                @Override
                 public Set<Month> getMonths() {
                     return months;
                 }
@@ -969,6 +970,7 @@ public interface SchedefValue extends NamedValue {
                     this.months = months;
                 }
 
+                @Override
                 public Set<Integer> getWeeks() {
                     return weeks;
                 }
@@ -977,6 +979,7 @@ public interface SchedefValue extends NamedValue {
                     this.weeks = weeks;
                 }
 
+                @Override
                 public Set<DayOfWeek> getWeekDays() {
                     return weekDays;
                 }
@@ -985,6 +988,7 @@ public interface SchedefValue extends NamedValue {
                     this.weekDays = weekDays;
                 }
 
+                @Override
                 public Set<Integer> getDays() {
                     return days;
                 }
