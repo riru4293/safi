@@ -131,7 +131,9 @@ public interface SchedefValue extends NamedValue {
      */
     @JsonbTypeDeserializer(SchedefValue.Trigger.Deserializer.class)
     @Schema(name = "ScheduleTrigger", description = "Schedule trigger configuration.",
-            example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}")
+            example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}",
+            oneOf = {Trigger.DailyTrigger.class, Trigger.WeeklyTrigger.class, Trigger.MonthlyDaysTrigger.class,
+                Trigger.MonthlyWeekDaysTrigger.class, Trigger.Once.class, Trigger.Cancel.class})
     interface Trigger {
 
         /**
@@ -182,11 +184,8 @@ public interface SchedefValue extends NamedValue {
                 }
 
                 /**
-                 * Build a new inspected instance.
+                 * {@inheritDoc}
                  *
-                 * @param validator the {@code Validator}
-                 * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-                 * @return new inspected instance
                  * @throws NullPointerException if any argument is {@code null}
                  * @throws ConstraintViolationException if occurred constraint violations when building
                  * @since 3.0.0
@@ -197,10 +196,8 @@ public interface SchedefValue extends NamedValue {
                 }
 
                 /**
-                 * Build a new instance. It instance may not meet that constraint. Use only if the original value is
-                 * completely reliable.
+                 * {@inheritDoc}
                  *
-                 * @return new unsafe instance
                  * @since 3.0.0
                  */
                 @Override
@@ -208,62 +205,25 @@ public interface SchedefValue extends NamedValue {
                     return new Builder.Bean(this);
                 }
 
-                /**
-                 * Implements of the {@code DailyTrigger}.
-                 *
-                 * @author riru
-                 * @version 3.0.0
-                 * @since 3.0.0
-                 */
                 protected static class Bean extends AbstractBuilder.AbstractBean implements DailyTrigger {
 
-                    /**
-                     * Constructor. Used only for deserialization from JSON.
-                     *
-                     * @since 3.0.0
-                     */
                     protected Bean() {
                     }
 
-                    /**
-                     * Constructor.
-                     *
-                     * @param builder the {@code Builder}
-                     * @since 3.0.0
-                     */
                     protected Bean(Builder builder) {
                         super(builder);
                     }
 
-                    /**
-                     * Returns a hash code value.
-                     *
-                     * @return a hash code value
-                     * @since 3.0.0
-                     */
                     @Override
                     public int hashCode() {
                         return Objects.hash(anchorTime);
                     }
 
-                    /**
-                     * Indicates that specified object is equal duration this one.
-                     *
-                     * @param other an any object
-                     * @return {@code true} if matches otherwise {@code false}.
-                     * @since 3.0.0
-                     */
                     @Override
                     public boolean equals(Object other) {
                         return other instanceof DailyTrigger o && Objects.equals(anchorTime, o.getAnchorTime());
                     }
 
-                    /**
-                     * Returns a string representation.
-                     *
-                     * @return a string representation
-                     * @since 3.0.0
-                     */
                     @Override
                     public String toString() {
                         return "DailyTrigger{anchorTime=" + anchorTime + '}';
@@ -335,11 +295,8 @@ public interface SchedefValue extends NamedValue {
                 }
 
                 /**
-                 * Build a new inspected instance.
+                 * {@inheritDoc}
                  *
-                 * @param validator the {@code Validator}
-                 * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-                 * @return new inspected instance
                  * @throws NullPointerException if any argument is {@code null}
                  * @throws ConstraintViolationException if occurred constraint violations when building
                  * @since 3.0.0
@@ -350,10 +307,8 @@ public interface SchedefValue extends NamedValue {
                 }
 
                 /**
-                 * Build a new instance. It instance may not meet that constraint. Use only if the original value is
-                 * completely reliable.
+                 * {@inheritDoc}
                  *
-                 * @return new unsafe instance
                  * @since 3.0.0
                  */
                 @Override
@@ -361,89 +316,41 @@ public interface SchedefValue extends NamedValue {
                     return new Builder.Bean(this);
                 }
 
-                /**
-                 * Implements of the {@code WeeklyTrigger}.
-                 *
-                 * @author riru
-                 * @version 3.0.0
-                 * @since 3.0.0
-                 */
                 protected static class Bean extends AbstractBuilder.AbstractBean implements WeeklyTrigger {
 
                     private Set<DayOfWeek> weekDays;
 
-                    /**
-                     * Constructor. Used only for deserialization from JSON.
-                     *
-                     * @since 3.0.0
-                     */
                     protected Bean() {
                     }
 
-                    /**
-                     * Constructor.
-                     *
-                     * @param builder the {@code Builder}
-                     * @since 3.0.0
-                     */
                     protected Bean(Builder builder) {
                         super(builder);
                         this.weekDays = builder.weekDays;
                     }
 
-                    /**
-                     * {@inheritDoc}
-                     *
-                     * @since 3.0.0
-                     */
                     @Override
                     public Set<DayOfWeek> getWeekDays() {
                         return weekDays;
                     }
 
-                    /**
-                     * Set target weekDays of scheduling.
-                     *
-                     * @param weekDays target weekDays of scheduling
-                     * @since 3.0.0
-                     */
                     public void setWeekDays(Set<DayOfWeek> weekDays) {
                         this.weekDays = weekDays;
                     }
 
-                    /**
-                     * Returns a hash code value.
-                     *
-                     * @return a hash code value
-                     * @since 3.0.0
-                     */
                     @Override
                     public int hashCode() {
                         return Objects.hash(weekDays, anchorTime);
                     }
 
-                    /**
-                     * Indicates that specified object is equal duration this one.
-                     *
-                     * @param other an any object
-                     * @return {@code true} if matches otherwise {@code false}.
-                     * @since 3.0.0
-                     */
                     @Override
                     public boolean equals(Object other) {
                         return other instanceof WeeklyTrigger o && Objects.equals(weekDays, o.getWeekDays())
                             && Objects.equals(anchorTime, o.getAnchorTime());
                     }
 
-                    /**
-                     * Returns a string representation.
-                     *
-                     * @return a string representation
-                     * @since 3.0.0
-                     */
                     @Override
                     public String toString() {
-                        return "Weekly{" + "weekDays=" + weekDays + "anchorTime=" + anchorTime + '}';
+                        return "WeeklyTrigger{" + "weekDays=" + weekDays + "anchorTime=" + anchorTime + '}';
                     }
                 }
             }
@@ -523,22 +430,11 @@ public interface SchedefValue extends NamedValue {
                         this.months = builder.months;
                     }
 
-                    /**
-                     * {@inheritDoc}
-                     *
-                     * @since 3.0.0
-                     */
                     @Override
                     public Set<Month> getMonths() {
                         return months;
                     }
 
-                    /**
-                     * Set target months of scheduling.
-                     *
-                     * @param months target weekDays of scheduling
-                     * @since 3.0.0
-                     */
                     public void setMonths(Set<Month> months) {
                         this.months = months;
                     }
@@ -573,7 +469,6 @@ public interface SchedefValue extends NamedValue {
              */
             class Builder extends AbstractBuilder<Builder, MonthlyDaysTrigger> {
 
-                private Set<Month> months;
                 private Set<Integer> days;
 
                 /**
@@ -593,20 +488,7 @@ public interface SchedefValue extends NamedValue {
                 @Override
                 public Builder with(MonthlyDaysTrigger src) {
                     super.with(src);
-                    this.months = src.getMonths();
                     this.days = src.getDays();
-                    return this;
-                }
-
-                /**
-                 * Set target months of scheduling.
-                 *
-                 * @param months target weekDays of scheduling
-                 * @return updated this
-                 * @since 3.0.0
-                 */
-                public Builder withMonths(Set<Month> months) {
-                    this.months = months;
                     return this;
                 }
 
@@ -623,11 +505,8 @@ public interface SchedefValue extends NamedValue {
                 }
 
                 /**
-                 * Build a new inspected instance.
+                 * {@inheritDoc}
                  *
-                 * @param validator the {@code Validator}
-                 * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-                 * @return new inspected instance
                  * @throws NullPointerException if any argument is {@code null}
                  * @throws ConstraintViolationException if occurred constraint violations when building
                  * @since 3.0.0
@@ -638,10 +517,8 @@ public interface SchedefValue extends NamedValue {
                 }
 
                 /**
-                 * Build a new instance. It instance may not meet that constraint. Use only if the original value is
-                 * completely reliable.
+                 * {@inheritDoc}
                  *
-                 * @return new unsafe instance
                  * @since 3.0.0
                  */
                 @Override
@@ -649,56 +526,16 @@ public interface SchedefValue extends NamedValue {
                     return new Builder.Bean(this);
                 }
 
-                /**
-                 * Implements of the {@code MonthlyDaysTrigger}.
-                 *
-                 * @author riru
-                 * @version 3.0.0
-                 * @since 3.0.0
-                 */
                 protected static class Bean extends AbstractBuilder.AbstractBean implements MonthlyDaysTrigger {
 
-                    private Set<Month> months;
                     private Set<Integer> days;
 
-                    /**
-                     * Constructor. Used only for deserialization from JSON.
-                     *
-                     * @since 3.0.0
-                     */
                     protected Bean() {
                     }
 
-                    /**
-                     * Constructor.
-                     *
-                     * @param builder the {@code Builder}
-                     * @since 3.0.0
-                     */
                     protected Bean(Builder builder) {
                         super(builder);
-                        this.months = builder.months;
                         this.days = builder.days;
-                    }
-
-                    /**
-                     * {@inheritDoc}
-                     *
-                     * @since 3.0.0
-                     */
-                    @Override
-                    public Set<Month> getMonths() {
-                        return months;
-                    }
-
-                    /**
-                     * Set target months of scheduling.
-                     *
-                     * @param months target weekDays of scheduling
-                     * @since 3.0.0
-                     */
-                    public void setMonths(Set<Month> months) {
-                        this.months = months;
                     }
 
                     /**
@@ -766,20 +603,157 @@ public interface SchedefValue extends NamedValue {
          * @version 3.0.0
          * @since 3.0.0
          */
-        interface MonthlyWeekDays extends MonthlyTrigger {
+        interface MonthlyWeekDaysTrigger extends MonthlyTrigger {
 
             /**
              * Get target week numbers of scheduling.
              *
-             * @return target months of scheduling
+             * @return target week days of scheduling
              * @since 3.0.0
              */
             @NotNull(groups = {Default.class})
             Set<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
             @Max(value = 5, groups = {Default.class}) Integer> getWeeks();
 
+            /**
+             * Get target week days of scheduling.
+             *
+             * @return target week days of scheduling
+             * @since 3.0.0
+             */
             Set<DayOfWeek> getWeekDays();
 
+            /**
+             * Builder of the {@code MonthlyWeekDaysTrigger}.
+             *
+             * @author riru
+             * @version 3.0.0
+             * @since 3.0.0
+             */
+            class Builder extends AbstractBuilder<Builder, MonthlyWeekDaysTrigger> {
+
+                private Set<Integer> weeks;
+                private Set<DayOfWeek> weekDays;
+
+                /**
+                 * Constructor.
+                 *
+                 * @since 3.0.0
+                 */
+                public Builder() {
+                    super(Builder.class, SchedefKing.MONTHLY_WEEKDAYS);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public Builder with(MonthlyWeekDaysTrigger src) {
+                    super.with(src);
+                    this.weeks = src.getWeeks();
+                    this.weekDays = src.getWeekDays();
+                    return this;
+                }
+
+                /**
+                 * Set target weeks of scheduling.
+                 *
+                 * @param weeks target weeks of scheduling
+                 * @return updated this
+                 * @since 3.0.0
+                 */
+                public Builder withWeeks(Set<Integer> weeks) {
+                    this.weeks = weeks;
+                    return this;
+                }
+
+                /**
+                 * Set target week days of scheduling.
+                 *
+                 * @param weekDays target week days of scheduling
+                 * @return updated this
+                 * @since 3.0.0
+                 */
+                public Builder withWeekDays(Set<DayOfWeek> weekDays) {
+                    this.weekDays = weekDays;
+                    return this;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @throws NullPointerException if any argument is {@code null}
+                 * @throws ConstraintViolationException if occurred constraint violations when building
+                 * @since 3.0.0
+                 */
+                @Override
+                public MonthlyWeekDaysTrigger build(Validator validator, Class<?>... groups) {
+                    return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public MonthlyWeekDaysTrigger unsafeBuild() {
+                    return new Builder.Bean(this);
+                }
+
+                protected static class Bean extends AbstractBuilder.AbstractBean implements MonthlyWeekDaysTrigger {
+
+                    private Set<Integer> weeks;
+                    private Set<DayOfWeek> weekDays;
+
+                    protected Bean() {
+                    }
+
+                    protected Bean(Builder builder) {
+                        super(builder);
+                        this.weeks = builder.weeks;
+                        this.weekDays = builder.weekDays;
+                    }
+
+                    @Override
+                    public Set<Integer> getWeeks() {
+                        return weeks;
+                    }
+
+                    public void setWeeks(Set<Integer> weeks) {
+                        this.weeks = weeks;
+                    }
+
+                    @Override
+                    public Set<DayOfWeek> getWeekDays() {
+                        return weekDays;
+                    }
+
+                    public void setWeekDays(Set<DayOfWeek> weekDays) {
+                        this.weekDays = weekDays;
+                    }
+
+                    @Override
+                    public int hashCode() {
+                        return Objects.hash(months, weeks, weekDays, anchorTime);
+                    }
+
+                    @Override
+                    public boolean equals(Object other) {
+                        return other instanceof MonthlyWeekDaysTrigger o && Objects.equals(months, o.getMonths())
+                            && Objects.equals(weeks, o.getWeeks()) && Objects.equals(weekDays, o.getWeekDays())
+                            && Objects.equals(anchorTime, o.getAnchorTime());
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "MonthlyWeekDaysTrigger{months=" + months + "weeks=" + weeks + "weekDays=" + weekDays
+                            + "anchorTime=" + anchorTime + '}';
+                    }
+                }
+            }
         }
 
         interface Once extends Trigger {
@@ -958,7 +932,8 @@ public interface SchedefValue extends NamedValue {
                 };
             }
 
-            protected class Bean implements DailyTrigger, WeeklyTrigger, MonthlyDaysTrigger, MonthlyWeekDays, Once,
+            protected class Bean implements DailyTrigger, WeeklyTrigger, MonthlyDaysTrigger, MonthlyWeekDaysTrigger,
+                Once,
                 Cancel {
 
                 private SchedefKing kind;
