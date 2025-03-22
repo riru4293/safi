@@ -79,7 +79,7 @@ public class SchedefEntity extends NamedEntity {
     /**
      * Set job schedule definition id.
      *
-     * @param id job schedule definition id. Cannot update persisted value.
+     * @param id job schedule definition id. Cannot update persisted config.
      * @since 3.0.0
      */
     public void setId(String id) {
@@ -131,9 +131,9 @@ public class SchedefEntity extends NamedEntity {
     }
 
     /**
-     * Returns a hash code value.
+     * Returns a hash code config.
      *
-     * @return a hash code value. It is generated from the primary key value.
+     * @return a hash code config. It is generated from the primary key config.
      * @since 3.0.0
      */
     @Override
