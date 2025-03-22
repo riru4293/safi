@@ -1,0 +1,93 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://project-k.mydns.jp/safi/schemas/schedule-trigger.schema.json",
+    "title": "ScheduleTrigger",
+    "description": "Schedule trigger configuration.",
+    "type": "object",
+    "properties": {
+        "kind": {
+            "description": "Schedule trigger kind.",
+            "type": "string",
+            "enum": ["DAYS", "WEEKDAYS", "ONCE", "CANCEL"]
+        },
+        "months": {
+            "description": "Target months of scheduling. The empty means all.",
+            "type": "string",
+            "enum": ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER",
+                "OCTOBER", "NOVEMBER", "DECEMBER"]
+        },
+        "weeks": {
+            "description": "Target week numbers of scheduling. The empty means all. If it exceeds the maximum, it is treated as the maximum.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+        },
+        "weekdays": {
+            "description": "Target weekdays of scheduling. The empty means all.",
+            "type": "string",
+            "enum": ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]
+        },
+        "days": {
+            "description": "Target days of scheduling. The empty means all. If it exceeds the maximum, it is treated as the maximum.",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+        },
+        "anchorTime": {
+            "description": "Anchor time of scheduling.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "duration": {
+            "description": "Schedule duration.",
+            "type": "string",
+            "format": "duration"
+        }
+    },
+    "required": ["kind", "anchorTime"],
+    "if": {
+        "properties": {
+            "type": {
+                "const": "DAYS"
+            }
+        }
+    },
+    "then": {
+        "required": ["months", "weeks", "days", "anchorTime"],
+        "not": {
+            "required": ["duration", "weekdays"]
+        }
+    },
+    "if": {
+        "properties": {
+            "type": {
+                "const": "WEEKDAYS"
+            }
+        }
+    },
+    "then": {
+        "required": ["months", "weeks", "weekdays", "anchorTime"],
+        "not": {
+            "required": ["duration", "days"]
+        }
+    },
+    "if": {
+        "properties": {
+            "type": {
+                "const": "ONCE"
+            }
+        }
+    },
+    "then": {
+        "required": ["anchorTime"],
+        "not": {
+            "required": ["duration", "months", "weeks", "weekdays", "days"]
+        }
+    },
+    "else": {
+        "required": ["anchorTime", "duration"],
+        "not": {
+            "required": ["months", "weeks", "weekdays", "days"]
+        }
+    }
+}
