@@ -98,8 +98,6 @@
         "jobKind",
         "jobTarget",
         "timeout",
-        "trnsdef",
-        "filtdef",
         "jobProperties",
         "version"
     ]

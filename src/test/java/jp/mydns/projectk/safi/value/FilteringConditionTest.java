@@ -150,23 +150,6 @@ class FilteringConditionTest {
     }
 
     /**
-     * Test of empty method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testEmpty() {
-        var val = FilteringCondition.empty();
-
-        assertThat(val).isInstanceOf(FilteringCondition.Multi.class)
-            .returns(FilteringOperation.Multi.AND, FilteringCondition::getOperation)
-            .returns(true, FilteringCondition::isMulti)
-            .hasToString("FilteringCondition.Empty{}")
-            .asInstanceOf(InstanceOfAssertFactories.type(FilteringCondition.Multi.class))
-            .extracting(FilteringCondition.Multi::getChildren).asInstanceOf(InstanceOfAssertFactories.LIST).isEmpty();
-    }
-
-    /**
      * Test of deserialize method, of class Deserializer.
      *
      * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
@@ -187,39 +170,6 @@ class FilteringConditionTest {
         var result = jsonb.fromJson(serialized, JsonObject.class);
 
         assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of deserialize method if empty JSON, of class Deserializer.
-     *
-     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
-     * @since 3.0.0
-     */
-    @Test
-    void testDeserializeIfEmptyJson(Jsonb jsonb) {
-        JsonObject expect = Json.createObjectBuilder().add("operation", "AND")
-            .add("children", JsonValue.EMPTY_JSON_ARRAY).build();
-
-        var deserialized = jsonb.fromJson("{}", FilteringCondition.class);
-
-        var serialized = jsonb.toJson(deserialized);
-
-        var result = jsonb.fromJson(serialized, JsonObject.class);
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of deserialize method if null, of class Deserializer.
-     *
-     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
-     * @since 3.0.0
-     */
-    @Test
-    void testDeserializeIfNull(Jsonb jsonb) {
-        var deserialized = jsonb.fromJson("null", FilteringCondition.class);
-
-        assertThat(deserialized).isNull();
     }
 
     /**

@@ -62,7 +62,8 @@ class JobdefValueTest {
     @Test
     void testBuild(Validator validator) {
         var vp = new ValidityPeriodValue.Builder().build(validator);
-        var filtdef = new FiltdefValue.Builder().build(validator);
+        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of())
+            .withFilter(FilteringCondition.singleOf(FilteringOperation.Single.IS_NULL, "n", "v")).build(validator);
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
 
@@ -85,8 +86,8 @@ class JobdefValueTest {
             .returns(Duration.ZERO, JobdefValue::getTimeout)
             .satisfies(v -> assertThat(v.getName()).hasValue("jobdef-name"))
             .satisfies(v -> assertThat(v.getPluginName()).hasValue("plg"))
-            .satisfies(v -> assertThat(v.getTrnsdef()).isEmpty())
-            .returns(filtdef, JobdefValue::getFiltdef)
+            .satisfies(v -> assertThat(v.getTrnsdef()).hasValue(Map.of()))
+            .satisfies(v -> assertThat(v.getFiltdef()).hasValue(filtdef))
             .returns(JsonValue.EMPTY_JSON_OBJECT, JobdefValue::getJobProperties)
             .satisfies(v -> assertThat(v.getNote()).hasValue("note"))
             .returns(3, JobdefValue::getVersion)
@@ -151,7 +152,8 @@ class JobdefValueTest {
             + ", trnsdef=%s, filtdef=%s, jobProperties=%s, version=%s}";
 
         var vp = new ValidityPeriodValue.Builder().build(validator);
-        var filtdef = new FiltdefValue.Builder().build(validator);
+        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of())
+            .withFilter(FilteringCondition.singleOf(FilteringOperation.Single.IS_NULL, "n", "v")).build(validator);
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
 

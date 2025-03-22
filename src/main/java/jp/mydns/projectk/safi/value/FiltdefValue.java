@@ -93,8 +93,8 @@ public interface FiltdefValue {
      */
     class Builder {
 
-        private Map<String, String> trnsdef = Map.of();
-        private FilteringCondition condition = FilteringCondition.empty();
+        private Map<String, String> trnsdef;
+        private FilteringCondition condition;
 
         /**
          * Set transform definition for filtering.

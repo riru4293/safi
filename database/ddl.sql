@@ -72,8 +72,8 @@ CREATE TABLE           `m_jobdef` (
   , `timeout`             VARCHAR(     20) NOT NULL                                    COMMENT 'Job processing timeout.'
   , `name`                VARCHAR(    250)          COLLATE utf8mb4_unicode_ci         COMMENT 'Job definition name'
   , `plugin`              VARCHAR(     50)          COLLATE utf8mb4_unicode_ci         COMMENT 'Plugin name'
-  , `trnsdef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Content transform definition'
-  , `filtdef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Content filtering definition'
+  , `trnsdef`                JSON                                                      COMMENT 'Content transform definition'
+  , `filtdef`                JSON                                                      COMMENT 'Content filtering definition'
   , `job_props`              JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Option values for job processing.'
 -- ---------------------+--------+--------+--------+-----------------------------------
   , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
