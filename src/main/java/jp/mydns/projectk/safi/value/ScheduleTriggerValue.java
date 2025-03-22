@@ -189,18 +189,10 @@ public interface ScheduleTriggerValue {
                 return new Builder.Bean(this);
             }
 
-            protected static class Bean extends AbstractBuilder.AbstractBean implements DaysTriggerValue {
+            private class Bean extends AbstractBuilder.AbstractBean implements DaysTriggerValue {
 
                 private Set<Month> months;
                 private Set<Integer> days;
-
-                /**
-                 * Constructor. Used only for deserialization from JSON.
-                 *
-                 * @since 3.0.0
-                 */
-                protected Bean() {
-                }
 
                 private Bean(Builder builder) {
                     super(builder);
@@ -208,52 +200,24 @@ public interface ScheduleTriggerValue {
                     this.days = builder.days;
                 }
 
-                /**
-                 * {@inheritDoc}
-                 *
-                 * @since 3.0.0
-                 */
                 @Override
                 public Set<Month> getMonths() {
                     return months;
                 }
 
-                /**
-                 * Set target months of scheduling. The empty means all.
-                 *
-                 * @param months target months of scheduling
-                 * @since 3.0.0
-                 */
                 public void setMonths(Set<Month> months) {
                     this.months = months;
                 }
 
-                /**
-                 * {@inheritDoc}
-                 *
-                 * @since 3.0.0
-                 */
                 @Override
                 public Set<Integer> getDays() {
                     return days;
                 }
 
-                /**
-                 * Set target day numbers of scheduling. The empty means all.
-                 *
-                 * @param days target day numbers of scheduling
-                 * @since 3.0.0
-                 */
                 public void setDays(Set<Integer> days) {
                     this.days = days;
                 }
 
-                /**
-                 * Returns a string representation.
-                 *
-                 * @return a string representation
-                 * @since 3.0.0
-                 */
                 @Override
                 public String toString() {
                     return String.format("DaysTriggerValue{months=%s, days=%s, anchorTime=%s}",
@@ -387,19 +351,11 @@ public interface ScheduleTriggerValue {
                 return new Builder.Bean(this);
             }
 
-            protected static class Bean extends AbstractBuilder.AbstractBean implements WeekdaysTriggerValue {
+            private class Bean extends AbstractBuilder.AbstractBean implements WeekdaysTriggerValue {
 
                 private Set<Month> months;
                 private Set<Integer> weeks;
                 private Set<DayOfWeek> weekdays;
-
-                /**
-                 * Constructor. Used only for deserialization from JSON.
-                 *
-                 * @since 3.0.0
-                 */
-                protected Bean() {
-                }
 
                 private Bean(Builder builder) {
                     super(builder);
@@ -521,26 +477,12 @@ public interface ScheduleTriggerValue {
                 return new Builder.Bean(this);
             }
 
-            protected static class Bean extends AbstractBuilder.AbstractBean implements OnceTriggerValue {
-
-                /**
-                 * Constructor. Used only for deserialization from JSON.
-                 *
-                 * @since 3.0.0
-                 */
-                protected Bean() {
-                }
+            private class Bean extends AbstractBuilder.AbstractBean implements OnceTriggerValue {
 
                 private Bean(Builder builder) {
                     super(builder);
                 }
 
-                /**
-                 * Returns a string representation.
-                 *
-                 * @return a string representation
-                 * @since 3.0.0
-                 */
                 @Override
                 public String toString() {
                     return String.format("OnceTriggerValue{anchorTime=%s}", anchorTime);
@@ -623,50 +565,24 @@ public interface ScheduleTriggerValue {
                 return new Builder.Bean(this);
             }
 
-            protected static class Bean extends AbstractBuilder.AbstractBean implements CancelTriggerValue {
+            private class Bean extends AbstractBuilder.AbstractBean implements CancelTriggerValue {
 
                 private Duration duration;
-
-                /**
-                 * Constructor. Used only for deserialization from JSON.
-                 *
-                 * @since 3.0.0
-                 */
-                protected Bean() {
-                }
 
                 private Bean(Builder builder) {
                     super(builder);
                     this.duration = builder.duration;
                 }
 
-                /**
-                 * Get schedule canceling duration.
-                 *
-                 * @return schedule canceling duration
-                 * @since 3.0.0
-                 */
                 @Override
                 public Duration getDuration() {
                     return duration;
                 }
 
-                /**
-                 * Set schedule canceling duration.
-                 *
-                 * @param duration schedule canceling duration
-                 * @since 3.0.0
-                 */
                 public void setDuration(Duration duration) {
                     this.duration = duration;
                 }
 
-                /**
-                 * Returns a string representation.
-                 *
-                 * @return a string representation
-                 * @since 3.0.0
-                 */
                 @Override
                 public String toString() {
                     return String.format("CancelTriggerValue{anchorTime=%s, duration=%s}", anchorTime, duration);
@@ -758,18 +674,10 @@ public interface ScheduleTriggerValue {
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected abstract static class AbstractBean implements ScheduleTriggerValue {
+        protected abstract class AbstractBean implements ScheduleTriggerValue {
 
             protected ScheduleTriggerKing kind;
             protected OffsetDateTime anchorTime;
-
-            /**
-             * Constructor. Used only for deserialization from JSON.
-             *
-             * @since 3.0.0
-             */
-            protected AbstractBean() {
-            }
 
             /**
              * Constructor.
