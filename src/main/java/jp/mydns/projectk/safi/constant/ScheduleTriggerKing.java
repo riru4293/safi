@@ -26,37 +26,25 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * Kind of the <i>Schedule definition</i>.
+ * Kind of the <i>Schedule trigger configuration</i>.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public enum SchedefKing {
+public enum ScheduleTriggerKing {
     /**
-     * Scheduling definition to execute at a specified time and on specified days.
+     * Scheduling definition to execute on a specified days in specified months.
      *
      * @since 3.0.0
      */
-    DAILY,
+    DAYS,
     /**
-     * Scheduling definition to execute on a specified day of the week and at a specified interval weeks.
+     * Scheduling definition to execute on a specified weekdays in specified months and weeks.
      *
      * @since 3.0.0
      */
-    WEEKLY,
-    /**
-     * Scheduling definition to execute on a specified day in a specified month.
-     *
-     * @since 3.0.0
-     */
-    MONTHLY_DAYS,
-    /**
-     * Scheduling definition to execute on a specified day of the week in a specified month.
-     *
-     * @since 3.0.0
-     */
-    MONTHLY_WEEKDAYS,
+    WEEKDAYS,
     /**
      * Scheduling definition to execute only once at a specified date and time.
      *

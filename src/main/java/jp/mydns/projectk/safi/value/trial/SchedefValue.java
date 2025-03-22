@@ -45,7 +45,7 @@ import java.time.Month;
 import java.time.OffsetDateTime;
 import java.util.Set;
 import java.util.Objects;
-import jp.mydns.projectk.safi.constant.SchedefKing;
+import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
@@ -139,11 +139,11 @@ public interface SchedefValue extends NamedValue {
         /**
          * Get schedule definition kind.
          *
-         * @return the {@code SchedefKing}
+         * @return the {@code ScheduleTriggerKing}
          * @since 3.0.0
          */
         @NotNull(groups = {Default.class})
-        SchedefKing getKind();
+        ScheduleTriggerKing getKind();
 
         /**
          * Get anchor time of scheduling.
@@ -180,7 +180,7 @@ public interface SchedefValue extends NamedValue {
                  * @since 3.0.0
                  */
                 public Builder() {
-                    super(Builder.class, SchedefKing.DAILY);
+                    super(Builder.class, ScheduleTriggerKing.DAILY);
                 }
 
                 /**
@@ -267,7 +267,7 @@ public interface SchedefValue extends NamedValue {
                  * @since 3.0.0
                  */
                 public Builder() {
-                    super(Builder.class, SchedefKing.WEEKLY);
+                    super(Builder.class, ScheduleTriggerKing.WEEKLY);
                 }
 
                 /**
@@ -388,7 +388,7 @@ public interface SchedefValue extends NamedValue {
 
                 protected Set<Month> months;
 
-                protected AbstractBuilder(Class<B> builderType, SchedefKing kind) {
+                protected AbstractBuilder(Class<B> builderType, ScheduleTriggerKing kind) {
                     super(builderType, kind);
                 }
 
@@ -477,7 +477,7 @@ public interface SchedefValue extends NamedValue {
                  * @since 3.0.0
                  */
                 public Builder() {
-                    super(Builder.class, SchedefKing.MONTHLY_DAYS);
+                    super(Builder.class, ScheduleTriggerKing.MONTHLY_DAYS);
                 }
 
                 /**
@@ -642,7 +642,7 @@ public interface SchedefValue extends NamedValue {
                  * @since 3.0.0
                  */
                 public Builder() {
-                    super(Builder.class, SchedefKing.MONTHLY_WEEKDAYS);
+                    super(Builder.class, ScheduleTriggerKing.MONTHLY_WEEKDAYS);
                 }
 
                 /**
@@ -778,10 +778,10 @@ public interface SchedefValue extends NamedValue {
         abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends Trigger> {
 
             protected final Class<B> builderType;
-            protected final SchedefKing kind;
+            protected final ScheduleTriggerKing kind;
             protected OffsetDateTime anchorTime;
 
-            protected AbstractBuilder(Class<B> builderType, SchedefKing kind) {
+            protected AbstractBuilder(Class<B> builderType, ScheduleTriggerKing kind) {
                 this.builderType = Objects.requireNonNull(builderType);
                 this.kind = Objects.requireNonNull(kind);
             }
@@ -841,7 +841,7 @@ public interface SchedefValue extends NamedValue {
              */
             protected abstract static class AbstractBean implements Trigger {
 
-                protected SchedefKing kind;
+                protected ScheduleTriggerKing kind;
                 protected OffsetDateTime anchorTime;
 
                 /**
@@ -869,7 +869,7 @@ public interface SchedefValue extends NamedValue {
                  * @since 3.0.0
                  */
                 @Override
-                public SchedefKing getKind() {
+                public ScheduleTriggerKing getKind() {
                     return kind;
                 }
 
@@ -879,7 +879,7 @@ public interface SchedefValue extends NamedValue {
                  * @param kind schedule definition kind
                  * @since 3.0.0
                  */
-                public void setKind(SchedefKing kind) {
+                public void setKind(ScheduleTriggerKing kind) {
                     this.kind = kind;
                 }
 
@@ -936,7 +936,7 @@ public interface SchedefValue extends NamedValue {
             protected class Bean implements DailyTrigger, WeeklyTrigger, MonthlyDaysTrigger, MonthlyWeekDaysTrigger,
                 OnceTrigger, CancelTrigger {
 
-                private SchedefKing kind;
+                private ScheduleTriggerKing kind;
                 private Duration duration;
                 private Set<Month> months;
                 private Set<Integer> weeks;
@@ -945,11 +945,11 @@ public interface SchedefValue extends NamedValue {
                 private OffsetDateTime anchorTime;
 
                 @Override
-                public SchedefKing getKind() {
+                public ScheduleTriggerKing getKind() {
                     return kind;
                 }
 
-                public void setKind(SchedefKing kind) {
+                public void setKind(ScheduleTriggerKing kind) {
                     this.kind = kind;
                 }
 
