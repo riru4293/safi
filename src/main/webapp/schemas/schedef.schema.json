@@ -37,34 +37,29 @@
             "type": "object",
             "properties": {
                 "kind": {
-                    "description": "Schedule definition kind.",
+                    "description": "Schedule trigger kind.",
                     "type": "string",
                     "enum": ["DAYS", "WEEKDAYS", "ONCE", "CANCEL"]
                 },
-                "duration": {
-                    "description": "Schedule duration.",
-                    "type": "string",
-                    "format": "duration"
-                },
                 "months": {
-                    "description": "Target month of scheduling.",
-                    "type": "integer",
-                    "minimum": 1,
-                    "maximum": 12
+                    "description": "Target months of scheduling. The empty means all.",
+                    "type": "string",
+                    "enum": ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER",
+                        "OCTOBER", "NOVEMBER", "DECEMBER"]
                 },
                 "weeks": {
-                    "description": "Target weeks of scheduling.",
+                    "description": "Target week numbers of scheduling. The empty means all. If it exceeds the maximum, it is treated as the maximum.",
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 5
                 },
-                "weekDays": {
-                    "description": "Target weekDays of scheduling.",
+                "weekdays": {
+                    "description": "Target weekdays of scheduling. The empty means all.",
                     "type": "string",
                     "enum": ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]
                 },
                 "days": {
-                    "description": "Target days of scheduling.",
+                    "description": "Target days of scheduling. The empty means all. If it exceeds the maximum, it is treated as the maximum.",
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 31
@@ -73,12 +68,14 @@
                     "description": "Anchor time of scheduling.",
                     "type": "string",
                     "format": "date-time"
+                },
+                "duration": {
+                    "description": "Schedule duration.",
+                    "type": "string",
+                    "format": "duration"
                 }
             },
-            "required": [
-                "type"
-            ],
-
+            "required": ["kind", "anchorTime"],
             "if": {
                 "properties": {
                     "type": {
