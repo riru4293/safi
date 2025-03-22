@@ -79,51 +79,25 @@
             "if": {
                 "properties": {
                     "type": {
-                        "const": "DAILY"
+                        "const": "DAYS"
                     }
                 }
             },
             "then": {
-                "required": ["anchorTime"],
+                "required": ["months", "weeks", "days", "anchorTime"],
                 "not": {
-                    "required": ["duration", "months", "weeks", "weekDays", "days"]
+                    "required": ["duration", "weekdays"]
                 }
             },
             "if": {
                 "properties": {
                     "type": {
-                        "const": "WEEKLY"
+                        "const": "WEEKDAYS"
                     }
                 }
             },
             "then": {
-                "required": ["weekDays", "anchorTime"],
-                "not": {
-                    "required": ["duration", "months", "weeks", "days"]
-                }
-            },
-            "if": {
-                "properties": {
-                    "type": {
-                        "const": "MONTHLY_DAYS"
-                    }
-                }
-            },
-            "then": {
-                "required": ["months", "days"],
-                "not": {
-                    "required": ["duration", "weeks", "weekDays", "anchorTime"]
-                }
-            },
-            "if": {
-                "properties": {
-                    "type": {
-                        "const": "MONTHLY_WEEKDAYS"
-                    }
-                }
-            },
-            "then": {
-                "required": ["months", "weeks", "weekDays", "anchorTime"],
+                "required": ["months", "weeks", "weekdays", "anchorTime"],
                 "not": {
                     "required": ["duration", "days"]
                 }
@@ -138,13 +112,13 @@
             "then": {
                 "required": ["anchorTime"],
                 "not": {
-                    "required": ["duration", "months", "weeks", "weekDays", "days"]
+                    "required": ["duration", "months", "weeks", "weekdays", "days"]
                 }
             },
             "else": {
                 "required": ["anchorTime", "duration"],
                 "not": {
-                    "required": ["months", "weeks", "weekDays", "days"]
+                    "required": ["months", "weeks", "weekdays", "days"]
                 }
             }
         },
