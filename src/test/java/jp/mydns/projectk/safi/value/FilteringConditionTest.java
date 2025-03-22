@@ -27,7 +27,6 @@ package jp.mydns.projectk.safi.value;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import java.util.List;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
