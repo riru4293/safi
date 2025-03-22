@@ -226,7 +226,7 @@ public interface SchedefValue extends NamedValue {
 
                     @Override
                     public String toString() {
-                        return "DailyTrigger{anchorTime=" + anchorTime + '}';
+                        return String.format("DailyTrigger{anchorTime=%s}", anchorTime);
                     }
                 }
             }
@@ -350,7 +350,7 @@ public interface SchedefValue extends NamedValue {
 
                     @Override
                     public String toString() {
-                        return "WeeklyTrigger{" + "weekDays=" + weekDays + "anchorTime=" + anchorTime + '}';
+                        return String.format("WeeklyTrigger{weekDays=%s, anchorTime=%s}", weekDays, anchorTime);
                     }
                 }
             }
@@ -590,7 +590,8 @@ public interface SchedefValue extends NamedValue {
                      */
                     @Override
                     public String toString() {
-                        return "MonthlyDaysTrigger{months=" + months + "days=" + days + "anchorTime=" + anchorTime + '}';
+                        return String.format("MonthlyDaysTrigger{months=%s, days=%s, anchorTime=%s}",
+                            months, days, anchorTime);
                     }
                 }
             }
