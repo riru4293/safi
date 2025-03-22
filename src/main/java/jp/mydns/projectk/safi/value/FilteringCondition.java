@@ -282,7 +282,14 @@ public interface FilteringCondition {
                 : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue());
         }
 
-        private static class SingleBean implements Single {
+        /**
+         * Implements of the {@code FilteringCondition.Single}.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
+        protected static class SingleBean implements Single {
 
             private final FilteringOperation operation;
             private final String name;
@@ -294,26 +301,53 @@ public interface FilteringCondition {
                 this.value = value;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
             @Override
             public FilteringOperation getOperation() {
                 return operation;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
             @Override
             public String getName() {
                 return name;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
             @Override
             public String getValue() {
                 return value;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@code false}
+             * @since 3.0.0
+             */
             @Override
             public boolean isMulti() {
                 return false;
             }
 
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 3.0.0
+             */
             @Override
             public String toString() {
                 return "FilteringCondition.Single{" + "operation=" + operation + ", name=" + name + ", value=" + value
@@ -321,7 +355,14 @@ public interface FilteringCondition {
             }
         }
 
-        private static class MultiBean implements Multi {
+        /**
+         * Implements of the {@code FilteringCondition.Multi}.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
+        protected static class MultiBean implements Multi {
 
             private final FilteringOperation operation;
             private final List<FilteringCondition> children;
@@ -331,21 +372,43 @@ public interface FilteringCondition {
                 this.children = children;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
             @Override
             public FilteringOperation getOperation() {
                 return operation;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
             @Override
             public List<FilteringCondition> getChildren() {
                 return children;
             }
 
+            /**
+             * {@inheritDoc}
+             *
+             * @return {@code true}
+             * @since 3.0.0
+             */
             @Override
             public boolean isMulti() {
                 return true;
             }
 
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 3.0.0
+             */
             @Override
             public String toString() {
                 return "FilteringCondition.Multi{" + "operation=" + operation + ", children=" + children + '}';
