@@ -443,16 +443,6 @@ public interface JobValue extends PersistableValue {
          * @since 3.0.0
          */
         @Override
-        public JobValue build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
         public JobValue unsafeBuild() {
             return new Bean(this);
         }
@@ -489,13 +479,7 @@ public interface JobValue extends PersistableValue {
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code JobdefValue.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(Builder builder) {
+            private Bean(Builder builder) {
                 super(builder);
 
                 this.id = builder.id;

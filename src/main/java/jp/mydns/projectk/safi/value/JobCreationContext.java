@@ -291,13 +291,7 @@ public interface JobCreationContext {
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code JobdefValue.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(Builder builder) {
+            private Bean(Builder builder) {
                 this.jobdefId = builder.jobdefId;
                 this.scheduleTime = builder.scheduleTime;
                 this.timeout = builder.timeout;

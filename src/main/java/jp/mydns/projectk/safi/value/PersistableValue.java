@@ -34,6 +34,7 @@ import jakarta.validation.groups.Default;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -286,7 +287,9 @@ public interface PersistableValue {
          * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public abstract V build(Validator validator, Class<?>... groups);
+        public V build(Validator validator, Class<?>... groups) {
+            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+        }
 
         /**
          * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely

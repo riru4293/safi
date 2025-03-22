@@ -274,13 +274,7 @@ public interface ValidityPeriodValue {
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code ValidityPeriodValue.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(Builder builder) {
+            private Bean(Builder builder) {
                 this.from = builder.from;
                 this.to = builder.to;
                 this.ignored = builder.ignored;

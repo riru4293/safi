@@ -334,16 +334,6 @@ The key is the property name after transformation, and the value is the transfor
          * @since 3.0.0
          */
         @Override
-        public JobdefValue build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
         public JobdefValue unsafeBuild() {
             return new Bean(this);
         }
@@ -374,13 +364,7 @@ The key is the property name after transformation, and the value is the transfor
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code JobdefValue.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(Builder builder) {
+            private Bean(Builder builder) {
                 super(builder);
 
                 this.id = builder.id;

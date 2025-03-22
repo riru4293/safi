@@ -31,12 +31,10 @@ import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.DayOfWeek;
@@ -49,7 +47,6 @@ import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.NamedValue;
 
 /**
  * <i>Job</i> schedule trigger configuration.
@@ -70,11 +67,12 @@ import jp.mydns.projectk.safi.value.NamedValue;
 @JsonbTypeDeserializer(ScheduleTriggerValue.Deserializer.class)
 @Schema(name = "SchedduleTrigger", description = "Job schedule trigger configuration.",
         example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}",
-        oneOf = {DaysTrigger.class, WeekdaysTrigger.class, OnceTrigger.class, CancelTrigger.class})
+        oneOf = {ScheduleTriggerValue.DaysTriggerValue.class, ScheduleTriggerValue.WeekdaysTriggerValue.class,
+            ScheduleTriggerValue.OnceTriggerValue.class, ScheduleTriggerValue.CancelTriggerValue.class})
 public interface ScheduleTriggerValue {
 
     /**
-     * Get schedule definition kind.
+     * Get schedule trigger configuration kind.
      *
      * @return the {@code ScheduleTriggerKing}
      * @since 3.0.0
@@ -94,213 +92,13 @@ public interface ScheduleTriggerValue {
     OffsetDateTime getAnchorTime();
 
     /**
-     * Daily schedule trigger configuration.
+     * Days schedule trigger configuration.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    interface DailyTrigger extends Trigger {
-
-        /**
-         * Builder of the {@code DailyTrigger}.
-         *
-         * @author riru
-         * @version 3.0.0
-         * @since 3.0.0
-         */
-        class Builder extends AbstractBuilder<Builder, DailyTrigger> {
-
-            /**
-             * Constructor.
-             *
-             * @since 3.0.0
-             */
-            public Builder() {
-                super(Builder.class, ScheduleTriggerKing.DAILY);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @throws NullPointerException if any argument is {@code null}
-             * @throws ConstraintViolationException if occurred constraint violations when building
-             * @since 3.0.0
-             */
-            @Override
-            public DailyTrigger build(Validator validator, Class<?>... groups) {
-                return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public DailyTrigger unsafeBuild() {
-                return new Builder.Bean(this);
-            }
-
-            protected static class Bean extends AbstractBuilder.AbstractBean implements DailyTrigger {
-
-                protected Bean() {
-                }
-
-                protected Bean(Builder builder) {
-                    super(builder);
-                }
-
-                @Override
-                public int hashCode() {
-                    return Objects.hash(anchorTime);
-                }
-
-                @Override
-                public boolean equals(Object other) {
-                    return other instanceof DailyTrigger o && Objects.equals(anchorTime, o.getAnchorTime());
-                }
-
-                @Override
-                public String toString() {
-                    return String.format("DailyTrigger{anchorTime=%s}", anchorTime);
-                }
-            }
-        }
-    }
-
-    /**
-     * Weekly schedule trigger configuration.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    interface WeeklyTrigger extends Trigger {
-
-        /**
-         * Get target weekDays of scheduling.
-         *
-         * @return target weekDays of scheduling
-         * @since 3.0.0
-         */
-        @NotNull(groups = {Default.class})
-        Set<@NotNull(groups = {Default.class}) DayOfWeek> getWeekDays();
-
-        /**
-         * Builder of the {@code WeeklyTrigger}.
-         *
-         * @author riru
-         * @version 3.0.0
-         * @since 3.0.0
-         */
-        class Builder extends AbstractBuilder<Builder, WeeklyTrigger> {
-
-            private Set<DayOfWeek> weekDays;
-
-            /**
-             * Constructor.
-             *
-             * @since 3.0.0
-             */
-            public Builder() {
-                super(Builder.class, ScheduleTriggerKing.WEEKLY);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public Builder with(WeeklyTrigger src) {
-                super.with(src);
-                this.weekDays = src.getWeekDays();
-                return this;
-            }
-
-            /**
-             * Set target weekDays of scheduling.
-             *
-             * @param weekDays target weekDays of scheduling
-             * @return updated this
-             * @since 3.0.0
-             */
-            public Builder withWeekDays(Set<DayOfWeek> weekDays) {
-                this.weekDays = weekDays;
-                return this;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @throws NullPointerException if any argument is {@code null}
-             * @throws ConstraintViolationException if occurred constraint violations when building
-             * @since 3.0.0
-             */
-            @Override
-            public WeeklyTrigger build(Validator validator, Class<?>... groups) {
-                return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public WeeklyTrigger unsafeBuild() {
-                return new Builder.Bean(this);
-            }
-
-            protected static class Bean extends AbstractBuilder.AbstractBean implements WeeklyTrigger {
-
-                private Set<DayOfWeek> weekDays;
-
-                protected Bean() {
-                }
-
-                protected Bean(Builder builder) {
-                    super(builder);
-                    this.weekDays = builder.weekDays;
-                }
-
-                @Override
-                public Set<DayOfWeek> getWeekDays() {
-                    return weekDays;
-                }
-
-                public void setWeekDays(Set<DayOfWeek> weekDays) {
-                    this.weekDays = weekDays;
-                }
-
-                @Override
-                public int hashCode() {
-                    return Objects.hash(weekDays, anchorTime);
-                }
-
-                @Override
-                public boolean equals(Object other) {
-                    return other instanceof WeeklyTrigger o && Objects.equals(weekDays, o.getWeekDays())
-                        && Objects.equals(anchorTime, o.getAnchorTime());
-                }
-
-                @Override
-                public String toString() {
-                    return String.format("WeeklyTrigger{weekDays=%s, anchorTime=%s}", weekDays, anchorTime);
-                }
-            }
-        }
-    }
-
-    /**
-     * Monthly schedule trigger configuration.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    interface MonthlyTrigger extends Trigger {
+    interface DaysTriggerValue extends ScheduleTriggerValue {
 
         /**
          * Get target months of scheduling.
@@ -312,83 +110,6 @@ public interface ScheduleTriggerValue {
         Set<@NotNull(groups = {Default.class}) Month> getMonths();
 
         /**
-         * Abstract builder of the {@code MonthlyTrigger}.
-         *
-         * @param <B> builder type
-         * @param <V> value type
-         * @author riru
-         * @version 3.0.0
-         * @since 3.0.0
-         */
-        abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends MonthlyTrigger>
-            extends Trigger.AbstractBuilder<B, V> {
-
-            protected Set<Month> months;
-
-            protected AbstractBuilder(Class<B> builderType, ScheduleTriggerKing kind) {
-                super(builderType, kind);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @throws NullPointerException if {@code src} is {@code null}
-             * @since 3.0.0
-             */
-            @Override
-            public B with(V src) {
-                super.with(src);
-                this.months = src.getMonths();
-                return builderType.cast(this);
-            }
-
-            /**
-             * Set target months of scheduling.
-             *
-             * @param months target weekDays of scheduling
-             * @return updated this
-             * @since 3.0.0
-             */
-            public B withMonths(Set<Month> months) {
-                this.months = months;
-                return builderType.cast(this);
-            }
-
-            protected abstract static class AbstractBean extends Trigger.AbstractBuilder.AbstractBean
-                implements MonthlyTrigger {
-
-                protected Set<Month> months;
-
-                protected AbstractBean() {
-                }
-
-                protected AbstractBean(MonthlyTrigger.AbstractBuilder<?, ?> builder) {
-                    super(builder);
-                    this.months = builder.months;
-                }
-
-                @Override
-                public Set<Month> getMonths() {
-                    return months;
-                }
-
-                public void setMonths(Set<Month> months) {
-                    this.months = months;
-                }
-            }
-        }
-    }
-
-    /**
-     * Monthly days schedule trigger configuration.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    interface MonthlyDaysTrigger extends MonthlyTrigger {
-
-        /**
          * Get target days of scheduling.
          *
          * @return target days of scheduling
@@ -398,14 +119,15 @@ public interface ScheduleTriggerValue {
         @Max(value = 31, groups = {Default.class}) Integer> getDays();
 
         /**
-         * Builder of the {@code MonthlyDaysTrigger}.
+         * Builder of the {@code DaysTriggerValue}.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        class Builder extends AbstractBuilder<Builder, MonthlyDaysTrigger> {
+        class Builder extends AbstractBuilder<Builder, DaysTriggerValue> {
 
+            private Set<Month> months;
             private Set<Integer> days;
 
             /**
@@ -414,25 +136,41 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             public Builder() {
-                super(Builder.class, ScheduleTriggerKing.MONTHLY_DAYS);
+                super(Builder.class, ScheduleTriggerKing.DAYS);
             }
 
             /**
-             * {@inheritDoc}
+             * Set all properties from {@code src}.
              *
+             * @param src source value
+             * @return updated this
+             * @throws NullPointerException if {@code src} is {@code null}
              * @since 3.0.0
              */
             @Override
-            public Builder with(MonthlyDaysTrigger src) {
-                super.with(src);
+            public Builder with(DaysTriggerValue src) {
+                Objects.requireNonNull(src);
+                this.months = src.getMonths();
                 this.days = src.getDays();
                 return this;
             }
 
             /**
-             * Set target days of scheduling.
+             * Set target months of scheduling.
              *
-             * @param days target weekDays of scheduling
+             * @param months target months of scheduling
+             * @return updated this
+             * @since 3.0.0
+             */
+            public Builder withMonths(Set<Month> months) {
+                this.months = months;
+                return this;
+            }
+
+            /**
+             * Set target day numbers of scheduling.
+             *
+             * @param days target day numbers of scheduling
              * @return updated this
              * @since 3.0.0
              */
@@ -444,35 +182,50 @@ public interface ScheduleTriggerValue {
             /**
              * {@inheritDoc}
              *
-             * @throws NullPointerException if any argument is {@code null}
-             * @throws ConstraintViolationException if occurred constraint violations when building
              * @since 3.0.0
              */
             @Override
-            public MonthlyDaysTrigger build(Validator validator, Class<?>... groups) {
-                return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public MonthlyDaysTrigger unsafeBuild() {
+            public DaysTriggerValue unsafeBuild() {
                 return new Builder.Bean(this);
             }
 
-            protected static class Bean extends AbstractBuilder.AbstractBean implements MonthlyDaysTrigger {
+            protected static class Bean extends AbstractBuilder.AbstractBean implements DaysTriggerValue {
 
+                private Set<Month> months;
                 private Set<Integer> days;
 
+                /**
+                 * Constructor. Used only for deserialization from JSON.
+                 *
+                 * @since 3.0.0
+                 */
                 protected Bean() {
                 }
 
-                protected Bean(Builder builder) {
+                private Bean(Builder builder) {
                     super(builder);
+                    this.months = builder.months;
                     this.days = builder.days;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public Set<Month> getMonths() {
+                    return months;
+                }
+
+                /**
+                 * Set target months of scheduling. The empty means all.
+                 *
+                 * @param months target months of scheduling
+                 * @since 3.0.0
+                 */
+                public void setMonths(Set<Month> months) {
+                    this.months = months;
                 }
 
                 /**
@@ -486,37 +239,13 @@ public interface ScheduleTriggerValue {
                 }
 
                 /**
-                 * Set target days of scheduling.
+                 * Set target day numbers of scheduling. The empty means all.
                  *
-                 * @param days target days of scheduling
+                 * @param days target day numbers of scheduling
                  * @since 3.0.0
                  */
                 public void setDays(Set<Integer> days) {
                     this.days = days;
-                }
-
-                /**
-                 * Returns a hash code value.
-                 *
-                 * @return a hash code value
-                 * @since 3.0.0
-                 */
-                @Override
-                public int hashCode() {
-                    return Objects.hash(months, days, anchorTime);
-                }
-
-                /**
-                 * Indicates that specified object is equal duration this one.
-                 *
-                 * @param other an any object
-                 * @return {@code true} if matches otherwise {@code false}.
-                 * @since 3.0.0
-                 */
-                @Override
-                public boolean equals(Object other) {
-                    return other instanceof MonthlyDaysTrigger o && Objects.equals(months, o.getMonths())
-                        && Objects.equals(days, o.getDays()) && Objects.equals(anchorTime, o.getAnchorTime());
                 }
 
                 /**
@@ -527,7 +256,7 @@ public interface ScheduleTriggerValue {
                  */
                 @Override
                 public String toString() {
-                    return String.format("MonthlyDaysTrigger{months=%s, days=%s, anchorTime=%s}",
+                    return String.format("DaysTriggerValue{months=%s, days=%s, anchorTime=%s}",
                         months, days, anchorTime);
                 }
             }
@@ -535,18 +264,27 @@ public interface ScheduleTriggerValue {
     }
 
     /**
-     * Monthly weekdays schedule trigger configuration.
+     * Weekdays schedule trigger configuration.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    interface MonthlyWeekDaysTrigger extends MonthlyTrigger {
+    interface WeekdaysTriggerValue extends ScheduleTriggerValue {
+
+        /**
+         * Get target months of scheduling.
+         *
+         * @return target months of scheduling
+         * @since 3.0.0
+         */
+        @NotNull(groups = {Default.class})
+        Set<@NotNull(groups = {Default.class}) Month> getMonths();
 
         /**
          * Get target week numbers of scheduling.
          *
-         * @return target week days of scheduling
+         * @return target week numbers of scheduling
          * @since 3.0.0
          */
         @NotNull(groups = {Default.class})
@@ -554,24 +292,26 @@ public interface ScheduleTriggerValue {
         @Max(value = 5, groups = {Default.class}) Integer> getWeeks();
 
         /**
-         * Get target week days of scheduling.
+         * Get target weekdays of scheduling.
          *
-         * @return target week days of scheduling
+         * @return target weekdays of scheduling
          * @since 3.0.0
          */
-        Set<DayOfWeek> getWeekDays();
+        @NotNull(groups = {Default.class})
+        Set<@NotNull(groups = {Default.class}) DayOfWeek> getWeekdays();
 
         /**
-         * Builder of the {@code MonthlyWeekDaysTrigger}.
+         * Builder of the {@code WeekdaysTriggerValue}.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        class Builder extends AbstractBuilder<Builder, MonthlyWeekDaysTrigger> {
+        class Builder extends AbstractBuilder<Builder, WeekdaysTriggerValue> {
 
+            private Set<Month> months;
             private Set<Integer> weeks;
-            private Set<DayOfWeek> weekDays;
+            private Set<DayOfWeek> weekdays;
 
             /**
              * Constructor.
@@ -579,26 +319,44 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             public Builder() {
-                super(Builder.class, ScheduleTriggerKing.MONTHLY_WEEKDAYS);
+                super(Builder.class, ScheduleTriggerKing.WEEKDAYS);
             }
 
             /**
-             * {@inheritDoc}
+             * Set all properties from {@code src}.
              *
+             * @param src source value
+             * @return updated this
+             * @throws NullPointerException if {@code src} is {@code null}
              * @since 3.0.0
              */
             @Override
-            public Builder with(MonthlyWeekDaysTrigger src) {
-                super.with(src);
+            public Builder with(WeekdaysTriggerValue src) {
+                Objects.requireNonNull(src);
+
+                this.months = src.getMonths();
                 this.weeks = src.getWeeks();
-                this.weekDays = src.getWeekDays();
+                this.weekdays = src.getWeekdays();
+
                 return this;
             }
 
             /**
-             * Set target weeks of scheduling.
+             * Set target months of scheduling.
              *
-             * @param weeks target weeks of scheduling
+             * @param months target months of scheduling
+             * @return updated this
+             * @since 3.0.0
+             */
+            public Builder withMonths(Set<Month> months) {
+                this.months = months;
+                return this;
+            }
+
+            /**
+             * Set target week numbers of scheduling.
+             *
+             * @param weeks target week numbers of scheduling
              * @return updated this
              * @since 3.0.0
              */
@@ -608,27 +366,149 @@ public interface ScheduleTriggerValue {
             }
 
             /**
-             * Set target week days of scheduling.
+             * Set target weekdays of scheduling.
              *
-             * @param weekDays target week days of scheduling
+             * @param weekdays target weekdays of scheduling
              * @return updated this
              * @since 3.0.0
              */
-            public Builder withWeekDays(Set<DayOfWeek> weekDays) {
-                this.weekDays = weekDays;
+            public Builder withWeekdays(Set<DayOfWeek> weekdays) {
+                this.weekdays = weekdays;
                 return this;
             }
 
             /**
              * {@inheritDoc}
              *
-             * @throws NullPointerException if any argument is {@code null}
-             * @throws ConstraintViolationException if occurred constraint violations when building
              * @since 3.0.0
              */
             @Override
-            public MonthlyWeekDaysTrigger build(Validator validator, Class<?>... groups) {
-                return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+            public WeekdaysTriggerValue unsafeBuild() {
+                return new Builder.Bean(this);
+            }
+
+            protected static class Bean extends AbstractBuilder.AbstractBean implements WeekdaysTriggerValue {
+
+                private Set<Month> months;
+                private Set<Integer> weeks;
+                private Set<DayOfWeek> weekdays;
+
+                /**
+                 * Constructor. Used only for deserialization from JSON.
+                 *
+                 * @since 3.0.0
+                 */
+                protected Bean() {
+                }
+
+                private Bean(Builder builder) {
+                    super(builder);
+                    this.months = builder.months;
+                    this.weeks = builder.weeks;
+                    this.weekdays = builder.weekdays;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public Set<Month> getMonths() {
+                    return months;
+                }
+
+                /**
+                 * Set target months of scheduling. The empty means all.
+                 *
+                 * @param months target months of scheduling
+                 * @since 3.0.0
+                 */
+                public void setMonths(Set<Month> months) {
+                    this.months = months;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public Set<Integer> getWeeks() {
+                    return weeks;
+                }
+
+                /**
+                 * Set target week numbers of scheduling. The empty means all. If it exceeds the maximum, it is treated
+                 * as the maximum.
+                 *
+                 * @param weeks target week numbers of scheduling
+                 * @since 3.0.0
+                 */
+                public void setWeeks(Set<Integer> weeks) {
+                    this.weeks = weeks;
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @since 3.0.0
+                 */
+                @Override
+                public Set<DayOfWeek> getWeekdays() {
+                    return weekdays;
+                }
+
+                /**
+                 * Set target weekdays of scheduling. The empty means all.
+                 *
+                 * @param weekdays target weekdays of scheduling
+                 * @since 3.0.0
+                 */
+                public void setWeekdays(Set<DayOfWeek> weekdays) {
+                    this.weekdays = weekdays;
+                }
+
+                /**
+                 * Returns a string representation.
+                 *
+                 * @return a string representation
+                 * @since 3.0.0
+                 */
+                @Override
+                public String toString() {
+                    return String.format("WeekdaysTriggerValue{months=%s, weeks=%s, weekdays=%s, anchorTime=%s}",
+                        months, weeks, weekdays, anchorTime);
+                }
+            }
+        }
+    }
+
+    /**
+     * Onetime schedule trigger configuration.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    interface OnceTriggerValue extends ScheduleTriggerValue {
+
+        /**
+         * Builder of the {@code OnceTriggerValue}.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
+        class Builder extends AbstractBuilder<Builder, OnceTriggerValue> {
+
+            /**
+             * Constructor.
+             *
+             * @since 3.0.0
+             */
+            public Builder() {
+                super(Builder.class, ScheduleTriggerKing.ONCE);
             }
 
             /**
@@ -637,74 +517,166 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            public MonthlyWeekDaysTrigger unsafeBuild() {
+            public OnceTriggerValue unsafeBuild() {
                 return new Builder.Bean(this);
             }
 
-            protected static class Bean extends AbstractBuilder.AbstractBean implements MonthlyWeekDaysTrigger {
+            protected static class Bean extends AbstractBuilder.AbstractBean implements OnceTriggerValue {
 
-                private Set<Integer> weeks;
-                private Set<DayOfWeek> weekDays;
-
+                /**
+                 * Constructor. Used only for deserialization from JSON.
+                 *
+                 * @since 3.0.0
+                 */
                 protected Bean() {
                 }
 
-                protected Bean(Builder builder) {
+                private Bean(Builder builder) {
                     super(builder);
-                    this.weeks = builder.weeks;
-                    this.weekDays = builder.weekDays;
                 }
 
-                @Override
-                public Set<Integer> getWeeks() {
-                    return weeks;
-                }
-
-                public void setWeeks(Set<Integer> weeks) {
-                    this.weeks = weeks;
-                }
-
-                @Override
-                public Set<DayOfWeek> getWeekDays() {
-                    return weekDays;
-                }
-
-                public void setWeekDays(Set<DayOfWeek> weekDays) {
-                    this.weekDays = weekDays;
-                }
-
-                @Override
-                public int hashCode() {
-                    return Objects.hash(months, weeks, weekDays, anchorTime);
-                }
-
-                @Override
-                public boolean equals(Object other) {
-                    return other instanceof MonthlyWeekDaysTrigger o && Objects.equals(months, o.getMonths())
-                        && Objects.equals(weeks, o.getWeeks()) && Objects.equals(weekDays, o.getWeekDays())
-                        && Objects.equals(anchorTime, o.getAnchorTime());
-                }
-
+                /**
+                 * Returns a string representation.
+                 *
+                 * @return a string representation
+                 * @since 3.0.0
+                 */
                 @Override
                 public String toString() {
-                    return "MonthlyWeekDaysTrigger{months=" + months + "weeks=" + weeks + "weekDays=" + weekDays
-                        + "anchorTime=" + anchorTime + '}';
+                    return String.format("OnceTriggerValue{anchorTime=%s}", anchorTime);
                 }
             }
         }
     }
 
-    interface OnceTrigger extends Trigger {
+    /**
+     * Schedule cancelling trigger configuration.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    interface CancelTriggerValue extends ScheduleTriggerValue {
 
-    }
-
-    interface CancelTrigger extends Trigger {
-
+        /**
+         * Get schedule canceling duration.
+         *
+         * @return schedule canceling duration
+         * @since 3.0.0
+         */
         Duration getDuration();
+
+        /**
+         * Builder of the {@code CancelTriggerValue}.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
+        class Builder extends AbstractBuilder<Builder, CancelTriggerValue> {
+
+            private Duration duration;
+
+            /**
+             * Constructor.
+             *
+             * @since 3.0.0
+             */
+            public Builder() {
+                super(Builder.class, ScheduleTriggerKing.CANCEL);
+            }
+
+            /**
+             * Set all properties from {@code src}.
+             *
+             * @param src source value
+             * @return updated this
+             * @throws NullPointerException if {@code src} is {@code null}
+             * @since 3.0.0
+             */
+            @Override
+            public Builder with(CancelTriggerValue src) {
+                super.with(Objects.requireNonNull(src));
+                this.duration = src.getDuration();
+                return this;
+            }
+
+            /**
+             * Set schedule canceling duration.
+             *
+             * @param duration schedule canceling duration
+             * @return updated this
+             * @since 3.0.0
+             */
+            public Builder withDuration(Duration duration) {
+                this.duration = duration;
+                return this;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public CancelTriggerValue unsafeBuild() {
+                return new Builder.Bean(this);
+            }
+
+            protected static class Bean extends AbstractBuilder.AbstractBean implements CancelTriggerValue {
+
+                private Duration duration;
+
+                /**
+                 * Constructor. Used only for deserialization from JSON.
+                 *
+                 * @since 3.0.0
+                 */
+                protected Bean() {
+                }
+
+                private Bean(Builder builder) {
+                    super(builder);
+                    this.duration = builder.duration;
+                }
+
+                /**
+                 * Get schedule canceling duration.
+                 *
+                 * @return schedule canceling duration
+                 * @since 3.0.0
+                 */
+                @Override
+                public Duration getDuration() {
+                    return duration;
+                }
+
+                /**
+                 * Set schedule canceling duration.
+                 *
+                 * @param duration schedule canceling duration
+                 * @since 3.0.0
+                 */
+                public void setDuration(Duration duration) {
+                    this.duration = duration;
+                }
+
+                /**
+                 * Returns a string representation.
+                 *
+                 * @return a string representation
+                 * @since 3.0.0
+                 */
+                @Override
+                public String toString() {
+                    return String.format("CancelTriggerValue{anchorTime=%s, duration=%s}", anchorTime, duration);
+                }
+            }
+        }
     }
 
     /**
-     * Abstract builder of the {@code Trigger}.
+     * Abstract builder of the {@code ScheduleTriggerValue}.
      *
      * @param <B> builder type
      * @param <V> value type
@@ -712,12 +684,20 @@ public interface ScheduleTriggerValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends Trigger> {
+    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ScheduleTriggerValue> {
 
         protected final Class<B> builderType;
         protected final ScheduleTriggerKing kind;
         protected OffsetDateTime anchorTime;
 
+        /**
+         * Constructor.
+         *
+         * @param builderType builder type
+         * @param kind the {@code ScheduleTriggerKing}
+         * @throws NullPointerException if any argument is {@code null}
+         * @since 3.0.0
+         */
         protected AbstractBuilder(Class<B> builderType, ScheduleTriggerKing kind) {
             this.builderType = Objects.requireNonNull(builderType);
             this.kind = Objects.requireNonNull(kind);
@@ -758,7 +738,9 @@ public interface ScheduleTriggerValue {
          * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public abstract V build(Validator validator, Class<?>... groups);
+        public V build(Validator validator, Class<?>... groups) {
+            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+        }
 
         /**
          * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
@@ -770,13 +752,13 @@ public interface ScheduleTriggerValue {
         public abstract V unsafeBuild();
 
         /**
-         * Abstract implements of the {@code Trigger}.
+         * Abstract implements of the {@code ScheduleTriggerValue}.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected abstract static class AbstractBean implements Trigger {
+        protected abstract static class AbstractBean implements ScheduleTriggerValue {
 
             protected ScheduleTriggerKing kind;
             protected OffsetDateTime anchorTime;
@@ -811,9 +793,9 @@ public interface ScheduleTriggerValue {
             }
 
             /**
-             * Set schedule definition kind.
+             * Set schedule trigger configuration kind.
              *
-             * @param kind schedule definition kind
+             * @param kind schedule trigger configuration kind
              * @since 3.0.0
              */
             public void setKind(ScheduleTriggerKing kind) {
@@ -843,13 +825,13 @@ public interface ScheduleTriggerValue {
     }
 
     /**
-     * JSON deserializer for {@code Trigger}.
+     * JSON deserializer for {@code ScheduleTriggerValue}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<Trigger> {
+    class Deserializer implements JsonbDeserializer<ScheduleTriggerValue> {
 
         /**
          * {@inheritDoc}
@@ -857,91 +839,172 @@ public interface ScheduleTriggerValue {
          * @since 3.0.0
          */
         @Override
-        public Trigger deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-            Bean tmp = ctx.deserialize(Bean.class, parser);
+        public ScheduleTriggerValue deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
+            Bean trigger = ctx.deserialize(Bean.class, parser);
 
-            return switch (tmp.getKind()) {
+            return switch (trigger.getKind()) {
                 case null ->
-                    tmp;
-                case DAILY ->
-                    new DailyTrigger.Builder().withAnchorTime(tmp.getAnchorTime()).unsafeBuild();
-                default ->
-                    throw new UnsupportedOperationException();
+                    trigger;    // Note: To be ocurrs constraint violation.
+                case DAYS ->
+                    new DaysTriggerValue.Builder().with(trigger).unsafeBuild();
+                case WEEKDAYS ->
+                    new WeekdaysTriggerValue.Builder().with(trigger).unsafeBuild();
+                case ONCE ->
+                    new OnceTriggerValue.Builder().with(trigger).unsafeBuild();
+                case CANCEL ->
+                    new CancelTriggerValue.Builder().with(trigger).unsafeBuild();
             };
         }
 
-        protected class Bean implements DailyTrigger, WeeklyTrigger, MonthlyDaysTrigger, MonthlyWeekDaysTrigger,
-            OnceTrigger, CancelTrigger {
+        protected class Bean implements DaysTriggerValue, WeekdaysTriggerValue, OnceTriggerValue, CancelTriggerValue {
 
             private ScheduleTriggerKing kind;
+            private OffsetDateTime anchorTime;
             private Duration duration;
             private Set<Month> months;
             private Set<Integer> weeks;
-            private Set<DayOfWeek> weekDays;
+            private Set<DayOfWeek> weekdays;
             private Set<Integer> days;
-            private OffsetDateTime anchorTime;
 
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
             @Override
             public ScheduleTriggerKing getKind() {
                 return kind;
             }
 
+            /**
+             * Set schedule trigger configuration kind.
+             *
+             * @param kind schedule trigger configuration kind
+             * @since 3.0.0
+             */
             public void setKind(ScheduleTriggerKing kind) {
                 this.kind = kind;
             }
 
-            @Override
-            public Duration getDuration() {
-                return duration;
-            }
-
-            public void setDuration(Duration duration) {
-                this.duration = duration;
-            }
-
-            @Override
-            public Set<Month> getMonths() {
-                return months;
-            }
-
-            public void setMonths(Set<Month> months) {
-                this.months = months;
-            }
-
-            @Override
-            public Set<Integer> getWeeks() {
-                return weeks;
-            }
-
-            public void setWeeks(Set<Integer> weeks) {
-                this.weeks = weeks;
-            }
-
-            @Override
-            public Set<DayOfWeek> getWeekDays() {
-                return weekDays;
-            }
-
-            public void setWeekDays(Set<DayOfWeek> weekDays) {
-                this.weekDays = weekDays;
-            }
-
-            @Override
-            public Set<Integer> getDays() {
-                return days;
-            }
-
-            public void setDays(Set<Integer> days) {
-                this.days = days;
-            }
-
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
             @Override
             public OffsetDateTime getAnchorTime() {
                 return anchorTime;
             }
 
+            /**
+             * Set anchor time of scheduling.
+             *
+             * @param anchorTime anchor time of scheduling
+             * @since 3.0.0
+             */
             public void setAnchorTime(OffsetDateTime anchorTime) {
                 this.anchorTime = anchorTime;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Duration getDuration() {
+                return duration;
+            }
+
+            /**
+             * Set schedule canceling duration.
+             *
+             * @param duration schedule canceling duration
+             * @since 3.0.0
+             */
+            public void setDuration(Duration duration) {
+                this.duration = duration;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Set<Month> getMonths() {
+                return months;
+            }
+
+            /**
+             * Set target months of scheduling. The empty means all.
+             *
+             * @param months target months of scheduling
+             * @since 3.0.0
+             */
+            public void setMonths(Set<Month> months) {
+                this.months = months;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Set<Integer> getWeeks() {
+                return weeks;
+            }
+
+            /**
+             * Set target week numbers of scheduling. The empty means all. If it exceeds the maximum, it is treated as
+             * the maximum.
+             *
+             * @param weeks target week numbers of scheduling
+             * @since 3.0.0
+             */
+            public void setWeeks(Set<Integer> weeks) {
+                this.weeks = weeks;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Set<DayOfWeek> getWeekdays() {
+                return weekdays;
+            }
+
+            /**
+             * Set target weekdays of scheduling. The empty means all.
+             *
+             * @param weekdays target weekdays of scheduling
+             * @since 3.0.0
+             */
+            public void setWeekdays(Set<DayOfWeek> weekdays) {
+                this.weekdays = weekdays;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Set<Integer> getDays() {
+                return days;
+            }
+
+            /**
+             * Set target day numbers of scheduling. The empty means all.
+             *
+             * @param days target day numbers of scheduling
+             * @since 3.0.0
+             */
+            public void setDays(Set<Integer> days) {
+                this.days = days;
             }
         }
     }

@@ -165,13 +165,7 @@ public interface FiltdefValue {
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code FiltdefValue.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(FiltdefValue.Builder builder) {
+            private Bean(Builder builder) {
                 this.trnsdef = builder.trnsdef;
                 this.condition = builder.condition;
             }
