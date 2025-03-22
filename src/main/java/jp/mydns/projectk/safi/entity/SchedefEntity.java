@@ -49,6 +49,7 @@ import jp.mydns.projectk.safi.value.JsonWrapper;
 @Table(name = "m_schedef")
 public class SchedefEntity extends NamedEntity {
 
+    @java.io.Serial
     private static final long serialVersionUID = 6291085973948685738L;
 
     @Id

@@ -23,8 +23,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.service;
+package jp.mydns.projectk.safi.service.trial;
 
+import jp.mydns.projectk.safi.service.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
@@ -32,6 +33,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -39,30 +41,31 @@ import java.util.function.UnaryOperator;
 import jp.mydns.projectk.safi.dao.JobdefDao;
 import jp.mydns.projectk.safi.dxo.JobdefDxo;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
+import jp.mydns.projectk.safi.service.JobdefService.JobdefIOException;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobdefValue;
 
 /**
- * Service for <i>Job definition</i>.
+ * Service for <i>Job</i>.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public interface JobdefService {
+public interface JobService {
 
     /**
-     * Indicates that a jobdef I/O exception has occurred. For example, it doesn't exist, you don't have permission to
-     * modify it, and so on.
+     * Indicates that a <i>Job</i> I/O exception has occurred. For example, it doesn't exist, you don't have permission
+     * to modify it, and so on.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class JobdefIOException extends IOException {
+    class JobIOException extends IOException implements Serializable {
 
         @java.io.Serial
-        private static final long serialVersionUID = 7853095085270398570L;
+        static final long serialVersionUID = 6729040049842755289L;
 
         /**
          * Construct with error message.
@@ -71,7 +74,7 @@ public interface JobdefService {
          * that can briefly describe the issue.
          * @since 3.0.0
          */
-        public JobdefIOException(String message) {
+        public JobIOException(String message) {
             super(message);
         }
     }
@@ -96,9 +99,9 @@ public interface JobdefService {
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Typed(JobdefService.class)
+    @Typed(JobService.class)
     @RequestScoped
-    class Impl implements JobdefService {
+    class Impl implements JobService {
 
         private final Supplier<JobdefIOException> noFoundJobdef
             = () -> new JobdefIOException("No found job definition.");

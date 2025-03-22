@@ -57,6 +57,7 @@ import jp.mydns.projectk.safi.value.JsonWrapper;
 @Table(name = "m_jobdef")
 public class JobdefEntity extends NamedEntity {
 
+    @java.io.Serial
     private static final long serialVersionUID = -8597141002815361653L;
 
     @Id

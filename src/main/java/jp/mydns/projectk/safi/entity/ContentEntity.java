@@ -44,6 +44,7 @@ import jp.mydns.projectk.safi.value.JsonWrapper;
 @MappedSuperclass
 public abstract class ContentEntity extends NamedEntity {
 
+    @java.io.Serial
     private static final long serialVersionUID = -4573193428404973991L;
 
     @Id

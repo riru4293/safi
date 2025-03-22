@@ -100,87 +100,44 @@ public interface JsonWrapper extends Serializable {
         }
 
         @JsonbTypeSerializer(JsonWrapper.Serializer.class)
-        protected static class Impl implements JsonWrapper {
+        private static class Impl implements JsonWrapper {
 
+            @java.io.Serial
             private static final long serialVersionUID = 6337206561334398852L;
 
             private transient JsonValue value; // Note: immutable
 
-            /**
-             * Construct with {@code JsonValue}.
-             *
-             * @param value an any JSON object
-             * @throws NullPointerException if {@code value} is {@code null}
-             * @since 3.0.0
-             */
-            public Impl(JsonValue value) {
+            private Impl(JsonValue value) {
                 this.value = Objects.requireNonNull(value);
             }
 
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
             @Override
             public JsonValue unwrap() {
                 return value;
             }
 
-            /**
-             * Returns a hash code value.
-             *
-             * @return a hash code value
-             * @since 3.0.0
-             */
             @Override
             public int hashCode() {
                 return value.hashCode();
             }
 
-            /**
-             * Indicates that specified object is equal to this one.
-             *
-             * @param other an any object
-             * @return {@code true} if matches otherwise {@code false}.
-             * @since 3.0.0
-             */
             @Override
             public boolean equals(Object other) {
                 return other instanceof JsonWrapper o && value.equals(o.unwrap());
             }
 
-            /**
-             * Returns a string representation.
-             *
-             * @return a string representation
-             * @since 3.0.0
-             */
             @Override
             public String toString() {
                 return value.toString();
             }
 
-            /**
-             * Serialize this instance.
-             *
-             * @param stream the {@code ObjectOutputStream}
-             * @throws IOException if occurs I/O error
-             * @since 3.0.0
-             */
+            @java.io.Serial
             private void writeObject(ObjectOutputStream stream) throws IOException {
                 stream.defaultWriteObject();
                 stream.writeUTF(value.toString());
             }
 
-            /**
-             * Deserialize this instance.
-             *
-             * @param stream the {@code ObjectInputStream}
-             * @throws IOException if occurs I/O error
-             * @throws ClassNotFoundException if the class of a serialized object could not be found
-             * @since 3.0.0
-             */
+            @java.io.Serial
             private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
                 stream.defaultReadObject();
 
