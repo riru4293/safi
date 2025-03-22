@@ -52,7 +52,7 @@ public enum ScheduleTriggerKing {
      */
     ONCE,
     /**
-     * Scheduling definition to cancel scheduling of the same job definition ID within a specified period.
+     * Scheduling definition to cancel scheduling of the same job definition id within a specified duration.
      *
      * @since 3.0.0
      */
