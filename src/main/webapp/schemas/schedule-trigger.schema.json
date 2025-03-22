@@ -53,9 +53,9 @@
         }
     },
     "then": {
-        "required": ["months", "weeks", "days", "anchorTime"],
+        "required": ["months", "days", "anchorTime"],
         "not": {
-            "required": ["duration", "weekdays"]
+            "required": ["duration", "weeks", "weekdays"]
         }
     },
     "if": {
