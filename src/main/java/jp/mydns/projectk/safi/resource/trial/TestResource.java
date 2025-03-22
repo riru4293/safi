@@ -38,7 +38,7 @@ import jakarta.ws.rs.core.UriInfo;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
-import jp.mydns.projectk.safi.value.trial.SchedefValue;
+import jp.mydns.projectk.safi.value.SchedefValue;
 
 /**
  * JAX-RS resource for test.

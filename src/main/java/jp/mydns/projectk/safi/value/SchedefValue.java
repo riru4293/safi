@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.value.trial;
+package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
@@ -36,7 +36,6 @@ import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Objects;
-import jp.mydns.projectk.safi.value.NamedValue;
 
 /**
  * Definition for <i>Job</i> scheduling. With this definition, the schedule that can be created is limited to the period

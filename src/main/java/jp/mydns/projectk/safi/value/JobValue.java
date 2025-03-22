@@ -43,7 +43,6 @@ import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.trial.SchedefValue;
 
 /**
  * <i>Job</i> information. {@code Job} representations that life cycle of one batch process.
