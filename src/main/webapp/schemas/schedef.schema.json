@@ -39,7 +39,7 @@
                 "kind": {
                     "description": "Schedule definition kind.",
                     "type": "string",
-                    "enum": ["DAILY", "WEEKLY", "MONTHLY_DAYS", "MONTHLY_WEEKDAYS", "ONCE", "CANCEL"]
+                    "enum": ["DAYS", "WEEKDAYS", "ONCE", "CANCEL"]
                 },
                 "duration": {
                     "description": "Schedule duration.",
