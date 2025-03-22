@@ -45,6 +45,8 @@ import java.util.Set;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.validator.DurationRange;
+import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -78,6 +80,7 @@ public interface ScheduleTriggerValue {
      * @since 3.0.0
      */
     @NotNull(groups = {Default.class})
+    @Schema(description = "Schedule trigger configuration kind.")
     ScheduleTriggerKing getKind();
 
     /**
@@ -89,6 +92,7 @@ public interface ScheduleTriggerValue {
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
+    @Schema(description = "Anchor time of scheduling.")
     OffsetDateTime getAnchorTime();
 
     /**
@@ -107,6 +111,7 @@ public interface ScheduleTriggerValue {
          * @since 3.0.0
          */
         @NotNull(groups = {Default.class})
+        @Schema(description = "Target months of schedulinge.")
         Set<@NotNull(groups = {Default.class}) Month> getMonths();
 
         /**
@@ -115,6 +120,7 @@ public interface ScheduleTriggerValue {
          * @return target days of scheduling
          * @since 3.0.0
          */
+        @Schema(description = "Target days of schedulinge.")
         Set<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
         @Max(value = 31, groups = {Default.class}) Integer> getDays();
 
@@ -243,6 +249,7 @@ public interface ScheduleTriggerValue {
          * @since 3.0.0
          */
         @NotNull(groups = {Default.class})
+        @Schema(description = "Target months of schedulinge.")
         Set<@NotNull(groups = {Default.class}) Month> getMonths();
 
         /**
@@ -252,6 +259,7 @@ public interface ScheduleTriggerValue {
          * @since 3.0.0
          */
         @NotNull(groups = {Default.class})
+        @Schema(description = "Target week numbers of schedulinge.")
         Set<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
         @Max(value = 5, groups = {Default.class}) Integer> getWeeks();
 
@@ -262,6 +270,7 @@ public interface ScheduleTriggerValue {
          * @since 3.0.0
          */
         @NotNull(groups = {Default.class})
+        @Schema(description = "Target weekdays of schedulinge.")
         Set<@NotNull(groups = {Default.class}) DayOfWeek> getWeekdays();
 
         /**
@@ -506,6 +515,11 @@ public interface ScheduleTriggerValue {
          * @return schedule canceling duration
          * @since 3.0.0
          */
+        @NotNull(groups = Default.class)
+        @PositiveOrZeroDuration(groups = {Default.class})
+        @DurationRange(groups = {Default.class})
+        @TimeAccuracy(groups = {Default.class})
+        @Schema(description = "Schedule canceling duration.")
         Duration getDuration();
 
         /**
