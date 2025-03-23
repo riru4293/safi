@@ -58,6 +58,15 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @since 3.0.0
  */
 interface WeekdaysTriggerValue extends ScheduleTriggerValue {
+    
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.0.0
+     */
+    @Override
+    @Schema(type = "string", defaultValue = "WEEKDAYS")
+    ScheduleTriggerKing getKind();
 
     /**
      * Get target months of scheduling.

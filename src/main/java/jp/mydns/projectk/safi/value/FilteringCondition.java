@@ -43,6 +43,8 @@ import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.FilteringOperationKing;
 import jp.mydns.projectk.safi.validator.OptionalNotEmpty;
+import jp.mydns.projectk.safi.value.FilteringCondition.LeafCondition;
+import jp.mydns.projectk.safi.value.FilteringCondition.NodeCondition;
 
 /**
  * Filtering condition. Combines some conditions is also possible.
@@ -86,7 +88,7 @@ Filtering condition.
     {"operation": "EQUAL", "name": "userName", "value": "taro"},
     {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
 ```""",
-        oneOf = {FilteringCondition.Single.class, FilteringCondition.Multi.class})
+        subTypes = {LeafCondition.class, NodeCondition.class}, oneOf = {LeafCondition.class, NodeCondition.class})
 public interface FilteringCondition {
 
     /**
@@ -95,8 +97,7 @@ public interface FilteringCondition {
      * @return filtering operation
      * @since 3.0.0
      */
-    @Schema(description = "Filtering operation.",
-            subTypes = {FilteringOperation.LeafOperation.class, FilteringOperation.NodeOperation.class})
+    @Schema(description = "Filtering operation.")
     @NotNull(groups = Default.class)
     FilteringOperation getOperation();
 
@@ -134,8 +135,8 @@ public interface FilteringCondition {
      * @throws ClassCastException if not assignable to {@code LeafOperation}
      * @since 3.0.0
      */
-    default Single asSingle() {
-        return Single.class.cast(this);
+    default LeafCondition asSingle() {
+        return LeafCondition.class.cast(this);
     }
 
     /**
@@ -145,8 +146,8 @@ public interface FilteringCondition {
      * @throws ClassCastException if not assignable to {@code NodeOperation}
      * @since 3.0.0
      */
-    default Multi asMulti() {
-        return Multi.class.cast(this);
+    default NodeCondition asMulti() {
+        return NodeCondition.class.cast(this);
     }
 
     /**
@@ -160,7 +161,7 @@ public interface FilteringCondition {
      * @throws IllegalArgumentException if {@code op} is not a single filtering operation
      * @since 3.0.0
      */
-    static Single singleOf(FilteringOperation op, String name, String value) {
+    static LeafCondition singleOf(FilteringOperation op, String name, String value) {
         Objects.requireNonNull(op);
         Objects.requireNonNull(name);
         Objects.requireNonNull(value);
@@ -184,7 +185,7 @@ public interface FilteringCondition {
      * @throws IllegalArgumentException if {@code op} is not a multiple filtering operation
      * @since 3.0.0
      */
-    static Multi multiOf(FilteringOperation op, List<FilteringCondition> children) {
+    static NodeCondition multiOf(FilteringOperation op, List<FilteringCondition> children) {
         Objects.requireNonNull(op);
         Objects.requireNonNull(children);
 
@@ -211,7 +212,7 @@ public interface FilteringCondition {
      * @since 3.0.0
      */
     @Schema(name = "FilteringCondition.Multi", description = "Combination of filtering conditions.")
-    interface Multi extends FilteringCondition {
+    interface NodeCondition extends FilteringCondition {
 
         /**
          * {@inheritDoc}
@@ -247,7 +248,7 @@ public interface FilteringCondition {
      * @since 3.0.0
      */
     @Schema(name = "FilteringCondition.Single", description = "A single filtering condition.")
-    public interface Single extends FilteringCondition {
+    public interface LeafCondition extends FilteringCondition {
 
         /**
          * {@inheritDoc}
@@ -311,7 +312,7 @@ public interface FilteringCondition {
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class SingleBean implements Single {
+        protected static class SingleBean implements LeafCondition {
 
             private final FilteringOperation operation;
             private final String name;
@@ -384,7 +385,7 @@ public interface FilteringCondition {
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class MultiBean implements Multi {
+        protected static class MultiBean implements NodeCondition {
 
             private final FilteringOperation operation;
             private final List<FilteringCondition> children;

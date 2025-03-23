@@ -56,7 +56,7 @@ import jp.mydns.projectk.safi.value.FilteringOperation.NodeOperation;
  */
 @JsonbTypeDeserializer(FilteringOperation.Deserializer.class)
 @Schema(name = "FilteringOperation", description = "Filtering operation.",
-        subTypes = {LeafOperation.class, NodeOperation.class}, oneOf = {LeafOperation.class, NodeOperation.class})
+        oneOf = {LeafOperation.class, NodeOperation.class})
 public interface FilteringOperation {
 
     /**

@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.value;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 
 /**
@@ -44,6 +45,15 @@ import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
  * @since 3.0.0
  */
 interface OnceTriggerValue extends ScheduleTriggerValue {
+    
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.0.0
+     */
+    @Override
+    @Schema(type = "string", defaultValue = "ONCE")
+    ScheduleTriggerKing getKind();
 
     /**
      * Builder of the {@code OnceTriggerValue}.

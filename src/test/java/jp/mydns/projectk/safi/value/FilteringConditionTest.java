@@ -59,7 +59,7 @@ class FilteringConditionTest {
     void testGetOperation() {
         var single = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
 
-        assertThat(single).isInstanceOf(FilteringCondition.Single.class)
+        assertThat(single).isInstanceOf(FilteringCondition.LeafCondition.class)
             .returns(FilteringOperation.LeafOperation.IS_NULL, FilteringCondition::getOperation);
     }
 
@@ -74,7 +74,7 @@ class FilteringConditionTest {
         var multi = FilteringCondition.multiOf(FilteringOperation.NodeOperation.AND, List.of());
 
         assertThatCode(single::asSingle).doesNotThrowAnyException();
-        assertThat(single.asSingle()).isInstanceOf(FilteringCondition.Single.class);
+        assertThat(single.asSingle()).isInstanceOf(FilteringCondition.LeafCondition.class);
 
         assertThatThrownBy(multi::asSingle).isInstanceOf(ClassCastException.class);
     }
@@ -90,7 +90,7 @@ class FilteringConditionTest {
         var multi = FilteringCondition.multiOf(FilteringOperation.NodeOperation.AND, List.of());
 
         assertThatCode(multi::asMulti).doesNotThrowAnyException();
-        assertThat(multi.asMulti()).isInstanceOf(FilteringCondition.Multi.class);
+        assertThat(multi.asMulti()).isInstanceOf(FilteringCondition.NodeCondition.class);
 
         assertThatThrownBy(single::asMulti).isInstanceOf(ClassCastException.class);
     }
@@ -104,7 +104,7 @@ class FilteringConditionTest {
     void testSingleOf() {
         var single = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
 
-        assertThat(single).isInstanceOf(FilteringCondition.Single.class)
+        assertThat(single).isInstanceOf(FilteringCondition.LeafCondition.class)
             .returns(FilteringOperation.LeafOperation.IS_NULL, FilteringCondition::getOperation)
             .satisfies(v -> assertThat(v.getName()).hasValue("name"))
             .satisfies(v -> assertThat(v.getValue()).hasValue("value"));
@@ -125,9 +125,9 @@ class FilteringConditionTest {
 
         var multi = FilteringCondition.multiOf(FilteringOperation.NodeOperation.AND, List.of(single1, single2));
 
-        assertThat(multi).isInstanceOf(FilteringCondition.Multi.class)
+        assertThat(multi).isInstanceOf(FilteringCondition.NodeCondition.class)
             .returns(FilteringOperation.NodeOperation.AND, FilteringCondition::getOperation)
-            .extracting(FilteringCondition.Multi::getChildren).asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
+            .extracting(FilteringCondition.NodeCondition::getChildren).asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
             .hasValue(List.of(single1, single2));
 
         assertThatIllegalArgumentException()

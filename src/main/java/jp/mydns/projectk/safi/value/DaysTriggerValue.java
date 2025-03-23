@@ -56,6 +56,15 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @since 3.0.0
  */
 interface DaysTriggerValue extends ScheduleTriggerValue {
+    
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.0.0
+     */
+    @Override
+    @Schema(type = "string", defaultValue = "DAYS")
+    ScheduleTriggerKing getKind();
 
     /**
      * Get target months of scheduling.

@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.value;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.Duration;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
@@ -48,11 +49,21 @@ import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 interface CancelTriggerValue extends ScheduleTriggerValue {
 
     /**
+     * {@inheritDoc}
+     *
+     * @since 3.0.0
+     */
+    @Override
+    @Schema(type = "string", defaultValue = "CANCEL")
+    ScheduleTriggerKing getKind();
+
+    /**
      * Get schedule canceling duration.
      *
      * @return schedule canceling duration
      * @since 3.0.0
      */
+    @Schema(type = "string", description = "Schedule canceling duration.")
     Duration getDuration();
 
     /**
