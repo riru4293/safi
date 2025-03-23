@@ -311,8 +311,9 @@ public interface ScheduleTriggerValue extends Template {
             }
 
             /**
-             * {@inheritDoc}
+             * Get schedule canceling duration.
              *
+             * @return schedule canceling duration
              * @since 3.0.0
              */
             @Override
@@ -331,8 +332,9 @@ public interface ScheduleTriggerValue extends Template {
             }
 
             /**
-             * {@inheritDoc}
+             * Get target months of scheduling.
              *
+             * @return target months of scheduling
              * @since 3.0.0
              */
             @Override
@@ -353,8 +355,9 @@ public interface ScheduleTriggerValue extends Template {
             }
 
             /**
-             * {@inheritDoc}
+             * Get target week numbers of scheduling.
              *
+             * @return target week numbers of scheduling
              * @since 3.0.0
              */
             @Override
@@ -376,8 +379,9 @@ public interface ScheduleTriggerValue extends Template {
             }
 
             /**
-             * {@inheritDoc}
+             * Get target weekdays of scheduling.
              *
+             * @return target weekdays of scheduling
              * @since 3.0.0
              */
             @Override
@@ -398,8 +402,9 @@ public interface ScheduleTriggerValue extends Template {
             }
 
             /**
-             * {@inheritDoc}
+             * Get target days of scheduling.
              *
+             * @return target days of scheduling
              * @since 3.0.0
              */
             @Override
