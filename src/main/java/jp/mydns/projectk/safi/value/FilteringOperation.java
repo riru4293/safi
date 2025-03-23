@@ -35,8 +35,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Objects;
-import java.util.Set;
-import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.FilteringOperationKing;
 import jp.mydns.projectk.safi.value.FilteringOperation.LeafOperation;
@@ -62,6 +60,23 @@ import jp.mydns.projectk.safi.value.FilteringOperation.NodeOperation;
 public interface FilteringOperation {
 
     /**
+     * Returns the filtering operation with the specified name.
+     *
+     * @param name filtering operation name
+     * @return the {@code FilteringOperation}
+     * @throws NullPointerException if {@code name} is {@code null}
+     * @throws IllegalArgumentException if {@code name} is malformed as filtering operation name
+     * @since 3.0.0
+     */
+    static FilteringOperation valueOf(String name) {
+        Objects.requireNonNull(name);
+
+        return Stream.of(NodeOperation.values()).map(Enum::name).anyMatch(name::equals)
+            ? NodeOperation.valueOf(name)
+            : LeafOperation.valueOf(name);
+    }
+
+    /**
      * Get kind of the filtering operation.
      *
      * @return kind of the filtering operation
@@ -69,7 +84,7 @@ public interface FilteringOperation {
      */
     @JsonbTransient
     @NotNull(groups = Default.class)
-    public FilteringOperationKing getKind();
+    FilteringOperationKing getKind();
 
     /**
      * Get filtering operation name.
@@ -204,9 +219,6 @@ public interface FilteringOperation {
      */
     class Deserializer implements JsonbDeserializer<FilteringOperation> {
 
-        private static final Set<String> multiOpNames
-            = Stream.of(NodeOperation.values()).map(Enum::name).collect(toUnmodifiableSet());
-
         /**
          * {@inheritDoc}
          *
@@ -214,13 +226,7 @@ public interface FilteringOperation {
          */
         @Override
         public FilteringOperation deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-            String opName = ctx.deserialize(String.class, parser);
-
-            if (opName == null) {
-                return null;
-            }
-
-            return multiOpNames.contains(opName) ? NodeOperation.valueOf(opName) : LeafOperation.valueOf(opName);
+            return FilteringOperation.valueOf(ctx.deserialize(String.class, parser));
         }
     }
 }
