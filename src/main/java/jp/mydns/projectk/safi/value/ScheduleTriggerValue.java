@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.json.bind.annotation.JsonbTypeAdapter;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
@@ -41,12 +42,16 @@ import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.Month;
 import java.time.OffsetDateTime;
-import java.util.Set;
+import java.util.SequencedSet;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.value.jsonb.AbstractSetAdapter;
+import jp.mydns.projectk.safi.value.jsonb.AbstractSetAdapter.SetDayOfWeekAdapter;
+import jp.mydns.projectk.safi.value.jsonb.AbstractSetAdapter.SetIntegerAdapter;
+import jp.mydns.projectk.safi.value.jsonb.AbstractSetAdapter.SetMonthAdapter;
 
 /**
  * <i>Job</i> schedule trigger configuration.
@@ -110,7 +115,7 @@ public interface ScheduleTriggerValue {
          */
         @NotNull(groups = {Default.class})
         @Schema(description = "Target months of schedulinge.")
-        Set<@NotNull(groups = {Default.class}) Month> getMonths();
+        SequencedSet<@NotNull(groups = {Default.class}) Month> getMonths();
 
         /**
          * Get target days of scheduling.
@@ -119,7 +124,7 @@ public interface ScheduleTriggerValue {
          * @since 3.0.0
          */
         @Schema(description = "Target days of schedulinge.")
-        Set<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
+        SequencedSet<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
         @Max(value = 31, groups = {Default.class}) Integer> getDays();
 
         /**
@@ -131,8 +136,8 @@ public interface ScheduleTriggerValue {
          */
         class Builder extends AbstractBuilder<Builder, DaysTriggerValue> {
 
-            private Set<Month> months;
-            private Set<Integer> days;
+            private SequencedSet<Month> months;
+            private SequencedSet<Integer> days;
 
             /**
              * Constructor.
@@ -153,7 +158,7 @@ public interface ScheduleTriggerValue {
              */
             @Override
             public Builder with(DaysTriggerValue src) {
-                Objects.requireNonNull(src);
+                super.with(Objects.requireNonNull(src));
                 this.months = src.getMonths();
                 this.days = src.getDays();
                 return this;
@@ -166,7 +171,7 @@ public interface ScheduleTriggerValue {
              * @return updated this
              * @since 3.0.0
              */
-            public Builder withMonths(Set<Month> months) {
+            public Builder withMonths(SequencedSet<Month> months) {
                 this.months = months;
                 return this;
             }
@@ -178,7 +183,7 @@ public interface ScheduleTriggerValue {
              * @return updated this
              * @since 3.0.0
              */
-            public Builder withDays(Set<Integer> days) {
+            public Builder withDays(SequencedSet<Integer> days) {
                 this.days = days;
                 return this;
             }
@@ -195,8 +200,16 @@ public interface ScheduleTriggerValue {
 
             protected static class Bean extends AbstractBuilder.AbstractBean implements DaysTriggerValue {
 
-                private Set<Month> months;
-                private Set<Integer> days;
+                private SequencedSet<Month> months;
+                private SequencedSet<Integer> days;
+
+                /**
+                 * Constructor. Used only for deserialization from JSON.
+                 *
+                 * @since 3.0.0
+                 */
+                protected Bean() {
+                }
 
                 private Bean(Builder builder) {
                     super(builder);
@@ -210,7 +223,8 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                public Set<Month> getMonths() {
+                @JsonbTypeAdapter(SetMonthAdapter.class)
+                public SequencedSet<Month> getMonths() {
                     return months;
                 }
 
@@ -220,7 +234,8 @@ public interface ScheduleTriggerValue {
                  * @param months target months of scheduling
                  * @since 3.0.0
                  */
-                public void setMonths(Set<Month> months) {
+                @JsonbTypeAdapter(SetMonthAdapter.class)
+                public void setMonths(SequencedSet<Month> months) {
                     this.months = months;
                 }
 
@@ -230,7 +245,8 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                public Set<Integer> getDays() {
+                @JsonbTypeAdapter(SetIntegerAdapter.class)
+                public SequencedSet<Integer> getDays() {
                     return days;
                 }
 
@@ -240,7 +256,8 @@ public interface ScheduleTriggerValue {
                  * @param days target day numbers of scheduling
                  * @since 3.0.0
                  */
-                public void setDays(Set<Integer> days) {
+                @JsonbTypeAdapter(SetIntegerAdapter.class)
+                public void setDays(SequencedSet<Integer> days) {
                     this.days = days;
                 }
 
@@ -276,7 +293,7 @@ public interface ScheduleTriggerValue {
          */
         @NotNull(groups = {Default.class})
         @Schema(description = "Target months of schedulinge.")
-        Set<@NotNull(groups = {Default.class}) Month> getMonths();
+        SequencedSet<@NotNull(groups = {Default.class}) Month> getMonths();
 
         /**
          * Get target week numbers of scheduling.
@@ -286,7 +303,7 @@ public interface ScheduleTriggerValue {
          */
         @NotNull(groups = {Default.class})
         @Schema(description = "Target week numbers of schedulinge.")
-        Set<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
+        SequencedSet<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
         @Max(value = 5, groups = {Default.class}) Integer> getWeeks();
 
         /**
@@ -297,7 +314,7 @@ public interface ScheduleTriggerValue {
          */
         @NotNull(groups = {Default.class})
         @Schema(description = "Target weekdays of schedulinge.")
-        Set<@NotNull(groups = {Default.class}) DayOfWeek> getWeekdays();
+        SequencedSet<@NotNull(groups = {Default.class}) DayOfWeek> getWeekdays();
 
         /**
          * Builder of the {@code WeekdaysTriggerValue}.
@@ -308,9 +325,9 @@ public interface ScheduleTriggerValue {
          */
         class Builder extends AbstractBuilder<Builder, WeekdaysTriggerValue> {
 
-            private Set<Month> months;
-            private Set<Integer> weeks;
-            private Set<DayOfWeek> weekdays;
+            private SequencedSet<Month> months;
+            private SequencedSet<Integer> weeks;
+            private SequencedSet<DayOfWeek> weekdays;
 
             /**
              * Constructor.
@@ -347,7 +364,7 @@ public interface ScheduleTriggerValue {
              * @return updated this
              * @since 3.0.0
              */
-            public Builder withMonths(Set<Month> months) {
+            public Builder withMonths(SequencedSet<Month> months) {
                 this.months = months;
                 return this;
             }
@@ -359,7 +376,7 @@ public interface ScheduleTriggerValue {
              * @return updated this
              * @since 3.0.0
              */
-            public Builder withWeeks(Set<Integer> weeks) {
+            public Builder withWeeks(SequencedSet<Integer> weeks) {
                 this.weeks = weeks;
                 return this;
             }
@@ -371,7 +388,7 @@ public interface ScheduleTriggerValue {
              * @return updated this
              * @since 3.0.0
              */
-            public Builder withWeekdays(Set<DayOfWeek> weekdays) {
+            public Builder withWeekdays(SequencedSet<DayOfWeek> weekdays) {
                 this.weekdays = weekdays;
                 return this;
             }
@@ -388,9 +405,9 @@ public interface ScheduleTriggerValue {
 
             protected static class Bean extends AbstractBuilder.AbstractBean implements WeekdaysTriggerValue {
 
-                private Set<Month> months;
-                private Set<Integer> weeks;
-                private Set<DayOfWeek> weekdays;
+                private SequencedSet<Month> months;
+                private SequencedSet<Integer> weeks;
+                private SequencedSet<DayOfWeek> weekdays;
 
                 /**
                  * Constructor. Used only for deserialization from JSON.
@@ -413,7 +430,8 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                public Set<Month> getMonths() {
+                @JsonbTypeAdapter(SetMonthAdapter.class)
+                public SequencedSet<Month> getMonths() {
                     return months;
                 }
 
@@ -423,7 +441,8 @@ public interface ScheduleTriggerValue {
                  * @param months target months of scheduling
                  * @since 3.0.0
                  */
-                public void setMonths(Set<Month> months) {
+                @JsonbTypeAdapter(SetMonthAdapter.class)
+                public void setMonths(SequencedSet<Month> months) {
                     this.months = months;
                 }
 
@@ -433,7 +452,8 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                public Set<Integer> getWeeks() {
+                @JsonbTypeAdapter(SetIntegerAdapter.class)
+                public SequencedSet<Integer> getWeeks() {
                     return weeks;
                 }
 
@@ -444,7 +464,8 @@ public interface ScheduleTriggerValue {
                  * @param weeks target week numbers of scheduling
                  * @since 3.0.0
                  */
-                public void setWeeks(Set<Integer> weeks) {
+                @JsonbTypeAdapter(SetIntegerAdapter.class)
+                public void setWeeks(SequencedSet<Integer> weeks) {
                     this.weeks = weeks;
                 }
 
@@ -454,7 +475,8 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                public Set<DayOfWeek> getWeekdays() {
+                @JsonbTypeAdapter(SetDayOfWeekAdapter.class)
+                public SequencedSet<DayOfWeek> getWeekdays() {
                     return weekdays;
                 }
 
@@ -464,7 +486,8 @@ public interface ScheduleTriggerValue {
                  * @param weekdays target weekdays of scheduling
                  * @since 3.0.0
                  */
-                public void setWeekdays(Set<DayOfWeek> weekdays) {
+                @JsonbTypeAdapter(SetDayOfWeekAdapter.class)
+                public void setWeekdays(SequencedSet<DayOfWeek> weekdays) {
                     this.weekdays = weekdays;
                 }
 
@@ -855,15 +878,16 @@ public interface ScheduleTriggerValue {
             };
         }
 
-        protected class Bean implements DaysTriggerValue, WeekdaysTriggerValue, OnceTriggerValue, CancelTriggerValue {
+        protected static class Bean implements DaysTriggerValue, WeekdaysTriggerValue, OnceTriggerValue,
+            CancelTriggerValue {
 
             private ScheduleTriggerKing kind;
             private OffsetDateTime anchorTime;
             private Duration duration;
-            private Set<Month> months;
-            private Set<Integer> weeks;
-            private Set<DayOfWeek> weekdays;
-            private Set<Integer> days;
+            private SequencedSet<Month> months;
+            private SequencedSet<Integer> weeks;
+            private SequencedSet<DayOfWeek> weekdays;
+            private SequencedSet<Integer> days;
 
             /**
              * {@inheritDoc}
@@ -931,7 +955,8 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            public Set<Month> getMonths() {
+            @JsonbTypeAdapter(SetMonthAdapter.class)
+            public SequencedSet<Month> getMonths() {
                 return months;
             }
 
@@ -941,7 +966,8 @@ public interface ScheduleTriggerValue {
              * @param months target months of scheduling
              * @since 3.0.0
              */
-            public void setMonths(Set<Month> months) {
+            @JsonbTypeAdapter(SetMonthAdapter.class)
+            public void setMonths(SequencedSet<Month> months) {
                 this.months = months;
             }
 
@@ -951,7 +977,8 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            public Set<Integer> getWeeks() {
+            @JsonbTypeAdapter(SetIntegerAdapter.class)
+            public SequencedSet<Integer> getWeeks() {
                 return weeks;
             }
 
@@ -962,7 +989,8 @@ public interface ScheduleTriggerValue {
              * @param weeks target week numbers of scheduling
              * @since 3.0.0
              */
-            public void setWeeks(Set<Integer> weeks) {
+            @JsonbTypeAdapter(SetIntegerAdapter.class)
+            public void setWeeks(SequencedSet<Integer> weeks) {
                 this.weeks = weeks;
             }
 
@@ -972,7 +1000,8 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            public Set<DayOfWeek> getWeekdays() {
+            @JsonbTypeAdapter(SetDayOfWeekAdapter.class)
+            public SequencedSet<DayOfWeek> getWeekdays() {
                 return weekdays;
             }
 
@@ -982,7 +1011,8 @@ public interface ScheduleTriggerValue {
              * @param weekdays target weekdays of scheduling
              * @since 3.0.0
              */
-            public void setWeekdays(Set<DayOfWeek> weekdays) {
+            @JsonbTypeAdapter(SetDayOfWeekAdapter.class)
+            public void setWeekdays(SequencedSet<DayOfWeek> weekdays) {
                 this.weekdays = weekdays;
             }
 
@@ -992,7 +1022,8 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            public Set<Integer> getDays() {
+            @JsonbTypeAdapter(SetIntegerAdapter.class)
+            public SequencedSet<Integer> getDays() {
                 return days;
             }
 
@@ -1002,7 +1033,8 @@ public interface ScheduleTriggerValue {
              * @param days target day numbers of scheduling
              * @since 3.0.0
              */
-            public void setDays(Set<Integer> days) {
+            @JsonbTypeAdapter(SetIntegerAdapter.class)
+            public void setDays(SequencedSet<Integer> days) {
                 this.days = days;
             }
         }
