@@ -118,7 +118,7 @@ public interface JobdefValue extends NamedValue {
      * @since 3.0.0
      */
     @Schema(description = "The name of the plugin that processes the content. It is case insensitive.", maxLength = 50)
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Size(max = 50, groups = {Default.class}) String> getPluginName();
 
     /**
@@ -165,7 +165,7 @@ The key is the property name after transformation, and the value is the transfor
 | Result | __taro's number is PP01__ |""",
             example = "{\"name\":\"toTitleCase([firstName]) & ` ` & toTitleCase([lastName])\", \"id\":\"[userId]\"}",
             type = "object", additionalPropertiesSchema = String.class)
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<Map<String, String>> getTrnsdef();
 
     /**
@@ -174,7 +174,7 @@ The key is the property name after transformation, and the value is the transfor
      * @return the {@code FiltdefValue}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Valid FiltdefValue> getFiltdef();
 
     /**

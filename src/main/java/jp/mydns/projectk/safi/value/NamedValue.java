@@ -64,7 +64,7 @@ public interface NamedValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Name of value.", maxLength = 250)
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Size(max = 250, groups = {Default.class}) String> getName();
 
     /**

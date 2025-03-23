@@ -58,7 +58,7 @@ public interface PersistableValue extends Template {
      * @since 3.0.0
      */
     @Schema(description = "Note for this value.")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<String> getNote();
 
     /**
@@ -80,7 +80,7 @@ public interface PersistableValue extends Template {
      */
     @Schema(description = "Registered time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
             accessMode = Schema.AccessMode.READ_ONLY)
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@TimeRange(groups = {Default.class}) @TimeAccuracy(groups = {Default.class}) OffsetDateTime> getRegisterTime();
 
     /**
@@ -91,7 +91,7 @@ public interface PersistableValue extends Template {
      */
     @Schema(description = "Account id who made this value.", accessMode = Schema.AccessMode.READ_ONLY,
             maxLength = 250)
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Size(max = 250, groups = {Default.class}) String> getRegisterAccountId();
 
     /**
@@ -102,7 +102,7 @@ public interface PersistableValue extends Template {
      */
     @Schema(description = "Process name who made this value.", accessMode = Schema.AccessMode.READ_ONLY,
             maxLength = 250)
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Size(max = 250, groups = {Default.class}) String> getRegisterProcessName();
 
     /**
@@ -113,7 +113,7 @@ public interface PersistableValue extends Template {
      */
     @Schema(description = "Updated time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
             accessMode = Schema.AccessMode.READ_ONLY)
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@TimeRange(groups = {Default.class}) @TimeAccuracy(groups = {Default.class}) OffsetDateTime> getUpdateTime();
 
     /**
@@ -124,7 +124,7 @@ public interface PersistableValue extends Template {
      */
     @Schema(description = "Account id who updated this value.", accessMode = Schema.AccessMode.READ_ONLY,
             maxLength = 250)
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Size(max = 250, groups = {Default.class}) String> getUpdateAccountId();
 
     /**
@@ -133,7 +133,7 @@ public interface PersistableValue extends Template {
      * @return process name
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = Default.class)
     @Schema(description = "Process name who updated this value.", accessMode = Schema.AccessMode.READ_ONLY,
             maxLength = 250)
     Optional<@Size(max = 250, groups = {Default.class}) String> getUpdateProcessName();

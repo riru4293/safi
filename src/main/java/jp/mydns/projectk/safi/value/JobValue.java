@@ -34,6 +34,7 @@ import jakarta.json.stream.JsonParser;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -83,7 +84,7 @@ public interface JobValue extends PersistableValue {
      * @return the {@code JobStatus}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = Default.class)
     @Schema(description = "Job status.")
     JobStatus getStatus();
 
@@ -93,7 +94,7 @@ public interface JobValue extends PersistableValue {
      * @return the {@code JobKind}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = Default.class)
     @Schema(description = "Job kind.")
     JobKind getKind();
 
@@ -103,7 +104,7 @@ public interface JobValue extends PersistableValue {
      * @return the {@code JobTarget}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = Default.class)
     @Schema(description = "Target content type.")
     JobTarget getTarget();
 
@@ -113,9 +114,9 @@ public interface JobValue extends PersistableValue {
      * @return job schedule time
      * @since 3.0.0
      */
-    @NotNull
-    @TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/)
-    @TimeAccuracy
+    @NotNull(groups = Default.class)
+    @TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/, groups = Default.class)
+    @TimeAccuracy(groups = Default.class)
     @Schema(description = "Job schedule time.")
     OffsetDateTime getScheduleTime();
 
@@ -125,9 +126,9 @@ public interface JobValue extends PersistableValue {
      * @return limit time at job execution
      * @since 3.0.0
      */
-    @NotNull
-    @TimeRange
-    @TimeAccuracy
+    @NotNull(groups = Default.class)
+    @TimeRange(groups = Default.class)
+    @TimeAccuracy(groups = Default.class)
     @Schema(description = "Limit time at job execution.")
     OffsetDateTime getLimitTime();
 
@@ -138,7 +139,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Begin time at job execution.")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getBeginTime();
 
     /**
@@ -148,7 +149,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "End time at job execution.")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getEndTime();
 
     /**
@@ -158,7 +159,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(ref = "#/components/schemas/Jobdef/properties/jobProperties")
-    @NotNull
+    @NotNull(groups = Default.class)
     JsonObject getProperties();
 
     /**
@@ -167,8 +168,8 @@ public interface JobValue extends PersistableValue {
      * @return job definition id
      * @since 3.0.0
      */
-    @NotNull
-    @Size(min = 1, max = 36)
+    @NotNull(groups = Default.class)
+    @Size(min = 1, max = 36, groups = Default.class)
     @Schema(description = "Job definition id.")
     String getJobdefId();
 
@@ -178,7 +179,7 @@ public interface JobValue extends PersistableValue {
      * @return job definition
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = Default.class)
     @Valid
     @Schema(description = "Job definition.")
     JobdefValue getJobdef();
@@ -190,7 +191,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Schedule definition id.")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Size(max = 36) String> getSchedefId();
 
     /**
@@ -200,7 +201,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Schedule definition.")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Valid SchedefValue> getSchedef();
 
     /**
@@ -210,7 +211,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Job execution result messages.")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<List<String>> getResultMessages();
 
     /**

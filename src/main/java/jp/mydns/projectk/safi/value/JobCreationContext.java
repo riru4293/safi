@@ -34,6 +34,7 @@ import jakarta.json.stream.JsonParser;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.OffsetDateTime;
@@ -86,7 +87,7 @@ public interface JobCreationContext extends Template {
     @Schema(description = "Job schedule time. Means current time if null."
         + " Values from 2000-01-01T00:00:00Z to 2999-12-31T00:00:00Z can be specified.", example
             = "2000-01-01T00:00:00Z")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/) @TimeAccuracy OffsetDateTime>
         getScheduleTime();
 
@@ -98,7 +99,7 @@ public interface JobCreationContext extends Template {
      */
     @Schema(type = "string", description = "Job execution timeout. Values from PT0S to PT23H59M59S can be specified."
             + " If not null, it overrides the value in the job definition.", example = "PT10M")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@PositiveOrZeroDuration @DurationRange(maxSecond = 86_399L/*23h59m59s*/) @TimeAccuracy Duration>
         getTimeout();
 
@@ -110,7 +111,7 @@ public interface JobCreationContext extends Template {
      */
     @Schema(description = "Plugin name. If not null, it overrides the value in the job definition.",
             example = "PluginName")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Size(max = 50) String> getPluginName();
 
     /**
@@ -121,7 +122,7 @@ public interface JobCreationContext extends Template {
      */
     @Schema(description = "Content transform definition. If not null, it overrides the value in the job definition.",
             ref = "#/components/schemas/Jobdef/properties/trnsdef")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<Map<String, String>> getTrnsdef();
 
     /**
@@ -131,7 +132,7 @@ public interface JobCreationContext extends Template {
      * @since 3.0.0
      */
     @Schema(description = "Content filtering definition. If not null, it overrides the value in the job definition.")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<@Valid FiltdefValue> getFiltdef();
 
     /**
@@ -143,7 +144,7 @@ public interface JobCreationContext extends Template {
      */
     @Schema(description = "Optional configurations at job execution. If not null, it will be marged(overwrite) "
         + "to value in the job definition.", ref = "#/components/schemas/Jobdef/properties/jobProperties")
-    @NotNull
+    @NotNull(groups = Default.class)
     Optional<JsonObject> getJobProperties();
 
     /**

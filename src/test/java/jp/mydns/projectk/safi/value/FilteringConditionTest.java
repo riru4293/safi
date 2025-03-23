@@ -120,8 +120,8 @@ class FilteringConditionTest {
 
         assertThat(single).isInstanceOf(FilteringCondition.Single.class)
             .returns(FilteringOperation.LeafOperation.IS_NULL, FilteringCondition::getOperation)
-            .returns("name", FilteringCondition.Single::getName)
-            .returns("value", FilteringCondition.Single::getValue);
+            .satisfies(v -> assertThat(v.getName()).hasValue("name"))
+            .satisfies(v -> assertThat(v.getValue()).hasValue("value"));
 
         assertThatIllegalArgumentException().isThrownBy(() -> FilteringCondition.singleOf(FilteringOperation.NodeOperation.OR,
             "", ""));
@@ -141,8 +141,8 @@ class FilteringConditionTest {
 
         assertThat(multi).isInstanceOf(FilteringCondition.Multi.class)
             .returns(FilteringOperation.NodeOperation.AND, FilteringCondition::getOperation)
-            .extracting(FilteringCondition.Multi::getChildren).asInstanceOf(InstanceOfAssertFactories.LIST)
-            .containsExactly(single1, single2);
+            .extracting(FilteringCondition.Multi::getChildren).asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
+            .hasValue(List.of(single1, single2));
 
         assertThatIllegalArgumentException()
             .isThrownBy(() -> FilteringCondition.multiOf(FilteringOperation.LeafOperation.IS_NULL, List.of()));

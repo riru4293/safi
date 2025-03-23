@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
+import jp.mydns.projectk.safi.validator.OptionalNotEmpty;
 
 /**
  * Filtering condition. Combines some conditions is also possible.
@@ -108,6 +109,33 @@ public interface FilteringCondition {
             subTypes = {FilteringOperation.LeafOperation.class, FilteringOperation.NodeOperation.class})
     @NotNull(groups = Default.class)
     FilteringOperation getOperation();
+
+    /**
+     * Get filtering target name.
+     *
+     * @return target name
+     * @since 3.0.0
+     */
+    @NotNull(groups = Default.class)
+    Optional<String> getName();
+
+    /**
+     * Get filtering value.
+     *
+     * @return filtering value
+     * @since 3.0.0
+     */
+    @NotNull(groups = Default.class)
+    Optional<String> getValue();
+
+    /**
+     * Get child conditions.
+     *
+     * @return children child conditions
+     * @since 3.0.0
+     */
+    @NotNull
+    Optional<List<@NotNull(groups = Default.class) @Valid FilteringCondition>> getChildren();
 
     /**
      * Get this as {@code LeafOperation}.
@@ -200,8 +228,8 @@ public interface FilteringCondition {
          *
          * @since 3.0.0
          */
-        @Schema(implementation = FilteringOperation.NodeOperation.class)
         @Override
+        @Schema(implementation = FilteringOperation.NodeOperation.class)
         public FilteringOperation getOperation();
 
         /**
@@ -210,8 +238,9 @@ public interface FilteringCondition {
          * @return children child conditions
          * @since 3.0.0
          */
-        @NotNull
-        List<@NotNull(groups = Default.class) @Valid FilteringCondition> getChildren();
+        @Override
+        @OptionalNotEmpty(groups = Default.class)
+        Optional<List<FilteringCondition>> getChildren();
     }
 
     /**
@@ -235,8 +264,8 @@ public interface FilteringCondition {
          *
          * @since 3.0.0
          */
-        @Schema(implementation = FilteringOperation.LeafOperation.class)
         @Override
+        @Schema(implementation = FilteringOperation.LeafOperation.class)
         public FilteringOperation getOperation();
 
         /**
@@ -245,8 +274,9 @@ public interface FilteringCondition {
          * @return target name
          * @since 3.0.0
          */
-        @NotNull(groups = Default.class)
-        String getName();
+        @Override
+        @OptionalNotEmpty(groups = Default.class)
+        Optional<String> getName();
 
         /**
          * Get filtering value.
@@ -254,8 +284,9 @@ public interface FilteringCondition {
          * @return filtering value
          * @since 3.0.0
          */
-        @NotNull(groups = Default.class)
-        String getValue();
+        @Override
+        @OptionalNotEmpty(groups = Default.class)
+        Optional<String> getValue();
     }
 
     /**
@@ -278,8 +309,8 @@ public interface FilteringCondition {
             Bean tmp = dc.deserialize(Bean.class, jp);
 
             return tmp.isMulti()
-                ? new MultiBean(tmp.getOperation(), tmp.getChildren())
-                : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue());
+                ? new MultiBean(tmp.getOperation(), tmp.getChildren().orElse(null))
+                : new SingleBean(tmp.getOperation(), tmp.getName().orElse(null), tmp.getValue().orElse(null));
         }
 
         /**
@@ -317,8 +348,8 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public String getName() {
-                return name;
+            public Optional<String> getName() {
+                return Optional.ofNullable(name);
             }
 
             /**
@@ -327,8 +358,19 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public String getValue() {
-                return value;
+            public Optional<String> getValue() {
+                return Optional.ofNullable(value);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            @JsonbTransient
+            public Optional<List<FilteringCondition>> getChildren() {
+                return Optional.empty();
             }
 
             /**
@@ -388,8 +430,30 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public List<FilteringCondition> getChildren() {
-                return children;
+            @JsonbTransient
+            public Optional<String> getName() {
+                return Optional.empty();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            @JsonbTransient
+            public Optional<String> getValue() {
+                return Optional.empty();
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<List<FilteringCondition>> getChildren() {
+                return Optional.ofNullable(children);
             }
 
             /**
@@ -458,8 +522,9 @@ public interface FilteringCondition {
              * @return target name
              * @since 3.0.0
              */
-            public String getName() {
-                return name;
+            @Override
+            public Optional<String> getName() {
+                return Optional.ofNullable(name);
             }
 
             /**
@@ -478,8 +543,9 @@ public interface FilteringCondition {
              * @return filtering value
              * @since 3.0.0
              */
-            public String getValue() {
-                return value;
+            @Override
+            public Optional<String> getValue() {
+                return Optional.ofNullable(value);
             }
 
             /**
@@ -498,8 +564,9 @@ public interface FilteringCondition {
              * @return children child filtering conditions
              * @since 3.0.0
              */
-            public List<FilteringCondition> getChildren() {
-                return children;
+            @Override
+            public Optional<List<FilteringCondition>> getChildren() {
+                return Optional.ofNullable(children);
             }
 
             /**
