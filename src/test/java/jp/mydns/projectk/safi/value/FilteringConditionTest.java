@@ -51,20 +51,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class FilteringConditionTest {
 
     /**
-     * Test of isMulti method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testIsMulti() {
-        var single = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
-        var multi = FilteringCondition.multiOf(FilteringOperation.NodeOperation.AND, List.of());
-
-        assertThat(single.isMulti()).isFalse();
-        assertThat(multi.isMulti()).isTrue();
-    }
-
-    /**
      * Test of getOperation method.
      *
      * @since 3.0.0

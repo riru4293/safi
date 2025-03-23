@@ -41,6 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
+import jp.mydns.projectk.safi.constant.FilteringOperationKing;
 import jp.mydns.projectk.safi.validator.OptionalNotEmpty;
 
 /**
@@ -87,17 +88,6 @@ Filtering condition.
 ```""",
         oneOf = {FilteringCondition.Single.class, FilteringCondition.Multi.class})
 public interface FilteringCondition {
-
-    /**
-     * {@code true} if multiple filtering condition.
-     *
-     * @return {@code true} if multiple filtering condition, otherwise {@code false}.
-     * @see Multi
-     * @since 3.0.0
-     */
-    @JsonbTransient
-    @Schema(hidden = true)
-    boolean isMulti();
 
     /**
      * Get filtering operation.
@@ -308,7 +298,8 @@ public interface FilteringCondition {
 
             Bean tmp = dc.deserialize(Bean.class, jp);
 
-            return tmp.isMulti()
+            return Optional.ofNullable(tmp).map(FilteringCondition::getOperation).map(FilteringOperation::getKind)
+                .filter(FilteringOperationKing.NODE::equals).isPresent()
                 ? new MultiBean(tmp.getOperation(), tmp.getChildren().orElse(null))
                 : new SingleBean(tmp.getOperation(), tmp.getName().orElse(null), tmp.getValue().orElse(null));
         }
@@ -371,17 +362,6 @@ public interface FilteringCondition {
             @JsonbTransient
             public Optional<List<FilteringCondition>> getChildren() {
                 return Optional.empty();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @return {@code false}
-             * @since 3.0.0
-             */
-            @Override
-            public boolean isMulti() {
-                return false;
             }
 
             /**
@@ -454,17 +434,6 @@ public interface FilteringCondition {
             @Override
             public Optional<List<FilteringCondition>> getChildren() {
                 return Optional.ofNullable(children);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @return {@code true}
-             * @since 3.0.0
-             */
-            @Override
-            public boolean isMulti() {
-                return true;
             }
 
             /**
@@ -577,20 +546,6 @@ public interface FilteringCondition {
              */
             public void setChildren(List<FilteringCondition> children) {
                 this.children = children;
-            }
-
-            /**
-             * Returns a {@code true} if type of the {@link FilteringOperation} obtained with {@link #getOperation()} is
-             * {@link Multi}.
-             *
-             * @return {@code true} if type of the {@link FilteringOperation} obtained with {@link #getOperation()} is
-             * {@link Multi}, otherwise {@code false}.
-             * @since 3.0.0
-             */
-            @Override
-            public boolean isMulti() {
-                return Optional.ofNullable(operation).map(FilteringOperation::name)
-                    .filter(multiOpNames::contains).isPresent();
             }
         }
     }
