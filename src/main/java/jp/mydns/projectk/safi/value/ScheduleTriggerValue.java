@@ -348,7 +348,7 @@ public interface ScheduleTriggerValue {
              */
             @Override
             public Builder with(WeekdaysTriggerValue src) {
-                Objects.requireNonNull(src);
+                super.with(Objects.requireNonNull(src));
 
                 this.months = src.getMonths();
                 this.weeks = src.getWeeks();
