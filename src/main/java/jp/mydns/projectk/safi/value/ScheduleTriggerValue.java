@@ -43,6 +43,7 @@ import java.time.OffsetDateTime;
 import java.util.SequencedSet;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
+import jp.mydns.projectk.safi.util.CollectionUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedDayOfWeekSetAdapter;
@@ -155,8 +156,8 @@ public interface ScheduleTriggerValue extends Template {
             @Override
             public Builder with(DaysTriggerValue src) {
                 super.with(Objects.requireNonNull(src));
-                this.months = src.getMonths();
-                this.days = src.getDays();
+                this.months = CollectionUtils.toUnmodifiable(src.getMonths());
+                this.days = CollectionUtils.toUnmodifiable(src.getDays());
                 return this;
             }
 
@@ -168,7 +169,7 @@ public interface ScheduleTriggerValue extends Template {
              * @since 3.0.0
              */
             public Builder withMonths(SequencedSet<Month> months) {
-                this.months = months;
+                this.months = CollectionUtils.toUnmodifiable(months);
                 return this;
             }
 
@@ -180,7 +181,7 @@ public interface ScheduleTriggerValue extends Template {
              * @since 3.0.0
              */
             public Builder withDays(SequencedSet<Integer> days) {
-                this.days = days;
+                this.days = CollectionUtils.toUnmodifiable(days);
                 return this;
             }
 
@@ -232,7 +233,7 @@ public interface ScheduleTriggerValue extends Template {
                  */
                 @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
                 public void setMonths(SequencedSet<Month> months) {
-                    this.months = months;
+                    this.months = CollectionUtils.toUnmodifiable(months);
                 }
 
                 /**
@@ -254,7 +255,7 @@ public interface ScheduleTriggerValue extends Template {
                  */
                 @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
                 public void setDays(SequencedSet<Integer> days) {
-                    this.days = days;
+                    this.days = CollectionUtils.toUnmodifiable(days);
                 }
 
                 /**
@@ -346,9 +347,9 @@ public interface ScheduleTriggerValue extends Template {
             public Builder with(WeekdaysTriggerValue src) {
                 super.with(Objects.requireNonNull(src));
 
-                this.months = src.getMonths();
-                this.weeks = src.getWeeks();
-                this.weekdays = src.getWeekdays();
+                this.months = CollectionUtils.toUnmodifiable(src.getMonths());
+                this.weeks = CollectionUtils.toUnmodifiable(src.getWeeks());
+                this.weekdays = CollectionUtils.toUnmodifiable(src.getWeekdays());
 
                 return this;
             }
@@ -361,7 +362,7 @@ public interface ScheduleTriggerValue extends Template {
              * @since 3.0.0
              */
             public Builder withMonths(SequencedSet<Month> months) {
-                this.months = months;
+                this.months = CollectionUtils.toUnmodifiable(months);
                 return this;
             }
 
@@ -373,7 +374,7 @@ public interface ScheduleTriggerValue extends Template {
              * @since 3.0.0
              */
             public Builder withWeeks(SequencedSet<Integer> weeks) {
-                this.weeks = weeks;
+                this.weeks = CollectionUtils.toUnmodifiable(weeks);
                 return this;
             }
 
@@ -385,7 +386,7 @@ public interface ScheduleTriggerValue extends Template {
              * @since 3.0.0
              */
             public Builder withWeekdays(SequencedSet<DayOfWeek> weekdays) {
-                this.weekdays = weekdays;
+                this.weekdays = CollectionUtils.toUnmodifiable(weekdays);
                 return this;
             }
 
@@ -439,7 +440,7 @@ public interface ScheduleTriggerValue extends Template {
                  */
                 @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
                 public void setMonths(SequencedSet<Month> months) {
-                    this.months = months;
+                    this.months = CollectionUtils.toUnmodifiable(months);
                 }
 
                 /**
@@ -462,7 +463,7 @@ public interface ScheduleTriggerValue extends Template {
                  */
                 @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
                 public void setWeeks(SequencedSet<Integer> weeks) {
-                    this.weeks = weeks;
+                    this.weeks = CollectionUtils.toUnmodifiable(weeks);
                 }
 
                 /**
@@ -484,7 +485,7 @@ public interface ScheduleTriggerValue extends Template {
                  */
                 @JsonbTypeAdapter(SequencedDayOfWeekSetAdapter.class)
                 public void setWeekdays(SequencedSet<DayOfWeek> weekdays) {
-                    this.weekdays = weekdays;
+                    this.weekdays = CollectionUtils.toUnmodifiable(weekdays);
                 }
 
                 /**
