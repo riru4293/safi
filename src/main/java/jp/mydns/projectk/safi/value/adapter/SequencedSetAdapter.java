@@ -76,7 +76,7 @@ public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, Li
      * @version 3.0.0
      * @since 3.0.0
      */
-    public class SetMonthAdapter implements SequencedSetAdapter<Month> {
+    public class SequencedMonthSetAdapter implements SequencedSetAdapter<Month> {
     }
 
     /**
@@ -86,7 +86,7 @@ public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, Li
      * @version 3.0.0
      * @since 3.0.0
      */
-    public class SetDayOfWeekAdapter implements SequencedSetAdapter<DayOfWeek> {
+    public class SequencedDayOfWeekSetAdapter implements SequencedSetAdapter<DayOfWeek> {
     }
 
     /**
@@ -96,6 +96,6 @@ public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, Li
      * @version 3.0.0
      * @since 3.0.0
      */
-    public class SetIntegerAdapter implements SequencedSetAdapter<Integer> {
+    public class SequencedIntegerSetAdapter implements SequencedSetAdapter<Integer> {
     }
 }

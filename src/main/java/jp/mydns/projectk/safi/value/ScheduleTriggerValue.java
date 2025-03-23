@@ -48,9 +48,9 @@ import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SetDayOfWeekAdapter;
-import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SetIntegerAdapter;
-import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SetMonthAdapter;
+import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedDayOfWeekSetAdapter;
+import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedIntegerSetAdapter;
+import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSetAdapter;
 
 /**
  * <i>Job</i> schedule trigger configuration.
@@ -222,7 +222,7 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                @JsonbTypeAdapter(SetMonthAdapter.class)
+                @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
                 public SequencedSet<Month> getMonths() {
                     return months;
                 }
@@ -233,7 +233,7 @@ public interface ScheduleTriggerValue {
                  * @param months target months of scheduling
                  * @since 3.0.0
                  */
-                @JsonbTypeAdapter(SetMonthAdapter.class)
+                @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
                 public void setMonths(SequencedSet<Month> months) {
                     this.months = months;
                 }
@@ -244,7 +244,7 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                @JsonbTypeAdapter(SetIntegerAdapter.class)
+                @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
                 public SequencedSet<Integer> getDays() {
                     return days;
                 }
@@ -255,7 +255,7 @@ public interface ScheduleTriggerValue {
                  * @param days target day numbers of scheduling
                  * @since 3.0.0
                  */
-                @JsonbTypeAdapter(SetIntegerAdapter.class)
+                @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
                 public void setDays(SequencedSet<Integer> days) {
                     this.days = days;
                 }
@@ -429,7 +429,7 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                @JsonbTypeAdapter(SetMonthAdapter.class)
+                @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
                 public SequencedSet<Month> getMonths() {
                     return months;
                 }
@@ -440,7 +440,7 @@ public interface ScheduleTriggerValue {
                  * @param months target months of scheduling
                  * @since 3.0.0
                  */
-                @JsonbTypeAdapter(SetMonthAdapter.class)
+                @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
                 public void setMonths(SequencedSet<Month> months) {
                     this.months = months;
                 }
@@ -451,7 +451,7 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                @JsonbTypeAdapter(SetIntegerAdapter.class)
+                @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
                 public SequencedSet<Integer> getWeeks() {
                     return weeks;
                 }
@@ -463,7 +463,7 @@ public interface ScheduleTriggerValue {
                  * @param weeks target week numbers of scheduling
                  * @since 3.0.0
                  */
-                @JsonbTypeAdapter(SetIntegerAdapter.class)
+                @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
                 public void setWeeks(SequencedSet<Integer> weeks) {
                     this.weeks = weeks;
                 }
@@ -474,7 +474,7 @@ public interface ScheduleTriggerValue {
                  * @since 3.0.0
                  */
                 @Override
-                @JsonbTypeAdapter(SetDayOfWeekAdapter.class)
+                @JsonbTypeAdapter(SequencedDayOfWeekSetAdapter.class)
                 public SequencedSet<DayOfWeek> getWeekdays() {
                     return weekdays;
                 }
@@ -485,7 +485,7 @@ public interface ScheduleTriggerValue {
                  * @param weekdays target weekdays of scheduling
                  * @since 3.0.0
                  */
-                @JsonbTypeAdapter(SetDayOfWeekAdapter.class)
+                @JsonbTypeAdapter(SequencedDayOfWeekSetAdapter.class)
                 public void setWeekdays(SequencedSet<DayOfWeek> weekdays) {
                     this.weekdays = weekdays;
                 }
@@ -954,7 +954,7 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SetMonthAdapter.class)
+            @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
             public SequencedSet<Month> getMonths() {
                 return months;
             }
@@ -965,7 +965,7 @@ public interface ScheduleTriggerValue {
              * @param months target months of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SetMonthAdapter.class)
+            @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
             public void setMonths(SequencedSet<Month> months) {
                 this.months = months;
             }
@@ -976,7 +976,7 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SetIntegerAdapter.class)
+            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
             public SequencedSet<Integer> getWeeks() {
                 return weeks;
             }
@@ -988,7 +988,7 @@ public interface ScheduleTriggerValue {
              * @param weeks target week numbers of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SetIntegerAdapter.class)
+            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
             public void setWeeks(SequencedSet<Integer> weeks) {
                 this.weeks = weeks;
             }
@@ -999,7 +999,7 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SetDayOfWeekAdapter.class)
+            @JsonbTypeAdapter(SequencedDayOfWeekSetAdapter.class)
             public SequencedSet<DayOfWeek> getWeekdays() {
                 return weekdays;
             }
@@ -1010,7 +1010,7 @@ public interface ScheduleTriggerValue {
              * @param weekdays target weekdays of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SetDayOfWeekAdapter.class)
+            @JsonbTypeAdapter(SequencedDayOfWeekSetAdapter.class)
             public void setWeekdays(SequencedSet<DayOfWeek> weekdays) {
                 this.weekdays = weekdays;
             }
@@ -1021,7 +1021,7 @@ public interface ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SetIntegerAdapter.class)
+            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
             public SequencedSet<Integer> getDays() {
                 return days;
             }
@@ -1032,7 +1032,7 @@ public interface ScheduleTriggerValue {
              * @param days target day numbers of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SetIntegerAdapter.class)
+            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
             public void setDays(SequencedSet<Integer> days) {
                 this.days = days;
             }
