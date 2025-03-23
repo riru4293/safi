@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
@@ -33,14 +34,18 @@ import jakarta.json.stream.JsonParser;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
+import java.util.Objects;
 import java.util.Set;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
+import jp.mydns.projectk.safi.constant.FilteringOperationKing;
 import jp.mydns.projectk.safi.value.FilteringOperation.LeafOperation;
 import jp.mydns.projectk.safi.value.FilteringOperation.NodeOperation;
 
 /**
- * Filtering operation.Interface for {@link LeafOperation} or {@link NodeOperation}.<p>
+ * Filtering operation.
+ *
+ * <p>
  * Implementation requirements.
  * <ul>
  * <li>This class is immutable and thread-safe.</li>
@@ -53,9 +58,18 @@ import jp.mydns.projectk.safi.value.FilteringOperation.NodeOperation;
  */
 @JsonbTypeDeserializer(FilteringOperation.Deserializer.class)
 @Schema(name = "FilteringOperation", description = "Filtering operation.",
-        subTypes = {LeafOperation.class, NodeOperation.class},
-        oneOf = {LeafOperation.class, NodeOperation.class})
+        subTypes = {LeafOperation.class, NodeOperation.class}, oneOf = {LeafOperation.class, NodeOperation.class})
 public interface FilteringOperation {
+
+    /**
+     * Get kind of the filtering operation.
+     *
+     * @return kind of the filtering operation
+     * @since 3.0.0
+     */
+    @JsonbTransient
+    @NotNull(groups = Default.class)
+    public FilteringOperationKing getKind();
 
     /**
      * Get filtering operation name.
@@ -68,85 +82,117 @@ public interface FilteringOperation {
     String name();
 
     /**
-     * Represents a match operation for a single value. For example, the {@code EQUAL} operator.
+     * Leaf filtering operation. For example, the {@code EQUAL} operator.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(name = "FilteringOperation.Single", description = "Signle filtering operation.")
+    @Schema(name = "FilteringOperation.Leaf", description = "Leaf filtering operation.")
     enum LeafOperation implements FilteringOperation {
         /**
          * Indicates a equal.
          *
          * @since 3.0.0
          */
-        EQUAL,
+        EQUAL(FilteringOperationKing.LEAF),
         /**
          * Indicates a forward-match.
          *
          * @since 3.0.0
          */
-        FORWARD_MATCH,
+        FORWARD_MATCH(FilteringOperationKing.LEAF),
         /**
          * Indicates a partial-match.
          *
          * @since 3.0.0
          */
-        PARTIAL_MATCH,
+        PARTIAL_MATCH(FilteringOperationKing.LEAF),
         /**
          * Indicates a backward-match.
          *
          * @since 3.0.0
          */
-        BACKWARD_MATCH,
+        BACKWARD_MATCH(FilteringOperationKing.LEAF),
         /**
          * Indicates a greater-than.
          *
          * @since 3.0.0
          */
-        GRATER_THAN,
+        GRATER_THAN(FilteringOperationKing.LEAF),
         /**
          * Indicates a less-than.
          *
          * @since 3.0.0
          */
-        LESS_THAN,
+        LESS_THAN(FilteringOperationKing.LEAF),
         /**
          * Indicates a is-null.
          *
          * @since 3.0.0
          */
-        IS_NULL,
+        IS_NULL(FilteringOperationKing.LEAF);
+
+        private final FilteringOperationKing kind;
+
+        private LeafOperation(FilteringOperationKing kind) {
+            this.kind = Objects.requireNonNull(kind);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public FilteringOperationKing getKind() {
+            return kind;
+        }
     }
 
     /**
-     * Filtering operation that aggregate filtering operations. For example, the {@code AND} operator.
+     * Node filtering operation. For example, the {@code AND} operator.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(name = "FilteringOperation.Multi", description = "Multiple filtering operation.")
+    @Schema(name = "FilteringOperation.Node", description = "Node filtering operation.")
     enum NodeOperation implements FilteringOperation {
         /**
          * Indicates a logical product.
          *
          * @since 3.0.0
          */
-        AND,
+        AND(FilteringOperationKing.NODE),
         /**
          * Indicates a logical sum.
          *
          * @since 3.0.0
          */
-        OR,
+        OR(FilteringOperationKing.NODE),
         /**
          * Indicates the negation of a logical sum.
          *
          * @since 3.0.0
          */
-        NOT_OR,
+        NOT_OR(FilteringOperationKing.NODE);
+
+        private final FilteringOperationKing kind;
+
+        private NodeOperation(FilteringOperationKing kind) {
+            this.kind = Objects.requireNonNull(kind);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public FilteringOperationKing getKind() {
+            return kind;
+        }
     }
 
     /**
