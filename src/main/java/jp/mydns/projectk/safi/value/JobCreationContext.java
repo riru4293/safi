@@ -31,9 +31,7 @@ import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.lang.reflect.Type;
@@ -42,7 +40,7 @@ import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.util.CollectionUtils;
 import jp.mydns.projectk.safi.validator.DurationRange;
 import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
@@ -86,7 +84,8 @@ public interface JobCreationContext extends Template {
      * @since 3.0.0
      */
     @Schema(description = "Job schedule time. Means current time if null."
-        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T00:00:00Z can be specified.", example = "2000-01-01T00:00:00Z")
+        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T00:00:00Z can be specified.", example
+            = "2000-01-01T00:00:00Z")
     Optional<@TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/) @TimeAccuracy OffsetDateTime>
         getScheduleTime();
 
@@ -157,7 +156,7 @@ public interface JobCreationContext extends Template {
         private Map<String, String> trnsdef;
         private FiltdefValue filtdef;
         private JsonObject jobProperties;
-        
+
         /**
          * Constructor.
          *
@@ -166,7 +165,7 @@ public interface JobCreationContext extends Template {
         public Builder() {
             super(Builder.class);
         }
-        
+
         /**
          * {@inheritDoc}
          *
@@ -244,7 +243,7 @@ public interface JobCreationContext extends Template {
          * @since 3.0.0
          */
         public Builder withTrnsdef(Map<String, String> trnsdef) {
-            this.trnsdef = trnsdef;
+            this.trnsdef = CollectionUtils.toUnmodifiable(trnsdef);
             return this;
         }
 
@@ -414,7 +413,7 @@ public interface JobCreationContext extends Template {
              * @since 3.0.0
              */
             public void setTrnsdef(Map<String, String> trnsdef) {
-                this.trnsdef = trnsdef;
+                this.trnsdef = CollectionUtils.toUnmodifiable(trnsdef);
             }
 
             /**

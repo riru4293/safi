@@ -42,6 +42,7 @@ import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
+import jp.mydns.projectk.safi.util.CollectionUtils;
 import jp.mydns.projectk.safi.validator.DurationRange;
 import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
@@ -299,7 +300,7 @@ The key is the property name after transformation, and the value is the transfor
          * @since 3.0.0
          */
         public Builder withTrnsdef(Map<String, String> trnsdef) {
-            this.trnsdef = trnsdef;
+            this.trnsdef = CollectionUtils.toUnmodifiable(trnsdef);
             return this;
         }
 
@@ -493,7 +494,7 @@ The key is the property name after transformation, and the value is the transfor
              * @since 3.0.0
              */
             public void setTrnsdef(Map<String, String> trnsdef) {
-                this.trnsdef = trnsdef;
+                this.trnsdef = CollectionUtils.toUnmodifiable(trnsdef);
             }
 
             /**

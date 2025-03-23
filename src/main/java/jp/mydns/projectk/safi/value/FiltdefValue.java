@@ -36,6 +36,7 @@ import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Objects;
+import jp.mydns.projectk.safi.util.CollectionUtils;
 
 /**
  * An information for filtering the content values. It has a transform definition and filtering condition, and is used
@@ -102,7 +103,7 @@ public interface FiltdefValue extends Template {
         public Builder() {
             super(Builder.class);
         }
-        
+
         /**
          * {@inheritDoc}
          *
@@ -127,7 +128,7 @@ public interface FiltdefValue extends Template {
          * @since 3.0.0
          */
         public Builder withTrnsdef(Map<String, String> trnsdef) {
-            this.trnsdef = trnsdef;
+            this.trnsdef = CollectionUtils.toUnmodifiable(trnsdef);
             return this;
         }
 
@@ -195,7 +196,7 @@ public interface FiltdefValue extends Template {
              * @since 3.0.0
              */
             public void setTrnsdef(Map<String, String> trnsdef) {
-                this.trnsdef = trnsdef;
+                this.trnsdef = CollectionUtils.toUnmodifiable(trnsdef);
             }
 
             /**

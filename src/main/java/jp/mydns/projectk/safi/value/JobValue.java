@@ -42,6 +42,7 @@ import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobStatus;
+import jp.mydns.projectk.safi.util.CollectionUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -431,7 +432,7 @@ public interface JobValue extends PersistableValue {
          * @since 3.0.0
          */
         public Builder withResultMessages(List<String> resultMessages) {
-            this.resultMessages = resultMessages;
+            this.resultMessages = CollectionUtils.toUnmodifiable(resultMessages);
             return this;
         }
 
@@ -761,7 +762,7 @@ public interface JobValue extends PersistableValue {
              * @since 3.0.0
              */
             public void setResultMessages(List<String> resultMessages) {
-                this.resultMessages = resultMessages;
+                this.resultMessages = CollectionUtils.toUnmodifiable(resultMessages);
             }
 
             /**
