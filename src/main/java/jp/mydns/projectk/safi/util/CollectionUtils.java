@@ -25,10 +25,19 @@
  */
 package jp.mydns.projectk.safi.util;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.SequencedMap;
+import java.util.SequencedSet;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collector;
@@ -55,7 +64,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Collect to unmodifiable the {@code LinkedHashMap} from {@code Map.Entry}.
+     * Collect to toUnmodifiable the {@code LinkedHashMap} from {@code Map.Entry}.
      *
      * @param <K> key type
      * @param <V> value type
@@ -68,7 +77,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Collect to unmodifiable the {@code LinkedHashMap} from {@code Map.Entry}.
+     * Collect to toUnmodifiable the {@code LinkedHashMap} from {@code Map.Entry}.
      *
      * @param <K> key type
      * @param <V> value type
@@ -83,7 +92,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Collect to unmodifiable the {@code TreeMap} from {@code Map.Entry}.
+     * Collect to toUnmodifiable the {@code TreeMap} from {@code Map.Entry}.
      *
      * @param <K> key type
      * @param <V> value type
@@ -96,7 +105,7 @@ public class CollectionUtils {
     }
 
     /**
-     * Collect to unmodifiable the {@code TreeMap} from {@code Map.Entry}.
+     * Collect to toUnmodifiable the {@code TreeMap} from {@code Map.Entry}.
      *
      * @param <K> key type
      * @param <V> value type
@@ -136,5 +145,87 @@ public class CollectionUtils {
 
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue, Objects.requireNonNull(mergeFunc),
             () -> new TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER)), Collections::unmodifiableMap);
+    }
+
+    /**
+     * Returns an unmodifiable view of the specified list.
+     *
+     * @param <V> value type
+     * @param list the {@code List}
+     * @return unmodifiable unmodifiable view of {@code list}. Returns {@code null} if {@code list} is {@code null}.
+     * @since 3.0.0
+     */
+    public static <V> List<V> toUnmodifiable(List<V> list) {
+        return Optional.ofNullable(list).map(s -> {
+            List<V> value = new ArrayList<>();
+            value.addAll(list);
+            return Collections.unmodifiableList(value);
+        }).orElse(list);
+    }
+
+    /**
+     * Returns an unmodifiable view of the specified set.
+     *
+     * @param <V> value type
+     * @param set the {@code Set}
+     * @return unmodifiable unmodifiable view of {@code set}. Returns {@code null} if {@code set} is {@code null}.
+     * @since 3.0.0
+     */
+    public static <V> Set<V> toUnmodifiable(Set<V> set) {
+        return Optional.ofNullable(set).map(s -> {
+            Set<V> value = new HashSet<>();
+            value.addAll(set);
+            return Collections.unmodifiableSet(value);
+        }).orElse(set);
+    }
+
+    /**
+     * Returns an unmodifiable view of the specified set.
+     *
+     * @param <V> value type
+     * @param set the {@code Set}
+     * @return unmodifiable unmodifiable view of {@code set}. Returns {@code null} if {@code set} is {@code null}.
+     * @since 3.0.0
+     */
+    public static <V> SequencedSet<V> toUnmodifiable(SequencedSet<V> set) {
+        return Optional.ofNullable(set).map(s -> {
+            SequencedSet<V> value = new LinkedHashSet<>();
+            value.addAll(set);
+            return Collections.unmodifiableSequencedSet(value);
+        }).orElse(set);
+    }
+
+    /**
+     * Returns an unmodifiable view of the specified map.
+     *
+     * @param <K> key type
+     * @param <V> value type
+     * @param map the {@code Map}
+     * @return unmodifiable unmodifiable view of {@code map}. Returns {@code null} if {@code map} is {@code null}.
+     * @since 3.0.0
+     */
+    public static <K, V> Map<K, V> toUnmodifiable(Map<K, V> map) {
+        return Optional.ofNullable(map).map(s -> {
+            Map<K, V> value = new HashMap<>();
+            value.putAll(map);
+            return Collections.unmodifiableMap(value);
+        }).orElse(map);
+    }
+
+    /**
+     * Returns an unmodifiable view of the specified map.
+     *
+     * @param <K> key type
+     * @param <V> value type
+     * @param map the {@code Map}
+     * @return unmodifiable unmodifiable view of {@code map}. Returns {@code null} if {@code map} is {@code null}.
+     * @since 3.0.0
+     */
+    public static <K, V> SequencedMap<K, V> toUnmodifiable(SequencedMap<K, V> map) {
+        return Optional.ofNullable(map).map(s -> {
+            SequencedMap<K, V> value = new LinkedHashMap<>();
+            value.putAll(map);
+            return Collections.unmodifiableSequencedMap(value);
+        }).orElse(map);
     }
 }
