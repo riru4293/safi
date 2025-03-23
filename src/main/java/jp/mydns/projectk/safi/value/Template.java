@@ -31,7 +31,7 @@ import java.util.Objects;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
- * Common value.
+ * Template of value object.
  *
  * <p>
  * Implementation requirements.
@@ -43,10 +43,10 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @version 3.0.0
  * @since 3.0.0
  */
-public interface CommonValue {
+public interface Template {
 
     /**
-     * Abstract builder of the {@code CommonValue}.
+     * Abstract builder of the {@code Template}.
      *
      * @param <B> builder type
      * @param <V> value type
@@ -54,7 +54,7 @@ public interface CommonValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends CommonValue> {
+    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends Template> {
 
         protected final Class<B> builderType;
 

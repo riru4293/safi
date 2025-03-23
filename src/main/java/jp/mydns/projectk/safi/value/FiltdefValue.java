@@ -60,7 +60,7 @@ import java.util.Objects;
         example = "{\"condition\":{\"operation\":\"AND\",\"children\":[{\"operation\":\"EQUAL\",\"name\":\"kind\","
         + "\"value\":\"2\"},{\"operation\":\"PARTIAL_MATCH\",\"name\":\"name\",\"value\":\"taro\"}]},"
         + "\"trnsdef\":{\"name\":\"[userName]\",\"kind\":\"[userType]\",\"id\":\"[userId]\"}}")
-public interface FiltdefValue extends CommonValue {
+public interface FiltdefValue extends Template {
 
     /**
      * Get the transform definition for filtering.

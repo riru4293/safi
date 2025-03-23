@@ -66,7 +66,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  */
 @JsonbTypeDeserializer(JobCreationContext.Deserializer.class)
 @Schema(name = "JobCreationContext", description = "Information to create a Job.")
-public interface JobCreationContext extends CommonValue {
+public interface JobCreationContext extends Template {
 
     /**
      * Get job definition id to use.

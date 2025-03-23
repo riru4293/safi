@@ -48,7 +48,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * @version 3.0.0
  * @since 3.0.0
  */
-public interface PersistableValue extends CommonValue {
+public interface PersistableValue extends Template {
 
     /**
      * Get note for this value.
@@ -140,7 +140,7 @@ public interface PersistableValue extends CommonValue {
      * @since 3.0.0
      */
     abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends PersistableValue>
-            extends CommonValue.AbstractBuilder<B, V> {
+            extends Template.AbstractBuilder<B, V> {
 
         protected String note;
         protected int version;
