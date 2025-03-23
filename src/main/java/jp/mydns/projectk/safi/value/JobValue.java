@@ -138,6 +138,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Begin time at job execution.")
+    @NotNull
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getBeginTime();
 
     /**
@@ -147,6 +148,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "End time at job execution.")
+    @NotNull
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getEndTime();
 
     /**
@@ -188,6 +190,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Schedule definition id.")
+    @NotNull
     Optional<@Size(max = 36) String> getSchedefId();
 
     /**
@@ -197,6 +200,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Schedule definition.")
+    @NotNull
     Optional<@Valid SchedefValue> getSchedef();
 
     /**
@@ -206,6 +210,7 @@ public interface JobValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Job execution result messages.")
+    @NotNull
     Optional<List<String>> getResultMessages();
 
     /**

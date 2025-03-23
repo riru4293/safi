@@ -64,6 +64,7 @@ public interface NamedValue extends PersistableValue {
      * @since 3.0.0
      */
     @Schema(description = "Name of value.", maxLength = 250)
+    @NotNull
     Optional<@Size(max = 250, groups = {Default.class}) String> getName();
 
     /**
@@ -76,7 +77,7 @@ public interface NamedValue extends PersistableValue {
      * @since 3.0.0
      */
     abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends NamedValue>
-            extends PersistableValue.AbstractBuilder<B, V> {
+        extends PersistableValue.AbstractBuilder<B, V> {
 
         protected ValidityPeriodValue validityPeriod;
         protected String name;
@@ -125,7 +126,7 @@ public interface NamedValue extends PersistableValue {
         }
 
         protected abstract static class AbstractBean extends PersistableValue.AbstractBuilder.AbstractBean
-                implements NamedValue {
+            implements NamedValue {
 
             protected ValidityPeriodValue validityPeriod;
             protected String name;
