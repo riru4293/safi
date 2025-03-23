@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import static java.util.stream.Collectors.toMap;
 import java.util.stream.Stream;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -273,5 +274,20 @@ class LambdaUtilsTest {
         var result = LambdaUtils.s(sup, proc).get();
 
         assertThat(result).isEqualTo("[10]");
+    }
+
+    /**
+     * Test of compute method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testCompute() {
+        var expect = Map.of("k1", 1, "k2", 2);
+
+        var result = Map.of("k1", "1", "k2", "2").entrySet().stream().map(LambdaUtils.compute(Integer::valueOf))
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expect);
     }
 }

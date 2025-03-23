@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.util;
 
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -312,7 +313,7 @@ public final class LambdaUtils {
      */
     public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> toLinkedHashMap(BinaryOperator<V> mergeFunc) {
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue,
-                Objects.requireNonNull(mergeFunc), LinkedHashMap::new), Collections::unmodifiableMap);
+            Objects.requireNonNull(mergeFunc), LinkedHashMap::new), Collections::unmodifiableMap);
     }
 
     /**
@@ -340,7 +341,7 @@ public final class LambdaUtils {
      */
     public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> toTreeMap(BinaryOperator<V> mergeFunc) {
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue,
-                Objects.requireNonNull(mergeFunc), TreeMap::new), Collections::unmodifiableMap);
+            Objects.requireNonNull(mergeFunc), TreeMap::new), Collections::unmodifiableMap);
     }
 
     /**
@@ -364,9 +365,11 @@ public final class LambdaUtils {
      * @throws NullPointerException if {@code mergeFunc} is {@code null}
      * @since 3.0.0
      */
-    public static <V> Collector<Map.Entry<String, V>, ?, Map<String, V>> toCaseInsensitiveMap(BinaryOperator<V> mergeFunc) {
+    public static <V> Collector<Map.Entry<String, V>, ?, Map<String, V>>
+        toCaseInsensitiveMap(BinaryOperator<V> mergeFunc) {
+
         return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue, Objects.requireNonNull(mergeFunc),
-                () -> new TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER)), Collections::unmodifiableMap);
+            () -> new TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER)), Collections::unmodifiableMap);
     }
 
     /**
@@ -398,5 +401,37 @@ public final class LambdaUtils {
      */
     public static <O, T> Supplier<T> supplier(Supplier<O> origin, Function<O, T> postConversion) {
         return () -> postConversion.apply(origin.get());
+    }
+
+    /**
+     * Compute the value of {@code Entry} using the specified function and return the result as new {@code Entry}. The
+     * original value is used for the key.
+     *
+     * @param <K> entry key type
+     * @param <I> input entry value type
+     * @param <O> output entry value type
+     * @param f computation function
+     * @return a new immutable entry using the computation result as a value
+     * <p>
+     * Usage example<pre>
+     * {@code // values to upper case
+     * Map<String, String> preMap = Map.of("k1", "v1", "k2", "v2");
+     * Map<String, String> postMap = preMap.entrySet().stream()
+     *     .map(compute(String::toUpperCase))
+     *     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+     *
+     * // Results are
+     * //   preMap  -> {"key-1", "val-1", "key-2", "val-2"}
+     * //   postMap -> {"key-1", "VAL-1", "key-2", "VAL-2"}
+     * }
+     * </pre>
+     *
+     * @throws NullPointerException if {@code f} is {@code null}
+     * @since 3.0.0
+     */
+    public static <K, I, O> Function<Map.Entry<K, I>, Map.Entry<K, O>> compute(Function<I, O> f) {
+        Objects.requireNonNull(f);
+
+        return e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), f.apply(e.getValue()));
     }
 }

@@ -32,8 +32,8 @@ import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
@@ -60,100 +60,32 @@ import java.util.stream.Stream;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/condition.schema.json",
- *     "title": "Filtdef",
- *     "description": "An information for filtering the contents.",
- *     "type": "object",
- *     "properties": {
- *         "operation": {
- *             "description": "Filtering operation.",
- *             "type": "string",
- *             "enum": [
- *                 "EQUAL",
- *                 "FORWARD_MATCH",
- *                 "PARTIAL_MATCH",
- *                 "BACKWARD_MATCH",
- *                 "GRATER_THAN",
- *                 "LESS_THAN",
- *                 "IS_NULL",
- *                 "AND",
- *                 "OR",
- *                 "NOT_OR"
- *             ]
- *         },
- *         "name": {
- *             "description": "Name of element to be filtered.",
- *             "type": "string",
- *             "minLength": 1
- *         },
- *         "value": {
- *             "description": "Value to filter.",
- *             "type": "string"
- *         },
- *         "children": {
- *             "description": "Chile condition collection.",
- *             "$ref": "https://project-k.mydns.jp/safi/condition.schema.json"
- *         }
- *     },
- *     "required": [
- *         "operation"
- *     ],
- *     "allOf": [
- *         {
- *             "if": {
- *                 "properties": {
- *                     "operation": {
- *                         "pattern": "[(AND)|(OR)|(NOT_OR)]"
- *                     }
- *                 }
- *             },
- *             "then": {
- *                 "required": [
- *                     "children"
- *                 ],
- *                 "allOf": [
- *                     {
- *                         "not": {
- *                             "required": [
- *                                 "name",
- *                                 "value"
- *                             ]
- *                         }
- *                     }
- *                 ]
- *             },
- *             "else": {
- *                 "required": [
- *                     "name",
- *                     "value"
- *                 ],
- *                 "allOf": [
- *                     {
- *                         "not": {
- *                             "required": [
- *                                 "children"
- *                             ]
- *                         }
- *                     }
- *                 ]
- *             }
- *         }
- *     ]
- * }
- * </code></pre>
+ * <a href="{@docRoot}/../schemas/filtering-condition.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(Condition.Deserializer.class)
-@Schema(description = "Filtering condition.")
-public interface Condition {
+@JsonbTypeDeserializer(FilteringCondition.Deserializer.class)
+@Schema(description
+    = """
+Filtering condition.
+
+# Examples
+
+## Case userName property is equal to taro
+```
+{"operation": "EQUAL", "name": "userName", "value": "taro"}
+```
+
+## Case userName property is equal to taro or jiro
+```
+{"operation": "OR", "children": [
+    {"operation": "EQUAL", "name": "userName", "value": "taro"},
+    {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
+```""",
+        oneOf = {FilteringCondition.Single.class, FilteringCondition.Multi.class})
+public interface FilteringCondition {
 
     /**
      * {@code true} if multiple filtering condition.
@@ -163,6 +95,7 @@ public interface Condition {
      * @since 3.0.0
      */
     @JsonbTransient
+    @Schema(hidden = true)
     boolean isMulti();
 
     /**
@@ -171,8 +104,9 @@ public interface Condition {
      * @return filtering operation
      * @since 3.0.0
      */
-    @Schema(description = "Filtering operation.")
-    @NotNull
+    @Schema(description = "Filtering operation.",
+            subTypes = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
+    @NotNull(groups = Default.class)
     FilteringOperation getOperation();
 
     /**
@@ -232,7 +166,7 @@ public interface Condition {
      * @throws IllegalArgumentException if {@code op} is not a multiple filtering operation
      * @since 3.0.0
      */
-    static Multi multiOf(FilteringOperation op, List<Condition> children) {
+    static Multi multiOf(FilteringOperation op, List<FilteringCondition> children) {
         Objects.requireNonNull(op);
         Objects.requireNonNull(children);
 
@@ -243,61 +177,6 @@ public interface Condition {
         }
 
         return new Deserializer.MultiBean(op, children);
-    }
-
-    /**
-     * Get the {@code Condition} that have no effect
-     *
-     * @return empty condition
-     * @since 3.0.0
-     */
-    static Condition emptyCondition() {
-        return new Multi() {
-
-            /**
-             * {@inheritDoc}
-             *
-             * @return empty
-             * @since 3.0.0
-             */
-            @Override
-            public List<Condition> getChildren() {
-                return List.of();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @return {@code true}
-             * @since 3.0.0
-             */
-            @Override
-            public boolean isMulti() {
-                return true;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @return the {@code FilteringOperation.Multi.AND}
-             * @since 3.0.0
-             */
-            @Override
-            public FilteringOperation getOperation() {
-                return FilteringOperation.Multi.AND;
-            }
-
-            /**
-             * Returns a string representation.
-             *
-             * @return a string representation
-             * @since 3.0.0
-             */
-            @Override
-            public String toString() {
-                return "Condition.Empty{}";
-            }
-        };
     }
 
     /**
@@ -313,8 +192,17 @@ public interface Condition {
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(description = "Combination of filtering conditions.")
-    interface Multi extends Condition {
+    @Schema(name = "FilteringCondition.Multi", description = "Combination of filtering conditions.")
+    interface Multi extends FilteringCondition {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Schema(implementation = FilteringOperation.Multi.class)
+        @Override
+        public FilteringOperation getOperation();
 
         /**
          * Get child conditions.
@@ -323,7 +211,7 @@ public interface Condition {
          * @since 3.0.0
          */
         @NotNull
-        List<@NotNull @Valid Condition> getChildren();
+        List<@NotNull(groups = Default.class) @Valid FilteringCondition> getChildren();
     }
 
     /**
@@ -339,8 +227,17 @@ public interface Condition {
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(description = "A single filtering condition.")
-    public interface Single extends Condition {
+    @Schema(name = "FilteringCondition.Single", description = "A single filtering condition.")
+    public interface Single extends FilteringCondition {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Schema(implementation = FilteringOperation.Single.class)
+        @Override
+        public FilteringOperation getOperation();
 
         /**
          * Get filtering target name.
@@ -348,7 +245,7 @@ public interface Condition {
          * @return target name
          * @since 3.0.0
          */
-        @NotBlank
+        @NotNull(groups = Default.class)
         String getName();
 
         /**
@@ -357,18 +254,18 @@ public interface Condition {
          * @return filtering value
          * @since 3.0.0
          */
-        @NotNull
+        @NotNull(groups = Default.class)
         String getValue();
     }
 
     /**
-     * JSON deserializer for {@code Condition}.
+     * JSON deserializer for {@code FilteringCondition}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<Condition> {
+    class Deserializer implements JsonbDeserializer<FilteringCondition> {
 
         /**
          * {@inheritDoc}
@@ -376,17 +273,9 @@ public interface Condition {
          * @since 3.0.0
          */
         @Override
-        public Condition deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public FilteringCondition deserialize(JsonParser jp, DeserializationContext dc, Type type) {
 
             Bean tmp = dc.deserialize(Bean.class, jp);
-
-            if (tmp == null) {
-                return null;
-            }
-
-            if (tmp.isEmpty()) {
-                return emptyCondition();
-            }
 
             return tmp.isMulti()
                 ? new MultiBean(tmp.getOperation(), tmp.getChildren())
@@ -394,7 +283,7 @@ public interface Condition {
         }
 
         /**
-         * Implements of the {@code Condition.Single}.
+         * Implements of the {@code FilteringCondition.Single}.
          *
          * @author riru
          * @version 3.0.0
@@ -406,15 +295,7 @@ public interface Condition {
             private final String name;
             private final String value;
 
-            /**
-             * Constructor.
-             *
-             * @param operation the {@code FilteringOperation}
-             * @param name name of element to be filtered.
-             * @param value value to filter
-             * @since 3.0.0
-             */
-            public SingleBean(FilteringOperation operation, String name, String value) {
+            private SingleBean(FilteringOperation operation, String name, String value) {
                 this.operation = operation;
                 this.name = name;
                 this.value = value;
@@ -469,12 +350,13 @@ public interface Condition {
              */
             @Override
             public String toString() {
-                return "Condition.Single{" + "operation=" + operation + ", name=" + name + ", value=" + value + '}';
+                return "FilteringCondition.Single{" + "operation=" + operation + ", name=" + name + ", value=" + value
+                    + '}';
             }
         }
 
         /**
-         * Implements of the {@code Condition.Multi}.
+         * Implements of the {@code FilteringCondition.Multi}.
          *
          * @author riru
          * @version 3.0.0
@@ -483,15 +365,9 @@ public interface Condition {
         protected static class MultiBean implements Multi {
 
             private final FilteringOperation operation;
-            private final List<Condition> children;
+            private final List<FilteringCondition> children;
 
-            /**
-             * Constructor.
-             *
-             * @param operation the {@code FilteringOperation}
-             * @param children child conditions
-             */
-            public MultiBean(FilteringOperation operation, List<Condition> children) {
+            private MultiBean(FilteringOperation operation, List<FilteringCondition> children) {
                 this.operation = operation;
                 this.children = children;
             }
@@ -512,7 +388,7 @@ public interface Condition {
              * @since 3.0.0
              */
             @Override
-            public List<Condition> getChildren() {
+            public List<FilteringCondition> getChildren() {
                 return children;
             }
 
@@ -535,18 +411,18 @@ public interface Condition {
              */
             @Override
             public String toString() {
-                return "Condition.Multi{" + "operation=" + operation + ", children=" + children + '}';
+                return "FilteringCondition.Multi{" + "operation=" + operation + ", children=" + children + '}';
             }
         }
 
         /**
-         * Implements of the {@code Condition}.
+         * Implements of the {@code FilteringCondition}.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class Bean implements Condition {
+        protected static class Bean implements FilteringCondition {
 
             private static final Set<String> multiOpNames = Stream.of(FilteringOperation.Multi.values())
                 .map(Enum::name).collect(toUnmodifiableSet());
@@ -554,7 +430,7 @@ public interface Condition {
             private FilteringOperation operation;
             private String name;
             private String value;
-            private List<Condition> children;
+            private List<FilteringCondition> children;
 
             /**
              * {@inheritDoc}
@@ -617,22 +493,22 @@ public interface Condition {
             }
 
             /**
-             * Get child conditions.
+             * Get child filtering conditions.
              *
-             * @return children child conditions
+             * @return children child filtering conditions
              * @since 3.0.0
              */
-            public List<Condition> getChildren() {
+            public List<FilteringCondition> getChildren() {
                 return children;
             }
 
             /**
-             * Set child conditions.
+             * Set child filtering conditions.
              *
-             * @param children child conditions
+             * @param children child filtering conditions
              * @since 3.0.0
              */
-            public void setChildren(List<Condition> children) {
+            public void setChildren(List<FilteringCondition> children) {
                 this.children = children;
             }
 
@@ -648,16 +524,6 @@ public interface Condition {
             public boolean isMulti() {
                 return Optional.ofNullable(operation).map(FilteringOperation::name)
                     .filter(multiOpNames::contains).isPresent();
-            }
-
-            /**
-             * Returns a {@code true} if all elements are {@code null}.
-             *
-             * @return {@code true} if all elements are {@code null}, otherwise {@code false}.
-             * @since 3.0.0
-             */
-            public boolean isEmpty() {
-                return Stream.of(name, operation, value, children).allMatch(Objects::isNull);
             }
         }
     }

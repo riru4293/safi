@@ -32,7 +32,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
  * Common content JPA entity. This class has id, enabled status, properties and digest value.
@@ -44,6 +44,7 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
 @MappedSuperclass
 public abstract class ContentEntity extends NamedEntity {
 
+    @java.io.Serial
     private static final long serialVersionUID = -4573193428404973991L;
 
     @Id
@@ -56,7 +57,7 @@ public abstract class ContentEntity extends NamedEntity {
 
     @Basic(optional = false)
     @Column(name = "props")
-    protected JsonObjectValue properties;
+    protected JsonWrapper properties;
 
     @Basic(optional = false)
     @Column(name = "digest", nullable = false, length = 128)
@@ -111,7 +112,7 @@ public abstract class ContentEntity extends NamedEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonObjectValue getProperties() {
+    public JsonWrapper getProperties() {
         return properties;
     }
 
@@ -121,7 +122,7 @@ public abstract class ContentEntity extends NamedEntity {
      * @param properties content properties
      * @since 3.0.0
      */
-    public void setProperties(JsonObjectValue properties) {
+    public void setProperties(JsonWrapper properties) {
         this.properties = properties;
     }
 

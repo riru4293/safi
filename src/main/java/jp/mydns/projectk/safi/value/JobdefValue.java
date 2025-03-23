@@ -32,20 +32,21 @@ import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
-import jp.mydns.projectk.safi.util.ValidationUtils;
+import jp.mydns.projectk.safi.validator.DurationRange;
+import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
+import jp.mydns.projectk.safi.validator.TimeAccuracy;
 
 /**
- * Definition for creates a {@code Job}.
+ * Definition for creates a <i>Job</i>.
  *
  * <p>
  * Implementation requirements.
@@ -54,140 +55,15 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/jobdef.schema.json",
- *     "title": "Jobdef",
- *     "description": "Definition for creates a Job.",
- *     "type": "object",
- *     "properties": {
- *         "id": {
- *             "description": "Job definition id.",
- *             "type": "string",
- *             "minLength": 1,
- *             "maxLength": 36
- *         },
- *         "validityPeriod": {
- *             "description": "Validity period.",
- *             "$ref": "https://project-k.mydns.jp/safi/validity-period.schema.json"
- *         },
- *         "jobKind": {
- *             "description": "Job kind.",
- *             "type": "string",
- *             "enum": [
- *                 "IMPORT",
- *                 "EXPORT",
- *                 "REBUILD"
- *             ]
- *         },
- *         "jobTarget": {
- *             "description": "Target content type.",
- *             "type": "string",
- *             "enum": [
- *                 "USER",
- *                 "ASSET",
- *                 "BELONG_ORG",
- *                 "ORG1",
- *                 "ORG2",
- *                 "BELONG_GRP",
- *                 "GRP",
- *                 "PER_USER",
- *                 "PER_ASSET"
- *             ]
- *         },
- *         "timeout": {
- *             "description": "Job execution timeout.",
- *             "type": "duration"
- *         },
- *         "name": {
- *             "description": "Job definition name.",
- *             "type": "string",
- *             "maxLength": 250
- *         },
- *         "pluginName": {
- *             "description": "The name of the plugin that processes the content.",
- *             "type": "string",
- *             "maxLength": 50
- *         },
- *         "trnsdef": {
- *             "description": "Content transform definition.",
- *             "type": "object",
- *             "patternProperties": {
- *                 "^.+$": {
- *                     "type": "string"
- *                 }
- *             }
- *         },
- *         "filtdef": {
- *             "description": "Content filtering definiton.",
- *             "$ref": "https://project-k.mydns.jp/safi/filtdef.schema.json"
- *         },
- *         "jobProperties": {
- *             "description": "Optional configurations at job execution.",
- *             "type": "object"
- *         },
- *         "note": {
- *             "description": "Note of this value.",
- *             "type": "string"
- *         },
- *         "version": {
- *             "description": "Entity version stored in database. 0 if not yet stored.",
- *             "type": "integer",
- *             "minimum": 0
- *         },
- *         "registerTime": {
- *             "description": "Registered time. This value for reference only, setting it does not persist the value.",
- *             "type": "date-time"
- *         },
- *         "registerAccountId": {
- *             "description": "Registered account id. This value for reference only, setting it does not persist the value.",
- *             "type": "string",
- *             "maxLength": 250
- *         },
- *         "registerProcessName": {
- *             "description": "Registered process name. This value for reference only, setting it does not persist the value.",
- *             "type": "string",
- *             "maxLength": 250
- *         },
- *         "updateTime": {
- *             "description": "Update time. This value for reference only, setting it does not persist the value.",
- *             "type": "date-time"
- *         },
- *         "updateAccountId": {
- *             "description": "Update account id. This value for reference only, setting it does not persist the value.",
- *             "type": "string",
- *             "maxLength": 250
- *         },
- *         "updateProcessName": {
- *             "description": "Update peocess name. This value for reference only, setting it does not persist the value.",
- *             "type": "string",
- *             "maxLength": 250
- *         }
- *     },
- *     "required": [
- *         "id",
- *         "validityPeriod",
- *         "jobKind",
- *         "jobTarget",
- *         "timeout",
- *         "trnsdef",
- *         "filtdef",
- *         "jobProperties",
- *         "version"
- *     ]
- * }
- * </code></pre>
+ * <a href="{@docRoot}/../schemas/jobdef.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(Jobdef.Deserializer.class)
+@JsonbTypeDeserializer(JobdefValue.Deserializer.class)
 @Schema(name = "Jobdef", description = "Definition for creates a job.")
-public interface Jobdef extends PersistableValue {
+public interface JobdefValue extends NamedValue {
 
     /**
      * Get job definition id.
@@ -195,20 +71,10 @@ public interface Jobdef extends PersistableValue {
      * @return job definition id
      * @since 3.0.0
      */
-    @NotBlank
-    @Size(max = 36)
-    @Schema(description = "Job definiton id.")
-    String getId();
-
-    /**
-     * Get the {@code ValidityPeriod}.
-     *
-     * @return the {@code ValidityPeriod}
-     * @since 3.0.0
-     */
     @NotNull
-    @Valid
-    ValidityPeriod getValidityPeriod();
+    @Size(min = 1, max = 36)
+    @Schema(description = "Job definition id.", example = "test")
+    String getId();
 
     /**
      * Get the {@code JobKind}.
@@ -216,7 +82,7 @@ public interface Jobdef extends PersistableValue {
      * @return the {@code JobKind}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = {Default.class})
     @Schema(description = "Job kind.")
     JobKind getJobKind();
 
@@ -226,7 +92,7 @@ public interface Jobdef extends PersistableValue {
      * @return the {@code JobTarget}
      * @since 3.0.0
      */
-    @NotNull
+    @NotNull(groups = {Default.class})
     @Schema(description = "Target content type.")
     JobTarget getJobTarget();
 
@@ -236,18 +102,12 @@ public interface Jobdef extends PersistableValue {
      * @return job execution timeout
      * @since 3.0.0
      */
-    @NotNull
-    @Schema(type = "string", description = "Job execution timeout.")
+    @NotNull(groups = {Default.class})
+    @PositiveOrZeroDuration(groups = {Default.class})
+    @DurationRange(maxSecond = 86_399L/*23h59m59s*/, groups = {Default.class})
+    @TimeAccuracy(groups = {Default.class})
+    @Schema(type = "string", description = "Job execution timeout. Values from PT0S to PT23H59M59S can be specified.")
     Duration getTimeout();
-
-    /**
-     * Get job definition name.
-     *
-     * @return job definition name
-     * @since 3.0.0
-     */
-    @Schema(description = "Job definiton name.")
-    Optional<@Size(max = 250) String> getName();
 
     /**
      * Get plugin name.
@@ -255,8 +115,8 @@ public interface Jobdef extends PersistableValue {
      * @return plugin name
      * @since 3.0.0
      */
-    @Schema(description = "The name of the plugin that processes the content.")
-    Optional<@Size(max = 50) String> getPluginName();
+    @Schema(description = "The name of the plugin that processes the content. It is case insensitive.", maxLength = 50)
+    Optional<@Size(max = 50, groups = {Default.class}) String> getPluginName();
 
     /**
      * Get content transform definition.
@@ -264,20 +124,53 @@ public interface Jobdef extends PersistableValue {
      * @return content transform definition
      * @since 3.0.0
      */
-    @Schema(description = "Content transform definition.")
-    @NotNull
-    Map<String, String> getTrnsdef();
+    @Schema(description
+        = """
+The key is the property name after transformation, and the value is the transformation expression. Details of the expression are as follows.
+
+# Trunsform expression syntax
+
+| Element              | Syntax              | Description |
+|----------------------|---------------------|-------------|
+| Literal element      | \\`literal-value\\` | The literal value is enclosed by \\`. If you want to escape it, prefix it with \\. |
+| Input element        | [input-value-name]  | The input value encloses its name in [ and ]. |
+| Function element     | func(arg, arg)      | Function consists of a function name followed by arguments enclosed in ( and ). The arguments are separated by , and the number varies depending on the function. The argument is any kind of the element that "Input" or "Literal" or "Function". |
+| Elements joiner      | &                   | Joiner concatenates the values before and after the element. Also, there must be white space before and after the Joiner. |
+
+# Trunsform example
+
+## Premise
+
+- Original values: {"id": " 01 ", "name": "taro"}
+- Trunsform expression: [name] & \\`'s number is \\` & LPAD( TRIM( [id] ), \\`4\\`, \\`P\\` )
+- Functions
+  - TRIM
+    - syntax: TRIM( arg-value )
+    - description: Trim leading and trailing spaces from arguments.
+  - LPAD
+    - syntax: LPAD( arg-value, arg-length, arg-padding-char )
+    - description: Pads a string to the left with the specified characters until the specified number of digits is reached.
+
+## Process of calculating
+
+| Step   | Interpretation of the expression |
+|--------|----------------------------------|
+| Step.0 | [name] & \\`'s number is \\` & LPAD( TRIM( [id] ), \\`4\\`, \\`P\\` ) |
+| Step.1 | [name] & \\`'s number is \\` & LPAD( TRIM( __\\` 01 \\`__ ), \\`4\\`, \\`P\\` ) |
+| Step.2 | [name] & \\`'s number is \\` & LPAD( __\\`01\\`__, \\`4\\`, \\`P\\` ) |
+| Step.3 | __\\`taro\\`__ & \\`'s number is \\` & __\\`PP01\\`__ |
+| Result | __taro's number is PP01__ |""",
+            example = "{\"name\":\"toTitleCase([firstName]) & ` ` & toTitleCase([lastName])\", \"id\":\"[userId]\"}",
+            type = "object", additionalPropertiesSchema = String.class)
+    Optional<Map<String, String>> getTrnsdef();
 
     /**
-     * Get the {@code Filtdef}.
+     * Get the {@code FiltdefValue}.
      *
-     * @return the {@code Filtdef}
+     * @return the {@code FiltdefValue}
      * @since 3.0.0
      */
-    @Schema(description = "Content filtering definiton.")
-    @NotNull
-    @Valid
-    Filtdef getFiltdef();
+    Optional<@Valid FiltdefValue> getFiltdef();
 
     /**
      * Get optional configurations at job execution.
@@ -285,28 +178,26 @@ public interface Jobdef extends PersistableValue {
      * @return optional configurations at job execution
      * @since 3.0.0
      */
-    @Schema(description = "Optional configurations at job execution.")
-    @NotNull
+    @Schema(description = "Optional configurations at job execution.", example = "{}")
+    @NotNull(groups = {Default.class})
     JsonObject getJobProperties();
 
     /**
-     * Builder of the {@code Jobdef}.
+     * Builder of the {@code JobdefValue}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Builder extends AbstractBuilder<Builder, Jobdef> {
+    class Builder extends AbstractBuilder<Builder, JobdefValue> {
 
         private String id;
-        private ValidityPeriod validityPeriod;
         private JobKind jobKind;
         private JobTarget jobTarget;
         private Duration timeout;
-        private String name;
         private String pluginName;
         private Map<String, String> trnsdef;
-        private Filtdef filtdef;
+        private FiltdefValue filtdef;
         private JsonObject jobProperties;
 
         /**
@@ -324,18 +215,16 @@ public interface Jobdef extends PersistableValue {
          * @since 3.0.0
          */
         @Override
-        public Builder with(Jobdef src) {
+        public Builder with(JobdefValue src) {
             super.with(src);
 
             this.id = src.getId();
-            this.validityPeriod = src.getValidityPeriod();
             this.jobKind = src.getJobKind();
             this.jobTarget = src.getJobTarget();
             this.timeout = src.getTimeout();
-            this.name = src.getName().orElse(null);
             this.pluginName = src.getPluginName().orElse(null);
-            this.trnsdef = src.getTrnsdef();
-            this.filtdef = src.getFiltdef();
+            this.trnsdef = src.getTrnsdef().orElse(null);
+            this.filtdef = src.getFiltdef().orElse(null);
             this.jobProperties = src.getJobProperties();
 
             return builderType.cast(this);
@@ -354,18 +243,6 @@ public interface Jobdef extends PersistableValue {
         }
 
         /**
-         * Set the {@code ValidityPeriod}.
-         *
-         * @param validityPeriod the {@code ValidityPeriod}
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withValidityPeriod(ValidityPeriod validityPeriod) {
-            this.validityPeriod = validityPeriod;
-            return this;
-        }
-
-        /**
          * Set the {@code JobKind}.
          *
          * @param jobKind the {@code JobKind}
@@ -380,12 +257,12 @@ public interface Jobdef extends PersistableValue {
         /**
          * Set the {@code JobTarget}.
          *
-         * @param contentKind the {@code JobTarget}
+         * @param jobTarget the {@code JobTarget}
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withJobTarget(JobTarget contentKind) {
-            this.jobTarget = contentKind;
+        public Builder withJobTarget(JobTarget jobTarget) {
+            this.jobTarget = jobTarget;
             return this;
         }
 
@@ -398,18 +275,6 @@ public interface Jobdef extends PersistableValue {
          */
         public Builder withTimeout(Duration timeout) {
             this.timeout = timeout;
-            return this;
-        }
-
-        /**
-         * Set job definition name.
-         *
-         * @param name job definition name
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withName(String name) {
-            this.name = name;
             return this;
         }
 
@@ -444,7 +309,7 @@ public interface Jobdef extends PersistableValue {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withFiltdef(Filtdef filtdef) {
+        public Builder withFiltdef(FiltdefValue filtdef) {
             this.filtdef = filtdef;
             return this;
         }
@@ -467,28 +332,26 @@ public interface Jobdef extends PersistableValue {
          * @since 3.0.0
          */
         @Override
-        public Jobdef build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(new Bean(this), validator, groups);
+        public JobdefValue unsafeBuild() {
+            return new Bean(this);
         }
 
         /**
-         * Implements of the {@code Jobdef}.
+         * Implements of the {@code JobdefValue}.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class Bean extends AbstractBuilder.AbstractBean implements Jobdef {
+        protected static class Bean extends AbstractBuilder.AbstractBean implements JobdefValue {
 
             private String id;
-            private ValidityPeriod validityPeriod;
             private JobKind jobKind;
             private JobTarget jobTarget;
             private Duration timeout;
-            private String name;
             private String pluginName;
             private Map<String, String> trnsdef;
-            private Filtdef filtdef;
+            private FiltdefValue filtdef;
             private JsonObject jobProperties;
 
             /**
@@ -499,21 +362,13 @@ public interface Jobdef extends PersistableValue {
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code Jobdef.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(Builder builder) {
+            private Bean(Builder builder) {
                 super(builder);
 
                 this.id = builder.id;
-                this.validityPeriod = builder.validityPeriod;
                 this.jobKind = builder.jobKind;
                 this.jobTarget = builder.jobTarget;
                 this.timeout = builder.timeout;
-                this.name = builder.name;
                 this.pluginName = builder.pluginName;
                 this.trnsdef = builder.trnsdef;
                 this.filtdef = builder.filtdef;
@@ -538,26 +393,6 @@ public interface Jobdef extends PersistableValue {
              */
             public void setId(String id) {
                 this.id = id;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public ValidityPeriod getValidityPeriod() {
-                return validityPeriod;
-            }
-
-            /**
-             * Set the {@code ValidityPeriod}.
-             *
-             * @param validityPeriod the {@code ValidityPeriod}
-             * @since 3.0.0
-             */
-            public void setValidityPeriod(ValidityPeriod validityPeriod) {
-                this.validityPeriod = validityPeriod;
             }
 
             /**
@@ -606,26 +441,6 @@ public interface Jobdef extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public Optional<String> getName() {
-                return Optional.ofNullable(name);
-            }
-
-            /**
-             * Set job definition name.
-             *
-             * @param name job definition name
-             * @since 3.0.0
-             */
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
             public Duration getTimeout() {
                 return timeout;
             }
@@ -666,8 +481,8 @@ public interface Jobdef extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public Map<String, String> getTrnsdef() {
-                return trnsdef;
+            public Optional<Map<String, String>> getTrnsdef() {
+                return Optional.ofNullable(trnsdef);
             }
 
             /**
@@ -686,8 +501,8 @@ public interface Jobdef extends PersistableValue {
              * @since 3.0.0
              */
             @Override
-            public Filtdef getFiltdef() {
-                return filtdef;
+            public Optional<FiltdefValue> getFiltdef() {
+                return Optional.ofNullable(filtdef);
             }
 
             /**
@@ -696,7 +511,7 @@ public interface Jobdef extends PersistableValue {
              * @param filtdef filtering setting
              * @since 3.0.0
              */
-            public void setFiltdef(Filtdef filtdef) {
+            public void setFiltdef(FiltdefValue filtdef) {
                 this.filtdef = filtdef;
             }
 
@@ -728,22 +543,22 @@ public interface Jobdef extends PersistableValue {
              */
             @Override
             public String toString() {
-                return "Jobdef{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind=" + jobKind
-                        + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name
-                        + ", pluginName=" + pluginName + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef
-                        + ", jobProperties=" + jobProperties + ", version=" + version + '}';
+                return "JobdefValue{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind=" + jobKind
+                    + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name
+                    + ", pluginName=" + pluginName + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef
+                    + ", jobProperties=" + jobProperties + ", version=" + version + '}';
             }
         }
     }
 
     /**
-     * JSON deserializer for {@code Jobdef}.
+     * JSON deserializer for {@code JobdefValue}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<Jobdef> {
+    class Deserializer implements JsonbDeserializer<JobdefValue> {
 
         /**
          * {@inheritDoc}
@@ -751,7 +566,7 @@ public interface Jobdef extends PersistableValue {
          * @since 3.0.0
          */
         @Override
-        public Jobdef deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public JobdefValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return dc.deserialize(Builder.Bean.class, jp);
         }
     }

@@ -23,75 +23,46 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity.convertor;
+package jp.mydns.projectk.safi.validator;
 
-import jakarta.json.Json;
-import jakarta.json.JsonValue;
-import jp.mydns.projectk.safi.value.JsonArrayValue;
+import java.time.Duration;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test of class {@code JsonArrayConvertor}.
+ * Test of class PositiveOrZeroDuration.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-class JsonArrayConvertorTest {
+class PositiveOrZeroDurationTest {
 
     /**
-     * Test of convertToDatabaseColumn method.
+     * Test of isValid method, of class Validator.
      *
      * @since 3.0.0
      */
     @Test
-    void testConvertToDatabaseColumn() {
-        var expect = "[\"m\",\"s\",\"g\"]";
-        
-        var result = new JsonArrayConvertor().convertToDatabaseColumn(new JsonArrayValue(Json.createArrayBuilder()
-            .add("m").add("s").add("g").build()));
-        
-        assertThat(result).isEqualTo(expect);
+    void testIsValid() {
+        var validator = new PositiveOrZeroDuration.Validator();
+
+        var valid = Duration.ZERO;
+        var invalid = Duration.ofNanos(-1);
+
+        assertThat(validator.isValid(valid, null/* no use */)).isTrue();
+        assertThat(validator.isValid(invalid, null/* no use */)).isFalse();
     }
 
     /**
-     * Test of convertToDatabaseColumn method if null.
+     * Test of isValid method if null, of class Validator.
      *
      * @since 3.0.0
      */
     @Test
-    void testConvertToDatabaseColumnIfNull() {
-        var result = new JsonArrayConvertor().convertToDatabaseColumn(null);
-        
-        assertThat(result).isEqualTo("[]");
-    }
+    void testIsValidIfNull() {
+        var validator = new PositiveOrZeroDuration.Validator();
 
-    /**
-     * Test of convertToEntityAttribute method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testConvertToEntityAttribute() {
-        var expect = JsonValue.EMPTY_JSON_ARRAY;
-        
-        var result = new JsonArrayConvertor().convertToEntityAttribute("[]");
-        
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of convertToEntityAttribute method if null.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testConvertToEntityAttributeIfNull() {
-        var expect = JsonValue.EMPTY_JSON_ARRAY;
-        
-        var result = new JsonArrayConvertor().convertToEntityAttribute(null);
-        
-        assertThat(result).isEqualTo(expect);
+        assertThat(validator.isValid(null, null/* no use */)).isTrue();
     }
 }

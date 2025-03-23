@@ -31,6 +31,7 @@ import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Set;
 import static java.util.stream.Collectors.toUnmodifiableSet;
@@ -51,7 +52,9 @@ import java.util.stream.Stream;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(FilteringOperation.Deserializer.class)
-@Schema(name = "FilteringOperation", description = "Filtering operation.")
+@Schema(name = "FilteringOperation", description = "Filtering operation.",
+        subTypes = {FilteringOperation.Single.class, FilteringOperation.Multi.class},
+        oneOf = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
 public interface FilteringOperation {
 
     /**
@@ -61,7 +64,7 @@ public interface FilteringOperation {
      * @since 3.0.0
      */
     @Schema(description = "Filtering operation name.")
-    @NotNull
+    @NotNull(groups = Default.class)
     String name();
 
     /**
@@ -93,6 +96,7 @@ public interface FilteringOperation {
      * @version 3.0.0
      * @since 3.0.0
      */
+    @Schema(name = "FilteringOperation.Single", description = "Signle filtering operation.")
     enum Single implements FilteringOperation {
         /**
          * Indicates a equal.
@@ -145,6 +149,7 @@ public interface FilteringOperation {
      * @version 3.0.0
      * @since 3.0.0
      */
+    @Schema(name = "FilteringOperation.Multi", description = "Multiple filtering operation.")
     enum Multi implements FilteringOperation {
         /**
          * Indicates a logical product.
@@ -176,7 +181,7 @@ public interface FilteringOperation {
     class Deserializer implements JsonbDeserializer<FilteringOperation> {
 
         private static final Set<String> multiOpNames
-                = Stream.of(Multi.values()).map(Enum::name).collect(toUnmodifiableSet());
+            = Stream.of(Multi.values()).map(Enum::name).collect(toUnmodifiableSet());
 
         /**
          * {@inheritDoc}

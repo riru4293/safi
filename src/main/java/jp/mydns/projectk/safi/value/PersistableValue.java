@@ -34,6 +34,7 @@ import jakarta.validation.groups.Default;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Optional;
+import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -62,13 +63,13 @@ public interface PersistableValue {
     Optional<String> getNote();
 
     /**
-     * Get version number for this value. Used for optimistic locking when updating this value. Incremented after
-     * update.
+     * Get version number for this value. Used for optimistic locking when updating this value. Please set to 0 for
+     * creation, set to the same value as when getting for update.
      *
      * @return version number. 0 means new value.
      * @since 3.0.0
      */
-    @Schema(description = "Version number for this value.")
+    @Schema(description = "Version number for this value.", defaultValue = "0", minimum = "0")
     @PositiveOrZero(groups = {Default.class})
     int getVersion();
 
@@ -78,8 +79,9 @@ public interface PersistableValue {
      * @return registered time
      * @since 3.0.0
      */
-    @Schema(description = "Registered time.")
-    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getRegisterTime();
+    @Schema(description = "Registered time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
+            accessMode = Schema.AccessMode.READ_ONLY)
+    Optional<@TimeRange(groups = {Default.class}) @TimeAccuracy(groups = {Default.class}) OffsetDateTime> getRegisterTime();
 
     /**
      * Get account id who made this value.
@@ -87,8 +89,9 @@ public interface PersistableValue {
      * @return account id
      * @since 3.0.0
      */
-    @Schema(description = "Account id who made this value.")
-    Optional<@Size(max = 250) String> getRegisterAccountId();
+    @Schema(description = "Account id who made this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getRegisterAccountId();
 
     /**
      * Get name of the process who made this value.
@@ -96,8 +99,9 @@ public interface PersistableValue {
      * @return process name
      * @since 3.0.0
      */
-    @Schema(description = "Process name who made this value.")
-    Optional<@Size(max = 250) String> getRegisterProcessName();
+    @Schema(description = "Process name who made this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getRegisterProcessName();
 
     /**
      * Get updated time.
@@ -105,8 +109,9 @@ public interface PersistableValue {
      * @return updated time
      * @since 3.0.0
      */
-    @Schema(description = "Updated time.")
-    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getUpdateTime();
+    @Schema(description = "Updated time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
+            accessMode = Schema.AccessMode.READ_ONLY)
+    Optional<@TimeRange(groups = {Default.class}) @TimeAccuracy(groups = {Default.class}) OffsetDateTime> getUpdateTime();
 
     /**
      * Get account id who updated this value.
@@ -114,8 +119,9 @@ public interface PersistableValue {
      * @return account id
      * @since 3.0.0
      */
-    @Schema(description = "Account id who updated this value.")
-    Optional<@Size(max = 250) String> getUpdateAccountId();
+    @Schema(description = "Account id who updated this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getUpdateAccountId();
 
     /**
      * Get name of the process who made this value.
@@ -123,11 +129,12 @@ public interface PersistableValue {
      * @return process name
      * @since 3.0.0
      */
-    @Schema(description = "Process name who updated this value.")
-    Optional<@Size(max = 250) String> getUpdateProcessName();
+    @Schema(description = "Process name who updated this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getUpdateProcessName();
 
     /**
-     * Abstract builder of the {@link PersistableValue}.
+     * Abstract builder of the {@code PersistableValue}.
      *
      * @param <B> builder type
      * @param <V> value type
@@ -280,7 +287,18 @@ public interface PersistableValue {
          * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public abstract V build(Validator validator, Class<?>... groups);
+        public V build(Validator validator, Class<?>... groups) {
+            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+        }
+
+        /**
+         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
+         * reliable.
+         *
+         * @return new unsafe instance
+         * @since 3.0.0
+         */
+        public abstract V unsafeBuild();
 
         /**
          * Abstract implements of the {@code PersistableValue}.

@@ -57,49 +57,16 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/validity-period.schema.json",
- *     "title": "ValidityPeriod",
- *     "description": "Validity period.",
- *     "type": "object",
- *     "properties": {
- *         "properties": {
- *             "from": {
- *                 "description": "Begin date-time of validity period.",
- *                 "type": "date-time",
- *                 "default": "2000-01-01T00:00:00Z"
- *             },
- *             "to": {
- *                 "description": "End date-time of validity period.",
- *                 "type": "date-time",
- *                 "default": "2999-12-31T23:59:59Z"
- *             },
- *             "ignored": {
- *                 "description": "Flag that forbidden to be valid.",
- *                 "type": "boolean",
- *                 "default": false
- *             }
- *         }
- *     },
- *     "required": [
- *         "from",
- *         "to",
- *         "ignored"
- *     ]
- * }
- * </code></pre>
+ * <a href="{@docRoot}/../schemas/validity-period.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(ValidityPeriod.Deserializer.class)
-@Schema(name = "ValidityPeriod", description = "Validity period.")
-public interface ValidityPeriod {
+@JsonbTypeDeserializer(ValidityPeriodValue.Deserializer.class)
+@Schema(name = "ValidityPeriod", description = "It has a validity period and an ignore flag, the combination of which"
+        + " indicates whether a value that has this as a property is valid or invalid.")
+public interface ValidityPeriodValue {
 
     /**
      * Get begin date-time of validity period.
@@ -107,7 +74,8 @@ public interface ValidityPeriod {
      * @return begin date-time of validity period
      * @since 3.0.0
      */
-    @Schema(example = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period.")
+    @Schema(defaultValue = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period."
+        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -119,7 +87,8 @@ public interface ValidityPeriod {
      * @return end date-time of validity period
      * @since 3.0.0
      */
-    @Schema(example = "2999-12-31T23:59:59Z", description = "End date-time of validity period.")
+    @Schema(defaultValue = "2999-12-31T23:59:59Z", description = "End date-time of validity period."
+        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -131,7 +100,7 @@ public interface ValidityPeriod {
      * @return {@code true} if forbidden to be valid, otherwise {@code false}.
      * @since 3.0.0
      */
-    @Schema(example = "false", description = "Flag that forbidden to be valid. true if forbidden.")
+    @Schema(defaultValue = "false", description = "Flag that forbidden to be valid. true if forbidden.")
     boolean isIgnored();
 
     /**
@@ -193,7 +162,7 @@ public interface ValidityPeriod {
     }
 
     /**
-     * Builder of the {@link ValidityPeriod}.
+     * Builder of the {@code ValidityPeriodValue}.
      *
      * @author riru
      * @version 3.0.0
@@ -213,7 +182,7 @@ public interface ValidityPeriod {
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 3.0.0
          */
-        public Builder with(ValidityPeriod src) {
+        public Builder with(ValidityPeriodValue src) {
             Objects.requireNonNull(src);
 
             this.from = src.getFrom();
@@ -269,18 +238,29 @@ public interface ValidityPeriod {
          * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public ValidityPeriod build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(new Bean(this), validator, groups);
+        public ValidityPeriodValue build(Validator validator, Class<?>... groups) {
+            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
         }
 
         /**
-         * Implements of the {@code ValidityPeriod}.
+         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
+         * reliable.
+         *
+         * @return new unsafe instance
+         * @since 3.0.0
+         */
+        public ValidityPeriodValue unsafeBuild() {
+            return new Bean(this);
+        }
+
+        /**
+         * Implements of the {@code ValidityPeriodValue}.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class Bean implements ValidityPeriod {
+        protected static class Bean implements ValidityPeriodValue {
 
             private OffsetDateTime from;
             private OffsetDateTime to;
@@ -294,13 +274,7 @@ public interface ValidityPeriod {
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code ValidityPeriod.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(Builder builder) {
+            private Bean(Builder builder) {
                 this.from = builder.from;
                 this.to = builder.to;
                 this.ignored = builder.ignored;
@@ -386,8 +360,8 @@ public interface ValidityPeriod {
              */
             @Override
             public boolean equals(Object other) {
-                return other instanceof ValidityPeriod o && Objects.equals(from, o.getFrom())
-                        && Objects.equals(to, o.getTo()) && Objects.equals(ignored, o.isIgnored());
+                return other instanceof ValidityPeriodValue o && Objects.equals(from, o.getFrom())
+                    && Objects.equals(to, o.getTo()) && Objects.equals(ignored, o.isIgnored());
             }
 
             /**
@@ -398,39 +372,39 @@ public interface ValidityPeriod {
              */
             @Override
             public String toString() {
-                return "ValidityPeriod{" + "from=" + from + ", to=" + to + ", ignored=" + ignored + '}';
+                return "ValidityPeriodValue{" + "from=" + from + ", to=" + to + ", ignored=" + ignored + '}';
             }
         }
     }
 
     /**
-     * JSON deserializer for {@code ValidityPeriod}.
+     * JSON deserializer for {@code ValidityPeriodValue}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<ValidityPeriod> {
+    class Deserializer implements JsonbDeserializer<ValidityPeriodValue> {
 
         /**
          * {@inheritDoc} If an element is null because no value is provided, the default value is used.
          *
-         * @see ValidityPeriod#defaultFrom()
-         * @see ValidityPeriod#defaultTo()
-         * @see ValidityPeriod#defaultIgnored()
+         * @see ValidityPeriodValue#defaultFrom()
+         * @see ValidityPeriodValue#defaultTo()
+         * @see ValidityPeriodValue#defaultIgnored()
          * @since 3.0.0
          */
         @Override
-        public ValidityPeriod deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public ValidityPeriodValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
 
             var bean = dc.deserialize(Builder.Bean.class, jp);
 
             if (bean.getFrom() == null) {
-                bean.setFrom(ValidityPeriod.defaultFrom());
+                bean.setFrom(ValidityPeriodValue.defaultFrom());
             }
 
             if (bean.getTo() == null) {
-                bean.setTo(ValidityPeriod.defaultTo());
+                bean.setTo(ValidityPeriodValue.defaultTo());
             }
 
             return bean;

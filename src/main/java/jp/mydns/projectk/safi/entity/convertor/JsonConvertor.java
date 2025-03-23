@@ -26,54 +26,55 @@
 package jp.mydns.projectk.safi.entity.convertor;
 
 import jakarta.json.Json;
-import static jakarta.json.JsonValue.EMPTY_JSON_ARRAY;
 import jakarta.json.stream.JsonParsingException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.io.StringReader;
-import java.util.Optional;
-import jp.mydns.projectk.safi.value.JsonArrayValue;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
- * JPA attribute convertor for the {@code JsonArrayValue}. This convertor is applied automatically.
+ * JPA attribute convertor for the {@code JsonWrapper}. This convertor is applied automatically.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
 @Converter(autoApply = true)
-public final class JsonArrayConvertor implements AttributeConverter<JsonArrayValue, String> {
+public final class JsonConvertor implements AttributeConverter<JsonWrapper, String> {
 
     /**
      * Convert to database column type.
      *
-     * @param javaVal the {@code JsonArrayValue}
-     * @return {@code javaVal} that converted to string representation of {@code JsonArrayValue}. Returns {@code []} if
+     * @param javaVal the {@code JsonWrapper}
+     * @return {@code javaVal} that converted to string representation of {@code JsonWrapper}. Returns {@code null} if
      * {@code javaVal} is {@code null}.
      * @since 3.0.0
      */
     @Override
-    public String convertToDatabaseColumn(JsonArrayValue javaVal) {
-        return Optional.ofNullable(javaVal).map(JsonArrayValue::toString).orElseGet(EMPTY_JSON_ARRAY::toString);
+    public String convertToDatabaseColumn(JsonWrapper javaVal) {
+        if (javaVal == null) {
+            return null;
+        }
+
+        return javaVal.toString();
     }
 
     /**
      * Convert to entity attribute type.
      *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonArrayValue}.
-     * @return {@code dbVal} as {@code JsonArrayValue}. Returns {@code EMPTY_JSON_ARRAY} if {@code dbVal} is
-     * {@code null}.
-     * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonArrayValue}
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonWrapper}.
+     * @return {@code dbVal} as {@code JsonWrapper}. Returns {@code null} if {@code dbVal} is {@code null}.
+     * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonWrapper}
      * @since 3.0.0
      */
     @Override
-    public JsonArrayValue convertToEntityAttribute(String dbVal) {
+    public JsonWrapper convertToEntityAttribute(String dbVal) {
         if (dbVal == null) {
-            return new JsonArrayValue(EMPTY_JSON_ARRAY);
+            return null;
         }
 
         try (var r = Json.createReader(new StringReader(dbVal))) {
-            return new JsonArrayValue(r.readArray());
+            return JsonWrapper.of(r.readValue());
         }
     }
 }

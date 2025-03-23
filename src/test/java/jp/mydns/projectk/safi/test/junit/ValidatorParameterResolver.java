@@ -68,7 +68,7 @@ public class ValidatorParameterResolver implements ParameterResolver, ExtensionC
     @Override
     public boolean supportsParameter(ParameterContext pc, ExtensionContext ec) throws ParameterResolutionException {
         return ValidatorFactory.class == pc.getParameter().getType()
-                || Validator.class == pc.getParameter().getType();
+            || Validator.class == pc.getParameter().getType();
     }
 
     /**
@@ -84,16 +84,16 @@ public class ValidatorParameterResolver implements ParameterResolver, ExtensionC
     public Object resolveParameter(ParameterContext pc, ExtensionContext ec) throws ParameterResolutionException {
 
         Class<?> clazz = pc.getParameter().getType();
-        
-        if(clazz == ValidatorFactory.class) {
+
+        if (clazz == ValidatorFactory.class) {
             return factory;
         } else if (clazz == Validator.class) {
             return factory.getValidator();
         }
-        
+
         throw new ParameterResolutionException("Impossible.");
     }
-    
+
     /**
      * Close the {@code ValidatorFactory} instance.
      *

@@ -23,75 +23,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity.convertor;
-
-import jakarta.json.Json;
-import jakarta.json.JsonValue;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
-import static org.assertj.core.api.Assertions.assertThat;
-import org.junit.jupiter.api.Test;
+package jp.mydns.projectk.safi.constant;
 
 /**
- * Test of class {@code JsonObjectConvertor}.
+ * Kind of the <i>Schedule trigger configuration</i>.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-class JsonObjectConvertorTest {
-
+public enum ScheduleTriggerKing {
     /**
-     * Test of convertToDatabaseColumn method.
+     * Scheduling definition to execute on a specified days in specified months.
      *
      * @since 3.0.0
      */
-    @Test
-    void testConvertToDatabaseColumn() {
-        var expect = "{\"k\":\"v\"}";
-        
-        var result = new JsonObjectConvertor().convertToDatabaseColumn(new JsonObjectValue(Json.createObjectBuilder()
-            .add("k", "v").build()));
-        
-        assertThat(result).isEqualTo(expect);
-    }
-
+    DAYS,
     /**
-     * Test of convertToDatabaseColumn method if null.
+     * Scheduling definition to execute on a specified weekdays in specified months and weeks.
      *
      * @since 3.0.0
      */
-    @Test
-    void testConvertToDatabaseColumnIfNull() {
-        var result = new JsonObjectConvertor().convertToDatabaseColumn(null);
-        
-        assertThat(result).isEqualTo("{}");
-    }
-
+    WEEKDAYS,
     /**
-     * Test of convertToEntityAttribute method.
+     * Scheduling definition to execute only once at a specified date and time.
      *
      * @since 3.0.0
      */
-    @Test
-    void testConvertToEntityAttribute() {
-        var expect = JsonValue.EMPTY_JSON_OBJECT;
-        
-        var result = new JsonObjectConvertor().convertToEntityAttribute("{}");
-        
-        assertThat(result).isEqualTo(expect);
-    }
-
+    ONCE,
     /**
-     * Test of convertToEntityAttribute method if null.
+     * Scheduling definition to cancel scheduling of the same job definition id within a specified duration.
      *
      * @since 3.0.0
      */
-    @Test
-    void testConvertToEntityAttributeIfNull() {
-        var expect = JsonValue.EMPTY_JSON_OBJECT;
-        
-        var result = new JsonObjectConvertor().convertToEntityAttribute(null);
-        
-        assertThat(result).isEqualTo(expect);
-    }
+    CANCEL
 }
