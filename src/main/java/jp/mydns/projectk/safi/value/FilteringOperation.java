@@ -36,9 +36,11 @@ import java.lang.reflect.Type;
 import java.util.Set;
 import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
+import jp.mydns.projectk.safi.value.FilteringOperation.LeafOperation;
+import jp.mydns.projectk.safi.value.FilteringOperation.NodeOperation;
 
 /**
- * Filtering operation.Interface for {@link Leaf} or {@link Multi}.<p>
+ * Filtering operation.Interface for {@link LeafOperation} or {@link NodeOperation}.<p>
  * Implementation requirements.
  * <ul>
  * <li>This class is immutable and thread-safe.</li>
@@ -51,8 +53,8 @@ import java.util.stream.Stream;
  */
 @JsonbTypeDeserializer(FilteringOperation.Deserializer.class)
 @Schema(name = "FilteringOperation", description = "Filtering operation.",
-        subTypes = {FilteringOperation.Leaf.class, FilteringOperation.Multi.class},
-        oneOf = {FilteringOperation.Leaf.class, FilteringOperation.Multi.class})
+        subTypes = {LeafOperation.class, NodeOperation.class},
+        oneOf = {LeafOperation.class, NodeOperation.class})
 public interface FilteringOperation {
 
     /**
@@ -73,7 +75,7 @@ public interface FilteringOperation {
      * @since 3.0.0
      */
     @Schema(name = "FilteringOperation.Single", description = "Signle filtering operation.")
-    enum Leaf implements FilteringOperation {
+    enum LeafOperation implements FilteringOperation {
         /**
          * Indicates a equal.
          *
@@ -126,7 +128,7 @@ public interface FilteringOperation {
      * @since 3.0.0
      */
     @Schema(name = "FilteringOperation.Multi", description = "Multiple filtering operation.")
-    enum Multi implements FilteringOperation {
+    enum NodeOperation implements FilteringOperation {
         /**
          * Indicates a logical product.
          *
@@ -157,7 +159,7 @@ public interface FilteringOperation {
     class Deserializer implements JsonbDeserializer<FilteringOperation> {
 
         private static final Set<String> multiOpNames
-            = Stream.of(Multi.values()).map(Enum::name).collect(toUnmodifiableSet());
+            = Stream.of(NodeOperation.values()).map(Enum::name).collect(toUnmodifiableSet());
 
         /**
          * {@inheritDoc}
@@ -172,7 +174,7 @@ public interface FilteringOperation {
                 return null;
             }
 
-            return multiOpNames.contains(opName) ? Multi.valueOf(opName) : Leaf.valueOf(opName);
+            return multiOpNames.contains(opName) ? NodeOperation.valueOf(opName) : LeafOperation.valueOf(opName);
         }
     }
 }

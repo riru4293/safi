@@ -65,8 +65,16 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  */
 @JsonbTypeDeserializer(ScheduleTriggerValue.Deserializer.class)
 @Schema(name = "SchedduleTrigger", description = "Job schedule trigger configuration.",
-        example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}",
-        oneOf = {DaysTriggerValue.class, WeekdaysTriggerValue.class, OnceTriggerValue.class, CancelTriggerValue.class})
+        examples = {
+            "{\"kind\": \"DAYS\", \"anchorTime\": \"2700-10-10T07:09:42Z\", \"months\": [1, 7], \"days\": [5, 25]}",
+            "{\"kind\": \"WEEKDAYS\", \"anchorTime\": \"2700-10-10T07:09:42Z\", \"months\": [], \"weeks\": [2, 5]"
+            + ", \"weekdays\": [\"SATURDAY\", \"SUNDAY\"]}",
+            "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}",
+            "{\"kind\": \"CANCEL\", \"anchorTime\": \"2700-10-10T07:09:42Z\", \"duration\": \"PT24H\"}"},
+        subTypes = {
+            DaysTriggerValue.class, WeekdaysTriggerValue.class, OnceTriggerValue.class, CancelTriggerValue.class},
+        oneOf = {
+            DaysTriggerValue.class, WeekdaysTriggerValue.class, OnceTriggerValue.class, CancelTriggerValue.class})
 public interface ScheduleTriggerValue extends Template {
 
     /**

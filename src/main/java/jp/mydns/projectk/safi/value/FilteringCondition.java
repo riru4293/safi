@@ -105,15 +105,15 @@ public interface FilteringCondition {
      * @since 3.0.0
      */
     @Schema(description = "Filtering operation.",
-            subTypes = {FilteringOperation.Leaf.class, FilteringOperation.Multi.class})
+            subTypes = {FilteringOperation.LeafOperation.class, FilteringOperation.NodeOperation.class})
     @NotNull(groups = Default.class)
     FilteringOperation getOperation();
 
     /**
-     * Get this as {@code Leaf}.
+     * Get this as {@code LeafOperation}.
      *
      * @return single filtering condition
-     * @throws ClassCastException if not assignable to {@code Leaf}
+     * @throws ClassCastException if not assignable to {@code LeafOperation}
      * @since 3.0.0
      */
     default Single asSingle() {
@@ -121,10 +121,10 @@ public interface FilteringCondition {
     }
 
     /**
-     * Get this as {@code Multi}.
+     * Get this as {@code NodeOperation}.
      *
      * @return multiple filtering condition
-     * @throws ClassCastException if not assignable to {@code Multi}
+     * @throws ClassCastException if not assignable to {@code NodeOperation}
      * @since 3.0.0
      */
     default Multi asMulti() {
@@ -148,7 +148,7 @@ public interface FilteringCondition {
         Objects.requireNonNull(value);
 
         try {
-            FilteringOperation.Leaf.class.cast(op);
+            FilteringOperation.LeafOperation.class.cast(op);
         } catch (ClassCastException ignore) {
             throw new IllegalArgumentException("Incorrect filtering operation.");
         }
@@ -171,7 +171,7 @@ public interface FilteringCondition {
         Objects.requireNonNull(children);
 
         try {
-            FilteringOperation.Multi.class.cast(op);
+            FilteringOperation.NodeOperation.class.cast(op);
         } catch (ClassCastException ignore) {
             throw new IllegalArgumentException("Incorrect filtering operation.");
         }
@@ -200,7 +200,7 @@ public interface FilteringCondition {
          *
          * @since 3.0.0
          */
-        @Schema(implementation = FilteringOperation.Multi.class)
+        @Schema(implementation = FilteringOperation.NodeOperation.class)
         @Override
         public FilteringOperation getOperation();
 
@@ -235,7 +235,7 @@ public interface FilteringCondition {
          *
          * @since 3.0.0
          */
-        @Schema(implementation = FilteringOperation.Leaf.class)
+        @Schema(implementation = FilteringOperation.LeafOperation.class)
         @Override
         public FilteringOperation getOperation();
 
@@ -283,7 +283,7 @@ public interface FilteringCondition {
         }
 
         /**
-         * Implements of the {@code FilteringCondition.Leaf}.
+         * Implements of the {@code FilteringCondition.LeafOperation}.
          *
          * @author riru
          * @version 3.0.0
@@ -356,7 +356,7 @@ public interface FilteringCondition {
         }
 
         /**
-         * Implements of the {@code FilteringCondition.Multi}.
+         * Implements of the {@code FilteringCondition.NodeOperation}.
          *
          * @author riru
          * @version 3.0.0
@@ -424,7 +424,7 @@ public interface FilteringCondition {
          */
         protected static class Bean implements FilteringCondition {
 
-            private static final Set<String> multiOpNames = Stream.of(FilteringOperation.Multi.values())
+            private static final Set<String> multiOpNames = Stream.of(FilteringOperation.NodeOperation.values())
                 .map(Enum::name).collect(toUnmodifiableSet());
 
             private FilteringOperation operation;
