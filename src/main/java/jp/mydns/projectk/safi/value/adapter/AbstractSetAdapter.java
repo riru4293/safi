@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.value.jsonb;
+package jp.mydns.projectk.safi.value.adapter;
 
 import jakarta.json.bind.adapter.JsonbAdapter;
 import java.time.DayOfWeek;

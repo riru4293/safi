@@ -48,9 +48,9 @@ import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.jsonb.AbstractSetAdapter.SetDayOfWeekAdapter;
-import jp.mydns.projectk.safi.value.jsonb.AbstractSetAdapter.SetIntegerAdapter;
-import jp.mydns.projectk.safi.value.jsonb.AbstractSetAdapter.SetMonthAdapter;
+import jp.mydns.projectk.safi.value.adapter.AbstractSetAdapter.SetDayOfWeekAdapter;
+import jp.mydns.projectk.safi.value.adapter.AbstractSetAdapter.SetIntegerAdapter;
+import jp.mydns.projectk.safi.value.adapter.AbstractSetAdapter.SetMonthAdapter;
 
 /**
  * <i>Job</i> schedule trigger configuration.
