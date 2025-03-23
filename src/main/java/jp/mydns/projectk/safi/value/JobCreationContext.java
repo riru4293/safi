@@ -40,6 +40,7 @@ import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.DurationRange;
@@ -65,7 +66,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  */
 @JsonbTypeDeserializer(JobCreationContext.Deserializer.class)
 @Schema(name = "JobCreationContext", description = "Information to create a Job.")
-public interface JobCreationContext {
+public interface JobCreationContext extends CommonValue {
 
     /**
      * Get job definition id to use.
@@ -147,7 +148,7 @@ public interface JobCreationContext {
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Builder {
+    class Builder extends AbstractBuilder<Builder, JobCreationContext> {
 
         private String jobdefId;
         private OffsetDateTime scheduleTime;
@@ -156,6 +157,36 @@ public interface JobCreationContext {
         private Map<String, String> trnsdef;
         private FiltdefValue filtdef;
         private JsonObject jobProperties;
+        
+        /**
+         * Constructor.
+         *
+         * @since 3.0.0
+         */
+        public Builder() {
+            super(Builder.class);
+        }
+        
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code src} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public Builder with(JobCreationContext src) {
+            super.with(Objects.requireNonNull(src));
+
+            this.jobdefId = src.getJobdefId();
+            this.scheduleTime = src.getScheduleTime().orElse(null);
+            this.timeout = src.getTimeout().orElse(null);
+            this.pluginName = src.getPluginName().orElse(null);
+            this.trnsdef = src.getTrnsdef().orElse(null);
+            this.filtdef = src.getFiltdef().orElse(null);
+            this.jobProperties = src.getJobProperties().orElse(null);
+
+            return this;
+        }
 
         /**
          * Set job definition id.
@@ -242,26 +273,11 @@ public interface JobCreationContext {
         }
 
         /**
-         * Build a new inspected instance.
+         * {@inheritDoc}
          *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public JobCreationContext build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-        }
-
-        /**
-         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
-         * reliable.
-         *
-         * @return new unsafe instance
-         * @since 3.0.0
-         */
+        @Override
         public JobCreationContext unsafeBuild() {
             return new Bean(this);
         }

@@ -26,15 +26,12 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 import java.util.Optional;
-import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -51,7 +48,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * @version 3.0.0
  * @since 3.0.0
  */
-public interface PersistableValue {
+public interface PersistableValue extends CommonValue {
 
     /**
      * Get note for this value.
@@ -142,9 +139,9 @@ public interface PersistableValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends PersistableValue> {
+    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends PersistableValue>
+            extends CommonValue.AbstractBuilder<B, V> {
 
-        protected final Class<B> builderType;
         protected String note;
         protected int version;
         protected OffsetDateTime registerTime;
@@ -155,7 +152,7 @@ public interface PersistableValue {
         protected String updateProcessName;
 
         protected AbstractBuilder(Class<B> builderType) {
-            this.builderType = Objects.requireNonNull(builderType);
+            super(builderType);
         }
 
         /**
@@ -166,8 +163,9 @@ public interface PersistableValue {
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 3.0.0
          */
+        @Override
         public B with(V src) {
-            Objects.requireNonNull(src);
+            super.with(Objects.requireNonNull(src));
 
             this.note = src.getNote().orElse(null);
             this.version = src.getVersion();
@@ -276,29 +274,6 @@ public interface PersistableValue {
             this.updateProcessName = updateProcessName;
             return builderType.cast(this);
         }
-
-        /**
-         * Build a new inspected instance.
-         *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
-         * @since 3.0.0
-         */
-        public V build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-        }
-
-        /**
-         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
-         * reliable.
-         *
-         * @return new unsafe instance
-         * @since 3.0.0
-         */
-        public abstract V unsafeBuild();
 
         /**
          * Abstract implements of the {@code PersistableValue}.

@@ -31,8 +31,6 @@ import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -45,7 +43,6 @@ import java.time.OffsetDateTime;
 import java.util.SequencedSet;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
-import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedDayOfWeekSetAdapter;
@@ -73,7 +70,7 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
         example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}",
         oneOf = {ScheduleTriggerValue.DaysTriggerValue.class, ScheduleTriggerValue.WeekdaysTriggerValue.class,
             ScheduleTriggerValue.OnceTriggerValue.class, ScheduleTriggerValue.CancelTriggerValue.class})
-public interface ScheduleTriggerValue {
+public interface ScheduleTriggerValue extends CommonValue {
 
     /**
      * Get schedule trigger configuration kind.
@@ -705,9 +702,9 @@ public interface ScheduleTriggerValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ScheduleTriggerValue> {
+    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ScheduleTriggerValue>
+        extends CommonValue.AbstractBuilder<B, V> {
 
-        protected final Class<B> builderType;
         protected final ScheduleTriggerKing kind;
         protected OffsetDateTime anchorTime;
 
@@ -720,20 +717,22 @@ public interface ScheduleTriggerValue {
          * @since 3.0.0
          */
         protected AbstractBuilder(Class<B> builderType, ScheduleTriggerKing kind) {
-            this.builderType = Objects.requireNonNull(builderType);
+            super(builderType);
             this.kind = Objects.requireNonNull(kind);
         }
 
         /**
-         * Set all properties from {@code src}.
+         * {@inheritDoc}
          *
-         * @param src source value
-         * @return updated this
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 3.0.0
          */
+        @Override
         public B with(V src) {
-            this.anchorTime = Objects.requireNonNull(src).getAnchorTime();
+            super.with(Objects.requireNonNull(src));
+
+            this.anchorTime = src.getAnchorTime();
+
             return builderType.cast(this);
         }
 
@@ -748,29 +747,6 @@ public interface ScheduleTriggerValue {
             this.anchorTime = anchorTime;
             return builderType.cast(this);
         }
-
-        /**
-         * Build a new inspected instance.
-         *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
-         * @since 3.0.0
-         */
-        public V build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-        }
-
-        /**
-         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
-         * reliable.
-         *
-         * @return new unsafe instance
-         * @since 3.0.0
-         */
-        public abstract V unsafeBuild();
 
         /**
          * Abstract implements of the {@code ScheduleTriggerValue}.

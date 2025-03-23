@@ -37,6 +37,7 @@ import jakarta.validation.constraints.Size;
 import java.lang.reflect.Type;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
@@ -246,7 +247,7 @@ public interface JobValue extends PersistableValue {
          */
         @Override
         public Builder with(JobValue src) {
-            super.with(src);
+            super.with(Objects.requireNonNull(src));
 
             this.id = src.getId();
             this.status = src.getStatus();

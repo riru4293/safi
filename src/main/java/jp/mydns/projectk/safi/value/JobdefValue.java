@@ -38,6 +38,7 @@ import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.constant.JobKind;
@@ -216,7 +217,7 @@ The key is the property name after transformation, and the value is the transfor
          */
         @Override
         public Builder with(JobdefValue src) {
-            super.with(src);
+            super.with(Objects.requireNonNull(src));
 
             this.id = src.getId();
             this.jobKind = src.getJobKind();

@@ -30,14 +30,12 @@ import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Map;
-import jp.mydns.projectk.safi.util.ValidationUtils;
+import java.util.Objects;
 
 /**
  * An information for filtering the content values. It has a transform definition and filtering condition, and is used
@@ -62,7 +60,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
         example = "{\"condition\":{\"operation\":\"AND\",\"children\":[{\"operation\":\"EQUAL\",\"name\":\"kind\","
         + "\"value\":\"2\"},{\"operation\":\"PARTIAL_MATCH\",\"name\":\"name\",\"value\":\"taro\"}]},"
         + "\"trnsdef\":{\"name\":\"[userName]\",\"kind\":\"[userType]\",\"id\":\"[userId]\"}}")
-public interface FiltdefValue {
+public interface FiltdefValue extends CommonValue {
 
     /**
      * Get the transform definition for filtering.
@@ -91,10 +89,35 @@ public interface FiltdefValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Builder {
+    class Builder extends AbstractBuilder<Builder, FiltdefValue> {
 
         private Map<String, String> trnsdef;
         private FilteringCondition condition;
+
+        /**
+         * Constructor.
+         *
+         * @since 3.0.0
+         */
+        public Builder() {
+            super(Builder.class);
+        }
+        
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code src} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public Builder with(FiltdefValue src) {
+            super.with(Objects.requireNonNull(src));
+
+            this.trnsdef = src.getTrnsdef();
+            this.condition = src.getCondition();
+
+            return this;
+        }
 
         /**
          * Set transform definition for filtering.
@@ -121,26 +144,11 @@ public interface FiltdefValue {
         }
 
         /**
-         * Build a new inspected instance.
+         * {@inheritDoc}
          *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public FiltdefValue build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-        }
-
-        /**
-         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
-         * reliable.
-         *
-         * @return new unsafe instance
-         * @since 3.0.0
-         */
+        @Override
         public FiltdefValue unsafeBuild() {
             return new Bean(this);
         }

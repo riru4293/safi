@@ -31,8 +31,6 @@ import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
@@ -41,7 +39,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -66,7 +63,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 @JsonbTypeDeserializer(ValidityPeriodValue.Deserializer.class)
 @Schema(name = "ValidityPeriod", description = "It has a validity period and an ignore flag, the combination of which"
         + " indicates whether a value that has this as a property is valid or invalid.")
-public interface ValidityPeriodValue {
+public interface ValidityPeriodValue extends CommonValue {
 
     /**
      * Get begin date-time of validity period.
@@ -75,7 +72,7 @@ public interface ValidityPeriodValue {
      * @since 3.0.0
      */
     @Schema(defaultValue = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period."
-        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
+            + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -88,7 +85,7 @@ public interface ValidityPeriodValue {
      * @since 3.0.0
      */
     @Schema(defaultValue = "2999-12-31T23:59:59Z", description = "End date-time of validity period."
-        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
+            + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -168,22 +165,30 @@ public interface ValidityPeriodValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Builder {
+    class Builder extends AbstractBuilder<Builder, ValidityPeriodValue> {
 
         private OffsetDateTime from = defaultFrom();
         private OffsetDateTime to = defaultTo();
         private boolean ignored = false;
 
         /**
-         * Set all properties from {@code src}.
+         * Constructor.
          *
-         * @param src source value
-         * @return updated this
+         * @since 3.0.0
+         */
+        public Builder() {
+            super(Builder.class);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 3.0.0
          */
+        @Override
         public Builder with(ValidityPeriodValue src) {
-            Objects.requireNonNull(src);
+            super.with(Objects.requireNonNull(src));
 
             this.from = src.getFrom();
             this.to = src.getTo();
@@ -229,26 +234,11 @@ public interface ValidityPeriodValue {
         }
 
         /**
-         * Build a new inspected instance.
+         * {@inheritDoc}
          *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public ValidityPeriodValue build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-        }
-
-        /**
-         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
-         * reliable.
-         *
-         * @return new unsafe instance
-         * @since 3.0.0
-         */
+        @Override
         public ValidityPeriodValue unsafeBuild() {
             return new Bean(this);
         }
