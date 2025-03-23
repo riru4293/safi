@@ -45,54 +45,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class FilteringOperationTest {
 
     /**
-     * Test of asSingle method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsSingle() {
-        var expect = FilteringOperation.Single.EQUAL;
-
-        var result = expect.asSingle();
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of asSingle method if illegal class.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsSingleIfIllegalClass() {
-        assertThatThrownBy(FilteringOperation.Multi.AND::asSingle).isInstanceOf(ClassCastException.class);
-    }
-
-    /**
-     * Test of asMulti method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsMulti() {
-        var expect = FilteringOperation.Multi.AND;
-
-        var result = expect.asMulti();
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of asMulti method if illegal class.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsMultiIfIllegalClass() {
-        assertThatThrownBy(FilteringOperation.Single.EQUAL::asMulti).isInstanceOf(ClassCastException.class);
-    }
-
-    /**
      * Test of deserialize method if single operation, of class Deserializer.
      *
      * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.

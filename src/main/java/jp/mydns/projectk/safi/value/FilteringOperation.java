@@ -38,9 +38,7 @@ import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
 
 /**
- * Filtering operation. Interface for {@link Single} or {@link Multi}.
- *
- * <p>
+ * Filtering operation.Interface for {@link Leaf} or {@link Multi}.<p>
  * Implementation requirements.
  * <ul>
  * <li>This class is immutable and thread-safe.</li>
@@ -53,8 +51,8 @@ import java.util.stream.Stream;
  */
 @JsonbTypeDeserializer(FilteringOperation.Deserializer.class)
 @Schema(name = "FilteringOperation", description = "Filtering operation.",
-        subTypes = {FilteringOperation.Single.class, FilteringOperation.Multi.class},
-        oneOf = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
+        subTypes = {FilteringOperation.Leaf.class, FilteringOperation.Multi.class},
+        oneOf = {FilteringOperation.Leaf.class, FilteringOperation.Multi.class})
 public interface FilteringOperation {
 
     /**
@@ -68,28 +66,6 @@ public interface FilteringOperation {
     String name();
 
     /**
-     * Get this as {@code FilteringOperation.Single}.
-     *
-     * @return this
-     * @throws ClassCastException if not assignable to {@code FilteringOperation.Single}
-     * @since 3.0.0
-     */
-    default Single asSingle() {
-        return Single.class.cast(this);
-    }
-
-    /**
-     * Get this as {@code FilteringOperation.Multi}.
-     *
-     * @return this
-     * @throws ClassCastException if not assignable to {@code FilteringOperation.Multi}
-     * @since 3.0.0
-     */
-    default Multi asMulti() {
-        return Multi.class.cast(this);
-    }
-
-    /**
      * Represents a match operation for a single value. For example, the {@code EQUAL} operator.
      *
      * @author riru
@@ -97,7 +73,7 @@ public interface FilteringOperation {
      * @since 3.0.0
      */
     @Schema(name = "FilteringOperation.Single", description = "Signle filtering operation.")
-    enum Single implements FilteringOperation {
+    enum Leaf implements FilteringOperation {
         /**
          * Indicates a equal.
          *
@@ -196,7 +172,7 @@ public interface FilteringOperation {
                 return null;
             }
 
-            return multiOpNames.contains(opName) ? Multi.valueOf(opName) : Single.valueOf(opName);
+            return multiOpNames.contains(opName) ? Multi.valueOf(opName) : Leaf.valueOf(opName);
         }
     }
 }

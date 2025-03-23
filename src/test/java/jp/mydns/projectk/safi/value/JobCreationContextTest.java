@@ -62,7 +62,7 @@ class JobCreationContextTest {
         var scheduleTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var trnsdef = Map.<String, String>of();
         var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of())
-            .withFilter(FilteringCondition.singleOf(FilteringOperation.Single.IS_NULL, "n", "v")).build(validator);
+            .withFilter(FilteringCondition.singleOf(FilteringOperation.Leaf.IS_NULL, "n", "v")).build(validator);
 
         // Build value
         var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
@@ -121,7 +121,7 @@ class JobCreationContextTest {
 
         var scheduleTime = OffsetDateTime.of(2000, 1, 1, 12, 33, 55, 0, ZoneOffset.UTC);
         var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of())
-            .withFilter(FilteringCondition.singleOf(FilteringOperation.Single.IS_NULL, "n", "v")).build(validator);
+            .withFilter(FilteringCondition.singleOf(FilteringOperation.Leaf.IS_NULL, "n", "v")).build(validator);
 
         var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
             .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)

@@ -105,15 +105,15 @@ public interface FilteringCondition {
      * @since 3.0.0
      */
     @Schema(description = "Filtering operation.",
-            subTypes = {FilteringOperation.Single.class, FilteringOperation.Multi.class})
+            subTypes = {FilteringOperation.Leaf.class, FilteringOperation.Multi.class})
     @NotNull(groups = Default.class)
     FilteringOperation getOperation();
 
     /**
-     * Get this as {@code Single}.
+     * Get this as {@code Leaf}.
      *
      * @return single filtering condition
-     * @throws ClassCastException if not assignable to {@code Single}
+     * @throws ClassCastException if not assignable to {@code Leaf}
      * @since 3.0.0
      */
     default Single asSingle() {
@@ -148,7 +148,7 @@ public interface FilteringCondition {
         Objects.requireNonNull(value);
 
         try {
-            op.asSingle();
+            FilteringOperation.Leaf.class.cast(op);
         } catch (ClassCastException ignore) {
             throw new IllegalArgumentException("Incorrect filtering operation.");
         }
@@ -171,7 +171,7 @@ public interface FilteringCondition {
         Objects.requireNonNull(children);
 
         try {
-            op.asMulti();
+            FilteringOperation.Multi.class.cast(op);
         } catch (ClassCastException ignore) {
             throw new IllegalArgumentException("Incorrect filtering operation.");
         }
@@ -235,7 +235,7 @@ public interface FilteringCondition {
          *
          * @since 3.0.0
          */
-        @Schema(implementation = FilteringOperation.Single.class)
+        @Schema(implementation = FilteringOperation.Leaf.class)
         @Override
         public FilteringOperation getOperation();
 
@@ -283,7 +283,7 @@ public interface FilteringCondition {
         }
 
         /**
-         * Implements of the {@code FilteringCondition.Single}.
+         * Implements of the {@code FilteringCondition.Leaf}.
          *
          * @author riru
          * @version 3.0.0
