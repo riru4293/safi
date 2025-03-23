@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.toCollection;
  * @version 3.0.0
  * @since 3.0.0
  */
-public abstract class AbstractSetAdapter<T> implements JsonbAdapter<SequencedSet<T>, List<T>> {
+public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, List<T>> {
 
     /**
      * {@inheritDoc}
@@ -52,7 +52,7 @@ public abstract class AbstractSetAdapter<T> implements JsonbAdapter<SequencedSet
      * @throws NullPointerException if {@code s} is {@code null}
      */
     @Override
-    public List<T> adaptToJson(SequencedSet<T> s) {
+    default List<T> adaptToJson(SequencedSet<T> s) {
         return Objects.requireNonNull(s).stream().sequential().toList();
     }
 
@@ -63,39 +63,39 @@ public abstract class AbstractSetAdapter<T> implements JsonbAdapter<SequencedSet
      * @throws NullPointerException if {@code l} is {@code null}
      */
     @Override
-    public SequencedSet<T> adaptFromJson(List<T> l) {
+    default SequencedSet<T> adaptFromJson(List<T> l) {
         LinkedHashSet<T> s = Objects.requireNonNull(l).stream().sequential()
             .collect(toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSequencedSet(s);
     }
 
     /**
-     * Implements of the {@code AbstractSetAdapter<Month>}.
+     * Implements of the {@code SequencedSetAdapter<Month>}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    public static class SetMonthAdapter extends AbstractSetAdapter<Month> {
+    public class SetMonthAdapter implements SequencedSetAdapter<Month> {
     }
 
     /**
-     * Implements of the {@code AbstractSetAdapter<DayOfWeek>}.
+     * Implements of the {@code SequencedSetAdapter<DayOfWeek>}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    public static class SetDayOfWeekAdapter extends AbstractSetAdapter<DayOfWeek> {
+    public class SetDayOfWeekAdapter implements SequencedSetAdapter<DayOfWeek> {
     }
 
     /**
-     * Implements of the {@code AbstractSetAdapter<Integer>}.
+     * Implements of the {@code SequencedSetAdapter<Integer>}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    public static class SetIntegerAdapter extends AbstractSetAdapter<Integer> {
+    public class SetIntegerAdapter implements SequencedSetAdapter<Integer> {
     }
 }
