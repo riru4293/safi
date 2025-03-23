@@ -49,7 +49,7 @@ public abstract class AbstractSetAdapter<T> implements JsonbAdapter<SequencedSet
      * {@inheritDoc}
      *
      * @since 3.0.0
-     * @throws NullPointerException if {@code s} is {@code null|
+     * @throws NullPointerException if {@code s} is {@code null}
      */
     @Override
     public List<T> adaptToJson(SequencedSet<T> s) {
@@ -60,7 +60,7 @@ public abstract class AbstractSetAdapter<T> implements JsonbAdapter<SequencedSet
      * {@inheritDoc}
      *
      * @since 3.0.0
-     * @throws NullPointerException if {@code l} is {@code null|
+     * @throws NullPointerException if {@code l} is {@code null}
      */
     @Override
     public SequencedSet<T> adaptFromJson(List<T> l) {
@@ -70,7 +70,7 @@ public abstract class AbstractSetAdapter<T> implements JsonbAdapter<SequencedSet
     }
 
     /**
-     * Implements of the {@code AbstractSetAdapter<Month>|.
+     * Implements of the {@code AbstractSetAdapter<Month>}.
      *
      * @author riru
      * @version 3.0.0
@@ -80,7 +80,7 @@ public abstract class AbstractSetAdapter<T> implements JsonbAdapter<SequencedSet
     }
 
     /**
-     * Implements of the {@code AbstractSetAdapter<DayOfWeek>|.
+     * Implements of the {@code AbstractSetAdapter<DayOfWeek>}.
      *
      * @author riru
      * @version 3.0.0
@@ -90,7 +90,7 @@ public abstract class AbstractSetAdapter<T> implements JsonbAdapter<SequencedSet
     }
 
     /**
-     * Implements of the {@code AbstractSetAdapter<Integer>|.
+     * Implements of the {@code AbstractSetAdapter<Integer>}.
      *
      * @author riru
      * @version 3.0.0
