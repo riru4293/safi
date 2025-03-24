@@ -81,7 +81,7 @@ class FiltdefValueTest {
     void testToString(Validator validator) {
         String tmpl = "FiltdefValue{trnsdef=%s, condition=%s}";
 
-        var filter = FilteringCondition.multiOf(FilteringOperation.NodeOperation.NOT_OR, List.of());
+        var filter = FilteringCondition.multiOf(FilteringOperationValue.NodeOperation.NOT_OR, List.of());
 
         var val = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(filter).build(validator);
 

@@ -57,10 +57,10 @@ class FilteringConditionTest {
      */
     @Test
     void testGetOperation() {
-        var single = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
+        var single = FilteringCondition.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
 
         assertThat(single).isInstanceOf(FilteringCondition.LeafCondition.class)
-            .returns(FilteringOperation.LeafOperation.IS_NULL, FilteringCondition::getOperation);
+            .returns(FilteringOperationValue.LeafOperation.IS_NULL, FilteringCondition::getOperation);
     }
 
     /**
@@ -70,8 +70,8 @@ class FilteringConditionTest {
      */
     @Test
     void testAsSingle() {
-        var single = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
-        var multi = FilteringCondition.multiOf(FilteringOperation.NodeOperation.AND, List.of());
+        var single = FilteringCondition.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
+        var multi = FilteringCondition.multiOf(FilteringOperationValue.NodeOperation.AND, List.of());
 
         assertThatCode(single::asSingle).doesNotThrowAnyException();
         assertThat(single.asSingle()).isInstanceOf(FilteringCondition.LeafCondition.class);
@@ -86,8 +86,8 @@ class FilteringConditionTest {
      */
     @Test
     void testAsMulti() {
-        var single = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
-        var multi = FilteringCondition.multiOf(FilteringOperation.NodeOperation.AND, List.of());
+        var single = FilteringCondition.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
+        var multi = FilteringCondition.multiOf(FilteringOperationValue.NodeOperation.AND, List.of());
 
         assertThatCode(multi::asMulti).doesNotThrowAnyException();
         assertThat(multi.asMulti()).isInstanceOf(FilteringCondition.NodeCondition.class);
@@ -102,14 +102,14 @@ class FilteringConditionTest {
      */
     @Test
     void testSingleOf() {
-        var single = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
+        var single = FilteringCondition.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
 
         assertThat(single).isInstanceOf(FilteringCondition.LeafCondition.class)
-            .returns(FilteringOperation.LeafOperation.IS_NULL, FilteringCondition::getOperation)
+            .returns(FilteringOperationValue.LeafOperation.IS_NULL, FilteringCondition::getOperation)
             .satisfies(v -> assertThat(v.getName()).hasValue("name"))
             .satisfies(v -> assertThat(v.getValue()).hasValue("value"));
 
-        assertThatIllegalArgumentException().isThrownBy(() -> FilteringCondition.singleOf(FilteringOperation.NodeOperation.OR,
+        assertThatIllegalArgumentException().isThrownBy(() -> FilteringCondition.singleOf(FilteringOperationValue.NodeOperation.OR,
             "", ""));
     }
 
@@ -120,18 +120,18 @@ class FilteringConditionTest {
      */
     @Test
     void testMultiOf() {
-        var single1 = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
-        var single2 = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
+        var single1 = FilteringCondition.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
+        var single2 = FilteringCondition.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
 
-        var multi = FilteringCondition.multiOf(FilteringOperation.NodeOperation.AND, List.of(single1, single2));
+        var multi = FilteringCondition.multiOf(FilteringOperationValue.NodeOperation.AND, List.of(single1, single2));
 
         assertThat(multi).isInstanceOf(FilteringCondition.NodeCondition.class)
-            .returns(FilteringOperation.NodeOperation.AND, FilteringCondition::getOperation)
+            .returns(FilteringOperationValue.NodeOperation.AND, FilteringCondition::getOperation)
             .extracting(FilteringCondition.NodeCondition::getChildren).asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
             .hasValue(List.of(single1, single2));
 
         assertThatIllegalArgumentException()
-            .isThrownBy(() -> FilteringCondition.multiOf(FilteringOperation.LeafOperation.IS_NULL, List.of()));
+            .isThrownBy(() -> FilteringCondition.multiOf(FilteringOperationValue.LeafOperation.IS_NULL, List.of()));
     }
 
     /**
@@ -166,7 +166,7 @@ class FilteringConditionTest {
     void testToStringIfSingle() {
         String tmpl = "FilteringCondition.Single{operation=%s, name=%s, value=%s}";
 
-        var val = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
+        var val = FilteringCondition.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
 
         assertThat(val).hasToString(tmpl, "IS_NULL", "name", "value");
     }
@@ -180,9 +180,9 @@ class FilteringConditionTest {
     void testToStringIfMulti() {
         String tmpl = "FilteringCondition.Multi{operation=%s, children=[%s]}";
 
-        var child = FilteringCondition.singleOf(FilteringOperation.LeafOperation.IS_NULL, "name", "value");
+        var child = FilteringCondition.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
 
-        var val = FilteringCondition.multiOf(FilteringOperation.NodeOperation.AND, List.of(child));
+        var val = FilteringCondition.multiOf(FilteringOperationValue.NodeOperation.AND, List.of(child));
 
         assertThat(val).hasToString(tmpl, "AND", child);
     }

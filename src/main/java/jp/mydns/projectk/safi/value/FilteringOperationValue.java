@@ -37,8 +37,8 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.FilteringOperationKing;
-import jp.mydns.projectk.safi.value.FilteringOperation.LeafOperation;
-import jp.mydns.projectk.safi.value.FilteringOperation.NodeOperation;
+import jp.mydns.projectk.safi.value.FilteringOperationValue.LeafOperation;
+import jp.mydns.projectk.safi.value.FilteringOperationValue.NodeOperation;
 
 /**
  * Filtering operation.
@@ -54,21 +54,21 @@ import jp.mydns.projectk.safi.value.FilteringOperation.NodeOperation;
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(FilteringOperation.Deserializer.class)
+@JsonbTypeDeserializer(FilteringOperationValue.Deserializer.class)
 @Schema(name = "FilteringOperation", description = "Filtering operation.",
         oneOf = {LeafOperation.class, NodeOperation.class})
-public interface FilteringOperation {
+public interface FilteringOperationValue {
 
     /**
      * Returns the filtering operation with the specified name.
      *
      * @param name filtering operation name
-     * @return the {@code FilteringOperation}
+     * @return the {@code FilteringOperationValue}
      * @throws NullPointerException if {@code name} is {@code null}
      * @throws IllegalArgumentException if {@code name} is malformed as filtering operation name
      * @since 3.0.0
      */
-    static FilteringOperation valueOf(String name) {
+    static FilteringOperationValue valueOf(String name) {
         Objects.requireNonNull(name);
 
         return Stream.of(NodeOperation.values()).map(Enum::name).anyMatch(name::equals)
@@ -105,7 +105,7 @@ public interface FilteringOperation {
      * @since 3.0.0
      */
     @Schema(name = "FilteringOperation.Leaf", description = "Leaf filtering operation.")
-    enum LeafOperation implements FilteringOperation {
+    enum LeafOperation implements FilteringOperationValue {
         /**
          * Indicates a equal.
          *
@@ -174,7 +174,7 @@ public interface FilteringOperation {
      * @since 3.0.0
      */
     @Schema(name = "FilteringOperation.Node", description = "Node filtering operation.")
-    enum NodeOperation implements FilteringOperation {
+    enum NodeOperation implements FilteringOperationValue {
         /**
          * Indicates a logical product.
          *
@@ -212,13 +212,13 @@ public interface FilteringOperation {
     }
 
     /**
-     * JSON deserializer for {@code FilteringOperation}.
+     * JSON deserializer for {@code FilteringOperationValue}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<FilteringOperation> {
+    class Deserializer implements JsonbDeserializer<FilteringOperationValue> {
 
         /**
          * {@inheritDoc}
@@ -226,8 +226,8 @@ public interface FilteringOperation {
          * @since 3.0.0
          */
         @Override
-        public FilteringOperation deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-            return FilteringOperation.valueOf(ctx.deserialize(String.class, parser));
+        public FilteringOperationValue deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
+            return FilteringOperationValue.valueOf(ctx.deserialize(String.class, parser));
         }
     }
 }

@@ -35,14 +35,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * Test of class {@code FilteringOperation}.
+ * Test of class {@code FilteringOperationValue}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
 @ExtendWith(JsonbParameterResolver.class)
-class FilteringOperationTest {
+class FilteringOperationValueTest {
 
     /**
      * Test of deserialize method if leaf operation, of class Deserializer.
@@ -57,7 +57,7 @@ class FilteringOperationTest {
     void testDeserializeIfLeafOperation(String opName, Jsonb jsonb) {
         JsonString expect = Json.createValue(opName);
 
-        var deserialized = jsonb.fromJson(expect.toString(), FilteringOperation.class);
+        var deserialized = jsonb.fromJson(expect.toString(), FilteringOperationValue.class);
 
         var serialized = jsonb.toJson(deserialized);
 
@@ -78,7 +78,7 @@ class FilteringOperationTest {
     void testDeserializeIfNodeOperation(String opName, Jsonb jsonb) {
         JsonString expect = Json.createValue(opName);
 
-        var deserialized = jsonb.fromJson(expect.toString(), FilteringOperation.class);
+        var deserialized = jsonb.fromJson(expect.toString(), FilteringOperationValue.class);
 
         var serialized = jsonb.toJson(deserialized);
 

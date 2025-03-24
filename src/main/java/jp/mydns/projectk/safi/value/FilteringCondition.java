@@ -97,7 +97,7 @@ public interface FilteringCondition {
      * @since 3.0.0
      */
     @NotNull(groups = Default.class)
-    FilteringOperation getOperation();
+    FilteringOperationValue getOperation();
 
     /**
      * Get filtering value.
@@ -152,13 +152,13 @@ public interface FilteringCondition {
      * @throws IllegalArgumentException if {@code op} is not a single filtering operation
      * @since 3.0.0
      */
-    static LeafCondition singleOf(FilteringOperation op, String name, String value) {
+    static LeafCondition singleOf(FilteringOperationValue op, String name, String value) {
         Objects.requireNonNull(op);
         Objects.requireNonNull(name);
         Objects.requireNonNull(value);
 
         try {
-            FilteringOperation.LeafOperation.class.cast(op);
+            FilteringOperationValue.LeafOperation.class.cast(op);
         } catch (ClassCastException ignore) {
             throw new IllegalArgumentException("Incorrect filtering operation.");
         }
@@ -176,12 +176,12 @@ public interface FilteringCondition {
      * @throws IllegalArgumentException if {@code op} is not a multiple filtering operation
      * @since 3.0.0
      */
-    static NodeCondition multiOf(FilteringOperation op, List<FilteringCondition> children) {
+    static NodeCondition multiOf(FilteringOperationValue op, List<FilteringCondition> children) {
         Objects.requireNonNull(op);
         Objects.requireNonNull(children);
 
         try {
-            FilteringOperation.NodeOperation.class.cast(op);
+            FilteringOperationValue.NodeOperation.class.cast(op);
         } catch (ClassCastException ignore) {
             throw new IllegalArgumentException("Incorrect filtering operation.");
         }
@@ -211,8 +211,8 @@ public interface FilteringCondition {
          * @since 3.0.0
          */
         @Override
-        @Schema(implementation = FilteringOperation.NodeOperation.class)
-        public FilteringOperation getOperation();
+        @Schema(implementation = FilteringOperationValue.NodeOperation.class)
+        public FilteringOperationValue getOperation();
 
         /**
          * Get child conditions.
@@ -247,8 +247,8 @@ public interface FilteringCondition {
          * @since 3.0.0
          */
         @Override
-        @Schema(implementation = FilteringOperation.LeafOperation.class)
-        public FilteringOperation getOperation();
+        @Schema(implementation = FilteringOperationValue.LeafOperation.class)
+        public FilteringOperationValue getOperation();
 
         /**
          * Get filtering target name.
@@ -289,7 +289,7 @@ public interface FilteringCondition {
 
             Bean tmp = dc.deserialize(Bean.class, jp);
 
-            return Optional.ofNullable(tmp).map(FilteringCondition::getOperation).map(FilteringOperation::getKind)
+            return Optional.ofNullable(tmp).map(FilteringCondition::getOperation).map(FilteringOperationValue::getKind)
                 .filter(FilteringOperationKing.NODE::equals).isPresent()
                 ? new MultiBean(tmp.getOperation(), tmp.getChildren().orElse(null))
                 : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue().orElse(null));
@@ -304,11 +304,11 @@ public interface FilteringCondition {
          */
         protected static class SingleBean implements LeafCondition {
 
-            private final FilteringOperation operation;
+            private final FilteringOperationValue operation;
             private final String name;
             private final String value;
 
-            private SingleBean(FilteringOperation operation, String name, String value) {
+            private SingleBean(FilteringOperationValue operation, String name, String value) {
                 this.operation = operation;
                 this.name = name;
                 this.value = value;
@@ -320,7 +320,7 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public FilteringOperation getOperation() {
+            public FilteringOperationValue getOperation() {
                 return operation;
             }
 
@@ -377,10 +377,10 @@ public interface FilteringCondition {
          */
         protected static class MultiBean implements NodeCondition {
 
-            private final FilteringOperation operation;
+            private final FilteringOperationValue operation;
             private final List<FilteringCondition> children;
 
-            private MultiBean(FilteringOperation operation, List<FilteringCondition> children) {
+            private MultiBean(FilteringOperationValue operation, List<FilteringCondition> children) {
                 this.operation = operation;
                 this.children = children;
             }
@@ -391,7 +391,7 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public FilteringOperation getOperation() {
+            public FilteringOperationValue getOperation() {
                 return operation;
             }
 
@@ -437,10 +437,10 @@ public interface FilteringCondition {
          */
         protected static class Bean implements FilteringCondition, LeafCondition {
 
-            private static final Set<String> multiOpNames = Stream.of(FilteringOperation.NodeOperation.values())
+            private static final Set<String> multiOpNames = Stream.of(FilteringOperationValue.NodeOperation.values())
                 .map(Enum::name).collect(toUnmodifiableSet());
 
-            private FilteringOperation operation;
+            private FilteringOperationValue operation;
             private String name;
             private String value;
             private List<FilteringCondition> children;
@@ -451,7 +451,7 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public FilteringOperation getOperation() {
+            public FilteringOperationValue getOperation() {
                 return operation;
             }
 
@@ -461,7 +461,7 @@ public interface FilteringCondition {
              * @param operation filtering operation
              * @since 3.0.0
              */
-            public void setOperation(FilteringOperation operation) {
+            public void setOperation(FilteringOperationValue operation) {
                 this.operation = operation;
             }
 
