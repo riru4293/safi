@@ -56,7 +56,7 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @version 3.0.0
  * @since 3.0.0
  */
-interface LeafConditionValue extends FilteringConditionValue {
+interface NodeConditionValue extends FilteringConditionValue {
 
     /**
      * Get property name to filter on.

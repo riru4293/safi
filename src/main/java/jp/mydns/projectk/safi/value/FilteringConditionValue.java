@@ -88,105 +88,105 @@ Filtering condition.
     {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
 ```""",
         oneOf = {LeafCondition.class, NodeCondition.class})
-public interface FilteringConditionValue {
+public interface FilteringConditionValue extends Template {
 
     /**
      * Get filtering operation.
      *
-     * @return filtering operation
+     * @return the {@code FilteringOperationValue}
      * @since 3.0.0
      */
     @NotNull(groups = Default.class)
     FilteringOperationValue getOperation();
 
     /**
-     * Get filtering value.
+     * Abstract builder of the {@code ScheduleTriggerValue}.
      *
-     * @return filtering value
+     * @param <B> builder type
+     * @param <V> value type
+     * @author riru
+     * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Property value to filter on.")
-    @NotNull(groups = Default.class)
-    Optional<String> getValue();
+    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends FilteringConditionValue>
+        extends Template.AbstractBuilder<B, V> {
 
-    /**
-     * Get child conditions.
-     *
-     * @return children child conditions
-     * @since 3.0.0
-     */
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Child filtering conditions.")
-    @NotNull
-    Optional<List<@NotNull(groups = Default.class) @Valid FilteringConditionValue>> getChildren();
+        protected final FilteringOperationValue operation;
 
-    /**
-     * Get this as {@code LeafOperation}.
-     *
-     * @return single filtering condition
-     * @throws ClassCastException if not assignable to {@code LeafOperation}
-     * @since 3.0.0
-     */
-    default LeafCondition asSingle() {
-        return LeafCondition.class.cast(this);
-    }
-
-    /**
-     * Get this as {@code NodeOperation}.
-     *
-     * @return multiple filtering condition
-     * @throws ClassCastException if not assignable to {@code NodeOperation}
-     * @since 3.0.0
-     */
-    default NodeCondition asMulti() {
-        return NodeCondition.class.cast(this);
-    }
-
-    /**
-     * Build a new single filtering condition.
-     *
-     * @param op single filtering operation
-     * @param name item name
-     * @param value item value
-     * @return a new single filtering condition
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws IllegalArgumentException if {@code op} is not a single filtering operation
-     * @since 3.0.0
-     */
-    static LeafCondition singleOf(FilteringOperationValue op, String name, String value) {
-        Objects.requireNonNull(op);
-        Objects.requireNonNull(name);
-        Objects.requireNonNull(value);
-
-        try {
-            FilteringOperationValue.LeafOperation.class.cast(op);
-        } catch (ClassCastException ignore) {
-            throw new IllegalArgumentException("Incorrect filtering operation.");
+        /**
+         * Constructor.
+         *
+         * @param builderType builder type
+         * @param operation the {@code FilteringOperationValue}
+         * @throws NullPointerException if any argument is {@code null}
+         * @since 3.0.0
+         */
+        protected AbstractBuilder(Class<B> builderType, FilteringOperationValue operation) {
+            super(builderType);
+            this.operation = Objects.requireNonNull(operation);
         }
 
-        return new Deserializer.SingleBean(op, name, value);
-    }
-
-    /**
-     * Build a new multiple filtering condition.
-     *
-     * @param op multi filtering operation
-     * @param children child filtering conditions
-     * @return a new multiple filtering condition
-     * @throws NullPointerException if any argument is {@code null} or contains {@code null} in {@code children}
-     * @throws IllegalArgumentException if {@code op} is not a multiple filtering operation
-     * @since 3.0.0
-     */
-    static NodeCondition multiOf(FilteringOperationValue op, List<FilteringConditionValue> children) {
-        Objects.requireNonNull(op);
-        Objects.requireNonNull(children);
-
-        try {
-            FilteringOperationValue.NodeOperation.class.cast(op);
-        } catch (ClassCastException ignore) {
-            throw new IllegalArgumentException("Incorrect filtering operation.");
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code src} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public B with(V src) {
+            super.with(Objects.requireNonNull(src));
+            return builderType.cast(this);
         }
 
-        return new Deserializer.MultiBean(op, children);
+        /**
+         * Abstract implements of the {@code FilteringConditionValue}.
+         *
+         * @author riru
+         * @version 3.0.0
+         * @since 3.0.0
+         */
+        protected abstract static class AbstractBean implements FilteringConditionValue {
+
+            protected FilteringOperationValue operation;
+
+            /**
+             * Constructor. Used only for deserialization from JSON.
+             *
+             * @since 3.0.0
+             */
+            protected AbstractBean() {
+            }
+
+            /**
+             * Constructor.
+             *
+             * @param builder the {@code SchedefValue.AbstractBuilder}
+             * @since 3.0.0
+             */
+            protected AbstractBean(AbstractBuilder<?, ?> builder) {
+                this.operation = builder.operation;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public FilteringOperationValue getOperation() {
+                return operation;
+            }
+
+            /**
+             * Set filtering operation.
+             *
+             * @param operation the {@code FilteringOperationValue}
+             * @since 3.0.0
+             */
+            public void setKind(FilteringOperationValue operation) {
+                this.operation = operation;
+            }
+        }
     }
 
     /**
@@ -289,7 +289,8 @@ public interface FilteringConditionValue {
 
             Bean tmp = dc.deserialize(Bean.class, jp);
 
-            return Optional.ofNullable(tmp).map(FilteringConditionValue::getOperation).map(FilteringOperationValue::getKind)
+            return Optional.ofNullable(tmp).map(FilteringConditionValue::getOperation).map(
+                FilteringOperationValue::getKind)
                 .filter(FilteringOperationKing.NODE::equals).isPresent()
                 ? new MultiBean(tmp.getOperation(), tmp.getChildren().orElse(null))
                 : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue().orElse(null));
