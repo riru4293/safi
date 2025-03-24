@@ -43,8 +43,8 @@ import static java.util.stream.Collectors.toUnmodifiableSet;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.FilteringOperationKing;
 import jp.mydns.projectk.safi.validator.OptionalNotEmpty;
-import jp.mydns.projectk.safi.value.FilteringCondition.LeafCondition;
-import jp.mydns.projectk.safi.value.FilteringCondition.NodeCondition;
+import jp.mydns.projectk.safi.value.FilteringConditionValue.LeafCondition;
+import jp.mydns.projectk.safi.value.FilteringConditionValue.NodeCondition;
 
 /**
  * Filtering condition. Combines some conditions is also possible.
@@ -69,7 +69,7 @@ import jp.mydns.projectk.safi.value.FilteringCondition.NodeCondition;
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(FilteringCondition.Deserializer.class)
+@JsonbTypeDeserializer(FilteringConditionValue.Deserializer.class)
 @Schema(description
     = """
 Filtering condition.
@@ -88,7 +88,7 @@ Filtering condition.
     {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
 ```""",
         oneOf = {LeafCondition.class, NodeCondition.class})
-public interface FilteringCondition {
+public interface FilteringConditionValue {
 
     /**
      * Get filtering operation.
@@ -117,7 +117,7 @@ public interface FilteringCondition {
      */
     @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Child filtering conditions.")
     @NotNull
-    Optional<List<@NotNull(groups = Default.class) @Valid FilteringCondition>> getChildren();
+    Optional<List<@NotNull(groups = Default.class) @Valid FilteringConditionValue>> getChildren();
 
     /**
      * Get this as {@code LeafOperation}.
@@ -176,7 +176,7 @@ public interface FilteringCondition {
      * @throws IllegalArgumentException if {@code op} is not a multiple filtering operation
      * @since 3.0.0
      */
-    static NodeCondition multiOf(FilteringOperationValue op, List<FilteringCondition> children) {
+    static NodeCondition multiOf(FilteringOperationValue op, List<FilteringConditionValue> children) {
         Objects.requireNonNull(op);
         Objects.requireNonNull(children);
 
@@ -203,7 +203,7 @@ public interface FilteringCondition {
      * @since 3.0.0
      */
     @Schema(name = "FilteringCondition.Multi", description = "Combination of filtering conditions.")
-    interface NodeCondition extends FilteringCondition {
+    interface NodeCondition extends FilteringConditionValue {
 
         /**
          * {@inheritDoc}
@@ -222,7 +222,7 @@ public interface FilteringCondition {
          */
         @Override
         @OptionalNotEmpty(groups = Default.class)
-        Optional<List<FilteringCondition>> getChildren();
+        Optional<List<FilteringConditionValue>> getChildren();
     }
 
     /**
@@ -239,7 +239,7 @@ public interface FilteringCondition {
      * @since 3.0.0
      */
     @Schema(name = "FilteringCondition.Single", description = "A single filtering condition.")
-    public interface LeafCondition extends FilteringCondition {
+    public interface LeafCondition extends FilteringConditionValue {
 
         /**
          * {@inheritDoc}
@@ -271,13 +271,13 @@ public interface FilteringCondition {
     }
 
     /**
-     * JSON deserializer for {@code FilteringCondition}.
+     * JSON deserializer for {@code FilteringConditionValue}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<FilteringCondition> {
+    class Deserializer implements JsonbDeserializer<FilteringConditionValue> {
 
         /**
          * {@inheritDoc}
@@ -285,18 +285,18 @@ public interface FilteringCondition {
          * @since 3.0.0
          */
         @Override
-        public FilteringCondition deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public FilteringConditionValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
 
             Bean tmp = dc.deserialize(Bean.class, jp);
 
-            return Optional.ofNullable(tmp).map(FilteringCondition::getOperation).map(FilteringOperationValue::getKind)
+            return Optional.ofNullable(tmp).map(FilteringConditionValue::getOperation).map(FilteringOperationValue::getKind)
                 .filter(FilteringOperationKing.NODE::equals).isPresent()
                 ? new MultiBean(tmp.getOperation(), tmp.getChildren().orElse(null))
                 : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue().orElse(null));
         }
 
         /**
-         * Implements of the {@code FilteringCondition.LeafOperation}.
+         * Implements of the {@code FilteringConditionValue.LeafOperation}.
          *
          * @author riru
          * @version 3.0.0
@@ -351,7 +351,7 @@ public interface FilteringCondition {
              */
             @Override
             @JsonbTransient
-            public Optional<List<FilteringCondition>> getChildren() {
+            public Optional<List<FilteringConditionValue>> getChildren() {
                 return Optional.empty();
             }
 
@@ -369,7 +369,7 @@ public interface FilteringCondition {
         }
 
         /**
-         * Implements of the {@code FilteringCondition.NodeOperation}.
+         * Implements of the {@code FilteringConditionValue.NodeOperation}.
          *
          * @author riru
          * @version 3.0.0
@@ -378,9 +378,9 @@ public interface FilteringCondition {
         protected static class MultiBean implements NodeCondition {
 
             private final FilteringOperationValue operation;
-            private final List<FilteringCondition> children;
+            private final List<FilteringConditionValue> children;
 
-            private MultiBean(FilteringOperationValue operation, List<FilteringCondition> children) {
+            private MultiBean(FilteringOperationValue operation, List<FilteringConditionValue> children) {
                 this.operation = operation;
                 this.children = children;
             }
@@ -412,7 +412,7 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public Optional<List<FilteringCondition>> getChildren() {
+            public Optional<List<FilteringConditionValue>> getChildren() {
                 return Optional.ofNullable(children);
             }
 
@@ -429,13 +429,13 @@ public interface FilteringCondition {
         }
 
         /**
-         * Implements of the {@code FilteringCondition}.
+         * Implements of the {@code FilteringConditionValue}.
          *
          * @author riru
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class Bean implements FilteringCondition, LeafCondition {
+        protected static class Bean implements FilteringConditionValue, LeafCondition {
 
             private static final Set<String> multiOpNames = Stream.of(FilteringOperationValue.NodeOperation.values())
                 .map(Enum::name).collect(toUnmodifiableSet());
@@ -443,7 +443,7 @@ public interface FilteringCondition {
             private FilteringOperationValue operation;
             private String name;
             private String value;
-            private List<FilteringCondition> children;
+            private List<FilteringConditionValue> children;
 
             /**
              * {@inheritDoc}
@@ -514,7 +514,7 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public Optional<List<FilteringCondition>> getChildren() {
+            public Optional<List<FilteringConditionValue>> getChildren() {
                 return Optional.ofNullable(children);
             }
 
@@ -524,7 +524,7 @@ public interface FilteringCondition {
              * @param children child filtering conditions
              * @since 3.0.0
              */
-            public void setChildren(List<FilteringCondition> children) {
+            public void setChildren(List<FilteringConditionValue> children) {
                 this.children = children;
             }
         }

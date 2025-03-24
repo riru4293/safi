@@ -81,7 +81,7 @@ public interface FiltdefValue extends Template {
      */
     @NotNull(groups = Default.class)
     @Valid
-    FilteringCondition getCondition();
+    FilteringConditionValue getCondition();
 
     /**
      * Builder of the {@code FiltdefValue}.
@@ -93,7 +93,7 @@ public interface FiltdefValue extends Template {
     class Builder extends AbstractBuilder<Builder, FiltdefValue> {
 
         private Map<String, String> trnsdef;
-        private FilteringCondition condition;
+        private FilteringConditionValue condition;
 
         /**
          * Constructor.
@@ -139,7 +139,7 @@ public interface FiltdefValue extends Template {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withFilter(FilteringCondition condition) {
+        public Builder withFilter(FilteringConditionValue condition) {
             this.condition = condition;
             return this;
         }
@@ -164,7 +164,7 @@ public interface FiltdefValue extends Template {
         protected static class Bean implements FiltdefValue {
 
             private Map<String, String> trnsdef;
-            private FilteringCondition condition;
+            private FilteringConditionValue condition;
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -205,7 +205,7 @@ public interface FiltdefValue extends Template {
              * @since 3.0.0
              */
             @Override
-            public FilteringCondition getCondition() {
+            public FilteringConditionValue getCondition() {
                 return condition;
             }
 
@@ -215,7 +215,7 @@ public interface FiltdefValue extends Template {
              * @param condition filtering condition
              * @since 3.0.0
              */
-            public void setCondition(FilteringCondition condition) {
+            public void setCondition(FilteringConditionValue condition) {
                 this.condition = condition;
             }
 
