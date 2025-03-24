@@ -138,7 +138,7 @@ public interface JobValue extends PersistableValue {
      * @return begin time
      * @since 3.0.0
      */
-    @Schema(description = "Begin time at job execution.")
+    @Schema(description = "Begin time at job execution.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getBeginTime();
 
@@ -148,7 +148,7 @@ public interface JobValue extends PersistableValue {
      * @return end time
      * @since 3.0.0
      */
-    @Schema(description = "End time at job execution.")
+    @Schema(description = "End time at job execution.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getEndTime();
 
@@ -190,7 +190,7 @@ public interface JobValue extends PersistableValue {
      * @return schedule definition id
      * @since 3.0.0
      */
-    @Schema(description = "Schedule definition id.")
+    @Schema(description = "Schedule definition id.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Size(max = 36) String> getSchedefId();
 
@@ -200,7 +200,7 @@ public interface JobValue extends PersistableValue {
      * @return schedule definition
      * @since 3.0.0
      */
-    @Schema(description = "Schedule definition.")
+    @Schema(description = "Schedule definition.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Valid SchedefValue> getSchedef();
 
@@ -210,7 +210,7 @@ public interface JobValue extends PersistableValue {
      * @return result messages
      * @since 3.0.0
      */
-    @Schema(description = "Job execution result messages.")
+    @Schema(description = "Job execution result messages.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<List<String>> getResultMessages();
 

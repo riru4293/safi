@@ -45,7 +45,7 @@ import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
  * @since 3.0.0
  */
 interface OnceTriggerValue extends ScheduleTriggerValue {
-    
+
     /**
      * {@inheritDoc}
      *

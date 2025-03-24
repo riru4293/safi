@@ -63,7 +63,7 @@ public interface NamedValue extends PersistableValue {
      * @return name
      * @since 3.0.0
      */
-    @Schema(description = "Name of value.", maxLength = 250)
+    @Schema(description = "Name of value.", maxLength = 250, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Size(max = 250, groups = {Default.class}) String> getName();
 

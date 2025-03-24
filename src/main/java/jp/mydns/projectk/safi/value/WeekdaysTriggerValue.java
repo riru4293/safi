@@ -58,7 +58,7 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @since 3.0.0
  */
 interface WeekdaysTriggerValue extends ScheduleTriggerValue {
-    
+
     /**
      * {@inheritDoc}
      *
