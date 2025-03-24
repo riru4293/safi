@@ -100,22 +100,12 @@ public interface FilteringCondition {
     FilteringOperation getOperation();
 
     /**
-     * Get filtering target name.
-     *
-     * @return target name
-     * @since 3.0.0
-     */
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-    @NotNull(groups = Default.class)
-    Optional<String> getName();
-
-    /**
      * Get filtering value.
      *
      * @return filtering value
      * @since 3.0.0
      */
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Property value to filter on.")
     @NotNull(groups = Default.class)
     Optional<String> getValue();
 
@@ -125,7 +115,7 @@ public interface FilteringCondition {
      * @return children child conditions
      * @since 3.0.0
      */
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Child filtering conditions.")
     @NotNull
     Optional<List<@NotNull(groups = Default.class) @Valid FilteringCondition>> getChildren();
 
@@ -266,9 +256,8 @@ public interface FilteringCondition {
          * @return target name
          * @since 3.0.0
          */
-        @Override
-        @OptionalNotEmpty(groups = Default.class)
-        Optional<String> getName();
+        @NotNull(groups = Default.class)
+        String getName();
 
         /**
          * Get filtering value.
@@ -303,7 +292,7 @@ public interface FilteringCondition {
             return Optional.ofNullable(tmp).map(FilteringCondition::getOperation).map(FilteringOperation::getKind)
                 .filter(FilteringOperationKing.NODE::equals).isPresent()
                 ? new MultiBean(tmp.getOperation(), tmp.getChildren().orElse(null))
-                : new SingleBean(tmp.getOperation(), tmp.getName().orElse(null), tmp.getValue().orElse(null));
+                : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue().orElse(null));
         }
 
         /**
@@ -341,8 +330,8 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public Optional<String> getName() {
-                return Optional.ofNullable(name);
+            public String getName() {
+                return name;
             }
 
             /**
@@ -413,17 +402,6 @@ public interface FilteringCondition {
              */
             @Override
             @JsonbTransient
-            public Optional<String> getName() {
-                return Optional.empty();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            @JsonbTransient
             public Optional<String> getValue() {
                 return Optional.empty();
             }
@@ -457,7 +435,7 @@ public interface FilteringCondition {
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class Bean implements FilteringCondition {
+        protected static class Bean implements FilteringCondition, LeafCondition {
 
             private static final Set<String> multiOpNames = Stream.of(FilteringOperation.NodeOperation.values())
                 .map(Enum::name).collect(toUnmodifiableSet());
@@ -494,8 +472,8 @@ public interface FilteringCondition {
              * @since 3.0.0
              */
             @Override
-            public Optional<String> getName() {
-                return Optional.ofNullable(name);
+            public String getName() {
+                return name;
             }
 
             /**
