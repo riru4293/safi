@@ -83,6 +83,7 @@ public interface FilteringOperation {
      * @since 3.0.0
      */
     @JsonbTransient
+    @Schema(hidden = true)
     @NotNull(groups = Default.class)
     FilteringOperationKing getKind();
 

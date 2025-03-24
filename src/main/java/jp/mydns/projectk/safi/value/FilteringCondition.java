@@ -60,7 +60,6 @@ import jp.mydns.projectk.safi.value.FilteringCondition.NodeCondition;
  * Implementation requirements.
  * <ul>
  * <li>This class is immutable and thread-safe.</li>
- * <li>This class can be converted to JSON Object.</li>
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
@@ -88,7 +87,7 @@ Filtering condition.
     {"operation": "EQUAL", "name": "userName", "value": "taro"},
     {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
 ```""",
-        subTypes = {LeafCondition.class, NodeCondition.class}, oneOf = {LeafCondition.class, NodeCondition.class})
+        oneOf = {LeafCondition.class, NodeCondition.class})
 public interface FilteringCondition {
 
     /**
@@ -97,7 +96,6 @@ public interface FilteringCondition {
      * @return filtering operation
      * @since 3.0.0
      */
-    @Schema(description = "Filtering operation.")
     @NotNull(groups = Default.class)
     FilteringOperation getOperation();
 
@@ -107,6 +105,7 @@ public interface FilteringCondition {
      * @return target name
      * @since 3.0.0
      */
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<String> getName();
 
@@ -116,6 +115,7 @@ public interface FilteringCondition {
      * @return filtering value
      * @since 3.0.0
      */
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<String> getValue();
 
@@ -125,6 +125,7 @@ public interface FilteringCondition {
      * @return children child conditions
      * @since 3.0.0
      */
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull
     Optional<List<@NotNull(groups = Default.class) @Valid FilteringCondition>> getChildren();
 
