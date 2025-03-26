@@ -123,15 +123,7 @@ interface NodeConditionValue extends FilteringConditionValue {
 
         protected static class Bean extends AbstractBuilder.AbstractBean implements NodeConditionValue {
 
-            private List<FilteringConditionValue> children;
-
-            /**
-             * Constructor. Used only for deserialization from JSON.
-             *
-             * @since 3.0.0
-             */
-            protected Bean() {
-            }
+            private final List<FilteringConditionValue> children;
 
             private Bean(Builder builder) {
                 super(builder);
@@ -146,16 +138,6 @@ interface NodeConditionValue extends FilteringConditionValue {
             @Override
             public List<FilteringConditionValue> getChildren() {
                 return children;
-            }
-
-            /**
-             * Set inner conditions.
-             *
-             * @param children inner conditions
-             * @since 3.0.0
-             */
-            public void setChildren(List<FilteringConditionValue> children) {
-                this.children = CollectionUtils.toUnmodifiable(children);
             }
 
             /**

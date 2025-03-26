@@ -103,8 +103,8 @@ interface LeafConditionValue extends FilteringConditionValue {
         @Override
         public Builder with(LeafConditionValue src) {
             super.with(Objects.requireNonNull(src));
-            this.name = src.getName();
-            this.value = src.getValue();
+            withName(src.getName());
+            withValue(src.getValue());
             return this;
         }
 
@@ -144,16 +144,8 @@ interface LeafConditionValue extends FilteringConditionValue {
 
         protected static class Bean extends AbstractBuilder.AbstractBean implements LeafConditionValue {
 
-            private String name;
-            private String value;
-
-            /**
-             * Constructor. Used only for deserialization from JSON.
-             *
-             * @since 3.0.0
-             */
-            protected Bean() {
-            }
+            private final String name;
+            private final String value;
 
             private Bean(Builder builder) {
                 super(builder);
@@ -172,16 +164,6 @@ interface LeafConditionValue extends FilteringConditionValue {
             }
 
             /**
-             * Set property name to filter on.
-             *
-             * @param name property name to filter on
-             * @since 3.0.0
-             */
-            public void setName(String name) {
-                this.name = name;
-            }
-
-            /**
              * {@inheritDoc}
              *
              * @since 3.0.0
@@ -189,16 +171,6 @@ interface LeafConditionValue extends FilteringConditionValue {
             @Override
             public String getValue() {
                 return value;
-            }
-
-            /**
-             * Set value to filter on.
-             *
-             * @param value value to filter on
-             * @since 3.0.0
-             */
-            public void setValue(String value) {
-                this.value = value;
             }
 
             /**
