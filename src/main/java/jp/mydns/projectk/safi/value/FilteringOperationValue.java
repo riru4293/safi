@@ -35,6 +35,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.constant.FilteringOperationKing;
 import jp.mydns.projectk.safi.value.FilteringOperationValue.LeafOperation;
@@ -227,7 +228,8 @@ public interface FilteringOperationValue {
          */
         @Override
         public FilteringOperationValue deserialize(JsonParser parser, DeserializationContext ctx, Type rtType) {
-            return FilteringOperationValue.valueOf(ctx.deserialize(String.class, parser));
+            return Optional.ofNullable(ctx.deserialize(String.class, parser)).map(FilteringOperationValue::valueOf)
+                .orElse(null);
         }
     }
 }

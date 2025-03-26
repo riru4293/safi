@@ -50,6 +50,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 class FiltdefValueTest {
 
     /**
+     * Test of build method, of class Builder.
+     *
+     * @param validator the {@code Validator}. This parameter resolved by {@code ValidatorParameterResolver}.
+     * @since 3.0.0
+     */
+    @Test
+    void testBuild(Validator validator) {
+        var trnsdef = Map.<String, String>of();
+        var condition = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("n").withValue("v").build(validator);
+
+        // Build value
+        var val = new FiltdefValue.Builder().with(
+            new FiltdefValue.Builder().withTrnsdef(trnsdef).withCondition(condition).build(validator)).build(validator);
+
+        assertThat(val).returns(trnsdef, FiltdefValue::getTrnsdef)
+            .returns(condition, FiltdefValue::getCondition);
+    }
+
+    /**
      * Test of deserialize method, of class Deserializer.
      *
      * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.

@@ -172,17 +172,12 @@ public interface FilteringConditionValue extends Template {
 
             Bean tmp = dc.deserialize(Bean.class, jp);
 
-            FilteringOperationValue operation = Optional.ofNullable(tmp).map(FilteringConditionValue::getOperation)
-                .orElse(null);
-
-            return switch (operation.getKind()) {
-                case null ->
-                    tmp;    // Note: To be cause constraint violation exception.
+            return Optional.ofNullable(tmp).map(FilteringConditionValue::getOperation).map(o -> switch (o.getKind()) {
                 case NODE ->
-                    new NodeConditionValue.Builder(tmp.getOperation()).with(tmp).unsafeBuild();
+                    new NodeConditionValue.Builder(o).with(tmp).unsafeBuild();
                 case LEAF ->
-                    new LeafConditionValue.Builder(tmp.getOperation()).with(tmp).unsafeBuild();
-            };
+                    new LeafConditionValue.Builder(o).with(tmp).unsafeBuild();
+            }).orElse(tmp);
         }
 
         /**

@@ -27,6 +27,7 @@ package jp.mydns.projectk.safi.value;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.validation.Validator;
 import java.util.List;
@@ -45,7 +46,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  */
 @ExtendWith(JsonbParameterResolver.class)
 @ExtendWith(ValidatorParameterResolver.class)
-class FilteringConditionTest {
+class FilteringConditionValueTest {
 
     /**
      * Test of getOperation method.
@@ -76,6 +77,25 @@ class FilteringConditionTest {
                 .add(Json.createObjectBuilder().add("operation", "EQUAL").add("name", "n1").add("value", "v1"))
                 .add(Json.createObjectBuilder().add("operation", "EQUAL").add("name", "n2").add("value", "v2"))
             ).build();
+
+        var deserialized = jsonb.fromJson(expect.toString(), FilteringConditionValue.class);
+
+        var serialized = jsonb.toJson(deserialized);
+
+        var result = jsonb.fromJson(serialized, JsonObject.class);
+
+        assertThat(result).isEqualTo(expect);
+    }
+
+    /**
+     * Test of deserialize method if wmpty, of class Deserializer.
+     *
+     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
+     * @since 3.0.0
+     */
+    @Test
+    void testDeserializeIfEmpty(Jsonb jsonb) {
+        JsonObject expect = JsonValue.EMPTY_JSON_OBJECT;
 
         var deserialized = jsonb.fromJson(expect.toString(), FilteringConditionValue.class);
 
