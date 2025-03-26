@@ -36,8 +36,6 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import static jp.mydns.projectk.safi.constant.FilteringOperationKing.LEAF;
-import static jp.mydns.projectk.safi.constant.FilteringOperationKing.NODE;
 import jp.mydns.projectk.safi.util.CollectionUtils;
 
 /**

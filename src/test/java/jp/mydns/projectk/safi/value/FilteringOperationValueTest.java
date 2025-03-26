@@ -59,6 +59,8 @@ class FilteringOperationValueTest {
 
         var deserialized = jsonb.fromJson(expect.toString(), FilteringOperationValue.class);
 
+        assertThat(deserialized).isInstanceOf(LeafConditionValue.class);
+
         var serialized = jsonb.toJson(deserialized);
 
         var result = jsonb.fromJson(serialized, JsonString.class);
@@ -79,6 +81,8 @@ class FilteringOperationValueTest {
         JsonString expect = Json.createValue(opName);
 
         var deserialized = jsonb.fromJson(expect.toString(), FilteringOperationValue.class);
+
+        assertThat(deserialized).isInstanceOf(NodeConditionValue.class);
 
         var serialized = jsonb.toJson(deserialized);
 
