@@ -26,22 +26,15 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.json.bind.annotation.JsonbTypeAdapter;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
-import java.time.Month;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.SequencedSet;
-import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
 import jp.mydns.projectk.safi.util.CollectionUtils;
-import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedIntegerSetAdapter;
-import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSetAdapter;
 
 /**
- * Leaf of the {@code FilteringOperation}.
+ * Node filtering condition.
  *
  * <p>
  * Implementation requirements.
@@ -59,54 +52,35 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
 interface NodeConditionValue extends FilteringConditionValue {
 
     /**
-     * Get property name to filter on.
+     * Get inner conditions.
      *
-     * @return property name to filter on
+     * @return children inner conditions
      * @since 3.0.0
      */
-    @Schema(description = "Property name to filter on.")
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Inner filtering conditions.")
     @NotNull(groups = Default.class)
-    String getName();
+    List<@NotNull(groups = Default.class) @Valid FilteringConditionValue> getChildren();
 
     /**
-     * Get filtering value.
-     *
-     * @return filtering value
-     * @since 3.0.0
-     */
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Property value to filter on.")
-    @NotNull(groups = Default.class)
-    Optional<String> getValue();
-
-    /**
-     * Get child conditions.
-     *
-     * @return children child conditions
-     * @since 3.0.0
-     */
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Child filtering conditions.")
-    @NotNull
-    Optional<List<@NotNull(groups = Default.class) @Valid FilteringConditionValue>> getChildren();
-
-    /**
-     * Builder of the {@code DaysTriggerValue}.
+     * Builder of the {@code NodeConditionValue}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Builder extends AbstractBuilder<Builder, LeafCondition> {
+    class Builder extends AbstractBuilder<Builder, NodeConditionValue> {
 
-        private SequencedSet<Month> months;
-        private SequencedSet<Integer> days;
+        private List<FilteringConditionValue> children;
 
         /**
          * Constructor.
          *
+         * @param operation the {@code FilteringOperationValue}
+         * @throws NullPointerException if {@code operation} is {@code null}
          * @since 3.0.0
          */
-        public Builder() {
-            super(Builder.class, ScheduleTriggerKing.DAYS);
+        public Builder(FilteringOperationValue operation) {
+            super(Builder.class, Objects.requireNonNull(operation));
         }
 
         /**
@@ -118,34 +92,21 @@ interface NodeConditionValue extends FilteringConditionValue {
          * @since 3.0.0
          */
         @Override
-        public Builder with(LeafCondition src) {
+        public Builder with(NodeConditionValue src) {
             super.with(Objects.requireNonNull(src));
-            this.months = CollectionUtils.toUnmodifiable(src.getMonths());
-            this.days = CollectionUtils.toUnmodifiable(src.getDays());
+            withChildren(src.getChildren());
             return this;
         }
 
         /**
-         * Set target months of scheduling.
+         * Set inner conditions.
          *
-         * @param months target months of scheduling
+         * @param children inner conditions
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withMonths(SequencedSet<Month> months) {
-            this.months = CollectionUtils.toUnmodifiable(months);
-            return this;
-        }
-
-        /**
-         * Set target day numbers of scheduling.
-         *
-         * @param days target day numbers of scheduling
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withDays(SequencedSet<Integer> days) {
-            this.days = CollectionUtils.toUnmodifiable(days);
+        public Builder withChildren(List<FilteringConditionValue> children) {
+            this.children = CollectionUtils.toUnmodifiable(children);
             return this;
         }
 
@@ -155,14 +116,13 @@ interface NodeConditionValue extends FilteringConditionValue {
          * @since 3.0.0
          */
         @Override
-        public LeafCondition unsafeBuild() {
+        public NodeConditionValue unsafeBuild() {
             return new Builder.Bean(this);
         }
 
-        protected static class Bean extends AbstractBuilder.AbstractBean implements LeafCondition {
+        protected static class Bean extends AbstractBuilder.AbstractBean implements NodeConditionValue {
 
-            private SequencedSet<Month> months;
-            private SequencedSet<Integer> days;
+            private List<FilteringConditionValue> children;
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -174,8 +134,7 @@ interface NodeConditionValue extends FilteringConditionValue {
 
             private Bean(Builder builder) {
                 super(builder);
-                this.months = builder.months;
-                this.days = builder.days;
+                this.children = builder.children;
             }
 
             /**
@@ -184,42 +143,18 @@ interface NodeConditionValue extends FilteringConditionValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
-            public SequencedSet<Month> getMonths() {
-                return months;
+            public List<FilteringConditionValue> getChildren() {
+                return children;
             }
 
             /**
-             * Set target months of scheduling. The empty means all.
+             * Set inner conditions.
              *
-             * @param months target months of scheduling
+             * @param children inner conditions
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
-            public void setMonths(SequencedSet<Month> months) {
-                this.months = CollectionUtils.toUnmodifiable(months);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
-            public SequencedSet<Integer> getDays() {
-                return days;
-            }
-
-            /**
-             * Set target day numbers of scheduling. The empty means all.
-             *
-             * @param days target day numbers of scheduling
-             * @since 3.0.0
-             */
-            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
-            public void setDays(SequencedSet<Integer> days) {
-                this.days = CollectionUtils.toUnmodifiable(days);
+            public void setChildren(List<FilteringConditionValue> children) {
+                this.children = CollectionUtils.toUnmodifiable(children);
             }
 
             /**
@@ -230,8 +165,7 @@ interface NodeConditionValue extends FilteringConditionValue {
              */
             @Override
             public String toString() {
-                return String.format("DaysTriggerValue{months=%s, days=%s, anchorTime=%s}",
-                    months, days, anchorTime);
+                return String.format("FilteringCondition.Node{operation=%s, children=%s}", operation, children);
             }
         }
     }

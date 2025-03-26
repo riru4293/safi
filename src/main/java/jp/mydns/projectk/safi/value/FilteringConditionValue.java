@@ -26,22 +26,20 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import static java.util.stream.Collectors.toUnmodifiableSet;
-import java.util.stream.Stream;
-import jp.mydns.projectk.safi.constant.FilteringOperationKing;
+import static jp.mydns.projectk.safi.constant.FilteringOperationKing.LEAF;
+import static jp.mydns.projectk.safi.constant.FilteringOperationKing.NODE;
+import jp.mydns.projectk.safi.util.CollectionUtils;
+import static jp.mydns.projectk.safi.util.LambdaUtils.p;
 import jp.mydns.projectk.safi.validator.OptionalNotEmpty;
 import jp.mydns.projectk.safi.value.FilteringConditionValue.LeafCondition;
 import jp.mydns.projectk.safi.value.FilteringConditionValue.NodeCondition;
@@ -251,9 +249,9 @@ public interface FilteringConditionValue extends Template {
         public FilteringOperationValue getOperation();
 
         /**
-         * Get filtering target name.
+         * Get property name to filter on.
          *
-         * @return target name
+         * @return property name to filter on
          * @since 3.0.0
          */
         @NotNull(groups = Default.class)
@@ -287,146 +285,13 @@ public interface FilteringConditionValue extends Template {
         @Override
         public FilteringConditionValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
 
-            Bean tmp = dc.deserialize(Bean.class, jp);
+            Bean b = dc.deserialize(Bean.class, jp);
 
-            return Optional.ofNullable(tmp).map(FilteringConditionValue::getOperation).map(
-                FilteringOperationValue::getKind)
-                .filter(FilteringOperationKing.NODE::equals).isPresent()
-                ? new MultiBean(tmp.getOperation(), tmp.getChildren().orElse(null))
-                : new SingleBean(tmp.getOperation(), tmp.getName(), tmp.getValue().orElse(null));
-        }
-
-        /**
-         * Implements of the {@code FilteringConditionValue.LeafOperation}.
-         *
-         * @author riru
-         * @version 3.0.0
-         * @since 3.0.0
-         */
-        protected static class SingleBean implements LeafCondition {
-
-            private final FilteringOperationValue operation;
-            private final String name;
-            private final String value;
-
-            private SingleBean(FilteringOperationValue operation, String name, String value) {
-                this.operation = operation;
-                this.name = name;
-                this.value = value;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public FilteringOperationValue getOperation() {
-                return operation;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public Optional<String> getValue() {
-                return Optional.ofNullable(value);
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            @JsonbTransient
-            public Optional<List<FilteringConditionValue>> getChildren() {
-                return Optional.empty();
-            }
-
-            /**
-             * Returns a string representation.
-             *
-             * @return a string representation
-             * @since 3.0.0
-             */
-            @Override
-            public String toString() {
-                return "FilteringCondition.Single{" + "operation=" + operation + ", name=" + name + ", value=" + value
-                    + '}';
-            }
-        }
-
-        /**
-         * Implements of the {@code FilteringConditionValue.NodeOperation}.
-         *
-         * @author riru
-         * @version 3.0.0
-         * @since 3.0.0
-         */
-        protected static class MultiBean implements NodeCondition {
-
-            private final FilteringOperationValue operation;
-            private final List<FilteringConditionValue> children;
-
-            private MultiBean(FilteringOperationValue operation, List<FilteringConditionValue> children) {
-                this.operation = operation;
-                this.children = children;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public FilteringOperationValue getOperation() {
-                return operation;
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            @JsonbTransient
-            public Optional<String> getValue() {
-                return Optional.empty();
-            }
-
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public Optional<List<FilteringConditionValue>> getChildren() {
-                return Optional.ofNullable(children);
-            }
-
-            /**
-             * Returns a string representation.
-             *
-             * @return a string representation
-             * @since 3.0.0
-             */
-            @Override
-            public String toString() {
-                return "FilteringCondition.Multi{" + "operation=" + operation + ", children=" + children + '}';
-            }
+            return Optional.ofNullable(b).map(FilteringConditionValue::getOperation)
+                .filter(p(Objects::nonNull, FilteringOperationValue::getKind))
+                .map(o -> o.getKind() == NODE ? new NodeConditionValue.Builder(b.getOperation()).with(b).unsafeBuild()
+                : new LeafConditionValue.Builder(b.getOperation()).with(b).unsafeBuild();
+            ).orElse(b);
         }
 
         /**
@@ -436,15 +301,15 @@ public interface FilteringConditionValue extends Template {
          * @version 3.0.0
          * @since 3.0.0
          */
-        protected static class Bean implements FilteringConditionValue, LeafCondition {
-
-            private static final Set<String> multiOpNames = Stream.of(FilteringOperationValue.NodeOperation.values())
-                .map(Enum::name).collect(toUnmodifiableSet());
+        protected static class Bean implements NodeConditionValue, LeafConditionValue {
 
             private FilteringOperationValue operation;
             private String name;
             private String value;
             private List<FilteringConditionValue> children;
+
+            private Bean() {
+            }
 
             /**
              * {@inheritDoc}
@@ -459,7 +324,7 @@ public interface FilteringConditionValue extends Template {
             /**
              * Set filtering operation.
              *
-             * @param operation filtering operation
+             * @param operation the {@code FilteringOperationValue}
              * @since 3.0.0
              */
             public void setOperation(FilteringOperationValue operation) {
@@ -467,9 +332,8 @@ public interface FilteringConditionValue extends Template {
             }
 
             /**
-             * Get filtering target name.
+             * {@inheritDoc}
              *
-             * @return target name
              * @since 3.0.0
              */
             @Override
@@ -478,9 +342,9 @@ public interface FilteringConditionValue extends Template {
             }
 
             /**
-             * Set filtering target name.
+             * Set property name to filter on.
              *
-             * @param name target name
+             * @param name property name to filter on
              * @since 3.0.0
              */
             public void setName(String name) {
@@ -488,20 +352,19 @@ public interface FilteringConditionValue extends Template {
             }
 
             /**
-             * Get filtering value.
+             * {@inheritDoc}
              *
-             * @return filtering value
              * @since 3.0.0
              */
             @Override
-            public Optional<String> getValue() {
-                return Optional.ofNullable(value);
+            public String getValue() {
+                return value;
             }
 
             /**
-             * Set filtering value.
+             * Set value to filter on.
              *
-             * @param value filtering value
+             * @param value value to filter on
              * @since 3.0.0
              */
             public void setValue(String value) {
@@ -509,24 +372,23 @@ public interface FilteringConditionValue extends Template {
             }
 
             /**
-             * Get child filtering conditions.
+             * {@inheritDoc}
              *
-             * @return children child filtering conditions
              * @since 3.0.0
              */
             @Override
-            public Optional<List<FilteringConditionValue>> getChildren() {
-                return Optional.ofNullable(children);
+            public List<FilteringConditionValue> getChildren() {
+                return children;
             }
 
             /**
              * Set child filtering conditions.
              *
-             * @param children child filtering conditions
+             * @param children the {@code FilteringConditionValue} collection
              * @since 3.0.0
              */
             public void setChildren(List<FilteringConditionValue> children) {
-                this.children = children;
+                this.children = CollectionUtils.toUnmodifiable(children);
             }
         }
     }
