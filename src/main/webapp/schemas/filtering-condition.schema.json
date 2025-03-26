@@ -27,27 +27,23 @@
     "required": [
         "operation"
     ],
-    "allOf": [
-        {
-            "if": {
-                "properties": {
-                    "operation": {
-                        "pattern": "[(AND)|(OR)|(NOT_OR)]"
-                    }
-                }
-            },
-            "then": {
-                "required": ["children"],
-                "not": {
-                    "required": ["name", "value"]
-                }
-            },
-            "else": {
-                "required": ["name", "value"],
-                "not": {
-                    "required": ["children"]
-                }
+    "if": {
+        "properties": {
+            "operation": {
+                "pattern": "[(AND)|(OR)|(NOT_OR)]"
             }
         }
-    ]
+    },
+    "then": {
+        "required": ["children"],
+        "not": {
+            "required": ["name", "value"]
+        }
+    },
+    "else": {
+        "required": ["name", "value"],
+        "not": {
+            "required": ["children"]
+        }
+    }
 }
