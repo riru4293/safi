@@ -190,9 +190,9 @@ public interface ValidityPeriodValue extends Template {
         public Builder with(ValidityPeriodValue src) {
             super.with(Objects.requireNonNull(src));
 
-            this.from = src.getFrom();
-            this.to = src.getTo();
-            this.ignored = src.isIgnored();
+            withFrom(src.getFrom());
+            withTo(src.getTo());
+            withIgnored(src.isIgnored());
 
             return this;
         }

@@ -97,7 +97,9 @@ interface CancelTriggerValue extends ScheduleTriggerValue {
         @Override
         public Builder with(CancelTriggerValue src) {
             super.with(Objects.requireNonNull(src));
-            this.duration = src.getDuration();
+
+            withDuration(src.getDuration());
+
             return this;
         }
 

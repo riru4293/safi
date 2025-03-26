@@ -134,11 +134,13 @@ public interface SchedefValue extends NamedValue {
          */
         @Override
         public Builder with(SchedefValue src) {
-            Objects.requireNonNull(src);
-            this.id = src.getId();
-            this.jobdefId = src.getJobdefId();
-            this.priority = src.getPriority();
-            this.trigger = src.getTrigger();
+            super.with(Objects.requireNonNull(src));
+
+            withId(src.getId());
+            withJobdefId(src.getJobdefId());
+            withPriority(src.getPriority());
+            withTrigger(src.getTrigger());
+
             return this;
         }
 

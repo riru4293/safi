@@ -186,13 +186,13 @@ public interface JobCreationContext extends Template {
         public Builder with(JobCreationContext src) {
             super.with(Objects.requireNonNull(src));
 
-            this.jobdefId = src.getJobdefId();
-            this.scheduleTime = src.getScheduleTime().orElse(null);
-            this.timeout = src.getTimeout().orElse(null);
-            this.pluginName = src.getPluginName().orElse(null);
-            this.trnsdef = src.getTrnsdef().orElse(null);
-            this.filtdef = src.getFiltdef().orElse(null);
-            this.jobProperties = src.getJobProperties().orElse(null);
+            withJobdefId(src.getJobdefId());
+            withScheduleTime(src.getScheduleTime().orElse(null));
+            withTimeout(src.getTimeout().orElse(null));
+            withPluginName(src.getPluginName().orElse(null));
+            withTrnsdef(src.getTrnsdef().orElse(null));
+            withFiltdef(src.getFiltdef().orElse(null));
+            withJobProperties(src.getJobProperties().orElse(null));
 
             return this;
         }

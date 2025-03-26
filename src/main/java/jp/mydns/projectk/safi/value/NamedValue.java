@@ -95,8 +95,8 @@ public interface NamedValue extends PersistableValue {
         public B with(V src) {
             super.with(src);
 
-            this.validityPeriod = src.getValidityPeriod();
-            this.name = src.getName().orElse(null);
+            withValidityPeriod(src.getValidityPeriod());
+            withName(src.getName().orElse(null));
 
             return builderType.cast(this);
         }

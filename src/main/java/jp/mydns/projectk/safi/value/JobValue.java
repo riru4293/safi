@@ -256,20 +256,20 @@ public interface JobValue extends PersistableValue {
         public Builder with(JobValue src) {
             super.with(Objects.requireNonNull(src));
 
-            this.id = src.getId();
-            this.status = src.getStatus();
-            this.kind = src.getKind();
-            this.target = src.getTarget();
-            this.scheduleTime = src.getScheduleTime();
-            this.limitTime = src.getLimitTime();
-            this.beginTime = src.getBeginTime().orElse(null);
-            this.endTime = src.getEndTime().orElse(null);
-            this.properties = src.getProperties();
-            this.jobdefId = src.getJobdefId();
-            this.jobdef = src.getJobdef();
-            this.schedefId = src.getSchedefId().orElse(null);
-            this.schedef = src.getSchedef().orElse(null);
-            this.resultMessages = src.getResultMessages().orElse(null);
+            withId(src.getId());
+            withStatus(src.getStatus());
+            withKind(src.getKind());
+            withTarget(src.getTarget());
+            withScheduleTime(src.getScheduleTime());
+            withLimitTime(src.getLimitTime());
+            withBeginTime(src.getBeginTime().orElse(null));
+            withEndTime(src.getEndTime().orElse(null));
+            withProperties(src.getProperties());
+            withJobdefId(src.getJobdefId());
+            withJobdef(src.getJobdef());
+            withSchedefId(src.getSchedefId().orElse(null));
+            withSchedef(src.getSchedef().orElse(null));
+            withResultMessages(src.getResultMessages().orElse(null));
 
             return builderType.cast(this);
         }

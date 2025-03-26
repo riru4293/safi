@@ -103,8 +103,10 @@ interface LeafConditionValue extends FilteringConditionValue {
         @Override
         public Builder with(LeafConditionValue src) {
             super.with(Objects.requireNonNull(src));
+
             withName(src.getName());
             withValue(src.getValue());
+
             return this;
         }
 

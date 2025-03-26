@@ -114,8 +114,8 @@ public interface FiltdefValue extends Template {
         public Builder with(FiltdefValue src) {
             super.with(Objects.requireNonNull(src));
 
-            this.trnsdef = src.getTrnsdef();
-            this.condition = src.getCondition();
+            withTrnsdef(src.getTrnsdef());
+            withCondition(src.getCondition());
 
             return this;
         }
@@ -139,7 +139,7 @@ public interface FiltdefValue extends Template {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withFilter(FilteringConditionValue condition) {
+        public Builder withCondition(FilteringConditionValue condition) {
             this.condition = condition;
             return this;
         }

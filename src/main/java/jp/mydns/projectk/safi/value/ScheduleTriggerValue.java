@@ -135,7 +135,7 @@ public interface ScheduleTriggerValue extends Template {
         public B with(V src) {
             super.with(Objects.requireNonNull(src));
 
-            this.anchorTime = src.getAnchorTime();
+            withAnchorTime(src.getAnchorTime());
 
             return builderType.cast(this);
         }

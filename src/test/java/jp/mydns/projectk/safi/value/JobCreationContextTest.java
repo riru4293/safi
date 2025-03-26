@@ -61,9 +61,9 @@ class JobCreationContextTest {
     void testBuild(Validator validator) {
         var scheduleTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var trnsdef = Map.<String, String>of();
-        var filter = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+        var condition = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
             .withName("n").withValue("v").build(validator);
-        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(filter).build(validator);
+        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withCondition(condition).build(validator);
 
         // Build value
         var val = new JobCreationContext.Builder().with(
@@ -122,9 +122,9 @@ class JobCreationContextTest {
             + ", filtdef=%s, jobProperties=%s}";
 
         var scheduleTime = OffsetDateTime.of(2000, 1, 1, 12, 33, 55, 0, ZoneOffset.UTC);
-        var filter = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+        var conditiion = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
             .withName("n").withValue("v").build(validator);
-        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(filter).build(validator);
+        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withCondition(conditiion).build(validator);
 
         var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
             .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)

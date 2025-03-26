@@ -81,11 +81,11 @@ class FiltdefValueTest {
     void testToString(Validator validator) {
         String tmpl = "FiltdefValue{trnsdef=%s, condition=%s}";
 
-        var filter = new NodeConditionValue.Builder(FilteringOperationValue.NodeOperation.NOT_OR)
+        var condition = new NodeConditionValue.Builder(FilteringOperationValue.NodeOperation.NOT_OR)
             .withChildren(List.of()).build(validator);
 
-        var val = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(filter).build(validator);
+        var val = new FiltdefValue.Builder().withTrnsdef(Map.of()).withCondition(condition).build(validator);
 
-        assertThat(val).hasToString(tmpl, Map.of(), filter);
+        assertThat(val).hasToString(tmpl, Map.of(), condition);
     }
 }

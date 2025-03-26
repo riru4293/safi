@@ -95,7 +95,9 @@ interface NodeConditionValue extends FilteringConditionValue {
         @Override
         public Builder with(NodeConditionValue src) {
             super.with(Objects.requireNonNull(src));
+
             withChildren(src.getChildren());
+
             return this;
         }
 

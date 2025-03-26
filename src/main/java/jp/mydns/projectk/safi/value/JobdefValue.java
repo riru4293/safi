@@ -224,14 +224,14 @@ The key is the property name after transformation, and the value is the transfor
         public Builder with(JobdefValue src) {
             super.with(Objects.requireNonNull(src));
 
-            this.id = src.getId();
-            this.jobKind = src.getJobKind();
-            this.jobTarget = src.getJobTarget();
-            this.timeout = src.getTimeout();
-            this.pluginName = src.getPluginName().orElse(null);
-            this.trnsdef = src.getTrnsdef().orElse(null);
-            this.filtdef = src.getFiltdef().orElse(null);
-            this.jobProperties = src.getJobProperties();
+            withId(src.getId());
+            withJobKind(src.getJobKind());
+            withJobTarget(src.getJobTarget());
+            withTimeout(src.getTimeout());
+            withPluginName(src.getPluginName().orElse(null));
+            withTrnsdef(src.getTrnsdef().orElse(null));
+            withFiltdef(src.getFiltdef().orElse(null));
+            withJobProperties(src.getJobProperties());
 
             return builderType.cast(this);
         }

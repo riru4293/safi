@@ -133,9 +133,9 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
         public Builder with(WeekdaysTriggerValue src) {
             super.with(Objects.requireNonNull(src));
 
-            this.months = CollectionUtils.toUnmodifiable(src.getMonths());
-            this.weeks = CollectionUtils.toUnmodifiable(src.getWeeks());
-            this.weekdays = CollectionUtils.toUnmodifiable(src.getWeekdays());
+            withMonths(src.getMonths());
+            withWeeks(src.getWeeks());
+            withWeekdays(src.getWeekdays());
 
             return this;
         }

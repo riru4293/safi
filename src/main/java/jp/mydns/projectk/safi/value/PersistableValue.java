@@ -175,14 +175,14 @@ public interface PersistableValue extends Template {
         public B with(V src) {
             super.with(Objects.requireNonNull(src));
 
-            this.note = src.getNote().orElse(null);
-            this.version = src.getVersion();
-            this.registerTime = src.getRegisterTime().orElse(null);
-            this.registerAccountId = src.getRegisterAccountId().orElse(null);
-            this.registerProcessName = src.getRegisterProcessName().orElse(null);
-            this.updateTime = src.getUpdateTime().orElse(null);
-            this.updateAccountId = src.getUpdateAccountId().orElse(null);
-            this.updateProcessName = src.getUpdateProcessName().orElse(null);
+            withNote(src.getNote().orElse(null));
+            withVersion(src.getVersion());
+            withRegisterTime(src.getRegisterTime().orElse(null));
+            withRegisterAccountId(src.getRegisterAccountId().orElse(null));
+            withRegisterProcessName(src.getRegisterProcessName().orElse(null));
+            withUpdateTime(src.getUpdateTime().orElse(null));
+            withUpdateAccountId(src.getUpdateAccountId().orElse(null));
+            withUpdateProcessName(src.getUpdateProcessName().orElse(null));
 
             return builderType.cast(this);
         }

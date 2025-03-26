@@ -118,8 +118,10 @@ interface DaysTriggerValue extends ScheduleTriggerValue {
         @Override
         public Builder with(DaysTriggerValue src) {
             super.with(Objects.requireNonNull(src));
-            this.months = CollectionUtils.toUnmodifiable(src.getMonths());
-            this.days = CollectionUtils.toUnmodifiable(src.getDays());
+
+            withMonths(src.getMonths());
+            withDays(src.getDays());
+            
             return this;
         }
 
