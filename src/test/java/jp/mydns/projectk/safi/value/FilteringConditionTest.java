@@ -28,14 +28,11 @@ package jp.mydns.projectk.safi.value;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.bind.Jsonb;
+import jakarta.validation.Validator;
 import java.util.List;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -53,85 +50,17 @@ class FilteringConditionTest {
     /**
      * Test of getOperation method.
      *
+     * @param validator the {@code Validator}. This parameter resolved by {@code ValidatorParameterResolver}.
      * @since 3.0.0
      */
     @Test
-    void testGetOperation() {
-        var single = FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
+    void testGetOperation(Validator validator) {
 
-        assertThat(single).isInstanceOf(FilteringConditionValue.LeafCondition.class)
+        var filter = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("n").withValue("v").build(validator);
+
+        assertThat(filter).isInstanceOf(LeafConditionValue.class)
             .returns(FilteringOperationValue.LeafOperation.IS_NULL, FilteringConditionValue::getOperation);
-    }
-
-    /**
-     * Test of asSingle method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsSingle() {
-        var single = FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
-        var multi = FilteringConditionValue.multiOf(FilteringOperationValue.NodeOperation.AND, List.of());
-
-        assertThatCode(single::asSingle).doesNotThrowAnyException();
-        assertThat(single.asSingle()).isInstanceOf(FilteringConditionValue.LeafCondition.class);
-
-        assertThatThrownBy(multi::asSingle).isInstanceOf(ClassCastException.class);
-    }
-
-    /**
-     * Test of asMulti method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsMulti() {
-        var single = FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
-        var multi = FilteringConditionValue.multiOf(FilteringOperationValue.NodeOperation.AND, List.of());
-
-        assertThatCode(multi::asMulti).doesNotThrowAnyException();
-        assertThat(multi.asMulti()).isInstanceOf(FilteringConditionValue.NodeCondition.class);
-
-        assertThatThrownBy(single::asMulti).isInstanceOf(ClassCastException.class);
-    }
-
-    /**
-     * Test of singleOf method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testSingleOf() {
-        var single = FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
-
-        assertThat(single).isInstanceOf(FilteringConditionValue.LeafCondition.class)
-            .returns(FilteringOperationValue.LeafOperation.IS_NULL, FilteringConditionValue::getOperation)
-            .satisfies(v -> assertThat(v.getName()).hasValue("name"))
-            .satisfies(v -> assertThat(v.getValue()).hasValue("value"));
-
-        assertThatIllegalArgumentException().isThrownBy(() -> FilteringConditionValue.singleOf(FilteringOperationValue.NodeOperation.OR,
-            "", ""));
-    }
-
-    /**
-     * Test of multiOf method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testMultiOf() {
-        var single1 = FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
-        var single2 = FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
-
-        var multi = FilteringConditionValue.multiOf(FilteringOperationValue.NodeOperation.AND, List.of(single1, single2));
-
-        assertThat(multi).isInstanceOf(FilteringConditionValue.NodeCondition.class)
-            .returns(FilteringOperationValue.NodeOperation.AND, FilteringConditionValue::getOperation)
-            .extracting(FilteringConditionValue.NodeCondition::getChildren).asInstanceOf(InstanceOfAssertFactories.OPTIONAL)
-            .hasValue(List.of(single1, single2));
-
-        assertThatIllegalArgumentException()
-            .isThrownBy(() -> FilteringConditionValue.multiOf(FilteringOperationValue.LeafOperation.IS_NULL, List.of()));
     }
 
     /**
@@ -158,31 +87,36 @@ class FilteringConditionTest {
     }
 
     /**
-     * Test of toString method if single.
+     * Test of toString method if leaf.
      *
+     * @param validator the {@code Validator}. This parameter resolved by {@code ValidatorParameterResolver}.
      * @since 3.0.0
      */
     @Test
-    void testToStringIfSingle() {
-        String tmpl = "FilteringCondition.Single{operation=%s, name=%s, value=%s}";
+    void testToStringIfLeaf(Validator validator) {
+        String tmpl = "FilteringCondition.Leaf{operation=%s, name=%s, value=%s}";
 
-        var val = FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
+        var val = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("name").withValue("value").build(validator);
 
         assertThat(val).hasToString(tmpl, "IS_NULL", "name", "value");
     }
 
     /**
-     * Test of toString method if multi.
+     * Test of toString method if node.
      *
+     * @param validator the {@code Validator}. This parameter resolved by {@code ValidatorParameterResolver}.
      * @since 3.0.0
      */
     @Test
-    void testToStringIfMulti() {
-        String tmpl = "FilteringCondition.Multi{operation=%s, children=[%s]}";
+    void testToStringIfNode(Validator validator) {
+        String tmpl = "FilteringCondition.Node{operation=%s, children=[%s]}";
 
-        var child = FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "name", "value");
+        var child = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("name").withValue("value").build(validator);
 
-        var val = FilteringConditionValue.multiOf(FilteringOperationValue.NodeOperation.AND, List.of(child));
+        var val = new NodeConditionValue.Builder(FilteringOperationValue.NodeOperation.AND)
+            .withChildren(List.of(child)).build(validator);
 
         assertThat(val).hasToString(tmpl, "AND", child);
     }

@@ -49,6 +49,7 @@ import jp.mydns.projectk.safi.util.CollectionUtils;
  * @version 3.0.0
  * @since 3.0.0
  */
+@Schema(name = "FilteringCondition.Node", description = "Node filtering condition.")
 interface NodeConditionValue extends FilteringConditionValue {
 
     /**

@@ -62,8 +62,9 @@ class JobdefValueTest {
     @Test
     void testBuild(Validator validator) {
         var vp = new ValidityPeriodValue.Builder().build(validator);
-        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of())
-            .withFilter(FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "n", "v")).build(validator);
+        var filter = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("n").withValue("v").build(validator);
+        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(filter).build(validator);
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
 
@@ -152,8 +153,9 @@ class JobdefValueTest {
             + ", trnsdef=%s, filtdef=%s, jobProperties=%s, version=%s}";
 
         var vp = new ValidityPeriodValue.Builder().build(validator);
-        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of())
-            .withFilter(FilteringConditionValue.singleOf(FilteringOperationValue.LeafOperation.IS_NULL, "n", "v")).build(validator);
+        var filter = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("n").withValue("v").build(validator);
+        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(filter).build(validator);
         var regTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
         var updTime = OffsetDateTime.of(2002, 3, 4, 5, 6, 7, 0, ZoneOffset.UTC);
 

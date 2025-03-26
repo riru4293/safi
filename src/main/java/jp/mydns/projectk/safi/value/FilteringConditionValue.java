@@ -39,10 +39,6 @@ import java.util.Optional;
 import static jp.mydns.projectk.safi.constant.FilteringOperationKing.LEAF;
 import static jp.mydns.projectk.safi.constant.FilteringOperationKing.NODE;
 import jp.mydns.projectk.safi.util.CollectionUtils;
-import static jp.mydns.projectk.safi.util.LambdaUtils.p;
-import jp.mydns.projectk.safi.validator.OptionalNotEmpty;
-import jp.mydns.projectk.safi.value.FilteringConditionValue.LeafCondition;
-import jp.mydns.projectk.safi.value.FilteringConditionValue.NodeCondition;
 
 /**
  * Filtering condition. Combines some conditions is also possible.
@@ -85,7 +81,7 @@ Filtering condition.
     {"operation": "EQUAL", "name": "userName", "value": "taro"},
     {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
 ```""",
-        oneOf = {LeafCondition.class, NodeCondition.class})
+        oneOf = {LeafConditionValue.class, NodeConditionValue.class})
 public interface FilteringConditionValue extends Template {
 
     /**
@@ -98,7 +94,7 @@ public interface FilteringConditionValue extends Template {
     FilteringOperationValue getOperation();
 
     /**
-     * Abstract builder of the {@code ScheduleTriggerValue}.
+     * Abstract builder of the {@code FilteringConditionValue}.
      *
      * @param <B> builder type
      * @param <V> value type
@@ -120,20 +116,8 @@ public interface FilteringConditionValue extends Template {
          * @since 3.0.0
          */
         protected AbstractBuilder(Class<B> builderType, FilteringOperationValue operation) {
-            super(builderType);
+            super(Objects.requireNonNull(builderType));
             this.operation = Objects.requireNonNull(operation);
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NullPointerException if {@code src} is {@code null}
-         * @since 3.0.0
-         */
-        @Override
-        public B with(V src) {
-            super.with(Objects.requireNonNull(src));
-            return builderType.cast(this);
         }
 
         /**
@@ -181,91 +165,10 @@ public interface FilteringConditionValue extends Template {
              * @param operation the {@code FilteringOperationValue}
              * @since 3.0.0
              */
-            public void setKind(FilteringOperationValue operation) {
+            public void setOperation(FilteringOperationValue operation) {
                 this.operation = operation;
             }
         }
-    }
-
-    /**
-     * Combination of filtering conditions.
-     *
-     * <p>
-     * Implementation requirements.
-     * <ul>
-     * <li>This class is immutable and thread-safe.</li>
-     * </ul>
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Schema(name = "FilteringCondition.Multi", description = "Combination of filtering conditions.")
-    interface NodeCondition extends FilteringConditionValue {
-
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        @Schema(implementation = FilteringOperationValue.NodeOperation.class)
-        public FilteringOperationValue getOperation();
-
-        /**
-         * Get child conditions.
-         *
-         * @return children child conditions
-         * @since 3.0.0
-         */
-        @Override
-        @OptionalNotEmpty(groups = Default.class)
-        Optional<List<FilteringConditionValue>> getChildren();
-    }
-
-    /**
-     * A single filtering condition.
-     *
-     * <p>
-     * Implementation requirements.
-     * <ul>
-     * <li>This class is immutable and thread-safe.</li>
-     * </ul>
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Schema(name = "FilteringCondition.Single", description = "A single filtering condition.")
-    public interface LeafCondition extends FilteringConditionValue {
-
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        @Schema(implementation = FilteringOperationValue.LeafOperation.class)
-        public FilteringOperationValue getOperation();
-
-        /**
-         * Get property name to filter on.
-         *
-         * @return property name to filter on
-         * @since 3.0.0
-         */
-        @NotNull(groups = Default.class)
-        String getName();
-
-        /**
-         * Get filtering value.
-         *
-         * @return filtering value
-         * @since 3.0.0
-         */
-        @Override
-        @OptionalNotEmpty(groups = Default.class)
-        Optional<String> getValue();
     }
 
     /**
@@ -285,17 +188,23 @@ public interface FilteringConditionValue extends Template {
         @Override
         public FilteringConditionValue deserialize(JsonParser jp, DeserializationContext dc, Type type) {
 
-            Bean b = dc.deserialize(Bean.class, jp);
+            Bean tmp = dc.deserialize(Bean.class, jp);
 
-            return Optional.ofNullable(b).map(FilteringConditionValue::getOperation)
-                .filter(p(Objects::nonNull, FilteringOperationValue::getKind))
-                .map(o -> o.getKind() == NODE ? new NodeConditionValue.Builder(b.getOperation()).with(b).unsafeBuild()
-                : new LeafConditionValue.Builder(b.getOperation()).with(b).unsafeBuild();
-            ).orElse(b);
+            FilteringOperationValue operation = Optional.ofNullable(tmp).map(FilteringConditionValue::getOperation)
+                .orElse(null);
+
+            return switch (operation.getKind()) {
+                case null ->
+                    tmp;    // Note: To be cause constraint violation exception.
+                case NODE ->
+                    new NodeConditionValue.Builder(tmp.getOperation()).with(tmp).unsafeBuild();
+                case LEAF ->
+                    new LeafConditionValue.Builder(tmp.getOperation()).with(tmp).unsafeBuild();
+            };
         }
 
         /**
-         * Implements of the {@code FilteringConditionValue}.
+         * A {@code FilteringConditionValue} implementation specifically for JSON deserialization.
          *
          * @author riru
          * @version 3.0.0
@@ -308,7 +217,12 @@ public interface FilteringConditionValue extends Template {
             private String value;
             private List<FilteringConditionValue> children;
 
-            private Bean() {
+            /**
+             * Constructor. Used only for deserialization from JSON.
+             *
+             * @since 3.0.0
+             */
+            protected Bean() {
             }
 
             /**

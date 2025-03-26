@@ -11,16 +11,16 @@
             "enum": ["EQUAL", "FORWARD_MATCH", "PARTIAL_MATCH", "BACKWARD_MATCH", "GRATER_THAN", "LESS_THAN", "IS_NULL", "AND", "OR", "NOT_OR"]
         },
         "name": {
-            "description": "Name of element to be filtered.",
+            "description": "Property name to filter on.",
             "type": "string",
             "minLength": 1
         },
         "value": {
-            "description": "Value to filter.",
+            "description": "Value to filter on.",
             "type": "string"
         },
         "children": {
-            "description": "Chile filtering condition collection.",
+            "description": "Inner filtering conditions.",
             "$ref": "https://project-k.mydns.jp/safi/schemas/filtering-condition.schema.json"
         }
     },
