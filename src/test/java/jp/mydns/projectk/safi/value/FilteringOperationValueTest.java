@@ -28,6 +28,8 @@ package jp.mydns.projectk.safi.value;
 import jakarta.json.Json;
 import jakarta.json.JsonString;
 import jakarta.json.bind.Jsonb;
+import static jp.mydns.projectk.safi.constant.FilteringOperationKing.LEAF;
+import static jp.mydns.projectk.safi.constant.FilteringOperationKing.NODE;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -59,7 +61,7 @@ class FilteringOperationValueTest {
 
         var deserialized = jsonb.fromJson(expect.toString(), FilteringOperationValue.class);
 
-        assertThat(deserialized).isInstanceOf(LeafConditionValue.class);
+        assertThat(deserialized).returns(LEAF, FilteringOperationValue::getKind);
 
         var serialized = jsonb.toJson(deserialized);
 
@@ -82,7 +84,7 @@ class FilteringOperationValueTest {
 
         var deserialized = jsonb.fromJson(expect.toString(), FilteringOperationValue.class);
 
-        assertThat(deserialized).isInstanceOf(NodeConditionValue.class);
+        assertThat(deserialized).returns(NODE, FilteringOperationValue::getKind);
 
         var serialized = jsonb.toJson(deserialized);
 
