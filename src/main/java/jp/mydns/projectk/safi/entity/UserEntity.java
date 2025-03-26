@@ -42,6 +42,7 @@ import java.util.Objects;
 @Table(name = "t_user")
 public class UserEntity extends ContentEntity {
 
+    @java.io.Serial
     private static final long serialVersionUID = 2711050439353117979L;
 
     /**

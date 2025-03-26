@@ -28,9 +28,9 @@ package jp.mydns.projectk.safi.entity;
 import jakarta.json.Json;
 import java.time.LocalDateTime;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
  * Test of class {@code SchedefEntity}.
@@ -121,13 +121,13 @@ class SchedefEntityTest {
      */
     @Test
     void testToString() {
-        String tmpl = "SchedefEntity{id=%s, validityPeriod=%s, priority=%s, name=%s, value=%s}";
+        String tmpl = "SchedefEntity{id=%s, validityPeriod=%s, priority=%s, name=%s, trigger=%s}";
 
         var vp = new ValidityPeriodEmb();
 
         vp.setIgnored(true);
-        vp.setLocalFrom(LocalDateTime.of(2000, 1, 1, 0, 0));
-        vp.setLocalTo(LocalDateTime.of(2000, 1, 2, 0, 0));
+        vp.setFrom(LocalDateTime.of(2000, 1, 1, 0, 0));
+        vp.setTo(LocalDateTime.of(2000, 1, 2, 0, 0));
 
         var entity = new SchedefEntity();
 
@@ -136,7 +136,7 @@ class SchedefEntityTest {
 
         entity.setPriority("7");
         entity.setName("schedef-name");
-        entity.setValue(new JsonObjectValue(Json.createObjectBuilder().add("name", "schedef").build()));
+        entity.setTrigger(JsonWrapper.of(Json.createObjectBuilder().add("name", "schedef").build()));
 
         assertThat(entity).hasToString(tmpl, "schedef-id", vp, "7", "schedef-name", "{\"name\":\"schedef\"}");
     }

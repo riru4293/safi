@@ -35,7 +35,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Objects;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
  * JPA entity for the <i>m_schedef</i> table.
@@ -49,6 +49,7 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
 @Table(name = "m_schedef")
 public class SchedefEntity extends NamedEntity {
 
+    @java.io.Serial
     private static final long serialVersionUID = 6291085973948685738L;
 
     @Id
@@ -61,8 +62,8 @@ public class SchedefEntity extends NamedEntity {
     private String priority;
 
     @Basic(optional = false)
-    @Column(name = "val", nullable = false)
-    private JsonObjectValue value;
+    @Column(name = "trigger", nullable = false)
+    private JsonWrapper trigger;
 
     /**
      * Get job schedule definition id.
@@ -79,7 +80,7 @@ public class SchedefEntity extends NamedEntity {
     /**
      * Set job schedule definition id.
      *
-     * @param id job schedule definition id. Cannot update persisted value.
+     * @param id job schedule definition id. Cannot update persisted config.
      * @since 3.0.0
      */
     public void setId(String id) {
@@ -90,7 +91,7 @@ public class SchedefEntity extends NamedEntity {
      * Get schedule definition priority.
      *
      * @return schedule definition priority. In case of a conflict with another schedule definition, the one with the
-     * higher priority will be used. The higher the value, the higher the priority.
+ higher priority will be used. The higher the value, the higher the priority.
      * @since 3.0.0
      */
     @NotBlank
@@ -110,30 +111,30 @@ public class SchedefEntity extends NamedEntity {
     }
 
     /**
-     * Get job schedule definition value.
+     * Get job schedule trigger.
      *
-     * @return job schedule definition value
+     * @return job schedule trigger
      * @since 3.0.0
      */
     @NotNull
-    public JsonObjectValue getValue() {
-        return value;
+    public JsonWrapper getTrigger() {
+        return trigger;
     }
 
     /**
-     * Set job schedule definition value.
+     * Set job schedule trigger.
      *
-     * @param value job schedule definition value
+     * @param trigger job schedule trigger
      * @since 3.0.0
      */
-    public void setValue(JsonObjectValue value) {
-        this.value = value;
+    public void setTrigger(JsonWrapper trigger) {
+        this.trigger = trigger;
     }
 
     /**
-     * Returns a hash code value.
+     * Returns a hash code config.
      *
-     * @return a hash code value. It is generated from the primary key value.
+     * @return a hash code config. It is generated from the primary key config.
      * @since 3.0.0
      */
     @Override
@@ -163,6 +164,6 @@ public class SchedefEntity extends NamedEntity {
     @Override
     public String toString() {
         return "SchedefEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", priority=" + priority
-            + ", name=" + name + ", value=" + value + '}';
+            + ", name=" + name + ", trigger=" + trigger + '}';
     }
 }

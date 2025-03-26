@@ -25,21 +25,16 @@
  */
 package jp.mydns.projectk.safi.util;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.TreeMap;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
-import java.util.stream.Collector;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * Utilities for Java lambda expressions. Provides frequent processing that when using lambda expressions.
@@ -287,87 +282,7 @@ public final class LambdaUtils {
         return v -> true;
     }
 
-    /**
-     * Collect to unmodifiable the {@code LinkedHashMap} from {@code Map.Entry}.
-     *
-     * @param <K> key type
-     * @param <V> value type
-     * @return the {@code Collector} for collect to {@code LinkedHashMap}
-     * @throws IllegalArgumentException if detected duplicate keys
-     * @since 3.0.0
-     */
-    public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> toLinkedHashMap() {
-        return toLinkedHashMap(alwaysThrow());
-    }
-
-    /**
-     * Collect to unmodifiable the {@code LinkedHashMap} from {@code Map.Entry}.
-     *
-     * @param <K> key type
-     * @param <V> value type
-     * @param mergeFunc merge function if detected duplicate keys
-     * @return the {@code Collector} for collect to {@code LinkedHashMap}
-     * @throws NullPointerException if {@code mergeFunc} is {@code null}
-     * @since 3.0.0
-     */
-    public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> toLinkedHashMap(BinaryOperator<V> mergeFunc) {
-        return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue,
-                Objects.requireNonNull(mergeFunc), LinkedHashMap::new), Collections::unmodifiableMap);
-    }
-
-    /**
-     * Collect to unmodifiable the {@code TreeMap} from {@code Map.Entry}.
-     *
-     * @param <K> key type
-     * @param <V> value type
-     * @return the {@code Collector} for collect to {@code TreeMap}
-     * @throws IllegalArgumentException if detected duplicate keys
-     * @since 3.0.0
-     */
-    public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> toTreeMap() {
-        return toTreeMap(alwaysThrow());
-    }
-
-    /**
-     * Collect to unmodifiable the {@code TreeMap} from {@code Map.Entry}.
-     *
-     * @param <K> key type
-     * @param <V> value type
-     * @param mergeFunc merge function if detected duplicate keys
-     * @return the {@code Collector} for collect to {@code TreeMap}
-     * @throws NullPointerException if {@code mergeFunc} is {@code null}
-     * @since 3.0.0
-     */
-    public static <K, V> Collector<Map.Entry<K, V>, ?, Map<K, V>> toTreeMap(BinaryOperator<V> mergeFunc) {
-        return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue,
-                Objects.requireNonNull(mergeFunc), TreeMap::new), Collections::unmodifiableMap);
-    }
-
-    /**
-     * Collects from {@code Map.Entry} into {@code TreeMap} with immutable and case-insensitive keys.
-     *
-     * @param <V> value type
-     * @return the {@code Collector} for collect to {@code TreeMap} with immutable and case-insensitive keys
-     * @throws NullPointerException if {@code mergeFunc} is {@code null}
-     * @since 3.0.0
-     */
-    public static <V> Collector<Map.Entry<String, V>, ?, Map<String, V>> toCaseInsensitiveMap() {
-        return toCaseInsensitiveMap(alwaysThrow());
-    }
-
-    /**
-     * Collects from {@code Map.Entry} into {@code TreeMap} with immutable and case-insensitive keys.
-     *
-     * @param <V> value type
-     * @param mergeFunc merge function if detected duplicate keys
-     * @return the {@code Collector} for collect to {@code TreeMap} with immutable and case-insensitive keys
-     * @throws NullPointerException if {@code mergeFunc} is {@code null}
-     * @since 3.0.0
-     */
-    public static <V> Collector<Map.Entry<String, V>, ?, Map<String, V>> toCaseInsensitiveMap(BinaryOperator<V> mergeFunc) {
-        return collectingAndThen(toMap(Map.Entry::getKey, Map.Entry::getValue, Objects.requireNonNull(mergeFunc),
-                () -> new TreeMap<String, V>(String.CASE_INSENSITIVE_ORDER)), Collections::unmodifiableMap);
-    }
+    
 
     /**
      * Returns a supplier with post conversion. This method is alias of
@@ -398,5 +313,37 @@ public final class LambdaUtils {
      */
     public static <O, T> Supplier<T> supplier(Supplier<O> origin, Function<O, T> postConversion) {
         return () -> postConversion.apply(origin.get());
+    }
+
+    /**
+     * Compute the value of {@code Entry} using the specified function and return the result as new {@code Entry}. The
+     * original value is used for the key.
+     *
+     * @param <K> entry key type
+     * @param <I> input entry value type
+     * @param <O> output entry value type
+     * @param f computation function
+     * @return a new immutable entry using the computation result as a value
+     * <p>
+     * Usage example<pre>
+     * {@code // values to upper case
+     * Map<String, String> preMap = Map.of("k1", "v1", "k2", "v2");
+     * Map<String, String> postMap = preMap.entrySet().stream()
+     *     .map(compute(String::toUpperCase))
+     *     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+     *
+     * // Results are
+     * //   preMap  -> {"key-1", "val-1", "key-2", "val-2"}
+     * //   postMap -> {"key-1", "VAL-1", "key-2", "VAL-2"}
+     * }
+     * </pre>
+     *
+     * @throws NullPointerException if {@code f} is {@code null}
+     * @since 3.0.0
+     */
+    public static <K, I, O> Function<Map.Entry<K, I>, Map.Entry<K, O>> compute(Function<I, O> f) {
+        Objects.requireNonNull(f);
+
+        return e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), f.apply(e.getValue()));
     }
 }

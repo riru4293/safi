@@ -40,8 +40,10 @@ import java.time.Duration;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobTarget;
+import jp.mydns.projectk.safi.validator.DurationRange;
+import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
-import jp.mydns.projectk.safi.value.JsonObjectValue;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
  * JPA entity for the <i>m_jobdef</i> table.
@@ -55,6 +57,7 @@ import jp.mydns.projectk.safi.value.JsonObjectValue;
 @Table(name = "m_jobdef")
 public class JobdefEntity extends NamedEntity {
 
+    @java.io.Serial
     private static final long serialVersionUID = -8597141002815361653L;
 
     @Id
@@ -79,17 +82,15 @@ public class JobdefEntity extends NamedEntity {
     @Column(name = "plugin", length = 50)
     private String pluginName;
 
-    @Basic(optional = false)
-    @Column(name = "trnsdef", nullable = false)
-    private JsonObjectValue trnsdef;
+    @Column(name = "trnsdef")
+    private JsonWrapper trnsdef;
 
-    @Basic(optional = false)
-    @Column(name = "filtdef", nullable = false)
-    private JsonObjectValue filtdef;
+    @Column(name = "filtdef")
+    private JsonWrapper filtdef;
 
     @Basic(optional = false)
     @Column(name = "job_props", nullable = false)
-    private JsonObjectValue jobProperties;
+    private JsonWrapper jobProperties;
 
     /**
      * Get job definition id.
@@ -162,6 +163,8 @@ public class JobdefEntity extends NamedEntity {
      * @since 3.0.0
      */
     @NotNull
+    @PositiveOrZeroDuration
+    @DurationRange(maxSecond = 86_399L/*23h59m59s*/)
     @TimeAccuracy
     public Duration getTimeout() {
         return timeout;
@@ -200,42 +203,40 @@ public class JobdefEntity extends NamedEntity {
     /**
      * Get transform definition.
      *
-     * @return transform definition
+     * @return transform definition. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotNull
-    public JsonObjectValue getTrnsdef() {
+    public JsonWrapper getTrnsdef() {
         return trnsdef;
     }
 
     /**
      * Set transform definition.
      *
-     * @param trnsdef transform definition
+     * @param trnsdef transform definition. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setTrnsdef(JsonObjectValue trnsdef) {
+    public void setTrnsdef(JsonWrapper trnsdef) {
         this.trnsdef = trnsdef;
     }
 
     /**
      * Get filtering definition.
      *
-     * @return filtering definition
+     * @return filtering definition. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotNull
-    public JsonObjectValue getFiltdef() {
+    public JsonWrapper getFiltdef() {
         return filtdef;
     }
 
     /**
      * Set filtering definition.
      *
-     * @param filtdef filtering definition
+     * @param filtdef filtering definition. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setFiltdef(JsonObjectValue filtdef) {
+    public void setFiltdef(JsonWrapper filtdef) {
         this.filtdef = filtdef;
     }
 
@@ -246,7 +247,7 @@ public class JobdefEntity extends NamedEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonObjectValue getJobProperties() {
+    public JsonWrapper getJobProperties() {
         return jobProperties;
     }
 
@@ -256,7 +257,7 @@ public class JobdefEntity extends NamedEntity {
      * @param jobProperties job properties
      * @since 3.0.0
      */
-    public void setJobProperties(JsonObjectValue jobProperties) {
+    public void setJobProperties(JsonWrapper jobProperties) {
         this.jobProperties = jobProperties;
     }
 
