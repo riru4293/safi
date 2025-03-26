@@ -66,9 +66,10 @@ class JobCreationContextTest {
         var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(filter).build(validator);
 
         // Build value
-        var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
-            .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(trnsdef).withFiltdef(filtdef)
-            .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).build(validator);
+        var val = new JobCreationContext.Builder().with(
+            new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
+                .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(trnsdef).withFiltdef(filtdef)
+                .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).build(validator)).build(validator);
 
         assertThat(val).returns("jobdef-id", JobCreationContext::getJobdefId)
             .satisfies(v -> assertThat(v.getScheduleTime()).hasValue(scheduleTime))

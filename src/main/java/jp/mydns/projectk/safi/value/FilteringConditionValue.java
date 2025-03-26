@@ -129,15 +129,7 @@ public interface FilteringConditionValue extends Template {
          */
         protected abstract static class AbstractBean implements FilteringConditionValue {
 
-            protected FilteringOperationValue operation;
-
-            /**
-             * Constructor. Used only for deserialization from JSON.
-             *
-             * @since 3.0.0
-             */
-            protected AbstractBean() {
-            }
+            protected final FilteringOperationValue operation;
 
             /**
              * Constructor.
@@ -157,16 +149,6 @@ public interface FilteringConditionValue extends Template {
             @Override
             public FilteringOperationValue getOperation() {
                 return operation;
-            }
-
-            /**
-             * Set filtering operation.
-             *
-             * @param operation the {@code FilteringOperationValue}
-             * @since 3.0.0
-             */
-            public void setOperation(FilteringOperationValue operation) {
-                this.operation = operation;
             }
         }
     }
