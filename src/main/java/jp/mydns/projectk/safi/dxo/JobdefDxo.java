@@ -66,7 +66,7 @@ public interface JobdefDxo {
      * Exchange to value object from JSON.
      *
      * @param json job definition as JSON
-     * @return the {@code Jobdef}
+     * @return the {@code JobdefValue}
      * @throws NullPointerException if {@code json} is {@code null}
      * @throws ConstraintViolationException if {@code json} has constraint violation
      * @since 3.0.0
@@ -77,7 +77,7 @@ public interface JobdefDxo {
      * Exchange to value object from entity.
      *
      * @param entity the {@code JobdefEntity}. Constraint violations must be none.
-     * @return the {@code Jobdef}
+     * @return the {@code JobdefValue}
      * @throws NullPointerException if {@code entity} is {@code null}
      * @since 3.0.0
      */

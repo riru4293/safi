@@ -33,13 +33,12 @@ import jakarta.json.JsonValue;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import jp.mydns.projectk.safi.dao.JobdefDao;
 import jp.mydns.projectk.safi.dxo.JobdefDxo;
-import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.value.JobCreationContext;
+import jp.mydns.projectk.safi.value.JobCreationRequest;
 import jp.mydns.projectk.safi.value.JobdefValue;
 
 /**
@@ -77,17 +76,17 @@ public interface JobdefService {
     }
 
     /**
-     * Build the {@code JobdefValue} from the {@code JobCreationContext}.
+     * Build the {@code JobCreationContext} from the {@code JobCreationRequest}.
      *
-     * @param ctx the {@code JobCreationContext}
-     * @return the {@code JobdefValue}
-     * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if malformed
+     * @param req the {@code JobCreationRequest}
+     * @return the {@code JobCreationContext}
+     * @throws ConstraintViolationException if not exists a job definition that specified in {@code req} or if malformed
      * return value.
      * @throws NullPointerException if any argument is {@code null}
      * @throws JobdefIOException if not found valid job definition
      * @since 3.0.0
      */
-    JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException;
+    JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException;
 
     /**
      * Implements of the {@code JobdefService}.
@@ -107,6 +106,7 @@ public interface JobdefService {
         private final JobdefDxo jobdefDxo;
         private final ValidationService validationSvc;
         private final JsonService jsonSvc;
+        private final RealTimeService realTimeSvc;
 
         /**
          * Constructor.
@@ -115,15 +115,17 @@ public interface JobdefService {
          * @param jobdefDao the {@code JobdefDao}
          * @param validationSvc the {@code ValidationService}
          * @param jsonSvc the {@code JsonService}
+         * @param realTimeSvc the {@code RealTimeService}
          * @since 3.0.0
          */
         @Inject
         public Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
-            JsonService jsonSvc) {
+            JsonService jsonSvc, RealTimeService realTimeSvc) {
             this.jobdefDxo = jobdefDxo;
             this.jobdefDao = jobdefDao;
             this.validationSvc = validationSvc;
             this.jsonSvc = jsonSvc;
+            this.realTimeSvc = realTimeSvc;
         }
 
         /**
@@ -136,19 +138,16 @@ public interface JobdefService {
          * @since 3.0.0
          */
         @Override
-        public JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException {
-            Objects.requireNonNull(ctx);
+        public JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException {
+            Objects.requireNonNull(req);
 
-            UnaryOperator<JsonObject> overwriteCtx = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(ctx).
-                asJsonObject());
+            UnaryOperator<JsonObject> mergeRequest = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(req).asJsonObject());
 
-            return getValidJobdefEntity(ctx.getJobdefId()).map(jobdefDxo::toValue).map(jsonSvc::toJsonValue)
-                .map(JsonValue::asJsonObject).map(overwriteCtx).map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
+            JobdefValue jobdef = jobdefDao.getJobdef(req.getJobdefId()).filter(validationSvc::isEnabled)
+                .map(jobdefDxo::toValue).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject).map(mergeRequest)
+                .map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
+
+            return new JobCreationContext(req.getScheduleTime().orElseGet(realTimeSvc::getOffsetNow), jobdef);
         }
-
-        private Optional<JobdefEntity> getValidJobdefEntity(String id) {
-            return jobdefDao.getJobdef(id).filter(validationSvc::isEnabled);
-        }
-
     }
 }

@@ -25,25 +25,21 @@
  */
 package jp.mydns.projectk.safi.service.trial;
 
-import jp.mydns.projectk.safi.service.*;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
+import jakarta.persistence.PersistenceException;
+import jakarta.transaction.Transactional;
+import jakarta.transaction.Transactional.TxType;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
-import jp.mydns.projectk.safi.dao.JobdefDao;
-import jp.mydns.projectk.safi.dxo.JobdefDxo;
-import jp.mydns.projectk.safi.entity.JobdefEntity;
-import jp.mydns.projectk.safi.service.JobdefService.JobdefIOException;
+import jp.mydns.projectk.safi.dao.CommonDao;
+import jp.mydns.projectk.safi.dao.JobDao;
+import jp.mydns.projectk.safi.dxo.JobDxo;
+import jp.mydns.projectk.safi.entity.JobEntity;
 import jp.mydns.projectk.safi.value.JobCreationContext;
-import jp.mydns.projectk.safi.value.JobdefValue;
+import jp.mydns.projectk.safi.value.JobValue;
 
 /**
  * Service for <i>Job</i>.
@@ -80,17 +76,16 @@ public interface JobService {
     }
 
     /**
-     * Build the {@code JobdefValue} from the {@code JobCreationContext}.
+     * Create a job. The state of the job that is created is schedule, and the schedule means schedule of batch process
+     * execution.
      *
      * @param ctx the {@code JobCreationContext}
-     * @return the {@code JobdefValue}
-     * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if malformed
-     * return value.
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws JobdefIOException if not found valid job definition
+     * @return created job
+     * @throws NullPointerException if {@code ctx} is {@code null}
+     * @throws PersistenceException if register fail to database
      * @since 3.0.0
      */
-    JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException;
+    JobValue createJob(JobCreationContext ctx);
 
     /**
      * Implements of the {@code JobdefService}.
@@ -103,55 +98,41 @@ public interface JobService {
     @RequestScoped
     class Impl implements JobService {
 
-        private final Supplier<JobdefIOException> noFoundJobdef
-            = () -> new JobdefIOException("No found job definition.");
-
-        private final JobdefDao jobdefDao;
-        private final JobdefDxo jobdefDxo;
-        private final ValidationService validationSvc;
-        private final JsonService jsonSvc;
+        private final CommonDao comDao;
+        private final JobDao jobDao;
+        private final JobDxo jobDxo;
 
         /**
          * Constructor.
          *
-         * @param jobdefDxo the {@code JobdefDxo}
-         * @param jobdefDao the {@code JobdefDao}
-         * @param validationSvc the {@code ValidationService}
-         * @param jsonSvc the {@code JsonService}
+         * @param comDao the {@code CommonDao}
+         * @param jobDao the {@code JobDao}
+         * @param jobDxo the {@code JobDxo}
          * @since 3.0.0
          */
         @Inject
-        public Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
-            JsonService jsonSvc) {
-            this.jobdefDxo = jobdefDxo;
-            this.jobdefDao = jobdefDao;
-            this.validationSvc = validationSvc;
-            this.jsonSvc = jsonSvc;
+        public Impl(CommonDao comDao, JobDao jobDao, JobDxo jobDxo) {
+            this.comDao = comDao;
+            this.jobDao = jobDao;
+            this.jobDxo = jobDxo;
         }
 
         /**
          * {@inheritDoc}
          *
-         * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if
-         * malformed return value.
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws JobdefIOException if not found valid job definition
+         * @throws ConstraintViolationException if any argument violates the constraint
+         * @throws PersistenceException if register fail to database
          * @since 3.0.0
          */
         @Override
-        public JobdefValue buildJobdef(JobCreationContext ctx) throws JobdefIOException {
-            Objects.requireNonNull(ctx);
+        @Transactional(TxType.REQUIRES_NEW)
+        public JobValue createJob(JobCreationContext ctx) {
 
-            UnaryOperator<JsonObject> overwriteCtx = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(ctx).
-                asJsonObject());
+            JobEntity job = comDao.persist(jobDxo.newEntity(ctx));
 
-            return getValidJobdefEntity(ctx.getJobdefId()).map(jobdefDxo::toValue).map(jsonSvc::toJsonValue)
-                .map(JsonValue::asJsonObject).map(overwriteCtx).map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
+            comDao.flush();
+
+            return jobDxo.toValue(job);
         }
-
-        private Optional<JobdefEntity> getValidJobdefEntity(String id) {
-            return jobdefDao.getJobdef(id).filter(validationSvc::isEnabled);
-        }
-
     }
 }

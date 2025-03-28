@@ -80,7 +80,7 @@ Filtering condition.
     {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
 ```""",
         oneOf = {LeafConditionValue.class, NodeConditionValue.class})
-public interface FilteringConditionValue extends Template {
+public interface FilteringConditionValue extends ValueTemplate {
 
     /**
      * Get filtering operation.
@@ -101,7 +101,7 @@ public interface FilteringConditionValue extends Template {
      * @since 3.0.0
      */
     abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends FilteringConditionValue>
-        extends Template.AbstractBuilder<B, V> {
+        extends ValueTemplate.AbstractBuilder<B, V> {
 
         protected final FilteringOperationValue operation;
 

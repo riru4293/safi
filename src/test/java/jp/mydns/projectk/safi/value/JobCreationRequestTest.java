@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- * Test of class {@code JobCreationContext}.
+ * Test of class {@code JobCreationRequest}.
  *
  * @author riru
  * @version 3.0.0
@@ -49,7 +49,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  */
 @ExtendWith(JsonbParameterResolver.class)
 @ExtendWith(ValidatorParameterResolver.class)
-class JobCreationContextTest {
+class JobCreationRequestTest {
 
     /**
      * Test of build method, of class Builder.
@@ -66,12 +66,12 @@ class JobCreationContextTest {
         var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withCondition(condition).build(validator);
 
         // Build value
-        var val = new JobCreationContext.Builder().with(
-            new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
+        var val = new JobCreationRequest.Builder().with(
+            new JobCreationRequest.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
                 .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(trnsdef).withFiltdef(filtdef)
                 .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).build(validator)).build(validator);
 
-        assertThat(val).returns("jobdef-id", JobCreationContext::getJobdefId)
+        assertThat(val).returns("jobdef-id", JobCreationRequest::getJobdefId)
             .satisfies(v -> assertThat(v.getScheduleTime()).hasValue(scheduleTime))
             .satisfies(v -> assertThat(v.getTimeout()).hasValue(Duration.ZERO))
             .satisfies(v -> assertThat(v.getPluginName()).hasValue("plg"))
@@ -101,7 +101,7 @@ class JobCreationContextTest {
             .add("jobProperties", Json.createObjectBuilder().add("p1", "A"))
             .build();
 
-        var deserialized = jsonb.fromJson(expect.toString(), JobCreationContext.class);
+        var deserialized = jsonb.fromJson(expect.toString(), JobCreationRequest.class);
 
         var serialized = jsonb.toJson(deserialized);
 
@@ -118,7 +118,7 @@ class JobCreationContextTest {
      */
     @Test
     void testToString(Validator validator) {
-        String tmpl = "JobCreationContext{jobdefId=%s, scheduleTime=%s, timeout=%s, pluginName=%s, trnsdef=%s"
+        String tmpl = "JobCreationRequest{jobdefId=%s, scheduleTime=%s, timeout=%s, pluginName=%s, trnsdef=%s"
             + ", filtdef=%s, jobProperties=%s}";
 
         var scheduleTime = OffsetDateTime.of(2000, 1, 1, 12, 33, 55, 0, ZoneOffset.UTC);
@@ -126,7 +126,7 @@ class JobCreationContextTest {
             .withName("n").withValue("v").build(validator);
         var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withCondition(conditiion).build(validator);
 
-        var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
+        var val = new JobCreationRequest.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
             .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
             .withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
             .build(validator);

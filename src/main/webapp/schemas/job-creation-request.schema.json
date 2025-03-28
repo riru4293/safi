@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://project-k.mydns.jp/safi/schemas/job-creation-context.schema.json",
-    "title": "JobCreationContext",
-    "description": "Information to create a Job.",
+    "$id": "https://project-k.mydns.jp/safi/schemas/job-creation-request.schema.json",
+    "title": "JobCreationRequest",
+    "description": "Arequest to create a Job.",
     "type": "object",
     "properties": {
         "jobdefId": {

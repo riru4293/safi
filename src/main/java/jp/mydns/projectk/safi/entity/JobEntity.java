@@ -109,8 +109,7 @@ public class JobEntity extends CommonEntity {
     @Column(name = "schedef_id", updatable = false, length = 36)
     private String schedefId;
 
-    @Basic(optional = false)
-    @Column(name = "schedef", nullable = false, updatable = false)
+    @Column(name = "schedef", updatable = false)
     private JsonWrapper schedef;
 
     @Column(name = "results", insertable = false)
@@ -379,7 +378,7 @@ public class JobEntity extends CommonEntity {
     /**
      * Get schedule definition.
      *
-     * @return source schedule definitions
+     * @return source schedule definition. It may be {@code null}.
      * @since 3.0.0
      */
     @NotNull
@@ -390,7 +389,7 @@ public class JobEntity extends CommonEntity {
     /**
      * Set schedule definition.
      *
-     * @param schedef source schedule definition. Cannot update persisted value.
+     * @param schedef source schedule definition. Cannot update persisted value. It can be set {@code null}.
      * @since 3.0.0
      */
     public void setSchedef(JsonWrapper schedef) {

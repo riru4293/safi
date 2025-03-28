@@ -39,10 +39,13 @@ import jakarta.ws.rs.core.Context;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
+import java.net.URI;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.service.JobdefService;
+import jp.mydns.projectk.safi.service.trial.JobService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
-import jp.mydns.projectk.safi.value.JobdefValue;
+import jp.mydns.projectk.safi.value.JobCreationRequest;
+import jp.mydns.projectk.safi.value.JobValue;
 
 /**
  * JAX-RS resource for <i>Job</i>.
@@ -56,11 +59,11 @@ public interface JobResource {
     /**
      * Create new job. Used to manually schedule job execution.
      *
-     * @param ctx the {@code JobCreationContext}
+     * @param req the {@code JobCreationRequest}
      * @return created job
      * @since 3.0.0
      */
-    public Response createJob(@NotNull @Valid JobCreationContext ctx);
+    public Response createJob(@NotNull @Valid JobCreationRequest req);
 
     /**
      * JAX-RS resource for <i>Job</i>.
@@ -75,6 +78,7 @@ public interface JobResource {
     class Impl implements JobResource {
 
         private final JobdefService jobdefSvc;
+        private final JobService jobSvc;
 
         @Context
         private UriInfo uriInfo;
@@ -83,41 +87,40 @@ public interface JobResource {
          * Constructor.
          *
          * @param jobdefSvc the {@code JobdefService}
+         * @param jobSvc the {@code JobService}
          * @since 3.0.0
          */
         @Inject
-        public Impl(JobdefService jobdefSvc) {
+        public Impl(JobdefService jobdefSvc, JobService jobSvc) {
             this.jobdefSvc = jobdefSvc;
+            this.jobSvc = jobSvc;
         }
 
         /**
-         * Create new job. Used to manually schedule job execution.
+         * {@inheritDoc}
          *
-         * @param ctx the {@code JobCreationContext}
-         * @return created job
          * @since 3.0.0
          */
+        @Override
         @Path("")
         @POST
         @Consumes(APPLICATION_JSON)
         @Produces(APPLICATION_JSON)
         @ProcessName("CreateJob")
-        @Override
-        public Response createJob(@NotNull @Valid JobCreationContext ctx) {
+        public Response createJob(@NotNull @Valid JobCreationRequest req) {
 
-            final JobdefValue jobdef;
+            final JobCreationContext ctx;
             try {
-                jobdef = jobdefSvc.buildJobdef(ctx);
+                ctx = jobdefSvc.buildJobCreationContext(req);
             } catch (JobdefService.JobdefIOException ex) {
                 throw new BadRequestException(ex);
             }
-//
-//        Job job = jobSvc.create(jobdef, ctx);
-//
-//        URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
-//
-//        return Response.created(location).entity(job).build();
-            return Response.ok().build();
+
+            JobValue job = jobSvc.createJob(ctx);
+
+            URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
+
+            return Response.created(location).entity(job).build();
         }
     }
 }

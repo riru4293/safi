@@ -43,7 +43,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * @version 3.0.0
  * @since 3.0.0
  */
-public interface Template {
+public interface ValueTemplate {
 
     /**
      * Abstract builder of the {@code Template}.
@@ -54,7 +54,7 @@ public interface Template {
      * @version 3.0.0
      * @since 3.0.0
      */
-    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends Template> {
+    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ValueTemplate> {
 
         protected final Class<B> builderType;
 

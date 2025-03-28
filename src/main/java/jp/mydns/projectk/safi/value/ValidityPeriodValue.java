@@ -63,7 +63,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 @JsonbTypeDeserializer(ValidityPeriodValue.Deserializer.class)
 @Schema(name = "ValidityPeriod", description = "It has a validity period and an ignore flag, the combination of which"
         + " indicates whether a value that has this as a property is valid or invalid.")
-public interface ValidityPeriodValue extends Template {
+public interface ValidityPeriodValue extends ValueTemplate {
 
     /**
      * Get begin date-time of validity period.

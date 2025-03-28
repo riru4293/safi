@@ -73,7 +73,7 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
             "{\"kind\": \"ONCE\", \"anchorTime\": \"2700-10-10T07:09:42Z\"}",
             "{\"kind\": \"CANCEL\", \"anchorTime\": \"2700-10-10T07:09:42Z\", \"duration\": \"PT24H\"}"},
         oneOf = {DaysTriggerValue.class, WeekdaysTriggerValue.class, OnceTriggerValue.class, CancelTriggerValue.class})
-public interface ScheduleTriggerValue extends Template {
+public interface ScheduleTriggerValue extends ValueTemplate {
 
     /**
      * Get schedule trigger configuration kind.
@@ -107,7 +107,7 @@ public interface ScheduleTriggerValue extends Template {
      * @since 3.0.0
      */
     abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ScheduleTriggerValue>
-        extends Template.AbstractBuilder<B, V> {
+        extends ValueTemplate.AbstractBuilder<B, V> {
 
         protected final ScheduleTriggerKing kind;
         protected OffsetDateTime anchorTime;

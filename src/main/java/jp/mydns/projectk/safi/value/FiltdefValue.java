@@ -61,7 +61,7 @@ import jp.mydns.projectk.safi.util.CollectionUtils;
         example = "{\"condition\":{\"operation\":\"AND\",\"children\":[{\"operation\":\"EQUAL\",\"name\":\"kind\","
         + "\"value\":\"2\"},{\"operation\":\"PARTIAL_MATCH\",\"name\":\"name\",\"value\":\"taro\"}]},"
         + "\"trnsdef\":{\"name\":\"[userName]\",\"kind\":\"[userType]\",\"id\":\"[userId]\"}}")
-public interface FiltdefValue extends Template {
+public interface FiltdefValue extends ValueTemplate {
 
     /**
      * Get the transform definition for filtering.
