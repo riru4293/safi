@@ -33,6 +33,7 @@ import jakarta.persistence.PersistenceException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.entity.JobdefEntity_;
@@ -73,11 +74,12 @@ public interface JobdefDao {
          * Constructor.
          *
          * @param em the {@code EntityManager}
+         * @throws NullPointerException if {@code em} is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Impl(EntityManager em) {
-            this.em = em;
+            this.em = Objects.requireNonNull(em);
         }
 
         /**

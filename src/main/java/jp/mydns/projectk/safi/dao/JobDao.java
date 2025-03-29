@@ -35,6 +35,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import java.util.Objects;
 import java.util.stream.Stream;
 import static jp.mydns.projectk.safi.constant.JobStatus.RUNNING;
 import static jp.mydns.projectk.safi.constant.JobStatus.SCHEDULE;
@@ -58,7 +59,7 @@ public interface JobDao {
      * @throws PersistenceException if the query execution was failed
      * @since 3.0.0
      */
-    public Stream<JobEntity> lockActiveJobs();
+    Stream<JobEntity> lockActiveJobs();
 
     /**
      * Implements of the {@code JobDao}.
@@ -79,12 +80,13 @@ public interface JobDao {
          *
          * @param em the {@code EntityManager}
          * @param realTimeSvc the {@code RealTimeService}
+         * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Impl(EntityManager em, RealTimeService realTimeSvc) {
-            this.em = em;
-            this.realTimeSvc = realTimeSvc;
+            this.em = Objects.requireNonNull(em);
+            this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
         }
 
         /**
