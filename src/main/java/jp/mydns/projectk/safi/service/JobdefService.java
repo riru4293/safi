@@ -30,6 +30,7 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
+import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Objects;
@@ -82,6 +83,7 @@ public interface JobdefService {
      * @return the {@code JobCreationContext}
      * @throws NullPointerException if {@code req} is {@code null}
      * @throws JobdefIOException if not found valid job definition
+     * @throws PersistenceException if failed database operation
      * @since 3.0.0
      */
     JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException;
@@ -114,16 +116,18 @@ public interface JobdefService {
          * @param validationSvc the {@code ValidationService}
          * @param jsonSvc the {@code JsonService}
          * @param realTimeSvc the {@code RealTimeService}
+         * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
             JsonService jsonSvc, RealTimeService realTimeSvc) {
-            this.jobdefDxo = jobdefDxo;
-            this.jobdefDao = jobdefDao;
-            this.validationSvc = validationSvc;
-            this.jsonSvc = jsonSvc;
-            this.realTimeSvc = realTimeSvc;
+            
+            this.jobdefDxo = Objects.requireNonNull(jobdefDxo);
+            this.jobdefDao = Objects.requireNonNull(jobdefDao);
+            this.validationSvc = Objects.requireNonNull(validationSvc);
+            this.jsonSvc = Objects.requireNonNull(jsonSvc);
+            this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
         }
 
         /**
@@ -131,18 +135,19 @@ public interface JobdefService {
          *
          * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if
          * malformed return value.
-         * @throws NullPointerException if any argument is {@code null}
+         * @throws NullPointerException if {@code req} is {@code null}
          * @throws JobdefIOException if not found valid job definition
+         * @throws PersistenceException if failed database operation
          * @since 3.0.0
          */
         @Override
         public JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException {
             Objects.requireNonNull(req);
 
-            UnaryOperator<JsonObject> mergeRequest = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(req).asJsonObject());
+            UnaryOperator<JsonObject> overWriteRequest = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(req).asJsonObject());
 
             JobdefValue jobdef = jobdefDao.getJobdef(req.getJobdefId()).filter(validationSvc::isEnabled)
-                .map(jobdefDxo::toValue).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject).map(mergeRequest)
+                .map(jobdefDxo::toValue).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject).map(overWriteRequest)
                 .map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
 
             return new JobCreationContext(req.getScheduleTime().orElseGet(realTimeSvc::getOffsetNow), jobdef);
