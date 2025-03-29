@@ -54,7 +54,7 @@ public interface JobDxo {
      * Exchange to new entity object from creation context.
      *
      * @param ctx the {@code JobCreationContext}. Constraint violations must be none.
-     * @return new job entity. It not persisted.
+     * @return new job entity. It is not persisted yet.
      * @throws NullPointerException if {@code ctx} is {@code null}
      * @since 3.0.0
      */

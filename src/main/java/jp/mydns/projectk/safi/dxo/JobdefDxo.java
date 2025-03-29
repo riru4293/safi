@@ -102,12 +102,13 @@ public interface JobdefDxo {
          *
          * @param validationSvc the {@code ValidationService}
          * @param jsonSvc the {@code JsonService}
+         * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Impl(ValidationService validationSvc, JsonService jsonSvc) {
-            this.validationSvc = validationSvc;
-            this.jsonSvc = jsonSvc;
+            this.validationSvc = Objects.requireNonNull(validationSvc);
+            this.jsonSvc = Objects.requireNonNull(jsonSvc);
         }
 
         /**
@@ -118,6 +119,8 @@ public interface JobdefDxo {
          */
         @Override
         public JobdefEntity toEntity(JobdefValue value) {
+            Objects.requireNonNull(value);
+
             var entity = new JobdefEntity();
 
             entity.setId(value.getId());
@@ -162,6 +165,8 @@ public interface JobdefDxo {
          */
         @Override
         public JobdefValue toValue(JobdefEntity entity) {
+            Objects.requireNonNull(entity);
+
             return new JobdefValue.Builder()
                 .withId(entity.getId())
                 .withValidityPeriod(toValidityPeriodValue(entity.getValidityPeriod()))

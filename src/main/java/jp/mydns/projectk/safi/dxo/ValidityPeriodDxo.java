@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.dxo;
 
+import java.util.Objects;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.value.ValidityPeriodValue;
@@ -47,12 +48,14 @@ public abstract class ValidityPeriodDxo {
      * @since 3.0.0
      */
     protected ValidityPeriodEmb toValidityPeriodEmb(ValidityPeriodValue value) {
+        Objects.requireNonNull(value);
+
         var emb = new ValidityPeriodEmb();
 
         emb.setFrom(TimeUtils.toLocalDateTime(value.getFrom()));
         emb.setTo(TimeUtils.toLocalDateTime(value.getTo()));
         emb.setIgnored(value.isIgnored());
-        
+
         return emb;
     }
 
@@ -65,6 +68,8 @@ public abstract class ValidityPeriodDxo {
      * @since 3.0.0
      */
     protected ValidityPeriodValue toValidityPeriodValue(ValidityPeriodEmb emb) {
+        Objects.requireNonNull(emb);
+
         return new ValidityPeriodValue.Builder()
             .withFrom(TimeUtils.toOffsetDateTime(emb.getFrom()))
             .withTo(TimeUtils.toOffsetDateTime(emb.getTo()))
