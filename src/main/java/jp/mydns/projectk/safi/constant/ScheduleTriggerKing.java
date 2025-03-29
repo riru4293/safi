@@ -34,25 +34,25 @@ package jp.mydns.projectk.safi.constant;
  */
 public enum ScheduleTriggerKing {
     /**
-     * Scheduling definition to execute on a specified days in specified months.
+     * Execute on a specified day in specified months.
      *
      * @since 3.0.0
      */
     DAYS,
     /**
-     * Scheduling definition to execute on a specified weekdays in specified months and weeks.
+     * Execute on a specified weekday in specified months and week numbers.
      *
      * @since 3.0.0
      */
     WEEKDAYS,
     /**
-     * Scheduling definition to execute only once at a specified date and time.
+     * Execute once at a specified date and time.
      *
      * @since 3.0.0
      */
     ONCE,
     /**
-     * Scheduling definition to cancel scheduling of the same job definition id within a specified duration.
+     * Cancel scheduling of the same job definition id within a specified duration.
      *
      * @since 3.0.0
      */
