@@ -59,6 +59,31 @@ public interface CommonDao {
     <T> T persist(T entity);
 
     /**
+     * Make an {@code entity} merge.
+     *
+     * @param <T> entity type
+     * @param entity an any entity
+     * @return entity that persisted
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @throws IllegalArgumentException if the instance is not an entity
+     * @throws TransactionRequiredException if there is no transaction
+     * @since 3.0.0
+     */
+    <T> T merge(T entity);
+
+    /**
+     * Make an {@code entity} remove. If the entity is not managed by the entity manager, make it managed first.
+     *
+     * @param <T> entity type
+     * @param entity an any entity
+     * @return entity that to be removed
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @throws PersistenceException if failed remove
+     * @since 3.0.0
+     */
+    <T> T remove(T entity);
+
+    /**
      * Synchronize the persistence context to the underlying database.
      *
      * @throws TransactionRequiredException if there is no transaction
@@ -74,6 +99,20 @@ public interface CommonDao {
      * @since 3.0.0
      */
     void clear();
+
+    /**
+     * Make an {@code entity} persistent or merge. Persist if version is less than 1, merge otherwise.
+     *
+     * @param <T> entity type
+     * @param entity an any entity
+     * @return entity that persisted or merged
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @throws EntityExistsException if the entity already exists when persist
+     * @throws IllegalArgumentException if the instance is not an entity
+     * @throws TransactionRequiredException if there is no transaction
+     * @since 3.0.0
+     */
+    <T extends CommonEntity> T persistOrMerge(T entity);
 
     /**
      * Call both the {@link #persist} and the {@link #flush}.
@@ -105,27 +144,12 @@ public interface CommonDao {
          * Constructor.
          *
          * @param em the {@code EntityManager}
+         * @throws NullPointerException if {@code em} is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Impl(EntityManager em) {
-            this.em = em;
-        }
-
-        /**
-         * Make an {@code entity} persistent or merge. Persist if version is less than 1, merge otherwise.
-         *
-         * @param <T> entity type
-         * @param entity an any entity
-         * @return entity that persisted or merged
-         * @throws NullPointerException if {@code entity} is {@code null}
-         * @throws EntityExistsException if the entity already exists when persist
-         * @throws IllegalArgumentException if the instance is not an entity
-         * @throws TransactionRequiredException if there is no transaction
-         * @since 3.0.0
-         */
-        public <T extends CommonEntity> T persistOrMerge(T entity) {
-            return entity.getVersion() < 1 ? persist(entity) : merge(entity);
+            this.em = Objects.requireNonNull(em);
         }
 
         /**
@@ -144,40 +168,16 @@ public interface CommonDao {
         }
 
         /**
-         * Make an {@code entity} merge.
+         * {@inheritDoc}
          *
-         * @param <T> entity type
-         * @param entity an any entity
-         * @return entity that persisted
          * @throws NullPointerException if {@code entity} is {@code null}
          * @throws IllegalArgumentException if the instance is not an entity
          * @throws TransactionRequiredException if there is no transaction
          * @since 3.0.0
          */
+        @Override
         public <T> T merge(T entity) {
-            if (em.contains(Objects.requireNonNull(entity))) {
-                return entity;
-            }
-            return em.merge(Objects.requireNonNull(entity));
-        }
-
-        /**
-         * Make an {@code entity} remove. If the entity is not managed by the entity manager, make it managed first.
-         *
-         * @param <T> entity type
-         * @param entity an any entity
-         * @return entity that to be removed
-         * @throws NullPointerException if {@code entity} is {@code null}
-         * @throws PersistenceException if failed remove
-         * @since 3.0.0
-         */
-        public <T> T remove(T entity) {
-            if (!em.contains(Objects.requireNonNull(entity))) {
-                entity = em.merge(entity);
-            }
-
-            em.remove(entity);
-            return entity;
+            return !em.contains(Objects.requireNonNull(entity)) ? em.merge(entity) : entity;
         }
 
         /**
@@ -206,16 +206,40 @@ public interface CommonDao {
          * {@inheritDoc}
          *
          * @throws NullPointerException if {@code entity} is {@code null}
+         * @throws PersistenceException if failed remove
+         * @since 3.0.0
+         */
+        @Override
+        public <T> T remove(T entity) {
+            em.remove(merge(entity));
+            return entity;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code entity} is {@code null}
+         * @throws EntityExistsException if the entity already exists when persist
+         * @throws IllegalArgumentException if the instance is not an entity
+         * @throws TransactionRequiredException if there is no transaction
+         * @since 3.0.0
+         */
+        @Override
+        public <T extends CommonEntity> T persistOrMerge(T entity) {
+            return entity.getVersion() < 1 ? persist(entity) : merge(entity);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code entity} is {@code null}
          * @throws PersistenceException if failed persist or flush
          * @since 3.0.0
          */
         @Override
         public <T> T persistAndflush(T entity) {
-
-            em.persist(Objects.requireNonNull(entity));
-
+            persist(entity);
             flush();
-
             return entity;
         }
 
