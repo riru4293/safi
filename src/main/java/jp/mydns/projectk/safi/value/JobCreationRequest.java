@@ -64,7 +64,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(JobCreationRequest.Deserializer.class)
-@Schema(name = "JobCreationRequest", description = "Arequest to create a Job.")
+@Schema(name = "JobCreationRequest", description = "A request to create a Job.")
 public interface JobCreationRequest extends ValueTemplate {
 
     /**
@@ -106,7 +106,7 @@ public interface JobCreationRequest extends ValueTemplate {
     @DurationRange(maxSecond = 86_399L/*23h59m59s*/, groups = Default.class) Duration> getTimeout();
 
     /**
-     * Get plugin name. If not null, it overrides the value in the job definition.
+     * Get use plugin name. If not null, it overrides the value in the job definition.
      *
      * @return plugin name
      * @since 3.0.0
@@ -235,7 +235,7 @@ public interface JobCreationRequest extends ValueTemplate {
         }
 
         /**
-         * Set plugin name.
+         * Set use plugin name.
          *
          * @param pluginName plugin name
          * @return updated this
