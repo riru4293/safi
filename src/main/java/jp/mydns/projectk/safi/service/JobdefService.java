@@ -80,9 +80,7 @@ public interface JobdefService {
      *
      * @param req the {@code JobCreationRequest}
      * @return the {@code JobCreationContext}
-     * @throws ConstraintViolationException if not exists a job definition that specified in {@code req} or if malformed
-     * return value.
-     * @throws NullPointerException if any argument is {@code null}
+     * @throws NullPointerException if {@code req} is {@code null}
      * @throws JobdefIOException if not found valid job definition
      * @since 3.0.0
      */

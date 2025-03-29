@@ -28,6 +28,8 @@ package jp.mydns.projectk.safi.resource.trial;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.BadRequestException;
@@ -40,6 +42,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.util.Objects;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.trial.JobService;
@@ -57,10 +60,13 @@ import jp.mydns.projectk.safi.value.JobValue;
 public interface JobResource {
 
     /**
-     * Create new job. Used to manually schedule job execution.
+     * Creates a new job. Used to manually schedule job execution.
      *
      * @param req the {@code JobCreationRequest}
      * @return created job
+     * @throws ConstraintViolationException if {@code req} is not valid
+     * @throws BadRequestException if not found valid job definition
+     * @throws PersistenceException if failed database operation
      * @since 3.0.0
      */
     public Response createJob(@NotNull @Valid JobCreationRequest req);
@@ -88,17 +94,21 @@ public interface JobResource {
          *
          * @param jobdefSvc the {@code JobdefService}
          * @param jobSvc the {@code JobService}
+         * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Impl(JobdefService jobdefSvc, JobService jobSvc) {
-            this.jobdefSvc = jobdefSvc;
-            this.jobSvc = jobSvc;
+            this.jobdefSvc = Objects.requireNonNull(jobdefSvc);
+            this.jobSvc = Objects.requireNonNull(jobSvc);
         }
 
         /**
          * {@inheritDoc}
          *
+         * @throws ConstraintViolationException if {@code req} is not valid
+         * @throws BadRequestException if not found valid job definition
+         * @throws PersistenceException if failed database operation
          * @since 3.0.0
          */
         @Override
