@@ -111,7 +111,7 @@ public interface JobCreationRequest extends ValueTemplate {
      * @return plugin name
      * @since 3.0.0
      */
-    @Schema(description = "Plugin name. If not null, it overrides the value in the job definition.",
+    @Schema(description = "Use plugin name. If not null, it overrides the value in the job definition.",
             example = "PluginName", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Size(max = 50, groups = Default.class) String> getPluginName();

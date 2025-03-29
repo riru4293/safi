@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://project-k.mydns.jp/safi/schemas/job-creation-request.schema.json",
     "title": "JobCreationRequest",
-    "description": "Arequest to create a Job.",
+    "description": "A request to create a Job.",
     "type": "object",
     "properties": {
         "jobdefId": {
@@ -22,7 +22,7 @@
             "format": "duration"
         },
         "pluginName": {
-            "description": "Plugin name. If not null, it overrides the value in the job definition.",
+            "description": "Use plugin name. If not null, it overrides the value in the job definition.",
             "type": "string",
             "maxLength": 50
         },
