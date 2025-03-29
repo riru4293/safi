@@ -221,8 +221,9 @@ public interface FilteringConditionValue extends ValueTemplate {
             }
 
             /**
-             * {@inheritDoc}
+             * Get property name to filter on.
              *
+             * @return property name to filter on
              * @since 3.0.0
              */
             @Override
@@ -241,8 +242,9 @@ public interface FilteringConditionValue extends ValueTemplate {
             }
 
             /**
-             * {@inheritDoc}
+             * Get value to filter on.
              *
+             * @return value to filter on
              * @since 3.0.0
              */
             @Override
@@ -261,8 +263,9 @@ public interface FilteringConditionValue extends ValueTemplate {
             }
 
             /**
-             * {@inheritDoc}
+             * Get inner conditions.
              *
+             * @return children inner conditions
              * @since 3.0.0
              */
             @Override

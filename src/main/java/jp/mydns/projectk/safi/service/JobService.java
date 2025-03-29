@@ -81,7 +81,7 @@ public interface JobService {
          * @since 3.0.0
          */
         @Inject
-        protected Impl(CommonDao comDao, JobDxo jobDxo) {
+        public Impl(CommonDao comDao, JobDxo jobDxo) {
             this.comDao = Objects.requireNonNull(comDao);
             this.jobDxo = Objects.requireNonNull(jobDxo);
         }

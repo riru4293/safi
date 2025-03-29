@@ -104,7 +104,7 @@ public interface ValidationService {
          * @since 3.0.0
          */
         @Inject
-        protected Impl(Validator validator, AppTimeService appTimeSvc) {
+        public Impl(Validator validator, AppTimeService appTimeSvc) {
             this.validator = Objects.requireNonNull(validator);
             this.appTimeSvc = Objects.requireNonNull(appTimeSvc);
         }

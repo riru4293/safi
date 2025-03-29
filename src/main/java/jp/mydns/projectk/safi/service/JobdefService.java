@@ -113,7 +113,7 @@ public interface JobdefService {
          * @since 3.0.0
          */
         @Inject
-        protected Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
+        public Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
             JsonService jsonSvc, RealTimeService realTimeSvc) {
 
             this.jobdefDxo = Objects.requireNonNull(jobdefDxo);

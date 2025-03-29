@@ -100,7 +100,7 @@ public interface JsonService {
          * @since 3.0.0
          */
         @Inject
-        protected Impl(Jsonb jsonb) {
+        public Impl(Jsonb jsonb) {
             this.jsonb = Objects.requireNonNull(jsonb);
         }
 
