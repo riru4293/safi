@@ -56,7 +56,7 @@ public interface CommonDao {
      * @throws TransactionRequiredException if there is no transaction
      * @since 3.0.0
      */
-    public <T> T persist(T entity);
+    <T> T persist(T entity);
 
     /**
      * Synchronize the persistence context to the underlying database.
@@ -66,6 +66,34 @@ public interface CommonDao {
      * @since 3.0.0
      */
     void flush();
+
+    /**
+     * Clear the persistence context, causing all managed entities to become detached. Changes made to entities that
+     * have not been flushed to the database will not be persisted.
+     *
+     * @since 3.0.0
+     */
+    void clear();
+
+    /**
+     * Call both the {@link #persist} and the {@link #flush}.
+     *
+     * @param <T> entity type
+     * @param entity an any entity
+     * @return entity that persisted
+     * @throws NullPointerException if {@code entity} is {@code null}
+     * @throws PersistenceException if failed persist or flush
+     * @since 3.0.0
+     */
+    <T> T persistAndflush(T entity);
+
+    /**
+     * Call both the {@link #flush} and the {@link #clear}.
+     *
+     * @throws PersistenceException if failed flush
+     * @since 3.0.0
+     */
+    void flushAndClear();
 
     @Typed(CommonDao.class)
     @RequestScoped
@@ -134,12 +162,13 @@ public interface CommonDao {
         }
 
         /**
-         * Make an {@code entity} remove.
+         * Make an {@code entity} remove. If the entity is not managed by the entity manager, make it managed first.
          *
          * @param <T> entity type
          * @param entity an any entity
          * @return entity that to be removed
          * @throws NullPointerException if {@code entity} is {@code null}
+         * @throws PersistenceException if failed remove
          * @since 3.0.0
          */
         public <T> T remove(T entity) {
@@ -149,16 +178,6 @@ public interface CommonDao {
 
             em.remove(entity);
             return entity;
-        }
-
-        /**
-         * Call both the {@link #flush} and the {@link #clear}.
-         *
-         * @since 3.0.0
-         */
-        public void flushAndClear() {
-            flush();
-            clear();
         }
 
         /**
@@ -174,13 +193,42 @@ public interface CommonDao {
         }
 
         /**
-         * Clear the persistence context, causing all managed entities to become detached. Changes made to entities that
-         * have not been flushed to the database will not be persisted.
+         * {@inheritDoc}
          *
          * @since 3.0.0
          */
+        @Override
         public void clear() {
             em.clear();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code entity} is {@code null}
+         * @throws PersistenceException if failed persist or flush
+         * @since 3.0.0
+         */
+        @Override
+        public <T> T persistAndflush(T entity) {
+
+            em.persist(Objects.requireNonNull(entity));
+
+            flush();
+
+            return entity;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws PersistenceException if failed flush
+         * @since 3.0.0
+         */
+        @Override
+        public void flushAndClear() {
+            flush();
+            clear();
         }
     }
 }
