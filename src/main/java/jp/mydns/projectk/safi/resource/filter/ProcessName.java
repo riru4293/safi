@@ -42,6 +42,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
+import java.util.Objects;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
@@ -63,6 +64,12 @@ import org.slf4j.LoggerFactory;
 @Documented
 public @interface ProcessName {
 
+    /**
+     * Process name.
+     *
+     * @return process name
+     * @since 3.0.0
+     */
     @Nonbinding
     String value() default "";
 
@@ -89,30 +96,26 @@ public @interface ProcessName {
          * Constructor.
          *
          * @param reqCtxProducer the {@code RequestContextProducer}
+         * @throws NullPointerException if {@code reqCtxProducer} is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Extractor(RequestContextProducer reqCtxProducer) {
-            this.reqCtxProducer = reqCtxProducer;
+            this.reqCtxProducer = Objects.requireNonNull(reqCtxProducer);
         }
 
         /**
          * Extract process name and set it to the {@code RequestContextProducer}.
          *
-         * @param crc the {@code ContainerRequestContext}
+         * @param crc the {@code ContainerRequestContext}. It no use.
          * @since 3.0.0
          */
         @Override
         @ProcessName
         public void filter(ContainerRequestContext crc) {
-            Optional.of(resourceInfo).map(ResourceInfo::getResourceMethod).map(this::extract)
+            Optional.of(resourceInfo).map(ResourceInfo::getResourceMethod).map(m -> m.getAnnotation(ProcessName.class))
                 .map(ProcessName::value).filter(not(String::isBlank))
-                .ifPresent(c(reqCtxProducer::setProcessName)
-                    .andThen(n -> log.debug("Process name is {}.", n)));
-        }
-
-        private ProcessName extract(Method m) {
-            return m.getAnnotation(ProcessName.class);
+                .ifPresent(c(reqCtxProducer::setProcessName).andThen(n -> log.debug("Process name is {}.", n)));
         }
     }
 }
