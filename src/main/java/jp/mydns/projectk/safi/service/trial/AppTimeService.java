@@ -30,6 +30,7 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.util.Objects;
 import jp.mydns.projectk.safi.service.RealTimeService;
 
 /**
@@ -47,7 +48,7 @@ public interface AppTimeService {
      * @return current time inside the application.
      * @since 3.0.0
      */
-     OffsetDateTime getOffsetNow();
+    OffsetDateTime getOffsetNow();
 
     /**
      * Get current time. Accuracy is seconds.
@@ -55,7 +56,7 @@ public interface AppTimeService {
      * @return current time inside the application, in that case timezone is UTC.
      * @since 3.0.0
      */
-     LocalDateTime getLocalNow();
+    LocalDateTime getLocalNow();
 
     /**
      * Implements of the {@code AppTimeService}
@@ -66,7 +67,7 @@ public interface AppTimeService {
      */
     @Typed(AppTimeService.class)
     @RequestScoped
-     class Impl implements AppTimeService {
+    class Impl implements AppTimeService {
 
         private final RealTimeService realTimeSvc;
 
@@ -74,11 +75,12 @@ public interface AppTimeService {
          * Constructor.
          *
          * @param realTimeSvc the {@code RealTimeService}
+         * @throws NullPointerException if {@code realTimeSvc} is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Impl(RealTimeService realTimeSvc) {
-            this.realTimeSvc = realTimeSvc;
+            this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
         }
 
         /**
