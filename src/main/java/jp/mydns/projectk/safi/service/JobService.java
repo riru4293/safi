@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.service.trial;
+package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
@@ -31,13 +31,9 @@ import jakarta.inject.Inject;
 import jakarta.persistence.PersistenceException;
 import jakarta.transaction.Transactional;
 import jakarta.transaction.Transactional.TxType;
-import jakarta.validation.ConstraintViolationException;
-import java.io.IOException;
-import java.io.Serializable;
+import java.util.Objects;
 import jp.mydns.projectk.safi.dao.CommonDao;
-import jp.mydns.projectk.safi.dao.JobDao;
 import jp.mydns.projectk.safi.dxo.JobDxo;
-import jp.mydns.projectk.safi.entity.JobEntity;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobValue;
 
@@ -49,31 +45,6 @@ import jp.mydns.projectk.safi.value.JobValue;
  * @since 3.0.0
  */
 public interface JobService {
-
-    /**
-     * Indicates that a <i>Job</i> I/O exception has occurred. For example, it doesn't exist, you don't have permission
-     * to modify it, and so on.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class JobIOException extends IOException implements Serializable {
-
-        @java.io.Serial
-        static final long serialVersionUID = 6729040049842755289L;
-
-        /**
-         * Construct with error message.
-         *
-         * @param message error message. Keep in mind that this may be exposed to users. It must be an abstract message
-         * that can briefly describe the issue.
-         * @since 3.0.0
-         */
-        public JobIOException(String message) {
-            super(message);
-        }
-    }
 
     /**
      * Create a job. The state of the job that is created is schedule, and the schedule means schedule of batch process
@@ -99,40 +70,33 @@ public interface JobService {
     class Impl implements JobService {
 
         private final CommonDao comDao;
-        private final JobDao jobDao;
         private final JobDxo jobDxo;
 
         /**
          * Constructor.
          *
          * @param comDao the {@code CommonDao}
-         * @param jobDao the {@code JobDao}
          * @param jobDxo the {@code JobDxo}
+         * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
-        public Impl(CommonDao comDao, JobDao jobDao, JobDxo jobDxo) {
-            this.comDao = comDao;
-            this.jobDao = jobDao;
-            this.jobDxo = jobDxo;
+        protected Impl(CommonDao comDao, JobDxo jobDxo) {
+            this.comDao = Objects.requireNonNull(comDao);
+            this.jobDxo = Objects.requireNonNull(jobDxo);
         }
 
         /**
          * {@inheritDoc}
          *
-         * @throws ConstraintViolationException if any argument violates the constraint
+         * @throws NullPointerException if {@code ctx} is {@code null}
          * @throws PersistenceException if register fail to database
          * @since 3.0.0
          */
         @Override
         @Transactional(TxType.REQUIRES_NEW)
         public JobValue createJob(JobCreationContext ctx) {
-
-            JobEntity job = comDao.persist(jobDxo.newEntity(ctx));
-
-            comDao.flush();
-
-            return jobDxo.toValue(job);
+            return jobDxo.toValue(comDao.persistAndflush(jobDxo.newEntity(Objects.requireNonNull(ctx))));
         }
     }
 }

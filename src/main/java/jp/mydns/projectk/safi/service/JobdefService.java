@@ -64,14 +64,7 @@ public interface JobdefService {
         @java.io.Serial
         private static final long serialVersionUID = 7853095085270398570L;
 
-        /**
-         * Construct with error message.
-         *
-         * @param message error message. Keep in mind that this may be exposed to users. It must be an abstract message
-         * that can briefly describe the issue.
-         * @since 3.0.0
-         */
-        public JobdefIOException(String message) {
+        private JobdefIOException(String message) {
             super(message);
         }
     }
@@ -120,9 +113,9 @@ public interface JobdefService {
          * @since 3.0.0
          */
         @Inject
-        public Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
+        protected Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
             JsonService jsonSvc, RealTimeService realTimeSvc) {
-            
+
             this.jobdefDxo = Objects.requireNonNull(jobdefDxo);
             this.jobdefDao = Objects.requireNonNull(jobdefDao);
             this.validationSvc = Objects.requireNonNull(validationSvc);

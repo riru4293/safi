@@ -53,7 +53,7 @@ public interface JsonService {
      * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
      * @since 3.0.0
      */
-    public JsonValue toJsonValue(Object value);
+    JsonValue toJsonValue(Object value);
 
     /**
      * Deserialize to {@code T} from JSON.
@@ -66,7 +66,7 @@ public interface JsonService {
      * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
      * @since 3.0.0
      */
-    public <T> T fromJsonValue(JsonValue json, Class<T> clazz);
+    <T> T fromJsonValue(JsonValue json, Class<T> clazz);
 
     /**
      * Merge two {@code JsonObject}.
@@ -77,7 +77,7 @@ public interface JsonService {
      * @throws NullPointerException if any argument is {@code null}
      * @since 3.0.0
      */
-    public JsonObject merge(JsonObject base, JsonObject ow);
+    JsonObject merge(JsonObject base, JsonObject ow);
 
     /**
      * Implements the {@code JsonService}.
@@ -88,7 +88,7 @@ public interface JsonService {
      */
     @Typed(JsonService.class)
     @RequestScoped
-    public class Impl implements JsonService {
+    class Impl implements JsonService {
 
         private final Jsonb jsonb;
 
@@ -96,11 +96,12 @@ public interface JsonService {
          * Constructor.
          *
          * @param jsonb the {@code Jsonb}
+         * @throws NullPointerException if {@code jsonb} is {@code null}
          * @since 3.0.0
          */
         @Inject
-        public Impl(Jsonb jsonb) {
-            this.jsonb = jsonb;
+        protected Impl(Jsonb jsonb) {
+            this.jsonb = Objects.requireNonNull(jsonb);
         }
 
         /**

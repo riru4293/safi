@@ -48,7 +48,7 @@ public interface RealTimeService {
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public OffsetDateTime getOffsetNow();
+    OffsetDateTime getOffsetNow();
 
     /**
      * Get current time. Accuracy is seconds.
@@ -56,7 +56,7 @@ public interface RealTimeService {
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public LocalDateTime getLocalNow();
+    LocalDateTime getLocalNow();
 
     /**
      * Get exactly current time. Can only be used when {@link #getOffsetNow()} has insufficient precision.
@@ -64,7 +64,7 @@ public interface RealTimeService {
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public OffsetDateTime getExactlyOffsetNow();
+    OffsetDateTime getExactlyOffsetNow();
 
     /**
      * Get exactly current time. Can only be used when {@link #getLocalNow()} has insufficient precision.
@@ -72,7 +72,7 @@ public interface RealTimeService {
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public LocalDateTime getExactlyLocalNow();
+    LocalDateTime getExactlyLocalNow();
 
     /**
      * Implements of the {@code RealTimeService}.

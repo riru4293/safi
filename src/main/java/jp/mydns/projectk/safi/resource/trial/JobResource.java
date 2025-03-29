@@ -45,7 +45,7 @@ import java.net.URI;
 import java.util.Objects;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.service.JobdefService;
-import jp.mydns.projectk.safi.service.trial.JobService;
+import jp.mydns.projectk.safi.service.JobService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobCreationRequest;
 import jp.mydns.projectk.safi.value.JobValue;
@@ -69,7 +69,7 @@ public interface JobResource {
      * @throws PersistenceException if failed database operation
      * @since 3.0.0
      */
-    public Response createJob(@NotNull @Valid JobCreationRequest req);
+    Response createJob(@NotNull @Valid JobCreationRequest req);
 
     /**
      * JAX-RS resource for <i>Job</i>.
@@ -98,7 +98,7 @@ public interface JobResource {
          * @since 3.0.0
          */
         @Inject
-        public Impl(JobdefService jobdefSvc, JobService jobSvc) {
+        protected Impl(JobdefService jobdefSvc, JobService jobSvc) {
             this.jobdefSvc = Objects.requireNonNull(jobdefSvc);
             this.jobSvc = Objects.requireNonNull(jobSvc);
         }

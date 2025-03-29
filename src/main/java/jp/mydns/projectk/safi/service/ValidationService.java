@@ -32,6 +32,8 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.util.Objects;
+import java.util.stream.Stream;
 import jp.mydns.projectk.safi.entity.NamedEntity;
 import jp.mydns.projectk.safi.service.trial.AppTimeService;
 import jp.mydns.projectk.safi.util.ValidationUtils;
@@ -54,7 +56,7 @@ public interface ValidationService {
      * @throws NullPointerException if {@code value} is {@code null}
      * @since 3.0.0
      */
-    public boolean isEnabled(NamedValue value);
+    boolean isEnabled(NamedValue value);
 
     /**
      * Validate that it is within the validity period.
@@ -64,7 +66,7 @@ public interface ValidationService {
      * @throws NullPointerException if {@code entity} is {@code null}
      * @since 3.0.0
      */
-    public boolean isEnabled(NamedEntity entity);
+    boolean isEnabled(NamedEntity entity);
 
     /**
      * Validate that the value is valid.
@@ -77,7 +79,7 @@ public interface ValidationService {
      * @throws ConstraintViolationException if {@code value} has constraint violation
      * @since 3.0.0
      */
-    public <V> V requireValid(V value, Class<?>... groups);
+    <V> V requireValid(V value, Class<?>... groups);
 
     /**
      * Implements of the {@code ValidationService}.
@@ -88,22 +90,23 @@ public interface ValidationService {
      */
     @Typed(ValidationService.class)
     @RequestScoped
-    public class Impl implements ValidationService {
+    class Impl implements ValidationService {
 
         private final Validator validator;
-        private final AppTimeService appTimeService;
+        private final AppTimeService appTimeSvc;
 
         /**
          * Constructor.
          *
          * @param validator the {@code Validator}
-         * @param appTimeService the {@code AppTimeService}
+         * @param appTimeSvc the {@code AppTimeService}
+         * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
-        public Impl(Validator validator, AppTimeService appTimeService) {
-            this.validator = validator;
-            this.appTimeService = appTimeService;
+        protected Impl(Validator validator, AppTimeService appTimeSvc) {
+            this.validator = Objects.requireNonNull(validator);
+            this.appTimeSvc = Objects.requireNonNull(appTimeSvc);
         }
 
         /**
@@ -114,6 +117,8 @@ public interface ValidationService {
          */
         @Override
         public boolean isEnabled(NamedValue value) {
+            Objects.requireNonNull(value);
+
             return isEnabled(value.getValidityPeriod().getFrom(), value.getValidityPeriod().getTo(),
                 value.getValidityPeriod().isIgnored());
         }
@@ -126,13 +131,15 @@ public interface ValidationService {
          */
         @Override
         public boolean isEnabled(NamedEntity entity) {
+            Objects.requireNonNull(entity);
+
             return isEnabled(OffsetDateTime.of(entity.getValidityPeriod().getFrom(), ZoneOffset.UTC),
                 OffsetDateTime.of(entity.getValidityPeriod().getTo(), ZoneOffset.UTC),
                 entity.getValidityPeriod().isIgnored());
         }
 
         private boolean isEnabled(OffsetDateTime from, OffsetDateTime to, boolean ignored) {
-            OffsetDateTime refTime = appTimeService.getOffsetNow();
+            OffsetDateTime refTime = appTimeSvc.getOffsetNow();
 
             return !ignored && !from.isAfter(refTime) && !to.isBefore(refTime);
         }
@@ -146,6 +153,10 @@ public interface ValidationService {
          */
         @Override
         public <V> V requireValid(V value, Class<?>... groups) {
+            Objects.requireNonNull(value);
+            Objects.requireNonNull(validator);
+            Stream.of(Objects.requireNonNull(groups)).forEach(Objects::requireNonNull);
+
             return ValidationUtils.requireValid(value, validator, groups);
         }
     }
