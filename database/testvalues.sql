@@ -20,7 +20,7 @@ INSERT INTO `m_jobdef` (
   , `upd_id`
   , `upd_ap`
 ) VALUES (
-    'test'
+    'test-jobdef'
   , '2000-01-01 00:00:00'
   , '2999-12-31 23:59:59'
   , FALSE
@@ -32,6 +32,38 @@ INSERT INTO `m_jobdef` (
   , '{}'
   , '{"trnsdef": {}, "condition": {"operation": "AND", "children": []}}'
   , '{}'
+  , 'for test'
+  , 1
+  , UTC_TIMESTAMP()
+  , 'admin'
+  , 'SQL'
+  , NULL
+  , NULL
+  , NULL
+);
+
+INSERT INTO `m_appconf` (
+    `id`
+  , `from_ts`
+  , `to_ts`
+  , `ignored`
+  , `name`
+  , `val`
+  , `note`
+  , `version`
+  , `reg_ts`
+  , `reg_id`
+  , `reg_ap`
+  , `upd_ts`
+  , `upd_id`
+  , `upd_ap`
+) VALUES (
+    'NOW'
+  , '2000-01-01 00:00:00'
+  , '2999-12-31 23:59:59'
+  , FALSE
+  , 'Current time in application'
+  , NULL
   , 'for test'
   , 1
   , UTC_TIMESTAMP()
