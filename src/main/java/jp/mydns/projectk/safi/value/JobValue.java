@@ -140,7 +140,9 @@ public interface JobValue extends PersistableValue {
      * @return begin time
      * @since 3.0.0
      */
-    @Schema(description = "Begin time at job execution.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description
+        = "Begin time at job execution. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getBeginTime();
 
@@ -150,7 +152,9 @@ public interface JobValue extends PersistableValue {
      * @return end time
      * @since 3.0.0
      */
-    @Schema(description = "End time at job execution.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @Schema(description
+        = "End time at job execution. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
+            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getEndTime();
 
@@ -172,7 +176,7 @@ public interface JobValue extends PersistableValue {
      */
     @NotNull(groups = Default.class)
     @Size(min = 1, max = 36, groups = Default.class)
-    @Schema(description = "Job definition id.")
+    @Schema(description = "Job definition id.", example = "test-jobdef")
     String getJobdefId();
 
     /**

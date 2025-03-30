@@ -175,6 +175,7 @@ The key is the property name after transformation, and the value is the transfor
      * @return the {@code FiltdefValue}
      * @since 3.0.0
      */
+    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Valid FiltdefValue> getFiltdef();
 
