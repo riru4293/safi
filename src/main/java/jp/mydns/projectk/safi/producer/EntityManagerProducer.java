@@ -28,7 +28,6 @@ package jp.mydns.projectk.safi.producer;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
-import jakarta.json.bind.Jsonb;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
