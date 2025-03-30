@@ -77,6 +77,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.maven-javadoc>3.11.2</version.maven-javadoc>
         <version.maven-dependency>3.8.1</version.maven-dependency>
         <version.maven-antrun>3.1.0</version.maven-antrun>
+        <version.maven-failsafe>3.5.2</version.maven-failsafe>
     </properties>
 
     <licenses>
@@ -378,6 +379,13 @@ POSSIBILITY OF SUCH DAMAGE.
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>${version.maven-antrun}</version>
                 </plugin>
+                
+                <!-- License: ASL-2.0 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${version.maven-failsafe}</version>
+                </plugin>
 
                 <!-- License: EPL-2.0 -->
                 <plugin>
@@ -406,11 +414,7 @@ POSSIBILITY OF SUCH DAMAGE.
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>3.1.1</version>
                 </plugin>-->
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.2.3</version>
-                </plugin>-->
+                
 
                 <!--                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -485,6 +489,23 @@ POSSIBILITY OF SUCH DAMAGE.
 
             <build>
                 <plugins>
+                    <!-- Integration tests -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    
                     <!-- Report code coverage. -->
                     <plugin>
                         <groupId>org.jacoco</groupId>
@@ -676,32 +697,5 @@ POSSIBILITY OF SUCH DAMAGE.
                 </plugins>
             </build>
         </profile>
-        <!--        <profile>
-            <id>release-profile</id>
-
-            <build>
-                <plugins>
-
-
-
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>-->
     </profiles>
 </project>
