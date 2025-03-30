@@ -33,18 +33,9 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
-import java.io.Serial;
-import java.io.Serializable;
-import java.time.Duration;
 import java.util.Objects;
-import jp.mydns.projectk.safi.constant.JobKind;
-import jp.mydns.projectk.safi.constant.JobTarget;
-import jp.mydns.projectk.safi.validator.DurationRange;
-import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
-import jp.mydns.projectk.safi.validator.TimeAccuracy;
+import jp.mydns.projectk.safi.constant.AppConfigId;
 import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
@@ -58,209 +49,57 @@ import jp.mydns.projectk.safi.value.JsonWrapper;
 @Cacheable(false)
 @Table(name = "m_appconf")
 public class AppConfigEntity extends NamedEntity {
-//
-//    @java.io.Serial
-//    private static final long serialVersionUID = -8597141002815361653L;
+    
+    private static final long serialVersionUID = 3895102690716080340L;
 
     @Id
     @Basic(optional = false)
     @Column(name = "id", nullable = false, updatable = false, length = 36)
-    private String id;
-
-    @Basic(optional = false)
-    @Column(name = "job_kind", nullable = false, updatable = false, length = 20)
     @Enumerated(EnumType.STRING)
-    private JobKind jobKind;
+    private AppConfigId id;
 
-    @Basic(optional = false)
-    @Column(name = "job_target", nullable = false, updatable = false, length = 20)
-    @Enumerated(EnumType.STRING)
-    private JobTarget jobTarget;
-
-    @Basic(optional = false)
-    @Column(name = "timeout", nullable = false, length = 20)
-    private Duration timeout;
-
-    @Column(name = "plugin", length = 50)
-    private String pluginName;
-
-    @Column(name = "trnsdef")
-    private JsonWrapper trnsdef;
-
-    @Column(name = "filtdef")
-    private JsonWrapper filtdef;
-
-    @Basic(optional = false)
-    @Column(name = "job_props", nullable = false)
-    private JsonWrapper jobProperties;
+    @Column(name = "val")
+    private JsonWrapper value;
 
     /**
-     * Get job definition id.
+     * Get application configuration id.
      *
-     * @return job definition id
+     * @return application configuration id
      * @since 3.0.0
      */
-    @NotBlank
-    @Size(max = 36)
-    public String getId() {
+    @NotNull
+    public AppConfigId getId() {
         return id;
     }
 
     /**
-     * Set job definition id.
+     * Set application configuration id.
      *
-     * @param id job definition id. Cannot update persisted value.
+     * @param id application configuration id. Cannot update persisted value.
      * @since 3.0.0
      */
-    public void setId(String id) {
+    public void setId(AppConfigId id) {
         this.id = id;
     }
 
     /**
-     * Get job kind.
+     * Get configuration value.
      *
-     * @return job kind
+     * @return configuration value. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotNull
-    public JobKind getJobKind() {
-        return jobKind;
+    public JsonWrapper getValue() {
+        return value;
     }
 
     /**
-     * Set job kind.
+     * Set configuration value.
      *
-     * @param jobKind job kind. Cannot update persisted value.
+     * @param value configuration value. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setJobKind(JobKind jobKind) {
-        this.jobKind = jobKind;
-    }
-
-    /**
-     * Get job target.
-     *
-     * @return job target
-     * @since 3.0.0
-     */
-    @NotNull
-    public JobTarget getJobTarget() {
-        return jobTarget;
-    }
-
-    /**
-     * Set job target.
-     *
-     * @param jobTarget job target. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setJobTarget(JobTarget jobTarget) {
-        this.jobTarget = jobTarget;
-    }
-
-    /**
-     * Set job processing timeout.
-     *
-     * @return job processing timeout
-     * @since 3.0.0
-     */
-    @NotNull
-    @PositiveOrZeroDuration
-    @DurationRange(maxSecond = 86_399L/*23h59m59s*/)
-    @TimeAccuracy
-    public Duration getTimeout() {
-        return timeout;
-    }
-
-    /**
-     * Set job processing timeout.
-     *
-     * @param timeout job processing timeout
-     * @since 3.0.0
-     */
-    public void setTimeout(Duration timeout) {
-        this.timeout = timeout;
-    }
-
-    /**
-     * Get plugin name.
-     *
-     * @return plugin name. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public String getPluginName() {
-        return pluginName;
-    }
-
-    /**
-     * Set plugin name.
-     *
-     * @param pluginName plugin name. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setPluginName(String pluginName) {
-        this.pluginName = pluginName;
-    }
-
-    /**
-     * Get transform definition.
-     *
-     * @return transform definition. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public JsonWrapper getTrnsdef() {
-        return trnsdef;
-    }
-
-    /**
-     * Set transform definition.
-     *
-     * @param trnsdef transform definition. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setTrnsdef(JsonWrapper trnsdef) {
-        this.trnsdef = trnsdef;
-    }
-
-    /**
-     * Get filtering definition.
-     *
-     * @return filtering definition. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public JsonWrapper getFiltdef() {
-        return filtdef;
-    }
-
-    /**
-     * Set filtering definition.
-     *
-     * @param filtdef filtering definition. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setFiltdef(JsonWrapper filtdef) {
-        this.filtdef = filtdef;
-    }
-
-    /**
-     * Get job properties.
-     *
-     * @return job properties
-     * @since 3.0.0
-     */
-    @NotNull
-    public JsonWrapper getJobProperties() {
-        return jobProperties;
-    }
-
-    /**
-     * Set job properties.
-     *
-     * @param jobProperties job properties
-     * @since 3.0.0
-     */
-    public void setJobProperties(JsonWrapper jobProperties) {
-        this.jobProperties = jobProperties;
+    public void setValue(JsonWrapper value) {
+        this.value = value;
     }
 
     /**
@@ -295,8 +134,6 @@ public class AppConfigEntity extends NamedEntity {
      */
     @Override
     public String toString() {
-        return "JobdefEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind=" + jobKind
-            + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name + ", pluginName=" + pluginName
-            + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef + ", jobProperties=" + jobProperties + '}';
+        return "AppConfigEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", value=" + value + '}';
     }
 }
