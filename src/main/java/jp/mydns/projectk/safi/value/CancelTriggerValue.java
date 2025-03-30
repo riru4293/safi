@@ -66,7 +66,8 @@ interface CancelTriggerValue extends ScheduleTriggerValue {
      * @return schedule canceling duration
      * @since 3.0.0
      */
-    @Schema(type = "string", description = "Schedule canceling duration.")
+    @Schema(type = "string", description
+            = "Schedule canceling duration. Value equal to or greater than PT0S can be specified.")
     @PositiveOrZeroDuration(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
     Duration getDuration();
