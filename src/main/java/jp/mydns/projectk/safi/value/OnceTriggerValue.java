@@ -44,6 +44,7 @@ import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
  * @version 3.0.0
  * @since 3.0.0
  */
+@Schema(name = "ScheduleTrigger.Once", description = "Onetime schedule trigger configuration.")
 interface OnceTriggerValue extends ScheduleTriggerValue {
 
     /**

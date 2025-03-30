@@ -55,6 +55,7 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @version 3.0.0
  * @since 3.0.0
  */
+@Schema(name = "ScheduleTrigger.Days", description = "Days schedule trigger configuration.")
 interface DaysTriggerValue extends ScheduleTriggerValue {
 
     /**
@@ -72,8 +73,8 @@ interface DaysTriggerValue extends ScheduleTriggerValue {
      * @return target months of scheduling
      * @since 3.0.0
      */
-    @NotNull(groups = {Default.class})
     @Schema(description = "Target months of schedulinge.")
+    @NotNull(groups = {Default.class})
     SequencedSet<@NotNull(groups = {Default.class}) Month> getMonths();
 
     /**
@@ -83,8 +84,9 @@ interface DaysTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @Schema(description = "Target days of schedulinge.")
+    @NotNull(groups = {Default.class})
     SequencedSet<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
-    @Max(value = 31, groups = {Default.class}) Integer> getDays();
+    @NotNull(groups = {Default.class}) @Max(value = 31, groups = {Default.class}) Integer> getDays();
 
     /**
      * Builder of the {@code DaysTriggerValue}.
@@ -121,7 +123,7 @@ interface DaysTriggerValue extends ScheduleTriggerValue {
 
             withMonths(src.getMonths());
             withDays(src.getDays());
-            
+
             return this;
         }
 

@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.time.Duration;
 import java.util.Objects;
@@ -49,6 +50,7 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  * @version 3.0.0
  * @since 3.0.0
  */
+@Schema(name = "ScheduleTrigger.Cancel", description = "Schedule cancelling trigger configuration.")
 interface CancelTriggerValue extends ScheduleTriggerValue {
 
     /**
@@ -68,6 +70,7 @@ interface CancelTriggerValue extends ScheduleTriggerValue {
      */
     @Schema(type = "string", description
             = "Schedule canceling duration. Value equal to or greater than PT0S can be specified.")
+    @NotNull(groups = {Default.class})
     @PositiveOrZeroDuration(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
     Duration getDuration();

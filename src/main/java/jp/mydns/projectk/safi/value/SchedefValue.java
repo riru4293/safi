@@ -66,7 +66,7 @@ public interface SchedefValue extends NamedValue {
      */
     @NotNull
     @Size(min = 1, max = 36)
-    @Schema(description = "Schedule definition id.", example = "test")
+    @Schema(description = "Schedule definition id.", example = "test-schedef")
     String getId();
 
     /**
@@ -77,7 +77,7 @@ public interface SchedefValue extends NamedValue {
      */
     @NotNull(groups = {Default.class})
     @Size(min = 1, max = 36, groups = {Default.class})
-    @Schema(description = "Job definition id.", example = "test")
+    @Schema(description = "Job definition id.", example = "test-jobdef")
     String getJobdefId();
 
     /**

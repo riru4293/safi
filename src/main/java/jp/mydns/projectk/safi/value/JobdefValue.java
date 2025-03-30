@@ -75,7 +75,7 @@ public interface JobdefValue extends NamedValue {
      */
     @NotNull
     @Size(min = 1, max = 36)
-    @Schema(description = "Job definition id.", example = "test")
+    @Schema(description = "Job definition id.", example = "test-jobdef")
     String getId();
 
     /**

@@ -65,7 +65,8 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(ScheduleTriggerValue.Deserializer.class)
-@Schema(name = "SchedduleTrigger", description = "Job schedule trigger configuration.",
+@Schema(name = "ScheduleTrigger", description = "Job schedule trigger configuration.",
+        example = "{\"kind\": \"ONCE\", \"anchorTime\": \"2030-10-10T07:02:00Z\"}",
         examples = {
             "{\"kind\": \"DAYS\", \"anchorTime\": \"2700-10-10T07:09:42Z\", \"months\": [1, 7], \"days\": [5, 25]}",
             "{\"kind\": \"WEEKDAYS\", \"anchorTime\": \"2700-10-10T07:09:42Z\", \"months\": [], \"weeks\": [2, 5]"
