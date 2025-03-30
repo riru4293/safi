@@ -66,7 +66,7 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @Override
-    @Schema(type = "string", defaultValue = "WEEKDAYS")
+    @Schema(type = "string", allowableValues = "WEEKDAYS")
     ScheduleTriggerKing getKind();
 
     /**
@@ -76,7 +76,7 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @NotNull(groups = {Default.class})
-    @Schema(description = "Target months of schedulinge.")
+    @Schema(description = "Target months of schedulinge.", example = "[\"APRIL\", \"MAY\"]")
     SequencedSet<@NotNull(groups = {Default.class}) Month> getMonths();
 
     /**
@@ -86,7 +86,7 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @NotNull(groups = {Default.class})
-    @Schema(description = "Target week numbers of schedulinge.")
+    @Schema(description = "Target week numbers of schedulinge.", example = "[1, 3]")
     SequencedSet<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
     @Max(value = 5, groups = {Default.class}) Integer> getWeeks();
 
@@ -97,7 +97,7 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @NotNull(groups = {Default.class})
-    @Schema(description = "Target weekdays of schedulinge.")
+    @Schema(description = "Target weekdays of schedulinge.", example = "[\"SUNDAY\", \"FRIDAY\"]")
     SequencedSet<@NotNull(groups = {Default.class}) DayOfWeek> getWeekdays();
 
     /**

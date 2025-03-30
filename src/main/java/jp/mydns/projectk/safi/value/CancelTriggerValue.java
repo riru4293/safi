@@ -59,7 +59,7 @@ interface CancelTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @Override
-    @Schema(type = "string", defaultValue = "CANCEL")
+    @Schema(type = "string", allowableValues = "CANCEL")
     ScheduleTriggerKing getKind();
 
     /**
@@ -68,7 +68,7 @@ interface CancelTriggerValue extends ScheduleTriggerValue {
      * @return schedule canceling duration
      * @since 3.0.0
      */
-    @Schema(type = "string", description
+    @Schema(type = "string", example = "PT24H", description
             = "Schedule canceling duration. Value equal to or greater than PT0S can be specified.")
     @NotNull(groups = {Default.class})
     @PositiveOrZeroDuration(groups = {Default.class})

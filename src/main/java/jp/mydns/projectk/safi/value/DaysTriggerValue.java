@@ -64,7 +64,7 @@ interface DaysTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @Override
-    @Schema(type = "string", defaultValue = "DAYS")
+    @Schema(type = "string", allowableValues = "DAYS")
     ScheduleTriggerKing getKind();
 
     /**
@@ -73,7 +73,7 @@ interface DaysTriggerValue extends ScheduleTriggerValue {
      * @return target months of scheduling
      * @since 3.0.0
      */
-    @Schema(description = "Target months of schedulinge.")
+    @Schema(description = "Target months of schedulinge.", example = "[\"FEBRUARY\"]")
     @NotNull(groups = {Default.class})
     SequencedSet<@NotNull(groups = {Default.class}) Month> getMonths();
 
@@ -83,7 +83,7 @@ interface DaysTriggerValue extends ScheduleTriggerValue {
      * @return target days of scheduling
      * @since 3.0.0
      */
-    @Schema(description = "Target days of schedulinge.")
+    @Schema(description = "Target days of schedulinge.", example = "[5, 25]")
     @NotNull(groups = {Default.class})
     SequencedSet<@NotNull(groups = {Default.class}) @Min(value = 1, groups = {Default.class})
     @NotNull(groups = {Default.class}) @Max(value = 31, groups = {Default.class}) Integer> getDays();

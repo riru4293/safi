@@ -53,7 +53,7 @@ interface OnceTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @Override
-    @Schema(type = "string", defaultValue = "ONCE")
+    @Schema(type = "string", allowableValues = "ONCE")
     ScheduleTriggerKing getKind();
 
     /**
