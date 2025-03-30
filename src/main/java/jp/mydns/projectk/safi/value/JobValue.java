@@ -117,7 +117,8 @@ public interface JobValue extends PersistableValue {
     @NotNull(groups = Default.class)
     @TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/, groups = Default.class)
     @TimeAccuracy(groups = Default.class)
-    @Schema(description = "Job schedule time.")
+    @Schema(description
+        = "Job schedule time. Values from 2000-01-01T00:00:00Z to 2999-12-31T00:00:00Z can be specified.")
     OffsetDateTime getScheduleTime();
 
     /**
@@ -129,7 +130,8 @@ public interface JobValue extends PersistableValue {
     @NotNull(groups = Default.class)
     @TimeRange(groups = Default.class)
     @TimeAccuracy(groups = Default.class)
-    @Schema(description = "Limit time at job execution.")
+    @Schema(description
+        = "Limit time at job execution. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     OffsetDateTime getLimitTime();
 
     /**

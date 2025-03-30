@@ -94,7 +94,8 @@ public interface ScheduleTriggerValue extends ValueTemplate {
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
-    @Schema(description = "Anchor time of scheduling.")
+    @Schema(description
+        = "Anchor time of scheduling. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     OffsetDateTime getAnchorTime();
 
     /**
