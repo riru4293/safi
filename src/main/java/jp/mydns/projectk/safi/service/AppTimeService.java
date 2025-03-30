@@ -23,15 +23,21 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.service.trial;
+package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
-import jp.mydns.projectk.safi.service.RealTimeService;
+import jp.mydns.projectk.safi.constant.AppConfigId;
+import jp.mydns.projectk.safi.dao.AppConfigDao;
+import jp.mydns.projectk.safi.entity.AppConfigEntity;
+import jp.mydns.projectk.safi.util.JsonValueUtils;
+import jp.mydns.projectk.safi.util.TimeUtils;
+import jp.mydns.projectk.safi.value.JsonWrapper;
 
 /**
  * Provides a time inside the application.
@@ -46,6 +52,7 @@ public interface AppTimeService {
      * Get current time. Accuracy is seconds.
      *
      * @return current time inside the application.
+     * @throws PersistenceException if failed database operation
      * @since 3.0.0
      */
     OffsetDateTime getOffsetNow();
@@ -54,6 +61,7 @@ public interface AppTimeService {
      * Get current time. Accuracy is seconds.
      *
      * @return current time inside the application, in that case timezone is UTC.
+     * @throws PersistenceException if failed database operation
      * @since 3.0.0
      */
     LocalDateTime getLocalNow();
@@ -70,40 +78,45 @@ public interface AppTimeService {
     class Impl implements AppTimeService {
 
         private final RealTimeService realTimeSvc;
+        private final AppConfigDao appConfigDao;
 
         /**
          * Constructor.
          *
          * @param realTimeSvc the {@code RealTimeService}
-         * @throws NullPointerException if {@code realTimeSvc} is {@code null}
+         * @param appConfigDao the {@code appConfigDao}
+         * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
-        public Impl(RealTimeService realTimeSvc) {
+        public Impl(RealTimeService realTimeSvc, AppConfigDao appConfigDao) {
             this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
+            this.appConfigDao = Objects.requireNonNull(appConfigDao);
         }
 
         /**
          * {@inheritDoc}
          *
+         * @throws PersistenceException if failed database operation
          * @since 3.0.0
          */
         @Override
         public OffsetDateTime getOffsetNow() {
-            // ToDo: Must be implemented.
-            return realTimeSvc.getOffsetNow();
+            return TimeUtils.toOffsetDateTime(getLocalNow());
         }
 
         /**
          * {@inheritDoc}
          *
          * @return current time inside the application, in that case timezone is UTC.
+         * @throws PersistenceException if failed database operation
          * @since 3.0.0
          */
         @Override
         public LocalDateTime getLocalNow() {
-            // ToDo: Must be implemented.
-            return realTimeSvc.getLocalNow();
+            return appConfigDao.getAppConfig(AppConfigId.NOW)
+                .map(AppConfigEntity::getValue).map(JsonWrapper::unwrap).map(JsonValueUtils::toString)
+                .map(TimeUtils::toLocalDateTime).orElseGet(realTimeSvc::getLocalNow);
         }
     }
 }

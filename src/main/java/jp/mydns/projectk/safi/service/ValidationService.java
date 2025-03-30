@@ -35,7 +35,6 @@ import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.entity.NamedEntity;
-import jp.mydns.projectk.safi.service.trial.AppTimeService;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.NamedValue;
 
