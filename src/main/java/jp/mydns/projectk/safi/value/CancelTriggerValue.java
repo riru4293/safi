@@ -26,9 +26,12 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.groups.Default;
 import java.time.Duration;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.ScheduleTriggerKing;
+import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
+import jp.mydns.projectk.safi.validator.TimeAccuracy;
 
 /**
  * Schedule cancelling trigger configuration.
@@ -64,6 +67,8 @@ interface CancelTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @Schema(type = "string", description = "Schedule canceling duration.")
+    @PositiveOrZeroDuration(groups = {Default.class})
+    @TimeAccuracy(groups = {Default.class})
     Duration getDuration();
 
     /**
