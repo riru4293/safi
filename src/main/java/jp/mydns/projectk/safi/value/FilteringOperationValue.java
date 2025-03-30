@@ -56,7 +56,7 @@ import jp.mydns.projectk.safi.value.FilteringOperationValue.NodeOperation;
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(FilteringOperationValue.Deserializer.class)
-@Schema(name = "FilteringOperation", description = "Filtering operation.",
+@Schema(name = "FilteringOperation", description = "Filtering operation kind.",
         oneOf = {LeafOperation.class, NodeOperation.class})
 public interface FilteringOperationValue {
 
@@ -105,7 +105,7 @@ public interface FilteringOperationValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(name = "FilteringOperation.Leaf", description = "Leaf filtering operation.")
+    @Schema(name = "FilteringOperation.Leaf", description = "Leaf filtering operation.", enumAsRef = true)
     enum LeafOperation implements FilteringOperationValue {
         /**
          * Indicates a equal.
@@ -174,7 +174,7 @@ public interface FilteringOperationValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    @Schema(name = "FilteringOperation.Node", description = "Node filtering operation.")
+    @Schema(name = "FilteringOperation.Node", description = "Node filtering operation.", enumAsRef = true)
     enum NodeOperation implements FilteringOperationValue {
         /**
          * Indicates a logical product.

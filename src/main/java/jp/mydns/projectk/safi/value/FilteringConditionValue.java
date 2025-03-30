@@ -79,6 +79,8 @@ Filtering condition.
     {"operation": "EQUAL", "name": "userName", "value": "taro"},
     {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
 ```""",
+        example = "{\"operation\": \"AND\", \"children\": [{\"operation\": \"EQUAL\", \"name\": \"kind\","
+        + " \"value\": \"A\"}, {\"operation\": \"LESS_THAN\", \"name\": \"version\", \"value\": \"3\"}]}",
         oneOf = {LeafConditionValue.class, NodeConditionValue.class})
 public interface FilteringConditionValue extends ValueTemplate {
 
@@ -89,6 +91,7 @@ public interface FilteringConditionValue extends ValueTemplate {
      * @since 3.0.0
      */
     @NotNull(groups = Default.class)
+    @Schema(description = "Filtering operation kind.")
     FilteringOperationValue getOperation();
 
     /**

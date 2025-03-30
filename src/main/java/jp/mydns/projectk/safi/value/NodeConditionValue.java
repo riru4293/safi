@@ -53,12 +53,22 @@ import jp.mydns.projectk.safi.util.CollectionUtils;
 interface NodeConditionValue extends FilteringConditionValue {
 
     /**
+     * {@inheritDoc}
+     *
+     * @since 3.0.0
+     */
+    @Override
+    @Schema(implementation = FilteringOperationValue.NodeOperation.class)
+    FilteringOperationValue getOperation();
+
+    /**
      * Get inner conditions.
      *
      * @return children inner conditions
      * @since 3.0.0
      */
-    @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, description = "Inner filtering conditions.")
+    @Schema(description = "Inner filtering conditions.", example = "[{\"operation\": \"EQUAL\", \"name\": \"kind\","
+        + " \"value\": \"A\"}, {\"operation\": \"LESS_THAN\", \"name\": \"version\", \"value\": \"3\"}]")
     @NotNull(groups = Default.class)
     List<@NotNull(groups = Default.class) @Valid FilteringConditionValue> getChildren();
 

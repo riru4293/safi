@@ -46,8 +46,18 @@ import java.util.Objects;
  * @version 3.0.0
  * @since 3.0.0
  */
-@Schema(name = "FilteringCondition.Leaf", description = "Leaf filtering condition.")
+@Schema(name = "FilteringCondition.Leaf", description = "Leaf filtering condition.",
+        example = "{\"operation\": \"PARTIAL_MATCH\", \"name\": \"userName\", \"value\": \"ike\"}")
 interface LeafConditionValue extends FilteringConditionValue {
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.0.0
+     */
+    @Override
+    @Schema(implementation = FilteringOperationValue.LeafOperation.class)
+    FilteringOperationValue getOperation();
 
     /**
      * Get property name to filter on.
