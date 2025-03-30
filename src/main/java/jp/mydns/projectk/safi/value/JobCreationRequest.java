@@ -75,7 +75,7 @@ public interface JobCreationRequest extends ValueTemplate {
      */
     @NotNull
     @Size(min = 1, max = 36)
-    @Schema(description = "Job definition id to use.")
+    @Schema(description = "Job definition id to use.", example = "test-jobdef")
     String getJobdefId();
 
     /**
@@ -112,7 +112,7 @@ public interface JobCreationRequest extends ValueTemplate {
      * @since 3.0.0
      */
     @Schema(description = "Use plugin name. If not null, it overrides the value in the job definition.",
-            example = "PluginName", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+            example = "TestPluginName", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Size(max = 50, groups = Default.class) String> getPluginName();
 
