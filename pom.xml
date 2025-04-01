@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
     <modelVersion>4.0.0</modelVersion>
     <groupId>jp.mydns.project-k</groupId>
     <artifactId>safi</artifactId>
-    <version>3.0.0-M5</version>
+    <version>3.0.0-M6</version>
     <packaging>war</packaging>
     <name>SAFI-${project.version}</name>
 
@@ -47,24 +47,19 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.jakartaee>10.0.0</version.jakartaee>
         <version.swagger>2.2.28</version.swagger>
         <version.swagger-ui>5.18.3</version.swagger-ui>
-        <!--<version.microprofile-config>3.1</version.microprofile-config>-->
-        <!--<version.smallrye-config>3.5.0</version.smallrye-config>-->
-        <!--<version.mockito>5.5.0</version.mockito>-->
+        <version.microprofile-config>3.1</version.microprofile-config>
+        <version.smallrye-config>3.12.4</version.smallrye-config>
+        <version.mockito>5.16.0</version.mockito>
         <version.junit>5.11.4</version.junit>
         <versin.slf4j>2.0.17</versin.slf4j>
         <version.eclipselink>4.0.3</version.eclipselink>
         <version.ulidj>1.0.4</version.ulidj>
         <version.assertj>3.27.3</version.assertj>
-        <!--<version.mockito>5.2.0</version.mockito>-->
         <version.hibernate-validator>8.0.1.Final</version.hibernate-validator>
         <version.expressly>5.0.0</version.expressly>
         <version.yasson>3.0.4</version.yasson>
-        <!--<version.weld-junit5>4.0.1.Final</version.weld-junit5>-->
-        <!--<version.h2>2.2.224</version.h2>-->
-        <!--<version.bytebuddy>1.14.6</version.bytebuddy>-->
-        <!--<version.k-plugin-mechanism>1.0.0</version.k-plugin-mechanism>-->
-        <!--<version.k-formula-mechanism>1.0.0-M4</version.k-formula-mechanism>-->
-        <!--<version.safi-pif>2.0.4</version.safi-pif>-->
+        <version.weld-junit5>5.0.0.Final</version.weld-junit5>
+        <version.h2database>2.3.232</version.h2database>
         <version.jacoco>0.8.12</version.jacoco>
         <version.sonar>5.0.0.4389</version.sonar>
 
@@ -78,6 +73,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.maven-javadoc>3.11.2</version.maven-javadoc>
         <version.maven-dependency>3.8.1</version.maven-dependency>
         <version.maven-antrun>3.1.0</version.maven-antrun>
+        <version.maven-failsafe>3.5.2</version.maven-failsafe>
     </properties>
 
     <licenses>
@@ -201,6 +197,13 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
+        <!-- License: EPL-2.0 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Jakarta EL implements -->
         <!-- License: EPL-2.0 -->
         <!-- License: GPL -->
@@ -230,77 +233,58 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
-        <!--        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>safi-plugin-interface</artifactId>
-            <version>${version.safi-pif}</version>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>k-plugin-mechanism</artifactId>
-            <version>${version.k-plugin-mechanism}</version>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>k-formula-mechanism</artifactId>
-            <version>${version.k-formula-mechanism}</version>
-        </dependency>-->
-        <!--        <dependency>
+        <!-- MicroProfile Config -->
+        <!-- License: ASL-2.0 -->
+        <dependency>
             <groupId>org.eclipse.microprofile.config</groupId>
             <artifactId>microprofile-config-api</artifactId>
             <version>${version.microprofile-config}</version>
             <scope>provided</scope>
-        </dependency>-->
+        </dependency>
+
+        <!-- MicroProfile Config implements -->
+        <!-- License: ASL-2.0 -->
+        <dependency>
+            <groupId>io.smallrye.config</groupId>
+            <artifactId>smallrye-config</artifactId>
+            <version>${version.smallrye-config}</version>
+            <scope>test</scope>
+        </dependency>
 
         <!--        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>-->
-        <!--        <dependency>
+
+        <!-- Mockito -->
+        <!-- License: MIT -->
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${version.mockito}</version>
             <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
+        </dependency>
+        <!-- License: MIT -->
+        <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-inline</artifactId>
+            <artifactId>mockito-core</artifactId>
             <version>${version.mockito}</version>
             <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>io.smallrye.config</groupId>
-            <artifactId>smallrye-config</artifactId>
-            <version>${version.smallrye-config}</version>
-            <scope>test</scope>
-        </dependency>-->
+        </dependency>
 
-
-        <!--        <dependency>
+        <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-junit5</artifactId>
             <version>${version.weld-junit5}</version>
             <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.2.224</version>
+            <version>${version.h2database}</version>
             <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-common</artifactId>
-            <version>3.1.5</version>
-            <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>4.2.0</version>
-            <scope>test</scope>
-        </dependency>-->
+        </dependency>
     </dependencies>
 
     <build>
@@ -369,6 +353,13 @@ POSSIBILITY OF SUCH DAMAGE.
                     <version>${version.maven-antrun}</version>
                 </plugin>
 
+                <!-- License: ASL-2.0 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${version.maven-failsafe}</version>
+                </plugin>
+
                 <!-- License: EPL-2.0 -->
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -390,57 +381,6 @@ POSSIBILITY OF SUCH DAMAGE.
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>${version.sonar}</version>
                 </plugin>
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>-->
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>3.2.3</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>4.0.0-M13</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-verifier-plugin</artifactId>
-                    <version>1.1</version>
-                </plugin>-->
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.3.0</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.0</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>-->
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.6.0</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.1</version>
-                </plugin>-->
             </plugins>
         </pluginManagement>
 
@@ -463,7 +403,7 @@ POSSIBILITY OF SUCH DAMAGE.
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                    <argLine>"@{jacocoArgLine}" "-Dfile.encoding=${project.build.sourceEncoding}" "-javaagent:${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar" "-XX:+EnableDynamicAgentLoading" "-Xshare:off"</argLine>
                 </configuration>
             </plugin>
         </plugins>
@@ -475,6 +415,23 @@ POSSIBILITY OF SUCH DAMAGE.
 
             <build>
                 <plugins>
+                    <!-- Integration tests -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
                     <!-- Report code coverage. -->
                     <plugin>
                         <groupId>org.jacoco</groupId>
@@ -666,32 +623,5 @@ POSSIBILITY OF SUCH DAMAGE.
                 </plugins>
             </build>
         </profile>
-        <!--        <profile>
-            <id>release-profile</id>
-
-            <build>
-                <plugins>
-
-
-
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>-->
     </profiles>
 </project>

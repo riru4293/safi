@@ -50,6 +50,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 @EntityListeners({FooterUpdater.class})
 public abstract class CommonEntity implements Serializable {
 
+    @java.io.Serial
     private static final long serialVersionUID = 3812032853350817271L;
 
     @Column(name = "note")

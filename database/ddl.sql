@@ -34,15 +34,15 @@ CREATE TABLE           `t_job` (
   , `kind`                VARCHAR(     20) NOT NULL                                    COMMENT 'Job kind. Values are IMPORT, EXPORT, REBUILD.'
   , `target`              VARCHAR(     20) NOT NULL                                    COMMENT 'Target content type. Values are USER, ASSET, BELONG_ORG, ORG1, ORG2, BELONG_GRP, GRP, PER_USER, PER_ASSET.'
   , `sche_ts`            DATETIME          NOT NULL                                    COMMENT 'Job scheduling time.'
-  , `limit_ts`           DATETIME          NOT NULL                                    COMMENT 'Expiration time for job.'            
+  , `limit_ts`           DATETIME          NOT NULL                                    COMMENT 'Expiration time for job.'
   , `begin_ts`           DATETIME                                                      COMMENT 'Begun time of job.'
   , `end_ts`             DATETIME                                                      COMMEnt 'End time of job.'
   , `props`                  JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Option values for job processing.'
   , `jobdef_id`           VARCHAR(     36) NOT NULL                                    COMMENT 'Source job definition id'
   , `jobdef`                 JSON          NOT NULL                                    COMMENT 'Source job definition'
   , `schedef_id`          VARCHAR(     36)                                             COMMENT 'Source schedule definition id.'
-  , `schedef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Source schedule definition'
-  , `results`                JSON          NOT NULL DEFAULT '[]'                       COMMENT 'Result messages array. Expects the format: ["msg1", "msg2"].'
+  , `schedef`                JSON                                                      COMMENT 'Source schedule definition'
+  , `results`                JSON                                                      COMMENT 'Result messages array. Expects the format: ["msg1", "msg2"].'
 -- ---------------------+--------+--------+--------+-----------------------------------
   , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
   , `version`                 INT          NOT NULL DEFAULT 1                          COMMENT 'JPA entity version. Used for mutual exclusion control. Starts at 1 and increments with each update.'
@@ -72,8 +72,8 @@ CREATE TABLE           `m_jobdef` (
   , `timeout`             VARCHAR(     20) NOT NULL                                    COMMENT 'Job processing timeout.'
   , `name`                VARCHAR(    250)          COLLATE utf8mb4_unicode_ci         COMMENT 'Job definition name'
   , `plugin`              VARCHAR(     50)          COLLATE utf8mb4_unicode_ci         COMMENT 'Plugin name'
-  , `trnsdef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Content transform definition'
-  , `filtdef`                JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Content filtering definition'
+  , `trnsdef`                JSON                                                      COMMENT 'Content transform definition'
+  , `filtdef`                JSON                                                      COMMENT 'Content filtering definition'
   , `job_props`              JSON          NOT NULL DEFAULT '{}'                       COMMENT 'Option values for job processing.'
 -- ---------------------+--------+--------+--------+-----------------------------------
   , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
@@ -115,5 +115,30 @@ CREATE TABLE           `m_schedef` (
   , PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT
   COMMENT='Jos schedule definition.'
+  ENCRYPTED=YES ENCRYPTION_KEY_ID=4
+;
+
+DROP   TABLE IF EXISTS `m_appconf`;
+CREATE TABLE           `m_appconf` (
+-- ---------------------+--------+--------+--------+-----------------------------------
+    `id`                  VARCHAR(     36) NOT NULL                                    COMMENT 'SAFI configuration id'
+  , `from_ts`            DATETIME          NOT NULL DEFAULT '2000-01-01 00:00:00'      COMMENT 'Begin date-time of enabled period.'
+  , `to_ts`              DATETIME          NOT NULL DEFAULT '2999-12-31 23:59:59'      COMMENT 'End date-time of enabled period.'
+  , `ignored`             BOOLEAN          NOT NULL DEFAULT FALSE                      COMMENT 'Ignore flag. True means ignore and the enabled state is disabled.'
+  , `name`                VARCHAR(    250)          COLLATE utf8mb4_unicode_ci         COMMENT 'SAFI configuration name'
+  , `val`                    JSON                                                      COMMENT 'SAFI configuration value'
+-- ---------------------+--------+--------+--------+-----------------------------------
+  , `note`                   TEXT                   COLLATE utf8mb4_unicode_ci         COMMENT 'Notes for maintenance use only.'
+  , `version`                 INT          NOT NULL DEFAULT 1                          COMMENT 'JPA entity version. Used for mutual exclusion control. Starts at 1 and increments with each update.'
+  , `reg_ts`             DATETIME                                                      COMMENT 'Registerd time'
+  , `reg_id`              VARCHAR(    250)                                             COMMENT 'The ID of the account that registered.'
+  , `reg_ap`              VARCHAR(    250)                                             COMMENT 'The name of the application that registered.'
+  , `upd_ts`             DATETIME                                                      COMMENT 'Updated time'
+  , `upd_id`              VARCHAR(    250)                                             COMMENT 'The ID of the account that updated.'
+  , `upd_ap`              VARCHAR(    250)                                             COMMENT 'The name of the application that updated.'
+-- ---------------------+--------+--------+--------+-----------------------------------
+  , PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci ROW_FORMAT=COMPACT
+  COMMENT='SAFI configuration.'
   ENCRYPTED=YES ENCRYPTION_KEY_ID=4
 ;

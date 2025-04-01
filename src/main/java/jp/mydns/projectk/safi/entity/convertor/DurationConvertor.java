@@ -56,8 +56,8 @@ public final class DurationConvertor implements AttributeConverter<Duration, Str
     /**
      * Convert to entity attribute type.
      *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code Duration}. It
-     * can be set {@code null}.
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code Duration}. It can be
+     * set {@code null}.
      * @return {@code dbVal} as {@code Duration}. {@code null} if {@code dbVal} is {@code null}.
      * @throws DateTimeParseException if {@code dbVal} is malformed as {@code Duration}
      * @since 3.0.0

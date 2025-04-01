@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.service;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Typed;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -39,8 +40,7 @@ import java.time.temporal.ChronoUnit;
  * @version 3.0.0
  * @since 3.0.0
  */
-@RequestScoped
-public class RealTimeService {
+public interface RealTimeService {
 
     /**
      * Get current time. Accuracy is seconds.
@@ -48,9 +48,7 @@ public class RealTimeService {
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public OffsetDateTime getOffsetNow() {
-        return getExactlyOffsetNow().truncatedTo(ChronoUnit.SECONDS);
-    }
+    OffsetDateTime getOffsetNow();
 
     /**
      * Get current time. Accuracy is seconds.
@@ -58,9 +56,7 @@ public class RealTimeService {
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public LocalDateTime getLocalNow() {
-        return getOffsetNow().toLocalDateTime();
-    }
+    LocalDateTime getLocalNow();
 
     /**
      * Get exactly current time. Can only be used when {@link #getOffsetNow()} has insufficient precision.
@@ -68,9 +64,7 @@ public class RealTimeService {
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public OffsetDateTime getExactlyOffsetNow() {
-        return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized());
-    }
+    OffsetDateTime getExactlyOffsetNow();
 
     /**
      * Get exactly current time. Can only be used when {@link #getLocalNow()} has insufficient precision.
@@ -78,7 +72,58 @@ public class RealTimeService {
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
      */
-    public LocalDateTime getExactlyLocalNow() {
-        return getExactlyOffsetNow().toLocalDateTime();
+    LocalDateTime getExactlyLocalNow();
+
+    /**
+     * Implements of the {@code RealTimeService}.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    @Typed(RealTimeService.class)
+    @RequestScoped
+    class Impl implements RealTimeService {
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public OffsetDateTime getOffsetNow() {
+            return getExactlyOffsetNow().truncatedTo(ChronoUnit.SECONDS);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @return current time, in that case timezone is UTC.
+         * @since 3.0.0
+         */
+        @Override
+        public LocalDateTime getLocalNow() {
+            return getOffsetNow().toLocalDateTime();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public OffsetDateTime getExactlyOffsetNow() {
+            return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized());
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
+        public LocalDateTime getExactlyLocalNow() {
+            return getExactlyOffsetNow().toLocalDateTime();
+        }
     }
 }

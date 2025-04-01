@@ -77,7 +77,7 @@ class TimeUtilsTest {
      * @since 3.0.0
      */
     @Test
-    void testToLocalDateTime() {
+    void testToLocalDateTime_String() {
 
         var expect = LocalDateTime.of(1999, 12, 31, 23, 48, 53, 123456);
 
@@ -92,21 +92,45 @@ class TimeUtilsTest {
      * @since 3.0.0
      */
     @Test
-    void testToLocalDateTimeIfNull() {
-
-        assertThatNullPointerException().isThrownBy(() -> TimeUtils.toLocalDateTime(null));
+    void testToLocalDateTime_StringIfNull() {
+        assertThatNullPointerException().isThrownBy(() -> TimeUtils.toLocalDateTime(String.class.cast(null)));
     }
 
-    /**
+        /**
      * Test of toLocalDateTime method, if malformed.
      *
      * @since 3.0.0
      */
     @Test
-    void testToLocalDateTimeIfMalformed() {
+    void testToLocalDateTime_StringIfMalformed() {
 
         var malformed = "1999-13-32T27:78:92.123456";
 
         assertThatThrownBy(() -> TimeUtils.toLocalDateTime(malformed)).hasCauseInstanceOf(DateTimeException.class);
+    }
+
+    /**
+     * Test of toLocalDateTime method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testToLocalDateTime_OffsetDateTime() {
+
+        var expect = LocalDateTime.of(1999, 12, 31, 23, 48, 53, 123456);
+
+        var value = OffsetDateTime.of(2000, 1, 1, 2, 48, 53, 123456, ZoneOffset.ofHours(3));
+
+        assertThat(TimeUtils.toLocalDateTime(value)).isEqualTo(expect);
+    }
+
+    /**
+     * Test of toLocalDateTime method, if {@code null}.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testToLocalDateTime_OffsetDateTimeIfNull() {
+        assertThat(TimeUtils.toLocalDateTime(OffsetDateTime.class.cast(null))).isNull();
     }
 }
