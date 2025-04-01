@@ -30,7 +30,7 @@ import jakarta.enterprise.inject.Produces;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- * Produce the {@link RequestContext}. Must be set values before producing.
+ * Producer of the {@link RequestContext}. Must be set values before producing.
  *
  * @author riru
  * @version 3.0.0

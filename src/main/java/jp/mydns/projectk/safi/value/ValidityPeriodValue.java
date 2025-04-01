@@ -31,8 +31,6 @@ import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
@@ -41,7 +39,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
 
@@ -57,49 +54,16 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/validity-period.schema.json",
- *     "title": "ValidityPeriod",
- *     "description": "Validity period.",
- *     "type": "object",
- *     "properties": {
- *         "properties": {
- *             "from": {
- *                 "description": "Begin date-time of validity period.",
- *                 "type": "date-time",
- *                 "default": "2000-01-01T00:00:00Z"
- *             },
- *             "to": {
- *                 "description": "End date-time of validity period.",
- *                 "type": "date-time",
- *                 "default": "2999-12-31T23:59:59Z"
- *             },
- *             "ignored": {
- *                 "description": "Flag that forbidden to be valid.",
- *                 "type": "boolean",
- *                 "default": false
- *             }
- *         }
- *     },
- *     "required": [
- *         "from",
- *         "to",
- *         "ignored"
- *     ]
- * }
- * </code></pre>
+ * <a href="{@docRoot}/../schemas/validity-period.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
 @JsonbTypeDeserializer(ValidityPeriodValue.Deserializer.class)
-@Schema(name = "ValidityPeriod", description = "Validity period.")
-public interface ValidityPeriodValue {
+@Schema(name = "ValidityPeriod", description = "It has a validity period and an ignore flag, the combination of which"
+        + " indicates whether a value that has this as a property is valid or invalid.")
+public interface ValidityPeriodValue extends ValueTemplate {
 
     /**
      * Get begin date-time of validity period.
@@ -107,7 +71,8 @@ public interface ValidityPeriodValue {
      * @return begin date-time of validity period
      * @since 3.0.0
      */
-    @Schema(example = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period.")
+    @Schema(defaultValue = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period."
+            + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -119,7 +84,8 @@ public interface ValidityPeriodValue {
      * @return end date-time of validity period
      * @since 3.0.0
      */
-    @Schema(example = "2999-12-31T23:59:59Z", description = "End date-time of validity period.")
+    @Schema(defaultValue = "2999-12-31T23:59:59Z", description = "End date-time of validity period."
+            + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -131,7 +97,7 @@ public interface ValidityPeriodValue {
      * @return {@code true} if forbidden to be valid, otherwise {@code false}.
      * @since 3.0.0
      */
-    @Schema(example = "false", description = "Flag that forbidden to be valid. true if forbidden.")
+    @Schema(defaultValue = "false", description = "Flag that forbidden to be valid. true if forbidden.")
     boolean isIgnored();
 
     /**
@@ -199,26 +165,34 @@ public interface ValidityPeriodValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Builder {
+    class Builder extends AbstractBuilder<Builder, ValidityPeriodValue> {
 
         private OffsetDateTime from = defaultFrom();
         private OffsetDateTime to = defaultTo();
         private boolean ignored = false;
 
         /**
-         * Set all properties from {@code src}.
+         * Constructor.
          *
-         * @param src source value
-         * @return updated this
+         * @since 3.0.0
+         */
+        public Builder() {
+            super(Builder.class);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 3.0.0
          */
+        @Override
         public Builder with(ValidityPeriodValue src) {
-            Objects.requireNonNull(src);
+            super.with(Objects.requireNonNull(src));
 
-            this.from = src.getFrom();
-            this.to = src.getTo();
-            this.ignored = src.isIgnored();
+            withFrom(src.getFrom());
+            withTo(src.getTo());
+            withIgnored(src.isIgnored());
 
             return this;
         }
@@ -260,17 +234,13 @@ public interface ValidityPeriodValue {
         }
 
         /**
-         * Build a new inspected instance.
+         * {@inheritDoc}
          *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public ValidityPeriodValue build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(new Bean(this), validator, groups);
+        @Override
+        public ValidityPeriodValue unsafeBuild() {
+            return new Bean(this);
         }
 
         /**
@@ -294,13 +264,7 @@ public interface ValidityPeriodValue {
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code ValidityPeriodValue.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(Builder builder) {
+            private Bean(Builder builder) {
                 this.from = builder.from;
                 this.to = builder.to;
                 this.ignored = builder.ignored;

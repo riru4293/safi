@@ -30,18 +30,18 @@ import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.stream.JsonParser;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.groups.Default;
 import java.lang.reflect.Type;
 import java.util.Map;
-import jp.mydns.projectk.safi.util.ValidationUtils;
+import java.util.Objects;
+import jp.mydns.projectk.safi.util.CollectionUtils;
 
 /**
- * An information for filtering the content values.It has a transform definition and filtering condition, and is used to
- * determine whether the transform result matches the filtering condition. If transform definition is {@code null}, no
- * transformation is performed and the input is passed to the filtering process as is.
+ * An information for filtering the content values. It has a transform definition and filtering condition, and is used
+ * to determine whether the transform result matches the filtering condition. If transform definition is {@code null},
+ * no transformation is performed and the input is passed to the filtering process as is.
  *
  * <p>
  * Implementation requirements.
@@ -50,35 +50,7 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  * <li>This and JSON can be converted bidirectionally.</li>
  * </ul>
  *
- * <p>
- * JSON format
- * <pre><code>
- * {
- *     "$schema": "https://json-schema.org/draft/2020-12/schema",
- *     "$id": "https://project-k.mydns.jp/safi/filtdef.schema.json",
- *     "title": "Filtdef",
- *     "description": "Content filtering definition.",
- *     "type": "object",
- *     "properties": {
- *         "trnsdef": {
- *             "description": "Transform definition for filtering.",
- *             "type": "object",
- *             "patternProperties": {
- *                 "^.+$": {
- *                     "type": "string"
- *                 }
- *             }
- *         },
- *         "condition": {
- *             "description": "Plugin execution arguments.",
- *             "$ref": "https://project-k.mydns.jp/safi/filtering-condition.schema.json"
- *         },
- *         "required": [
- *             "trnsdef", "condition"
- *         ]
- *     }
- * }
- * </code></pre>
+ * <a href="{@docRoot}/../schemas/filtdef.schema.json">Json schema is here</a>
  *
  * @author riru
  * @version 3.0.0
@@ -86,10 +58,10 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
  */
 @JsonbTypeDeserializer(FiltdefValue.Deserializer.class)
 @Schema(name = "Filtdef", description = "An information for filtering the content values.",
-    example = "{\"condition\":{\"operation\":\"AND\",\"children\":[{\"operation\":\"EQUAL\",\"name\":\"kind\","
-    + "\"value\":\"2\"},{\"operation\":\"PARTIAL_MATCH\",\"name\":\"name\",\"value\":\"taro\"}]},"
-    + "\"trnsdef\":{\"name\":\"[userName]\",\"kind\":\"[userType]\",\"id\":\"[userId]\"}}")
-public interface FiltdefValue {
+        example = "{\"condition\":{\"operation\":\"AND\",\"children\":[{\"operation\":\"EQUAL\",\"name\":\"kind\","
+        + "\"value\":\"2\"},{\"operation\":\"PARTIAL_MATCH\",\"name\":\"name\",\"value\":\"taro\"}]},"
+        + "\"trnsdef\":{\"name\":\"[userName]\",\"kind\":\"[userType]\",\"id\":\"[userId]\"}}")
+public interface FiltdefValue extends ValueTemplate {
 
     /**
      * Get the transform definition for filtering.
@@ -97,8 +69,8 @@ public interface FiltdefValue {
      * @return transform definition for filtering
      * @since 3.0.0
      */
-    @Schema(description = "Transform definition for filtering.")
-    @NotNull
+    @NotNull(groups = Default.class)
+    @Schema(ref = "#/components/schemas/Jobdef/properties/trnsdef")
     Map<String, String> getTrnsdef();
 
     /**
@@ -107,10 +79,9 @@ public interface FiltdefValue {
      * @return filtering condition
      * @since 3.0.0
      */
-    @Schema(description = "Filtering condition.")
-    @NotNull
+    @NotNull(groups = Default.class)
     @Valid
-    FilteringCondition getCondition();
+    FilteringConditionValue getCondition();
 
     /**
      * Builder of the {@code FiltdefValue}.
@@ -119,10 +90,35 @@ public interface FiltdefValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Builder {
+    class Builder extends AbstractBuilder<Builder, FiltdefValue> {
 
-        private Map<String, String> trnsdef = Map.of();
-        private FilteringCondition condition = FilteringCondition.empty();
+        private Map<String, String> trnsdef;
+        private FilteringConditionValue condition;
+
+        /**
+         * Constructor.
+         *
+         * @since 3.0.0
+         */
+        public Builder() {
+            super(Builder.class);
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code src} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public Builder with(FiltdefValue src) {
+            super.with(Objects.requireNonNull(src));
+
+            withTrnsdef(src.getTrnsdef());
+            withCondition(src.getCondition());
+
+            return this;
+        }
 
         /**
          * Set transform definition for filtering.
@@ -132,7 +128,7 @@ public interface FiltdefValue {
          * @since 3.0.0
          */
         public Builder withTrnsdef(Map<String, String> trnsdef) {
-            this.trnsdef = trnsdef;
+            this.trnsdef = CollectionUtils.toUnmodifiable(trnsdef);
             return this;
         }
 
@@ -143,23 +139,19 @@ public interface FiltdefValue {
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withFilter(FilteringCondition condition) {
+        public Builder withCondition(FilteringConditionValue condition) {
             this.condition = condition;
             return this;
         }
 
         /**
-         * Build a new inspected instance.
+         * {@inheritDoc}
          *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
          * @since 3.0.0
          */
-        public FiltdefValue build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(new Bean(this), validator, groups);
+        @Override
+        public FiltdefValue unsafeBuild() {
+            return new Bean(this);
         }
 
         /**
@@ -172,7 +164,7 @@ public interface FiltdefValue {
         protected static class Bean implements FiltdefValue {
 
             private Map<String, String> trnsdef;
-            private FilteringCondition condition;
+            private FilteringConditionValue condition;
 
             /**
              * Constructor. Used only for deserialization from JSON.
@@ -182,13 +174,7 @@ public interface FiltdefValue {
             protected Bean() {
             }
 
-            /**
-             * Constructor.
-             *
-             * @param builder the {@code FiltdefValue.Builder}
-             * @since 3.0.0
-             */
-            protected Bean(FiltdefValue.Builder builder) {
+            private Bean(Builder builder) {
                 this.trnsdef = builder.trnsdef;
                 this.condition = builder.condition;
             }
@@ -210,7 +196,7 @@ public interface FiltdefValue {
              * @since 3.0.0
              */
             public void setTrnsdef(Map<String, String> trnsdef) {
-                this.trnsdef = trnsdef;
+                this.trnsdef = CollectionUtils.toUnmodifiable(trnsdef);
             }
 
             /**
@@ -219,7 +205,7 @@ public interface FiltdefValue {
              * @since 3.0.0
              */
             @Override
-            public FilteringCondition getCondition() {
+            public FilteringConditionValue getCondition() {
                 return condition;
             }
 
@@ -229,7 +215,7 @@ public interface FiltdefValue {
              * @param condition filtering condition
              * @since 3.0.0
              */
-            public void setCondition(FilteringCondition condition) {
+            public void setCondition(FilteringConditionValue condition) {
                 this.condition = condition;
             }
 

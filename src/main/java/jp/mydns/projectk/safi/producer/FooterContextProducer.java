@@ -29,6 +29,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import jp.mydns.projectk.safi.entity.FooterContext;
 import jp.mydns.projectk.safi.service.RealTimeService;
 import jp.mydns.projectk.safi.value.RequestContext;
@@ -49,14 +50,15 @@ public class FooterContextProducer {
     /**
      * Constructor.
      *
-     * @param reqCtx the {@code RequestContext}.
+     * @param reqCtx the {@code RequestContext}
      * @param realTimeSvc the {@code RealTimeService}
+     * @throws NullPointerException if any argument is {@code null}
      * @since 3.0.0
      */
     @Inject
     public FooterContextProducer(RequestContext reqCtx, RealTimeService realTimeSvc) {
-        this.reqCtx = reqCtx;
-        this.realTimeSvc = realTimeSvc;
+        this.reqCtx = Objects.requireNonNull(reqCtx);
+        this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
     }
 
     /**
@@ -68,23 +70,16 @@ public class FooterContextProducer {
     @Produces
     @RequestScoped
     public FooterContext produce() {
-        return new FooterContextImpl(realTimeSvc.getLocalNow(), reqCtx.getAccountId(), reqCtx.getProcessName());
+        return new Impl(realTimeSvc.getLocalNow(), reqCtx.getAccountId(), reqCtx.getProcessName());
     }
 
-    private class FooterContextImpl implements FooterContext {
+    private class Impl implements FooterContext {
 
         private final LocalDateTime utcNow;
         private final String accountId;
         private final String processName;
 
-        /**
-         * Constructor.
-         *
-         * @param utcNow now as UTC
-         * @param accountId logged account id
-         * @param processName current processing name
-         */
-        public FooterContextImpl(LocalDateTime utcNow, String accountId, String processName) {
+        private Impl(LocalDateTime utcNow, String accountId, String processName) {
             this.utcNow = utcNow;
             this.accountId = accountId;
             this.processName = processName;

@@ -30,6 +30,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.validation.Validator;
+import java.util.List;
 import java.util.Map;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
@@ -47,6 +48,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(JsonbParameterResolver.class)
 @ExtendWith(ValidatorParameterResolver.class)
 class FiltdefValueTest {
+
+    /**
+     * Test of build method, of class Builder.
+     *
+     * @param validator the {@code Validator}. This parameter resolved by {@code ValidatorParameterResolver}.
+     * @since 3.0.0
+     */
+    @Test
+    void testBuild(Validator validator) {
+        var trnsdef = Map.<String, String>of();
+        var condition = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("n").withValue("v").build(validator);
+
+        // Build value
+        var val = new FiltdefValue.Builder().with(
+            new FiltdefValue.Builder().withTrnsdef(trnsdef).withCondition(condition).build(validator)).build(validator);
+
+        assertThat(val).returns(trnsdef, FiltdefValue::getTrnsdef)
+            .returns(condition, FiltdefValue::getCondition);
+    }
 
     /**
      * Test of deserialize method, of class Deserializer.
@@ -80,8 +101,11 @@ class FiltdefValueTest {
     void testToString(Validator validator) {
         String tmpl = "FiltdefValue{trnsdef=%s, condition=%s}";
 
-        var val = new FiltdefValue.Builder().withTrnsdef(Map.of()).withFilter(FilteringCondition.empty()).build(validator);
+        var condition = new NodeConditionValue.Builder(FilteringOperationValue.NodeOperation.NOT_OR)
+            .withChildren(List.of()).build(validator);
 
-        assertThat(val).hasToString(tmpl, Map.of(), FilteringCondition.empty());
+        var val = new FiltdefValue.Builder().withTrnsdef(Map.of()).withCondition(condition).build(validator);
+
+        assertThat(val).hasToString(tmpl, Map.of(), condition);
     }
 }

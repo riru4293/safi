@@ -82,4 +82,14 @@ entity "t_job" as t_job {
 m_jobdef ||--o{ t_job : "id = jobdef_id"
 m_schedef ||--o{ t_job : "id = schedef_id"
 
+entity "m_appconf" as m_appconf {
+    * id
+    --
+      from_ts
+      to_ts
+      ignored
+      name
+      val
+}
+
 @enduml

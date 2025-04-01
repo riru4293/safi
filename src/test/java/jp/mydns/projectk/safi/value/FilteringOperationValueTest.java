@@ -28,81 +28,40 @@ package jp.mydns.projectk.safi.value;
 import jakarta.json.Json;
 import jakarta.json.JsonString;
 import jakarta.json.bind.Jsonb;
+import static jp.mydns.projectk.safi.constant.FilteringOperationKing.LEAF;
+import static jp.mydns.projectk.safi.constant.FilteringOperationKing.NODE;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
- * Test of class {@code FilteringOperation}.
+ * Test of class {@code FilteringOperationValue}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
 @ExtendWith(JsonbParameterResolver.class)
-class FilteringOperationTest {
+class FilteringOperationValueTest {
 
     /**
-     * Test of asSingle method.
+     * Test of deserialize method if leaf operation, of class Deserializer.
      *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsSingle() {
-        var expect = FilteringOperation.Single.EQUAL;
-
-        var result = expect.asSingle();
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of asSingle method if illegal class.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsSingleIfIllegalClass() {
-        assertThatThrownBy(FilteringOperation.Multi.AND::asSingle).isInstanceOf(ClassCastException.class);
-    }
-
-    /**
-     * Test of asMulti method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsMulti() {
-        var expect = FilteringOperation.Multi.AND;
-
-        var result = expect.asMulti();
-
-        assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of asMulti method if illegal class.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testAsMultiIfIllegalClass() {
-        assertThatThrownBy(FilteringOperation.Single.EQUAL::asMulti).isInstanceOf(ClassCastException.class);
-    }
-
-    /**
-     * Test of deserialize method if single operation, of class Deserializer.
-     *
+     * @param opName filtering operation name
      * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
      * @since 3.0.0
      */
-    @Test
-    void testDeserializeIfSingle(Jsonb jsonb) {
-        JsonString expect = Json.createValue("EQUAL");
+    @ParameterizedTest
+    @ValueSource(strings = {"EQUAL", "FORWARD_MATCH", "PARTIAL_MATCH", "BACKWARD_MATCH", "GRATER_THAN", "LESS_THAN",
+        "IS_NULL"})
+    void testDeserializeIfLeafOperation(String opName, Jsonb jsonb) {
+        JsonString expect = Json.createValue(opName);
 
-        var deserialized = jsonb.fromJson(expect.toString(), FilteringOperation.class);
+        var deserialized = jsonb.fromJson(expect.toString(), FilteringOperationValue.class);
+
+        assertThat(deserialized).returns(LEAF, FilteringOperationValue::getKind);
 
         var serialized = jsonb.toJson(deserialized);
 
@@ -112,34 +71,25 @@ class FilteringOperationTest {
     }
 
     /**
-     * Test of deserialize method if multi operation, of class Deserializer.
+     * Test of deserialize method if node operation, of class Deserializer.
      *
+     * @param opName filtering operation name
      * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
      * @since 3.0.0
      */
-    @Test
-    void testDeserializeIfMulti(Jsonb jsonb) {
-        JsonString expect = Json.createValue("AND");
+    @ParameterizedTest
+    @ValueSource(strings = {"AND", "OR", "NOT_OR"})
+    void testDeserializeIfNodeOperation(String opName, Jsonb jsonb) {
+        JsonString expect = Json.createValue(opName);
 
-        var deserialized = jsonb.fromJson(expect.toString(), FilteringOperation.class);
+        var deserialized = jsonb.fromJson(expect.toString(), FilteringOperationValue.class);
+
+        assertThat(deserialized).returns(NODE, FilteringOperationValue::getKind);
 
         var serialized = jsonb.toJson(deserialized);
 
         var result = jsonb.fromJson(serialized, JsonString.class);
 
         assertThat(result).isEqualTo(expect);
-    }
-
-    /**
-     * Test of deserialize method if null, of class Deserializer.
-     *
-     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
-     * @since 3.0.0
-     */
-    @Test
-    void testDeserializeIfNull(Jsonb jsonb) {
-        var deserialized = jsonb.fromJson("null", FilteringOperation.class);
-
-        assertThat(deserialized).isNull();
     }
 }

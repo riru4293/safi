@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- * Test of class {@code JobCreationContext}.
+ * Test of class {@code JobCreationRequest}.
  *
  * @author riru
  * @version 3.0.0
@@ -49,7 +49,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  */
 @ExtendWith(JsonbParameterResolver.class)
 @ExtendWith(ValidatorParameterResolver.class)
-class JobCreationContextTest {
+class JobCreationRequestTest {
 
     /**
      * Test of build method, of class Builder.
@@ -60,18 +60,22 @@ class JobCreationContextTest {
     @Test
     void testBuild(Validator validator) {
         var scheduleTime = OffsetDateTime.of(2001, 2, 3, 4, 5, 6, 0, ZoneOffset.UTC);
-        var filtdef = new FiltdefValue.Builder().build(validator);
+        var trnsdef = Map.<String, String>of();
+        var condition = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("n").withValue("v").build(validator);
+        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withCondition(condition).build(validator);
 
         // Build value
-        var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
-            .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
-            .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).build(validator);
+        var val = new JobCreationRequest.Builder().with(
+            new JobCreationRequest.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
+                .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(trnsdef).withFiltdef(filtdef)
+                .withJobProperties(JsonValue.EMPTY_JSON_OBJECT).build(validator)).build(validator);
 
-        assertThat(val).returns("jobdef-id", JobCreationContext::getJobdefId)
+        assertThat(val).returns("jobdef-id", JobCreationRequest::getJobdefId)
             .satisfies(v -> assertThat(v.getScheduleTime()).hasValue(scheduleTime))
             .satisfies(v -> assertThat(v.getTimeout()).hasValue(Duration.ZERO))
             .satisfies(v -> assertThat(v.getPluginName()).hasValue("plg"))
-            .satisfies(v -> assertThat(v.getTrnsdef()).hasValue(Map.of()))
+            .satisfies(v -> assertThat(v.getTrnsdef()).hasValue(trnsdef))
             .satisfies(v -> assertThat(v.getFiltdef()).hasValue(filtdef))
             .satisfies(v -> assertThat(v.getJobProperties()).hasValue(JsonValue.EMPTY_JSON_OBJECT));
     }
@@ -97,7 +101,7 @@ class JobCreationContextTest {
             .add("jobProperties", Json.createObjectBuilder().add("p1", "A"))
             .build();
 
-        var deserialized = jsonb.fromJson(expect.toString(), JobCreationContext.class);
+        var deserialized = jsonb.fromJson(expect.toString(), JobCreationRequest.class);
 
         var serialized = jsonb.toJson(deserialized);
 
@@ -114,13 +118,15 @@ class JobCreationContextTest {
      */
     @Test
     void testToString(Validator validator) {
-        String tmpl = "JobCreationContext{jobdefId=%s, scheduleTime=%s, timeout=%s, pluginName=%s, trnsdef=%s"
+        String tmpl = "JobCreationRequest{jobdefId=%s, scheduleTime=%s, timeout=%s, pluginName=%s, trnsdef=%s"
             + ", filtdef=%s, jobProperties=%s}";
 
         var scheduleTime = OffsetDateTime.of(2000, 1, 1, 12, 33, 55, 0, ZoneOffset.UTC);
-        var filtdef = new FiltdefValue.Builder().build(validator);
+        var conditiion = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
+            .withName("n").withValue("v").build(validator);
+        var filtdef = new FiltdefValue.Builder().withTrnsdef(Map.of()).withCondition(conditiion).build(validator);
 
-        var val = new JobCreationContext.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
+        var val = new JobCreationRequest.Builder().withJobdefId("jobdef-id").withScheduleTime(scheduleTime)
             .withTimeout(Duration.ZERO).withPluginName("plg").withTrnsdef(Map.of()).withFiltdef(filtdef)
             .withJobProperties(JsonValue.EMPTY_JSON_OBJECT)
             .build(validator);

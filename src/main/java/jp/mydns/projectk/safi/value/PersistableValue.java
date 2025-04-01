@@ -26,8 +26,7 @@
 package jp.mydns.projectk.safi.value;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Validator;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import jakarta.validation.groups.Default;
@@ -50,7 +49,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  * @version 3.0.0
  * @since 3.0.0
  */
-public interface PersistableValue {
+public interface PersistableValue extends ValueTemplate {
 
     /**
      * Get note for this value.
@@ -58,17 +57,18 @@ public interface PersistableValue {
      * @return note for this value
      * @since 3.0.0
      */
-    @Schema(description = "Note for this value.")
+    @Schema(description = "Note for this value.", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @NotNull(groups = Default.class)
     Optional<String> getNote();
 
     /**
-     * Get version number for this value. Used for optimistic locking when updating this value. Incremented after
-     * update.
+     * Get version number for this value. Used for optimistic locking when updating this value. Please set to 0 for
+     * creation, set to the same value as when getting for update.
      *
      * @return version number. 0 means new value.
      * @since 3.0.0
      */
-    @Schema(description = "Version number for this value.")
+    @Schema(description = "Version number for this value.", defaultValue = "0", minimum = "0")
     @PositiveOrZero(groups = {Default.class})
     int getVersion();
 
@@ -78,8 +78,10 @@ public interface PersistableValue {
      * @return registered time
      * @since 3.0.0
      */
-    @Schema(description = "Registered time.")
-    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getRegisterTime();
+    @Schema(description = "Registered time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
+            accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @NotNull(groups = Default.class)
+    Optional<@TimeRange(groups = {Default.class}) @TimeAccuracy(groups = {Default.class}) OffsetDateTime> getRegisterTime();
 
     /**
      * Get account id who made this value.
@@ -87,8 +89,10 @@ public interface PersistableValue {
      * @return account id
      * @since 3.0.0
      */
-    @Schema(description = "Account id who made this value.")
-    Optional<@Size(max = 250) String> getRegisterAccountId();
+    @Schema(description = "Account id who made this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @NotNull(groups = Default.class)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getRegisterAccountId();
 
     /**
      * Get name of the process who made this value.
@@ -96,8 +100,10 @@ public interface PersistableValue {
      * @return process name
      * @since 3.0.0
      */
-    @Schema(description = "Process name who made this value.")
-    Optional<@Size(max = 250) String> getRegisterProcessName();
+    @Schema(description = "Process name who made this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @NotNull(groups = Default.class)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getRegisterProcessName();
 
     /**
      * Get updated time.
@@ -105,8 +111,10 @@ public interface PersistableValue {
      * @return updated time
      * @since 3.0.0
      */
-    @Schema(description = "Updated time.")
-    Optional<@TimeRange @TimeAccuracy OffsetDateTime> getUpdateTime();
+    @Schema(description = "Updated time. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
+            accessMode = Schema.AccessMode.READ_ONLY, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @NotNull(groups = Default.class)
+    Optional<@TimeRange(groups = {Default.class}) @TimeAccuracy(groups = {Default.class}) OffsetDateTime> getUpdateTime();
 
     /**
      * Get account id who updated this value.
@@ -114,8 +122,10 @@ public interface PersistableValue {
      * @return account id
      * @since 3.0.0
      */
-    @Schema(description = "Account id who updated this value.")
-    Optional<@Size(max = 250) String> getUpdateAccountId();
+    @Schema(description = "Account id who updated this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @NotNull(groups = Default.class)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getUpdateAccountId();
 
     /**
      * Get name of the process who made this value.
@@ -123,8 +133,10 @@ public interface PersistableValue {
      * @return process name
      * @since 3.0.0
      */
-    @Schema(description = "Process name who updated this value.")
-    Optional<@Size(max = 250) String> getUpdateProcessName();
+    @NotNull(groups = Default.class)
+    @Schema(description = "Process name who updated this value.", accessMode = Schema.AccessMode.READ_ONLY,
+            maxLength = 250, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    Optional<@Size(max = 250, groups = {Default.class}) String> getUpdateProcessName();
 
     /**
      * Abstract builder of the {@code PersistableValue}.
@@ -135,9 +147,9 @@ public interface PersistableValue {
      * @version 3.0.0
      * @since 3.0.0
      */
-    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends PersistableValue> {
+    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends PersistableValue>
+        extends ValueTemplate.AbstractBuilder<B, V> {
 
-        protected final Class<B> builderType;
         protected String note;
         protected int version;
         protected OffsetDateTime registerTime;
@@ -148,7 +160,7 @@ public interface PersistableValue {
         protected String updateProcessName;
 
         protected AbstractBuilder(Class<B> builderType) {
-            this.builderType = Objects.requireNonNull(builderType);
+            super(builderType);
         }
 
         /**
@@ -159,17 +171,18 @@ public interface PersistableValue {
          * @throws NullPointerException if {@code src} is {@code null}
          * @since 3.0.0
          */
+        @Override
         public B with(V src) {
-            Objects.requireNonNull(src);
+            super.with(Objects.requireNonNull(src));
 
-            this.note = src.getNote().orElse(null);
-            this.version = src.getVersion();
-            this.registerTime = src.getRegisterTime().orElse(null);
-            this.registerAccountId = src.getRegisterAccountId().orElse(null);
-            this.registerProcessName = src.getRegisterProcessName().orElse(null);
-            this.updateTime = src.getUpdateTime().orElse(null);
-            this.updateAccountId = src.getUpdateAccountId().orElse(null);
-            this.updateProcessName = src.getUpdateProcessName().orElse(null);
+            withNote(src.getNote().orElse(null));
+            withVersion(src.getVersion());
+            withRegisterTime(src.getRegisterTime().orElse(null));
+            withRegisterAccountId(src.getRegisterAccountId().orElse(null));
+            withRegisterProcessName(src.getRegisterProcessName().orElse(null));
+            withUpdateTime(src.getUpdateTime().orElse(null));
+            withUpdateAccountId(src.getUpdateAccountId().orElse(null));
+            withUpdateProcessName(src.getUpdateProcessName().orElse(null));
 
             return builderType.cast(this);
         }
@@ -269,18 +282,6 @@ public interface PersistableValue {
             this.updateProcessName = updateProcessName;
             return builderType.cast(this);
         }
-
-        /**
-         * Build a new inspected instance.
-         *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
-         * @since 3.0.0
-         */
-        public abstract V build(Validator validator, Class<?>... groups);
 
         /**
          * Abstract implements of the {@code PersistableValue}.

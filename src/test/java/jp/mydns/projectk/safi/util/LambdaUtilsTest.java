@@ -32,11 +32,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
+import static java.util.stream.Collectors.toMap;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.assertj.core.api.Assertions.entry;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.Test;
 
@@ -186,81 +185,6 @@ class LambdaUtilsTest {
     }
 
     /**
-     * Test of toLinkedHashMap method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testToLinkedHashMap() {
-        var result = Stream.of(entry(2, "no2"), entry(1, "no1"), entry(3, "no3")).collect(LambdaUtils.toLinkedHashMap());
-
-        assertThat(result).containsExactly(entry(2, "no2"), entry(1, "no1"), entry(3, "no3"));
-    }
-
-    /**
-     * Test of toLinkedHashMap method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testToLinkedHashMap_BinaryOperator() {
-        var result = Stream.of(entry(2, "no2"), entry(1, "no1"), entry(3, "no3"), entry(2, "++"))
-            .collect(LambdaUtils.toLinkedHashMap((v1, v2) -> v1 + v2));
-
-        assertThat(result).containsExactly(entry(2, "no2++"), entry(1, "no1"), entry(3, "no3"));
-    }
-
-    /**
-     * Test of toTreeMap method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testToTreeMap() {
-        var result = Stream.of(entry(2, "no2"), entry(1, "no1"), entry(3, "no3")).collect(LambdaUtils.toTreeMap());
-
-        assertThat(result).containsExactly(entry(1, "no1"), entry(2, "no2"), entry(3, "no3"));
-    }
-
-    /**
-     * Test of toTreeMap method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testToTreeMap_BinaryOperator() {
-        var result = Stream.of(entry(2, "no2"), entry(1, "no1"), entry(3, "no3"), entry(2, "++"))
-            .collect(LambdaUtils.toTreeMap((v1, v2) -> v1 + v2));
-
-        assertThat(result).containsExactly(entry(1, "no1"), entry(2, "no2++"), entry(3, "no3"));
-    }
-
-    /**
-     * Test of toCaseInsensitiveMap method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testToCaseInsensitiveMap() {
-        var result = Stream.of(entry("A", "no2"), entry("B", "no1")).collect(LambdaUtils.toCaseInsensitiveMap());
-
-        assertThat(result).containsKeys("a", "b").containsExactlyInAnyOrderEntriesOf(Map.of("A", "no2", "B", "no1"));
-    }
-
-    /**
-     * Test of toCaseInsensitiveMap method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testToCaseInsensitiveMap_BinaryOperator() {
-        var result = Stream.of(entry("A", "no2"), entry("B", "no1"), entry("b", "--"))
-            .collect(LambdaUtils.toCaseInsensitiveMap((v1, v2) -> v1 + v2));
-
-        assertThat(result).containsKeys("a", "b").containsExactlyInAnyOrderEntriesOf(Map.of("A", "no2", "B", "no1--"));
-    }
-
-    /**
      * Test of s method.
      *
      * @since 3.0.0
@@ -273,5 +197,20 @@ class LambdaUtilsTest {
         var result = LambdaUtils.s(sup, proc).get();
 
         assertThat(result).isEqualTo("[10]");
+    }
+
+    /**
+     * Test of compute method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testCompute() {
+        var expect = Map.of("k1", 1, "k2", 2);
+
+        var result = Map.of("k1", "1", "k2", "2").entrySet().stream().map(LambdaUtils.compute(Integer::valueOf))
+            .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        assertThat(result).containsExactlyInAnyOrderEntriesOf(expect);
     }
 }

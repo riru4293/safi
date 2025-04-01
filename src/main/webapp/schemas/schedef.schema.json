@@ -1,0 +1,87 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://project-k.mydns.jp/safi/schemas/schedef.schema.json",
+    "title": "Schedef",
+    "description": "Definition for Job scheduling.",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "Schedule definition id.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+        },
+        "jobdefId": {
+            "description": "Job definition id.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+        },
+        "validityPeriod": {
+            "description": "Validity period.",
+            "$ref": "https://project-k.mydns.jp/safi/schemas/validity-period.schema.json"
+        },
+        "priority": {
+            "description": "Scheduling priority. The larger the number, the higher the priority.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1
+        },
+        "name": {
+            "description": "Schedule definition name.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "trigger": {
+            "description": "Schedule trigger configuration.",
+            "$ref": "https://project-k.mydns.jp/safi/schemas/schedule-trigger.schema.json"
+        },
+        "note": {
+            "description": "Note of this value.",
+            "type": "string"
+        },
+        "version": {
+            "description": "Entity version stored in database. 0 if not yet stored.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "registerTime": {
+            "description": "Registered time. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "registerAccountId": {
+            "description": "Registered account id. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "registerProcessName": {
+            "description": "Registered process name. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "updateTime": {
+            "description": "Update time. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "updateAccountId": {
+            "description": "Update account id. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "updateProcessName": {
+            "description": "Update peocess name. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        }
+    },
+    "required": [
+        "id",
+        "jobdefId",
+        "validityPeriod",
+        "priority",
+        "trigger",
+        "version"
+    ]
+}

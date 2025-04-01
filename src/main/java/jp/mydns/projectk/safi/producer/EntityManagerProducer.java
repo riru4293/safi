@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -53,5 +54,15 @@ public class EntityManagerProducer {
     @RequestScoped
     public EntityManager produce() {
         return em;
+    }
+
+    /**
+     * Close the produced {@code EntityManager} if disposed.
+     *
+     * @param em the produced {@code EntityManager}
+     * @since 3.0.0
+     */
+    public void close(@Disposes EntityManager em) {
+        em.close();
     }
 }

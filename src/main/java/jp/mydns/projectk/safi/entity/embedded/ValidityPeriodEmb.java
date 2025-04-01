@@ -45,6 +45,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 @Embeddable
 public class ValidityPeriodEmb implements Serializable {
 
+    @java.io.Serial
     private static final long serialVersionUID = -3134392376473803641L;
 
     @Basic(optional = false)

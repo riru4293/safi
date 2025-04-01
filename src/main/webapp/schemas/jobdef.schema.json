@@ -1,0 +1,104 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://project-k.mydns.jp/safi/schemas/jobdef.schema.json",
+    "title": "Jobdef",
+    "description": "Definition for creates a Job.",
+    "type": "object",
+    "properties": {
+        "id": {
+            "description": "Job definition id.",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 36
+        },
+        "validityPeriod": {
+            "description": "Validity period.",
+            "$ref": "https://project-k.mydns.jp/safi/schemas/validity-period.schema.json"
+        },
+        "jobKind": {
+            "description": "Job kind.",
+            "type": "string",
+            "enum": ["IMPORT", "EXPORT", "REBUILD"]
+        },
+        "jobTarget": {
+            "description": "Target content type.",
+            "type": "string",
+            "enum": ["USER", "ASSET", "BELONG_ORG", "ORG1", "ORG2", "BELONG_GRP", "GRP", "PER_USER", "PER_ASSET"]
+        },
+        "timeout": {
+            "description": "Job execution timeout.",
+            "type": "string",
+            "format": "duration"
+        },
+        "name": {
+            "description": "Job definition name.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "pluginName": {
+            "description": "The name of the plugin that processes the content.",
+            "type": "string",
+            "maxLength": 50
+        },
+        "trnsdef": {
+            "description": "Content transform definition.",
+            "$ref": "https://project-k.mydns.jp/safi/schemas/trnsdef.schema.json"
+        },
+        "filtdef": {
+            "description": "Content filtering definition.",
+            "$ref": "https://project-k.mydns.jp/safi/schemas/filtdef.schema.json"
+        },
+        "jobProperties": {
+            "description": "Optional configurations at job execution.",
+            "type": "object"
+        },
+        "note": {
+            "description": "Note of this value.",
+            "type": "string"
+        },
+        "version": {
+            "description": "Entity version stored in database. 0 if not yet stored.",
+            "type": "integer",
+            "minimum": 0
+        },
+        "registerTime": {
+            "description": "Registered time. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "registerAccountId": {
+            "description": "Registered account id. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "registerProcessName": {
+            "description": "Registered process name. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "updateTime": {
+            "description": "Update time. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "format": "date-time"
+        },
+        "updateAccountId": {
+            "description": "Update account id. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        },
+        "updateProcessName": {
+            "description": "Update peocess name. This value for reference only, setting it does not persist the value.",
+            "type": "string",
+            "maxLength": 250
+        }
+    },
+    "required": [
+        "id",
+        "validityPeriod",
+        "jobKind",
+        "jobTarget",
+        "timeout",
+        "jobProperties",
+        "version"
+    ]
+}

@@ -33,7 +33,7 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
 /**
- * Producer of {@link Jsonb}. Instances are created only once, reducing construction costs.
+ * Producer of the {@link Jsonb}. Instances are created only once, reducing construction costs.
  *
  * @author riru
  * @version 3.0.0
