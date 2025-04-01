@@ -58,12 +58,8 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.hibernate-validator>8.0.1.Final</version.hibernate-validator>
         <version.expressly>5.0.0</version.expressly>
         <version.yasson>3.0.4</version.yasson>
-        <!--<version.weld-junit5>4.0.1.Final</version.weld-junit5>-->
-        <!--<version.h2>2.2.224</version.h2>-->
-        <!--<version.bytebuddy>1.14.6</version.bytebuddy>-->
-        <!--<version.k-plugin-mechanism>1.0.0</version.k-plugin-mechanism>-->
-        <!--<version.k-formula-mechanism>1.0.0-M4</version.k-formula-mechanism>-->
-        <!--<version.safi-pif>2.0.4</version.safi-pif>-->
+        <version.weld-junit5>5.0.0.Final</version.weld-junit5>
+        <version.h2database>2.3.232</version.h2database>
         <version.jacoco>0.8.12</version.jacoco>
         <version.sonar>5.0.0.4389</version.sonar>
 
@@ -237,22 +233,6 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
-        <!--        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>safi-plugin-interface</artifactId>
-            <version>${version.safi-pif}</version>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>k-plugin-mechanism</artifactId>
-            <version>${version.k-plugin-mechanism}</version>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>jp.mydns.project-k</groupId>
-            <artifactId>k-formula-mechanism</artifactId>
-            <version>${version.k-formula-mechanism}</version>
-        </dependency>-->
-
         <!-- MicroProfile Config -->
         <!-- License: ASL-2.0 -->
         <dependency>
@@ -261,7 +241,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <version>${version.microprofile-config}</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- MicroProfile Config implements -->
         <!-- License: ASL-2.0 -->
         <dependency>
@@ -293,33 +273,18 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
-
-
-
-        <!--        <dependency>
+        <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-junit5</artifactId>
             <version>${version.weld-junit5}</version>
             <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
+        </dependency>
+        <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>2.2.224</version>
+            <version>${version.h2database}</version>
             <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-common</artifactId>
-            <version>3.1.5</version>
-            <scope>test</scope>
-        </dependency>-->
-        <!--        <dependency>
-            <groupId>org.awaitility</groupId>
-            <artifactId>awaitility</artifactId>
-            <version>4.2.0</version>
-            <scope>test</scope>
-        </dependency>-->
+        </dependency>
     </dependencies>
 
     <build>
@@ -416,53 +381,6 @@ POSSIBILITY OF SUCH DAMAGE.
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>${version.sonar}</version>
                 </plugin>
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>-->
-
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>4.0.0-M13</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-verifier-plugin</artifactId>
-                    <version>1.1</version>
-                </plugin>-->
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.3.0</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.0</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>-->
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.6.0</version>
-                </plugin>-->
-
-                <!--                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.1</version>
-                </plugin>-->
             </plugins>
         </pluginManagement>
 
