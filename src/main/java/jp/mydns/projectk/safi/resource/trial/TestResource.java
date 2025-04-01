@@ -36,6 +36,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import jakarta.ws.rs.core.UriInfo;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
+import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
 import jp.mydns.projectk.safi.value.SchedefValue;
@@ -56,6 +57,8 @@ public class TestResource {
 
     @Context
     private UriInfo uriInfo;
+
+    @Inject private ConfigService configSvc;
 
     /**
      * API communication check.
@@ -91,5 +94,12 @@ public class TestResource {
     @Produces(APPLICATION_JSON)
     public JobValue getJob() {
         return null;
+    }
+
+    @GET
+    @Path("p")
+    @Produces(TEXT_PLAIN)
+    public String getPath() {
+        return configSvc.getPluginDir().toString();
     }
 }

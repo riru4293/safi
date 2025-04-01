@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.resource.trial;
+package jp.mydns.projectk.safi.resource;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
