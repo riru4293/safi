@@ -29,7 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
     <modelVersion>4.0.0</modelVersion>
     <groupId>jp.mydns.project-k</groupId>
     <artifactId>safi</artifactId>
-    <version>3.0.0-M6</version>
+    <version>3.0.0-M7</version>
     <packaging>war</packaging>
     <name>SAFI-${project.version}</name>
 
@@ -197,6 +197,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
+        <!-- JUnit Jupiter Parameters -->
         <!-- License: EPL-2.0 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -224,7 +225,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
-        <!-- Jakarta Bean Validation -->
+        <!-- Jakarta Bean Validation implements -->
         <!-- License: ASL-2.0 -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -233,7 +234,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
-        <!-- MicroProfile Config -->
+        <!-- MicroProfile Config API -->
         <!-- License: ASL-2.0 -->
         <dependency>
             <groupId>org.eclipse.microprofile.config</groupId>
@@ -251,12 +252,6 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
-        <!--        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <scope>test</scope>
-        </dependency>-->
-
         <!-- Mockito -->
         <!-- License: MIT -->
         <dependency>
@@ -273,12 +268,15 @@ POSSIBILITY OF SUCH DAMAGE.
             <scope>test</scope>
         </dependency>
 
+        <!-- Jakarta CDI implements -->
         <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-junit5</artifactId>
             <version>${version.weld-junit5}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- H2 Database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -360,6 +358,7 @@ POSSIBILITY OF SUCH DAMAGE.
                     <version>${version.maven-failsafe}</version>
                 </plugin>
 
+                <!-- Code coverage measurement -->
                 <!-- License: EPL-2.0 -->
                 <plugin>
                     <groupId>org.jacoco</groupId>
@@ -367,6 +366,7 @@ POSSIBILITY OF SUCH DAMAGE.
                     <version>${version.jacoco}</version>
                 </plugin>
 
+                <!-- Generate OpenAPI documents -->
                 <!-- License: ASL-2.0 -->
                 <plugin>
                     <groupId>io.swagger.core.v3</groupId>
@@ -383,7 +383,6 @@ POSSIBILITY OF SUCH DAMAGE.
                 </plugin>
             </plugins>
         </pluginManagement>
-
 
         <plugins>
             <!-- Specified compiler options -->
