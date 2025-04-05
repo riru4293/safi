@@ -48,7 +48,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.swagger>2.2.28</version.swagger>
         <version.swagger-ui>5.18.3</version.swagger-ui>
         <version.microprofile-config>3.1</version.microprofile-config>
-        <version.smallrye-config>3.12.4</version.smallrye-config>
+        <version.helidon-config>4.2.0</version.helidon-config>
         <version.mockito>5.16.0</version.mockito>
         <version.junit>5.12.1</version.junit>
         <version.slf4j>2.0.17</version.slf4j>
@@ -60,7 +60,6 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.yasson>3.0.4</version.yasson>
         <version.weld-junit5>5.0.0.Final</version.weld-junit5>
         <version.h2database>2.3.232</version.h2database>
-        <version.jetty>12.0.18</version.jetty>
         <version.jacoco>0.8.12</version.jacoco>
         <version.sonar>5.0.0.4389</version.sonar>
 
@@ -247,9 +246,9 @@ POSSIBILITY OF SUCH DAMAGE.
         <!-- MicroProfile Config implements -->
         <!-- License: ASL-2.0 -->
         <dependency>
-            <groupId>io.smallrye.config</groupId>
-            <artifactId>smallrye-config</artifactId>
-            <version>${version.smallrye-config}</version>
+            <groupId>io.helidon.config</groupId>
+            <artifactId>helidon-config</artifactId>
+            <version>${version.helidon-config}</version>
             <scope>test</scope>
         </dependency>
 
@@ -284,16 +283,6 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${version.h2database}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <!-- JNDI -->
-        <!-- License: EPL-2.0 -->
-        <!-- License: ASL-2.0 -->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-plus</artifactId>
-            <version>${version.jetty}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
