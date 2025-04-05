@@ -36,18 +36,19 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
+import jp.mydns.projectk.safi.entity.listener.EntityFooterUpdater;
 
 /**
  * Common JPA entity. This class has one version number field qualified with {@link Version}. Thereby realizing an
  * optimistic lock of entity. And also this class implements entity's common footer items. Footer items are
- * automatically set by {@link FooterUpdater}.
+ * automatically set by {@link EntityFooterUpdater}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
 @MappedSuperclass
-@EntityListeners({FooterUpdater.class})
+@EntityListeners({EntityFooterUpdater.Impl.class})
 public abstract class CommonEntity implements Serializable {
 
     @java.io.Serial
@@ -56,6 +57,7 @@ public abstract class CommonEntity implements Serializable {
     @Column(name = "note")
     private String note;
 
+    @Version
     @Column(name = "version", nullable = false)
     private int version;
 
@@ -107,7 +109,6 @@ public abstract class CommonEntity implements Serializable {
      * @since 3.0.0
      */
     @PositiveOrZero
-    @Version
     public int getVersion() {
         return version;
     }

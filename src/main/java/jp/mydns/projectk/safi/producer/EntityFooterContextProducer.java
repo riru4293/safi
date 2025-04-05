@@ -30,19 +30,19 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import jp.mydns.projectk.safi.entity.FooterContext;
 import jp.mydns.projectk.safi.service.RealTimeService;
 import jp.mydns.projectk.safi.value.RequestContext;
+import jp.mydns.projectk.safi.entity.listener.EntityFooterUpdater;
 
 /**
- * Produce the {@link FooterContext}.
+ * Produce the {@link EntityFooterUpdater.Context}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
 @RequestScoped
-public class FooterContextProducer {
+public class EntityFooterContextProducer {
 
     private final RequestContext reqCtx;
     private final RealTimeService realTimeSvc;
@@ -56,24 +56,24 @@ public class FooterContextProducer {
      * @since 3.0.0
      */
     @Inject
-    public FooterContextProducer(RequestContext reqCtx, RealTimeService realTimeSvc) {
+    public EntityFooterContextProducer(RequestContext reqCtx, RealTimeService realTimeSvc) {
         this.reqCtx = Objects.requireNonNull(reqCtx);
         this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
     }
 
     /**
-     * Produce the {@code FooterContext}.
+     * Produce the {@code EntityFooterUpdater.Context}.
      *
-     * @return the {@code FooterContext}
+     * @return the {@code EntityFooterUpdater.Context}
      * @since 3.0.0
      */
     @Produces
     @RequestScoped
-    public FooterContext produce() {
+    public EntityFooterUpdater.Context produce() {
         return new Impl(realTimeSvc.getLocalNow(), reqCtx.getAccountId(), reqCtx.getProcessName());
     }
 
-    private class Impl implements FooterContext {
+    private class Impl implements EntityFooterUpdater.Context {
 
         private final LocalDateTime utcNow;
         private final String accountId;
@@ -123,8 +123,8 @@ public class FooterContextProducer {
          */
         @Override
         public String toString() {
-            return "FooterContext{" + "utcNow=" + utcNow + ", accountId=" + accountId + ", processName=" + processName
-                + '}';
+            return "EntityFooterContext{" + "utcNow=" + utcNow + ", accountId=" + accountId
+                + ", processName=" + processName + '}';
         }
     }
 }
