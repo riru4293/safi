@@ -59,7 +59,7 @@ systemctl --user --now enable glassfish
 # Configure JDBC
 "${GLASSFISH_HOME}/bin/asadmin" create-jdbc-connection-pool \
 --datasourceclassname=org.mariadb.jdbc.MariaDbDataSource \
---restype=javax.sql.XADataSource \
+--restype=javax.sql.DataSource \
 --property=user=safi:password="${SAFI_PASS}":sessionVariables='innodb_lock_wait_timeout\=60':sslMode='verify-full':\
 trustStore="file\:///${CA_HOME}/mariadb-connector-cacerts":\
 trustStoreType='pkcs12':trustStorePassword="${STORE_PASS}":URL='jdbc\:mariadb\://localhost/safi' \
@@ -69,7 +69,7 @@ SafiPool
 
 
 # Configure JVM options
-"${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/, opt, safi'
+"${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/,opt,safi'
 
 
 # Restart service

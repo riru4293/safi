@@ -152,7 +152,7 @@ Write-Host 'Complete start domain1'
 # Configure JDBC
 & "${GLASSFISH_HOME}\bin\asadmin.bat" create-jdbc-connection-pool `
 --datasourceclassname=org.mariadb.jdbc.MariaDbDataSource `
---restype=javax.sql.XADataSource `
+--restype=javax.sql.DataSource `
 --property=$(Write-Output $(Join-String -Separator ':' -InputObject @(`
   'user=safi', `
   "password=${SAFI_PASS}", `
@@ -170,7 +170,7 @@ SafiPool
 
 
 # Configure JVM options
-& "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Dsafi.home=/, $( ${env:LOCALAPPDATA}.Replace( '\', ', ' ).Replace( ':', '\:' ) ), safi"
+& "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Dsafi.home=$( ${env:LOCALAPPDATA}.Replace( '\', ',' ).Replace( ':', '\:' ) ),safi"
 
 
 # Configure console log-level
