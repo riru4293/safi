@@ -27,7 +27,7 @@ package jp.mydns.projectk.safi.resource.trial;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -36,7 +36,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import jakarta.ws.rs.core.UriInfo;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
-import jp.mydns.projectk.safi.service.ConfigService;
+import jp.mydns.projectk.safi.service.trial.TestService;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
 import jp.mydns.projectk.safi.value.SchedefValue;
@@ -53,12 +53,10 @@ import jp.mydns.projectk.safi.value.SchedefValue;
 public class TestResource {
 
     @Inject
-    private EntityManager em;
+    private TestService svc;
 
     @Context
     private UriInfo uriInfo;
-
-    @Inject private ConfigService configSvc;
 
     /**
      * API communication check.
@@ -99,7 +97,10 @@ public class TestResource {
     @GET
     @Path("p")
     @Produces(TEXT_PLAIN)
+    @Transactional
+    @ProcessName("DRE")
     public String getPath() {
-        return configSvc.getPluginDir().toString();
+        svc.test();
+        return svc.getPluginDir().toString();
     }
 }
