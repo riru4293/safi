@@ -59,7 +59,7 @@ public interface JobService {
     JobValue createJob(JobCreationContext ctx);
 
     /**
-     * Implements of the {@code JobdefService}.
+     * Implements of the {@code JobService}.
      *
      * @author riru
      * @version 3.0.0
