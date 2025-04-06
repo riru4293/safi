@@ -32,6 +32,7 @@ import jakarta.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import jp.mydns.projectk.safi.constant.AppConfigId;
 import jp.mydns.projectk.safi.dao.AppConfigDao;
 import jp.mydns.projectk.safi.entity.AppConfigEntity;
@@ -49,7 +50,8 @@ import jp.mydns.projectk.safi.value.JsonWrapper;
 public interface AppTimeService {
 
     /**
-     * Get current time. Accuracy is seconds.
+     * Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the same value is
+     * returned.
      *
      * @return current time inside the application.
      * @throws PersistenceException if failed database operation
@@ -58,7 +60,8 @@ public interface AppTimeService {
     OffsetDateTime getOffsetNow();
 
     /**
-     * Get current time. Accuracy is seconds.
+     * Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the same value is
+     * returned.
      *
      * @return current time inside the application, in that case timezone is UTC.
      * @throws PersistenceException if failed database operation
@@ -77,6 +80,7 @@ public interface AppTimeService {
     @RequestScoped
     class Impl implements AppTimeService {
 
+        private final AtomicReference<LocalDateTime> cached = new AtomicReference<>();
         private final RealTimeService realTimeSvc;
         private final AppConfigDao appConfigDao;
 
@@ -114,9 +118,16 @@ public interface AppTimeService {
          */
         @Override
         public LocalDateTime getLocalNow() {
-            return appConfigDao.getAppConfig(AppConfigId.NOW)
+            cached.compareAndSet(null, appConfigDao.getAppConfig(AppConfigId.NOW).filter(this::isEnabled)
                 .map(AppConfigEntity::getValue).map(JsonWrapper::unwrap).map(JsonValueUtils::toString)
-                .map(TimeUtils::toLocalDateTime).orElseGet(realTimeSvc::getLocalNow);
+                .map(TimeUtils::toLocalDateTime).orElseGet(realTimeSvc::getLocalNow));
+            return cached.get();
+        }
+
+        private boolean isEnabled(AppConfigEntity e) {
+            return !e.getValidityPeriod().isIgnored()
+                && !e.getValidityPeriod().getFrom().isAfter(realTimeSvc.getLocalNow())
+                && !e.getValidityPeriod().getTo().isBefore(realTimeSvc.getLocalNow());
         }
     }
 }

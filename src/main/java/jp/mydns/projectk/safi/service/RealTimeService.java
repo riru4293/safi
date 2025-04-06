@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Provides a real date-time.
@@ -43,7 +44,8 @@ import java.time.temporal.ChronoUnit;
 public interface RealTimeService {
 
     /**
-     * Get current time. Accuracy is seconds.
+     * Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the same value is
+     * returned.
      *
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
@@ -51,7 +53,8 @@ public interface RealTimeService {
     OffsetDateTime getOffsetNow();
 
     /**
-     * Get current time. Accuracy is seconds.
+     * Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the same value is
+     * returned.
      *
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
@@ -59,7 +62,8 @@ public interface RealTimeService {
     LocalDateTime getLocalNow();
 
     /**
-     * Get exactly current time. Can only be used when {@link #getOffsetNow()} has insufficient precision.
+     * Get exactly current time. Can only be used when {@link #getOffsetNow()} has insufficient precision. The first
+     * value is remembered so that subsequent times the same value is returned.
      *
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
@@ -67,7 +71,8 @@ public interface RealTimeService {
     OffsetDateTime getExactlyOffsetNow();
 
     /**
-     * Get exactly current time. Can only be used when {@link #getLocalNow()} has insufficient precision.
+     * Get exactly current time. Can only be used when {@link #getLocalNow()} has insufficient precision. The first
+     * value is remembered so that subsequent times the same value is returned.
      *
      * @return current time, in that case timezone is UTC.
      * @since 3.0.0
@@ -84,6 +89,8 @@ public interface RealTimeService {
     @Typed(RealTimeService.class)
     @RequestScoped
     class Impl implements RealTimeService {
+
+        private final AtomicReference<OffsetDateTime> cached = new AtomicReference<>();
 
         /**
          * {@inheritDoc}
@@ -113,7 +120,8 @@ public interface RealTimeService {
          */
         @Override
         public OffsetDateTime getExactlyOffsetNow() {
-            return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized());
+            cached.compareAndSet(null, OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized()));
+            return cached.get();
         }
 
         /**
