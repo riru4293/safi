@@ -25,11 +25,11 @@
  */
 package jp.mydns.projectk.safi.dxo;
 
-import io.azam.ulidj.ULID;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import java.util.Objects;
+import java.util.UUID;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.entity.JobEntity;
 import jp.mydns.projectk.safi.service.JsonService;
@@ -116,7 +116,7 @@ public interface JobDxo {
 
             var entity = new JobEntity();
 
-            entity.setId(ULID.random());
+            entity.setId(UUID.randomUUID().toString());
             entity.setStatus(JobStatus.SCHEDULE);
             entity.setScheduleTime(ctx.getScheduleTime());
             entity.setLimitTime(ctx.getScheduleTime().plus(ctx.getJobdef().getTimeout()));
