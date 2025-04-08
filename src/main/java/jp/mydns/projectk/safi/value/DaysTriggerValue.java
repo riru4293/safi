@@ -56,7 +56,7 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @since 3.0.0
  */
 @Schema(name = "ScheduleTrigger.Days", description = "Days schedule trigger configuration.")
-interface DaysTriggerValue extends ScheduleTriggerValue {
+public interface DaysTriggerValue extends ScheduleTriggerValue {
 
     /**
      * {@inheritDoc}

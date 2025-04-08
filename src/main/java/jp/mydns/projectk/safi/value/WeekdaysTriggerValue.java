@@ -58,7 +58,7 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @since 3.0.0
  */
 @Schema(name = "ScheduleTrigger.Weekdays", description = "Weekdays schedule trigger configuration.")
-interface WeekdaysTriggerValue extends ScheduleTriggerValue {
+public interface WeekdaysTriggerValue extends ScheduleTriggerValue {
 
     /**
      * {@inheritDoc}
