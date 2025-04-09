@@ -121,7 +121,7 @@ public interface JobDxo {
             entity.setScheduleTime(ctx.getScheduleTime());
             entity.setLimitTime(ctx.getScheduleTime().plus(ctx.getJobdef().getTimeout()));
             entity.setProperties(SJson.of(ctx.getJobdef().getJobProperties()));
-            entity.setJobdef(SJson.of(jsonSvc.toJsonValue(ctx.getJobdef())));
+            entity.setJobdef(jsonSvc.toSJson(ctx.getJobdef()));
 
             return entity;
         }
@@ -148,7 +148,7 @@ public interface JobDxo {
             entity.setEndTime(TimeUtils.toLocalDateTime(value.getEndTime().orElse(null)));
             entity.setProperties(SJson.of(value.getProperties()));
             entity.setJobdefId(value.getJobdefId());
-            entity.setJobdef(SJson.of(jsonSvc.toJsonValue(value.getJobdef())));
+            entity.setJobdef(jsonSvc.toSJson(value.getJobdef()));
             entity.setSchedefId(value.getSchedefId().orElse(null));
             entity.setSchedef(value.getSchedef().map(jsonSvc::toJsonValue).map(SJson::of).orElse(null));
             entity.setResultMessages(value.getResultMessages().map(jsonSvc::toJsonValue).map(SJson::of)

@@ -34,6 +34,7 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbException;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Provides JSON conversion.
@@ -78,6 +79,17 @@ public interface JsonService {
      * @since 3.0.0
      */
     JsonObject merge(JsonObject base, JsonObject ow);
+
+    /**
+     * Conversion to {@code SJson}.
+     *
+     * @param value source value
+     * @return converted value
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+     * @since 3.0.0
+     */
+    SJson toSJson(Object value);
 
     /**
      * Implements the {@code JsonService}.
@@ -137,6 +149,18 @@ public interface JsonService {
         @Override
         public JsonObject merge(JsonObject base, JsonObject ow) {
             return JsonValueUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+         * @since 3.0.0
+         */
+        @Override
+        public SJson toSJson(Object value) {
+            return SJson.of(toJsonValue(value));
         }
     }
 }

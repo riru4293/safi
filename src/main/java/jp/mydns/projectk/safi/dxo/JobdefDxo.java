@@ -130,8 +130,8 @@ public interface JobdefDxo {
             entity.setTimeout(value.getTimeout());
             entity.setName(value.getName().orElse(null));
             entity.setPluginName(value.getPluginName().orElse(null));
-            entity.setTrnsdef(SJson.of(jsonSvc.toJsonValue(value.getTrnsdef())));
-            entity.setFiltdef(SJson.of(jsonSvc.toJsonValue(value.getFiltdef())));
+            entity.setTrnsdef(jsonSvc.toSJson(value.getTrnsdef()));
+            entity.setFiltdef(jsonSvc.toSJson(value.getFiltdef()));
             entity.setJobProperties(SJson.of(value.getJobProperties()));
             entity.setNote(value.getNote().orElse(null));
             entity.setVersion(value.getVersion());
