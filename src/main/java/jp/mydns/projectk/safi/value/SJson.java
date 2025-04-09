@@ -44,7 +44,7 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * Wrapper of the {@link JsonValue}. This can be serialized.
+ * Serializable JSON value. It is wrapper of the {@link JsonValue}.
  *
  * <p>
  * Implementation requirements.
@@ -57,8 +57,8 @@ import java.util.Objects;
  * @version 3.0.0
  * @since 3.0.0
  */
-@JsonbTypeDeserializer(JsonWrapper.Deserializer.class)
-public interface JsonWrapper extends Serializable {
+@JsonbTypeDeserializer(SJson.Deserializer.class)
+public interface SJson extends Serializable {
 
     /**
      * Build with {@code JsonValue}.
@@ -68,7 +68,7 @@ public interface JsonWrapper extends Serializable {
      * @throws NullPointerException if {@code value} is {@code null}
      * @since 3.0.0
      */
-    static JsonWrapper of(JsonValue value) {
+    static SJson of(JsonValue value) {
         return new Deserializer.Impl(Objects.requireNonNull(value));
     }
 
@@ -81,13 +81,13 @@ public interface JsonWrapper extends Serializable {
     JsonValue unwrap();
 
     /**
-     * JSON deserializer for {@code JsonWrapper}.
+     * JSON deserializer for {@code SJson}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Deserializer implements JsonbDeserializer<JsonWrapper> {
+    class Deserializer implements JsonbDeserializer<SJson> {
 
         /**
          * {@inheritDoc}
@@ -95,12 +95,12 @@ public interface JsonWrapper extends Serializable {
          * @since 3.0.0
          */
         @Override
-        public JsonWrapper deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public SJson deserialize(JsonParser jp, DeserializationContext dc, Type type) {
             return new Impl(dc.deserialize(JsonValue.class, jp));
         }
 
-        @JsonbTypeSerializer(JsonWrapper.Serializer.class)
-        private static class Impl implements JsonWrapper {
+        @JsonbTypeSerializer(SJson.Serializer.class)
+        private static class Impl implements SJson {
 
             @java.io.Serial
             private static final long serialVersionUID = 6337206561334398852L;
@@ -123,7 +123,7 @@ public interface JsonWrapper extends Serializable {
 
             @Override
             public boolean equals(Object other) {
-                return other instanceof JsonWrapper o && value.equals(o.unwrap());
+                return other instanceof SJson o && value.equals(o.unwrap());
             }
 
             @Override
@@ -149,13 +149,13 @@ public interface JsonWrapper extends Serializable {
     }
 
     /**
-     * JSON serializer for {@code JsonWrapper}.
+     * JSON serializer for {@code SJson}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    class Serializer implements JsonbSerializer<JsonWrapper> {
+    class Serializer implements JsonbSerializer<SJson> {
 
         /**
          * {@inheritDoc}
@@ -163,7 +163,7 @@ public interface JsonWrapper extends Serializable {
          * @since 3.0.0
          */
         @Override
-        public void serialize(JsonWrapper obj, JsonGenerator generator, SerializationContext ctx) {
+        public void serialize(SJson obj, JsonGenerator generator, SerializationContext ctx) {
             generator.write(obj.unwrap());
         }
     }

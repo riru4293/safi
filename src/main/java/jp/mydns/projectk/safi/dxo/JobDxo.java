@@ -38,8 +38,8 @@ import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
-import jp.mydns.projectk.safi.value.JsonWrapper;
 import jp.mydns.projectk.safi.value.SchedefValue;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Data exchange processing for <i>Job</i>.
@@ -120,8 +120,8 @@ public interface JobDxo {
             entity.setStatus(JobStatus.SCHEDULE);
             entity.setScheduleTime(ctx.getScheduleTime());
             entity.setLimitTime(ctx.getScheduleTime().plus(ctx.getJobdef().getTimeout()));
-            entity.setProperties(JsonWrapper.of(ctx.getJobdef().getJobProperties()));
-            entity.setJobdef(JsonWrapper.of(jsonSvc.toJsonValue(ctx.getJobdef())));
+            entity.setProperties(SJson.of(ctx.getJobdef().getJobProperties()));
+            entity.setJobdef(SJson.of(jsonSvc.toJsonValue(ctx.getJobdef())));
 
             return entity;
         }
@@ -146,12 +146,12 @@ public interface JobDxo {
             entity.setLimitTime(TimeUtils.toLocalDateTime(value.getLimitTime()));
             entity.setBeginTime(TimeUtils.toLocalDateTime(value.getBeginTime().orElse(null)));
             entity.setEndTime(TimeUtils.toLocalDateTime(value.getEndTime().orElse(null)));
-            entity.setProperties(JsonWrapper.of(value.getProperties()));
+            entity.setProperties(SJson.of(value.getProperties()));
             entity.setJobdefId(value.getJobdefId());
-            entity.setJobdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getJobdef())));
+            entity.setJobdef(SJson.of(jsonSvc.toJsonValue(value.getJobdef())));
             entity.setSchedefId(value.getSchedefId().orElse(null));
-            entity.setSchedef(value.getSchedef().map(jsonSvc::toJsonValue).map(JsonWrapper::of).orElse(null));
-            entity.setResultMessages(value.getResultMessages().map(jsonSvc::toJsonValue).map(JsonWrapper::of)
+            entity.setSchedef(value.getSchedef().map(jsonSvc::toJsonValue).map(SJson::of).orElse(null));
+            entity.setResultMessages(value.getResultMessages().map(jsonSvc::toJsonValue).map(SJson::of)
                 .orElse(null));
             entity.setNote(value.getNote().orElse(null));
             entity.setVersion(value.getVersion());

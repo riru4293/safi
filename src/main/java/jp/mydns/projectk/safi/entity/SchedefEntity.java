@@ -35,7 +35,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Objects;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * JPA entity for the <i>m_schedef</i> table.
@@ -63,7 +63,7 @@ public class SchedefEntity extends NamedEntity {
 
     @Basic(optional = false)
     @Column(name = "trigger", nullable = false)
-    private JsonWrapper trigger;
+    private SJson trigger;
 
     /**
      * Get job schedule definition id.
@@ -117,7 +117,7 @@ public class SchedefEntity extends NamedEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonWrapper getTrigger() {
+    public SJson getTrigger() {
         return trigger;
     }
 
@@ -127,7 +127,7 @@ public class SchedefEntity extends NamedEntity {
      * @param trigger job schedule trigger
      * @since 3.0.0
      */
-    public void setTrigger(JsonWrapper trigger) {
+    public void setTrigger(SJson trigger) {
         this.trigger = trigger;
     }
 

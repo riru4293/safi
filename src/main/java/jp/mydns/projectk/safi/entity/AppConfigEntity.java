@@ -36,7 +36,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import java.util.Objects;
 import jp.mydns.projectk.safi.constant.AppConfigId;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * JPA entity for the <i>m_appconf</i> table.
@@ -59,7 +59,7 @@ public class AppConfigEntity extends NamedEntity {
     private AppConfigId id;
 
     @Column(name = "val")
-    private JsonWrapper value;
+    private SJson value;
 
     /**
      * Get application configuration id.
@@ -88,7 +88,7 @@ public class AppConfigEntity extends NamedEntity {
      * @return configuration value. It may be {@code null}.
      * @since 3.0.0
      */
-    public JsonWrapper getValue() {
+    public SJson getValue() {
         return value;
     }
 
@@ -98,7 +98,7 @@ public class AppConfigEntity extends NamedEntity {
      * @param value configuration value. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setValue(JsonWrapper value) {
+    public void setValue(SJson value) {
         this.value = value;
     }
 

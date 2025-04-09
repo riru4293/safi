@@ -43,7 +43,7 @@ import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * JPA entity for the <i>t_job</i> table.
@@ -96,7 +96,7 @@ public class JobEntity extends CommonEntity {
 
     @Basic(optional = false)
     @Column(name = "props", nullable = false, updatable = false)
-    private JsonWrapper properties;
+    private SJson properties;
 
     @Basic(optional = false)
     @Column(name = "jobdef_id", nullable = false, updatable = false, length = 36)
@@ -104,16 +104,16 @@ public class JobEntity extends CommonEntity {
 
     @Basic(optional = false)
     @Column(name = "jobdef", nullable = false, updatable = false)
-    private JsonWrapper jobdef;
+    private SJson jobdef;
 
     @Column(name = "schedef_id", updatable = false, length = 36)
     private String schedefId;
 
     @Column(name = "schedef", updatable = false)
-    private JsonWrapper schedef;
+    private SJson schedef;
 
     @Column(name = "results", insertable = false)
-    private JsonWrapper resultMessages;
+    private SJson resultMessages;
 
     /**
      * Get job id.
@@ -297,7 +297,7 @@ public class JobEntity extends CommonEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonWrapper getProperties() {
+    public SJson getProperties() {
         return properties;
     }
 
@@ -307,7 +307,7 @@ public class JobEntity extends CommonEntity {
      * @param properties job properties. Cannot update persisted value.
      * @since 3.0.0
      */
-    public void setProperties(JsonWrapper properties) {
+    public void setProperties(SJson properties) {
         this.properties = properties;
     }
 
@@ -340,7 +340,7 @@ public class JobEntity extends CommonEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonWrapper getJobdef() {
+    public SJson getJobdef() {
         return jobdef;
     }
 
@@ -350,7 +350,7 @@ public class JobEntity extends CommonEntity {
      * @param jobdef source job definition. Cannot update persisted value.
      * @since 3.0.0
      */
-    public void setJobdef(JsonWrapper jobdef) {
+    public void setJobdef(SJson jobdef) {
         this.jobdef = jobdef;
     }
 
@@ -382,7 +382,7 @@ public class JobEntity extends CommonEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonWrapper getSchedef() {
+    public SJson getSchedef() {
         return schedef;
     }
 
@@ -392,7 +392,7 @@ public class JobEntity extends CommonEntity {
      * @param schedef source schedule definition. Cannot update persisted value. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setSchedef(JsonWrapper schedef) {
+    public void setSchedef(SJson schedef) {
         this.schedef = schedef;
     }
 
@@ -402,7 +402,7 @@ public class JobEntity extends CommonEntity {
      * @return result messages. It may be {@code null}.
      * @since 3.0.0
      */
-    public JsonWrapper getResultMessages() {
+    public SJson getResultMessages() {
         return resultMessages;
     }
 
@@ -412,7 +412,7 @@ public class JobEntity extends CommonEntity {
      * @param resultMessages result messages. Cannot insert new.
      * @since 3.0.0
      */
-    public void setResultMessages(JsonWrapper resultMessages) {
+    public void setResultMessages(SJson resultMessages) {
         this.resultMessages = resultMessages;
     }
 

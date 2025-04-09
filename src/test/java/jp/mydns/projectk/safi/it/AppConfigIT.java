@@ -40,7 +40,6 @@ import jp.mydns.projectk.safi.test.EntityFooterContextProducer;
 import jp.mydns.projectk.safi.test.EntityManagerProducer;
 import jp.mydns.projectk.safi.test.JndiServer;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
-import jp.mydns.projectk.safi.value.JsonWrapper;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.jboss.weld.junit5.EnableWeld;
 import org.jboss.weld.junit5.WeldInitiator;
@@ -48,6 +47,7 @@ import org.jboss.weld.junit5.WeldSetup;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Test application configuration.
@@ -89,7 +89,7 @@ class AppConfigIT {
 
             e.setId(AppConfigId.NOW);
             e.setValidityPeriod(new DefaultValidityPeriodValue().toEmb());
-            e.setValue(JsonWrapper.of(JsonValueUtils.toJsonValue(LocalDateTime.of(2111, Month.MARCH, 12, 23, 34))));
+            e.setValue(SJson.of(JsonValueUtils.toJsonValue(LocalDateTime.of(2111, Month.MARCH, 12, 23, 34))));
             e.setName("Current time in application");
             e.setNote("Create new");
 
@@ -105,7 +105,7 @@ class AppConfigIT {
             assertThat(e).isNotNull()
                 .returns(AppConfigId.NOW, AppConfigEntity::getId)
                 .returns(new DefaultValidityPeriodValue().toEmb(), AppConfigEntity::getValidityPeriod)
-                .returns(JsonWrapper.of(Json.createValue("2111-03-12T23:34:00")), AppConfigEntity::getValue)
+                .returns(SJson.of(Json.createValue("2111-03-12T23:34:00")), AppConfigEntity::getValue)
                 .returns("Current time in application", AppConfigEntity::getName)
                 .returns("Create new", AppConfigEntity::getNote)
                 .returns(1, AppConfigEntity::getVersion)

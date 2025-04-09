@@ -41,7 +41,7 @@ import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.value.FiltdefValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Data exchange processing for <i>Job definition</i>.
@@ -130,9 +130,9 @@ public interface JobdefDxo {
             entity.setTimeout(value.getTimeout());
             entity.setName(value.getName().orElse(null));
             entity.setPluginName(value.getPluginName().orElse(null));
-            entity.setTrnsdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getTrnsdef())));
-            entity.setFiltdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getFiltdef())));
-            entity.setJobProperties(JsonWrapper.of(value.getJobProperties()));
+            entity.setTrnsdef(SJson.of(jsonSvc.toJsonValue(value.getTrnsdef())));
+            entity.setFiltdef(SJson.of(jsonSvc.toJsonValue(value.getFiltdef())));
+            entity.setJobProperties(SJson.of(value.getJobProperties()));
             entity.setNote(value.getNote().orElse(null));
             entity.setVersion(value.getVersion());
             entity.setRegTime(TimeUtils.toLocalDateTime(value.getRegisterTime().orElse(null)));
@@ -189,12 +189,12 @@ public interface JobdefDxo {
                 .unsafeBuild();
         }
 
-        private Map<String, String> toTrnsdef(JsonWrapper json) {
+        private Map<String, String> toTrnsdef(SJson json) {
             return json.unwrap().asJsonObject().entrySet().stream()
                 .map(compute(JsonValueUtils::toString)).collect(toLinkedHashMap());
         }
 
-        private FiltdefValue toFiltdef(JsonWrapper json) {
+        private FiltdefValue toFiltdef(SJson json) {
             return jsonSvc.fromJsonValue(jsonSvc.toJsonValue(json), FiltdefValue.class);
         }
     }

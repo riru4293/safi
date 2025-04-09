@@ -38,7 +38,7 @@ import jp.mydns.projectk.safi.dao.AppConfigDao;
 import jp.mydns.projectk.safi.entity.AppConfigEntity;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Provides a time inside the application.
@@ -119,7 +119,7 @@ public interface AppTimeService {
         @Override
         public LocalDateTime getLocalNow() {
             cached.compareAndSet(null, appConfigDao.getAppConfig(AppConfigId.NOW).filter(this::isEnabled)
-                .map(AppConfigEntity::getValue).map(JsonWrapper::unwrap).map(JsonValueUtils::toString)
+                .map(AppConfigEntity::getValue).map(SJson::unwrap).map(JsonValueUtils::toString)
                 .map(TimeUtils::toLocalDateTime).orElseGet(realTimeSvc::getLocalNow));
             return cached.get();
         }

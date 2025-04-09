@@ -39,10 +39,10 @@ import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.service.ConfigService;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.value.JsonWrapper;
 import jp.mydns.projectk.safi.value.ValidityPeriodValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jp.mydns.projectk.safi.value.SJson;
 
 @RequestScoped
 public class TestService {
@@ -81,7 +81,7 @@ public class TestService {
         e.setValidityPeriod(vp);
         e.setName(UUID.randomUUID().toString());
 
-        e.setValue(JsonWrapper.of(JsonValueUtils.toJsonValue(ValidityPeriodValue.defaultTo())));
+        e.setValue(SJson.of(JsonValueUtils.toJsonValue(ValidityPeriodValue.defaultTo())));
 
         comDao.persistOrMerge(e);
     }
