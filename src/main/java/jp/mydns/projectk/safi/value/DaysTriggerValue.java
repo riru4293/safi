@@ -186,7 +186,6 @@ public interface DaysTriggerValue extends ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
             public SequencedSet<Month> getMonths() {
                 return months;
             }
@@ -197,8 +196,7 @@ public interface DaysTriggerValue extends ScheduleTriggerValue {
              * @param months target months of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
-            public void setMonths(SequencedSet<Month> months) {
+            public void setMonths(@JsonbTypeAdapter(SequencedMonthSetAdapter.class) SequencedSet<Month> months) {
                 this.months = CollectionUtils.toUnmodifiable(months);
             }
 
@@ -208,7 +206,6 @@ public interface DaysTriggerValue extends ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
             public SequencedSet<Integer> getDays() {
                 return days;
             }
@@ -219,8 +216,7 @@ public interface DaysTriggerValue extends ScheduleTriggerValue {
              * @param days target day numbers of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
-            public void setDays(SequencedSet<Integer> days) {
+            public void setDays(@JsonbTypeAdapter(SequencedIntegerSetAdapter.class) SequencedSet<Integer> days) {
                 this.days = CollectionUtils.toUnmodifiable(days);
             }
 
