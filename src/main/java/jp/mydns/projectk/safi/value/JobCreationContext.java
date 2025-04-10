@@ -45,20 +45,33 @@ import jp.mydns.projectk.safi.util.TimeUtils;
  */
 public class JobCreationContext {
 
+    private final String jobId;
     private final LocalDateTime scheduleTime;
     private final JobdefValue jobdef;
 
     /**
      * Constructor.
      *
+     * @param jobId job id. It must be something new and not something that already exists.
      * @param scheduleTime job scheduling time
      * @param jobdef the {@code JobdefValue}. Constraint violations must be none.
      * @throws NullPointerException if any argument is {@code null}
      * @since 3.0.0
      */
-    public JobCreationContext(OffsetDateTime scheduleTime, JobdefValue jobdef) {
+    public JobCreationContext(String jobId, OffsetDateTime scheduleTime, JobdefValue jobdef) {
+        this.jobId = Objects.requireNonNull(jobId);
         this.scheduleTime = TimeUtils.toLocalDateTime(Objects.requireNonNull(scheduleTime));
         this.jobdef = Objects.requireNonNull(jobdef);
+    }
+
+    /**
+     * Get job id.
+     *
+     * @return job id
+     * @since 3.0.0
+     */
+    public String getJobId() {
+        return jobId;
     }
 
     /**
@@ -89,6 +102,6 @@ public class JobCreationContext {
      */
     @Override
     public String toString() {
-        return "JobCreationContext{" + ", scheduleTime=" + scheduleTime + "jobdef=" + jobdef + '}';
+        return "JobCreationContext{" + ", jobId=" + jobId + ", scheduleTime=" + scheduleTime + ", jobdef=" + jobdef + '}';
     }
 }
