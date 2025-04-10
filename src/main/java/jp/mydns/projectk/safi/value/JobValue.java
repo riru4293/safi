@@ -565,7 +565,7 @@ public interface JobValue extends PersistableValue {
              * @param kind the {@code JobKind}
              * @since 3.0.0
              */
-            public void setJobKind(JobKind kind) {
+            public void setKind(JobKind kind) {
                 this.kind = kind;
             }
 
