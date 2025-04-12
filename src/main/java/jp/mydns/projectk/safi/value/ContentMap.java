@@ -247,6 +247,7 @@ public class ContentMap<T> implements Closeable {
      * </ul>
      *
      * @param <T> Content type
+     * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
