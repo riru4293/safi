@@ -443,8 +443,10 @@ POSSIBILITY OF SUCH DAMAGE.
                         <configuration>
                             <propertyName>jacocoArgLine</propertyName>
                             <excludes>
-                                Exclude the automatically generated codes.
+                                <!-- Exclude the automatically generated codes. -->
                                 <exclude>**/*_.*</exclude>
+                                <!-- Exclude the trial codes. -->
+                                <exclude>**/trial/**</exclude>
                             </excludes>
                         </configuration>
                         <executions>
@@ -469,8 +471,10 @@ POSSIBILITY OF SUCH DAMAGE.
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <configuration>
                             <sourceFileExcludes>
-                                Exclude the automatically generated codes.
+                                <!-- Exclude the automatically generated codes. -->
                                 <exclude>**/*_.*</exclude>
+                                <!-- Exclude the trial codes. -->
+                                <exclude>**/trial/**</exclude>
                             </sourceFileExcludes>
                             <links>
                                 <link>https://jakarta.ee/specifications/platform/10/apidocs</link>
