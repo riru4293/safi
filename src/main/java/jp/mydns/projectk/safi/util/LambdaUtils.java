@@ -26,7 +26,6 @@
 package jp.mydns.projectk.safi.util;
 
 import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.BinaryOperator;
@@ -34,7 +33,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 
 /**
  * Utilities for Java lambda expressions. Provides frequent processing that when using lambda expressions.
@@ -152,35 +150,6 @@ public final class LambdaUtils {
     }
 
     /**
-     * Returns a function that test the list values with a predicate to narrow it down.
-     *
-     * @param <T> element type of list
-     * @param predicate the {@code Predicate}
-     * @return function that returns a narrowed list
-     * @throws NullPointerException if {@code p} is {@code null}
-     * @since 3.0.0
-     */
-    public static <T> UnaryOperator<List<T>> narrowDown(Predicate<T> predicate) {
-        return l -> l.stream().filter(predicate).toList();
-    }
-
-    /**
-     * Returns a function that convert list elements.
-     *
-     * @param <B> element type that before conversion
-     * @param <A> element type that after conversion
-     * @param converter function that convert list elements
-     * @return function that convert list elements
-     * @throws NullPointerException if {@code converter} is {@code null}
-     * @since 3.0.0
-     */
-    public static <B, A> Function<List<B>, List<A>> convertElements(Function<B, A> converter) {
-        Objects.requireNonNull(converter);
-
-        return l -> l.stream().map(converter).toList();
-    }
-
-    /**
      * Returns a function received as is. Use when you want to chain functions. This method is alias of
      * {@link #function(Function)}.
      *
@@ -281,8 +250,6 @@ public final class LambdaUtils {
     public static <T> Predicate<T> alwaysTrue() {
         return v -> true;
     }
-
-    
 
     /**
      * Returns a supplier with post conversion. This method is alias of
