@@ -49,7 +49,8 @@ import jp.mydns.projectk.safi.value.SJson;
 @Cacheable(false)
 @Table(name = "m_appconf")
 public class AppConfigEntity extends NamedEntity {
-    
+
+    @java.io.Serial
     private static final long serialVersionUID = 3895102690716080340L;
 
     @Id

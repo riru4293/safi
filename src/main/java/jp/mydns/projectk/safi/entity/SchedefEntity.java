@@ -91,7 +91,7 @@ public class SchedefEntity extends NamedEntity {
      * Get schedule definition priority.
      *
      * @return schedule definition priority. In case of a conflict with another schedule definition, the one with the
- higher priority will be used. The higher the value, the higher the priority.
+     * higher priority will be used. The higher the value, the higher the priority.
      * @since 3.0.0
      */
     @NotBlank

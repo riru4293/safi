@@ -86,7 +86,7 @@ public interface JobCreationRequest extends ValueTemplate {
      */
     @Schema(description = "Job schedule time. Means current time if null."
         + " Values from 2000-01-01T00:00:00Z to 2999-12-31T00:00:00Z can be specified.", example
-            = "2000-01-01T00:00:00Z", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        = "2000-01-01T00:00:00Z", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@TimeAccuracy(groups = Default.class)
     @TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/, groups = Default.class) OffsetDateTime>
@@ -99,8 +99,8 @@ public interface JobCreationRequest extends ValueTemplate {
      * @since 3.0.0
      */
     @Schema(type = "string", description = "Job execution timeout. Values from PT0S to PT23H59M59S can be specified."
-            + " If not null, it overrides the value in the job definition.", example = "PT10M",
-            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        + " If not null, it overrides the value in the job definition.", example = "PT10M",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@PositiveOrZeroDuration(groups = Default.class) @TimeAccuracy(groups = Default.class)
     @DurationRange(maxSecond = 86_399L/*23h59m59s*/, groups = Default.class) Duration> getTimeout();
@@ -112,7 +112,7 @@ public interface JobCreationRequest extends ValueTemplate {
      * @since 3.0.0
      */
     @Schema(description = "Use plugin name. If not null, it overrides the value in the job definition.",
-            example = "TestPluginName", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        example = "TestPluginName", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Size(max = 50, groups = Default.class) String> getPluginName();
 
@@ -123,7 +123,7 @@ public interface JobCreationRequest extends ValueTemplate {
      * @since 3.0.0
      */
     @Schema(description = "Content transform definition. If not null, it overrides the value in the job definition.",
-            ref = "#/components/schemas/Jobdef/properties/trnsdef", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        ref = "#/components/schemas/Jobdef/properties/trnsdef", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<Map<String, String>> getTrnsdef();
 
@@ -134,7 +134,7 @@ public interface JobCreationRequest extends ValueTemplate {
      * @since 3.0.0
      */
     @Schema(description = "Content filtering definition. If not null, it overrides the value in the job definition.",
-            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Valid FiltdefValue> getFiltdef();
 
@@ -147,7 +147,7 @@ public interface JobCreationRequest extends ValueTemplate {
      */
     @Schema(description = "Optional configurations at job execution. If not null, it will be marged(overwrite) "
         + "to value in the job definition.", ref = "#/components/schemas/Jobdef/properties/jobProperties",
-            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<JsonObject> getJobProperties();
 

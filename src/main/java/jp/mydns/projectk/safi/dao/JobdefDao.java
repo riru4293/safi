@@ -55,7 +55,7 @@ public interface JobdefDao {
      * @throws PersistenceException if the query execution was failed
      * @since 3.0.0
      */
-     Optional<JobdefEntity> getJobdef(String id);
+    Optional<JobdefEntity> getJobdef(String id);
 
     /**
      * Implements of the {@code JobdefDao}.
