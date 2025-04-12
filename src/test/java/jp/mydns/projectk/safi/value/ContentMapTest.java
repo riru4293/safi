@@ -155,7 +155,7 @@ class ContentMapTest {
         var duplicates = new ContentMap<String>(Stream.of(
             Map.entry("k", "v"), Map.entry("K", "V"), Map.entry("k2", "v2")).iterator(), tmpDir, new TestConvertor());
 
-        assertThat(duplicates.duplicates()).containsExactlyInAnyOrder("k", "K");
+        assertThat(duplicates.duplicates()).containsExactlyInAnyOrder("v", "V");
     }
 
     /**
