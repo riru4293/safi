@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import static java.time.ZoneOffset.UTC;
 import java.util.List;
+import java.util.function.Function;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.constant.JobTarget;
@@ -221,12 +222,13 @@ class JobDxoTest {
 
         var jobdef = mock(JobdefValue.class);
         var schedef = mock(SchedefValue.class);
-
+        
         // Conversion job definition
         doReturn(jobdef).when(jsonSvc).fromJsonValue(any(), eq(JobdefValue.class));
 
         // Conversion schedule definition
-        doReturn(schedef).when(jsonSvc).fromJsonValue(any(), eq(SchedefValue.class));
+        doReturn(JsonValue.EMPTY_JSON_OBJECT).when(schedefJson).unwrap();
+        doReturn((Function<JsonValue, SchedefValue>)z -> schedef).when(jsonSvc).fromJsonValue(SchedefValue.class);
 
         // Conversion properties
         doReturn(JsonValue.EMPTY_JSON_OBJECT).when(propsJson).unwrap();

@@ -31,7 +31,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test of class SequencedSetAdapter.
@@ -58,7 +57,7 @@ class SequencedSetAdapterTest {
 
         var result = instance.adaptToJson(sequenced);
 
-        assertThat(result).containsExactlyElementsOf(result);
+        assertThat(result).containsExactlyElementsOf(expect);
     }
 
     /**
@@ -77,7 +76,7 @@ class SequencedSetAdapterTest {
 
         var result = instance.adaptToJson(sequenced);
 
-        assertThat(result).containsExactlyElementsOf(result);
+        assertThat(result).containsExactlyElementsOf(expect);
     }
 
     /**
@@ -95,7 +94,7 @@ class SequencedSetAdapterTest {
 
         var result = instance.adaptToJson(sequenced);
 
-        assertThat(result).containsExactlyElementsOf(result);
+        assertThat(result).containsExactlyElementsOf(expect);
     }
 
     /**
@@ -111,7 +110,7 @@ class SequencedSetAdapterTest {
 
         var result = instance.adaptFromJson(expect);
 
-        assertThat(result).containsExactlyElementsOf(result);
+        assertThat(result).containsExactlyElementsOf(expect);
     }
 
     /**
@@ -127,7 +126,7 @@ class SequencedSetAdapterTest {
 
         var result = instance.adaptFromJson(expect);
 
-        assertThat(result).containsExactlyElementsOf(result);
+        assertThat(result).containsExactlyElementsOf(expect);
     }
 
     /**
@@ -143,6 +142,6 @@ class SequencedSetAdapterTest {
 
         var result = instance.adaptFromJson(expect);
 
-        assertThat(result).containsExactlyElementsOf(result);
+        assertThat(result).containsExactlyElementsOf(expect);
     }
 }

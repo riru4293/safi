@@ -381,7 +381,6 @@ public class JobEntity extends CommonEntity {
      * @return source schedule definition. It may be {@code null}.
      * @since 3.0.0
      */
-    @NotNull
     public SJson getSchedef() {
         return schedef;
     }

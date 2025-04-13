@@ -25,64 +25,46 @@
  */
 package jp.mydns.projectk.safi.test;
 
-import java.time.OffsetDateTime;
-import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
-import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.value.ValidityPeriodValue;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Produces;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 /**
- * Default validity period value for testing.
+ * CDI Producer that provides instances of {@link Validator} for testing.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class DefaultValidityPeriodValue implements ValidityPeriodValue {
+@ApplicationScoped
+public class ValidatorProducer {
+
+    private final ValidatorFactory fact = Validation.buildDefaultValidatorFactory();
 
     /**
-     * {@inheritDoc}
+     * Produces an the {@code Validator}.
      *
-     * @return 2000-01-01T00:00:00
+     * @return the {@code Validator}
      * @since 3.0.0
      */
-    @Override
-    public OffsetDateTime getFrom() {
-        return ValidityPeriodValue.defaultFrom();
+    @Produces
+    @Alternative
+    @ApplicationScoped
+    public Validator produce() {
+        return fact.getValidator();
     }
 
     /**
-     * {@inheritDoc}
+     * Close the {@code ValidatorFactory}.
      *
-     * @return 2999-12-31T23:59:59
      * @since 3.0.0
      */
-    @Override
-    public OffsetDateTime getTo() {
-        return ValidityPeriodValue.defaultTo();
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @return {@code true}
-     * @since 3.0.0
-     */
-    @Override
-    public boolean isIgnored() {
-        return ValidityPeriodValue.defaultIgnored();
-    }
-
-    /**
-     * Exchange to the {@code ValidityPeriodEmb}.
-     *
-     * @return the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    public ValidityPeriodEmb toEmb() {
-        var vp = new ValidityPeriodEmb();
-        vp.setFrom(TimeUtils.toLocalDateTime(getFrom()));
-        vp.setTo(TimeUtils.toLocalDateTime(getTo()));
-        vp.setIgnored(isIgnored());
-        return vp;
+    @PreDestroy
+    public void closeValidatorFactory() {
+        fact.close();
     }
 }

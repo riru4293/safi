@@ -33,6 +33,7 @@ import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbException;
 import java.util.Objects;
+import java.util.function.Function;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.value.SJson;
 
@@ -90,6 +91,17 @@ public interface JsonService {
      * @since 3.0.0
      */
     SJson toSJson(Object value);
+
+    /**
+     * Returns a deserialize function to {@code T} from JSON.
+     *
+     * @param <T> destination type. It should support deserialization from JSON.
+     * @param clazz destination type
+     * @return deserialized value
+     * @throws NullPointerException if {@code clazz} is {@code null}
+     * @since 3.0.0
+     */
+    <T> Function<JsonValue, T> fromJsonValue(Class<T> clazz);
 
     /**
      * Implements the {@code JsonService}.
@@ -161,6 +173,18 @@ public interface JsonService {
         @Override
         public SJson toSJson(Object value) {
             return SJson.of(toJsonValue(value));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code clazz} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public <T> Function<JsonValue, T> fromJsonValue(Class<T> clazz) {
+            Objects.requireNonNull(clazz);
+            return j -> fromJsonValue(j, clazz);
         }
     }
 }

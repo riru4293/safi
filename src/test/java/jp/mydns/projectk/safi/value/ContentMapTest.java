@@ -70,7 +70,7 @@ class ContentMapTest {
         var empty = new ContentMap<String>(Collections.emptyIterator(), tmpDir, new TestConvertor());
         var noEmpty = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
             new TestConvertor());
-        assertThat(empty.size()).isEqualTo(0);
+        assertThat(empty.size()).isZero();
         assertThat(noEmpty.size()).isEqualTo(1);
     }
 

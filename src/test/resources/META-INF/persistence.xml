@@ -31,6 +31,8 @@ POSSIBILITY OF SUCH DAMAGE.
         <validation-mode>CALLBACK</validation-mode>
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <class>jp.mydns.projectk.safi.entity.AppConfigEntity</class>
+        <class>jp.mydns.projectk.safi.entity.JobEntity</class>
+        <class>jp.mydns.projectk.safi.entity.JobdefEntity</class>
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:test;MODE=MySQL"/>
             <property name="eclipselink.target-server" value="GlassFish"/>

@@ -29,9 +29,12 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.ValidationService;
@@ -190,12 +193,14 @@ public interface JobdefDxo {
         }
 
         private Map<String, String> toTrnsdef(SJson json) {
-            return json.unwrap().asJsonObject().entrySet().stream()
-                .map(compute(JsonValueUtils::toString)).collect(toLinkedHashMap());
+            return Optional.ofNullable(json).map(SJson::unwrap).map(JsonValue::asJsonObject).map(JsonObject::entrySet)
+                .map(Set::stream).map(s -> s.map(compute(JsonValueUtils::toString)).collect(toLinkedHashMap()))
+                .orElseGet(() -> null);
         }
 
         private FiltdefValue toFiltdef(SJson json) {
-            return jsonSvc.fromJsonValue(jsonSvc.toJsonValue(json), FiltdefValue.class);
+            return Optional.ofNullable(json).map(jsonSvc::toJsonValue)
+                .map(jsonSvc.fromJsonValue(FiltdefValue.class)).orElseGet(() -> null);
         }
     }
 }
