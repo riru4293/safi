@@ -52,7 +52,8 @@ class ContentMapTest {
         var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
 
         var empty = new ContentMap<String>(Collections.emptyIterator(), tmpDir, new TestConvertor());
-        var noEmpty = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir, new TestConvertor());
+        var noEmpty = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
+            new TestConvertor());
         assertThat(empty.isEmpty()).isTrue();
         assertThat(noEmpty.isEmpty()).isFalse();
     }
@@ -67,7 +68,8 @@ class ContentMapTest {
         var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
 
         var empty = new ContentMap<String>(Collections.emptyIterator(), tmpDir, new TestConvertor());
-        var noEmpty = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir, new TestConvertor());
+        var noEmpty = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
+            new TestConvertor());
         assertThat(empty.size()).isEqualTo(0);
         assertThat(noEmpty.size()).isEqualTo(1);
     }
@@ -81,7 +83,8 @@ class ContentMapTest {
     void testContainsKey() throws IOException {
         var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
 
-        var instance = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir, new TestConvertor());
+        var instance = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
+            new TestConvertor());
         assertThat(instance.containsKey("k")).isTrue();
         assertThat(instance.containsKey("v")).isFalse();
     }
@@ -95,7 +98,8 @@ class ContentMapTest {
     void testKeySet() throws IOException {
         var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
 
-        var instance = new ContentMap<String>(Map.of("k", "v", "k2", "v2").entrySet().iterator(), tmpDir, new TestConvertor());
+        var instance = new ContentMap<String>(Map.of("k", "v", "k2", "v2").entrySet().iterator(), tmpDir,
+            new TestConvertor());
         assertThat(instance.keySet()).containsExactlyInAnyOrder("k", "k2");
     }
 
@@ -123,7 +127,8 @@ class ContentMapTest {
     void testGet() throws IOException {
         var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
 
-        var instance = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir, new TestConvertor());
+        var instance = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
+            new TestConvertor());
 
         assertThat(instance.get("k")).isEqualTo("v");
         assertThat(instance.get("k2")).isNull();
@@ -147,22 +152,17 @@ class ContentMapTest {
 
     /**
      * Test of duplicates method.
+     *
+     * @since 3.0.0
      */
     @Test
     void testDuplicates() throws IOException {
         var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
 
         var duplicates = new ContentMap<String>(Stream.of(
-            Map.entry("k", "v"), Map.entry("K", "V"), Map.entry("k2", "v2")).iterator(), tmpDir, new TestConvertor());
+            Map.entry("k", "v"), Map.entry("K", "V"), Map.entry("k", "v2")).iterator(), tmpDir, new TestConvertor());
 
-        assertThat(duplicates.duplicates()).containsExactlyInAnyOrder("v", "V");
-    }
-
-    /**
-     * Test of close method.
-     */
-    @Test
-    void testClose() throws Exception {
+        assertThat(duplicates.duplicates()).containsExactlyInAnyOrder("v", "V", "v2");
     }
 
     private class TestConvertor implements ContentMap.Convertor<String> {

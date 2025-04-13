@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.validator;
 
 import jakarta.validation.ConstraintValidatorContext;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -80,6 +81,27 @@ class TimeAccuracyTest {
 
         var invalid = OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 1, ZoneOffset.UTC);
         var valid = OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC);
+
+        assertThat(instance.isValid(invalid, ctx)).isFalse();
+        assertThat(instance.isValid(valid, ctx)).isTrue();
+
+        assertThat(instance.isValid(null, ctx)).isTrue();
+    }
+
+    /**
+     * Test of isValid method for {@code Duration}.
+     *
+     * @param annon the {@code TimeAccuracy}. It provides by Mockito.
+     * @param ctx the {@code ConstraintValidatorContext}. It provides by Mockito.
+     * @since 3.0.0
+     */
+    @Test
+    void testIsValidDuration(@Mock TimeAccuracy annon, @Mock ConstraintValidatorContext ctx) {
+
+        var instance = new TimeAccuracy.DurationValidator();
+
+        var invalid = Duration.ofMillis(1);
+        var valid = Duration.ZERO;
 
         assertThat(instance.isValid(invalid, ctx)).isFalse();
         assertThat(instance.isValid(valid, ctx)).isTrue();

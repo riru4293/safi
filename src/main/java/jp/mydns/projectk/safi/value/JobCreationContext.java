@@ -102,6 +102,6 @@ public class JobCreationContext {
      */
     @Override
     public String toString() {
-        return "JobCreationContext{" + ", jobId=" + jobId + ", scheduleTime=" + scheduleTime + ", jobdef=" + jobdef + '}';
+        return "JobCreationContext{" + "jobId=" + jobId + ", scheduleTime=" + scheduleTime + ", jobdef=" + jobdef + '}';
     }
 }

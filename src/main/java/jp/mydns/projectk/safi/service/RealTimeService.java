@@ -110,7 +110,7 @@ public interface RealTimeService {
          */
         @Override
         public LocalDateTime getLocalNow() {
-            return getOffsetNow().toLocalDateTime();
+            return getExactlyLocalNow().truncatedTo(ChronoUnit.SECONDS);
         }
 
         /**
