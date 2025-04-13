@@ -85,22 +85,22 @@ public interface JobResource {
 
         private final JobdefService jobdefSvc;
         private final JobService jobSvc;
-
-        @Context
-        private UriInfo uriInfo;
+        private final UriInfo uriInfo;
 
         /**
          * Constructor.
          *
          * @param jobdefSvc the {@code JobdefService}
          * @param jobSvc the {@code JobService}
+         * @param uriInfo the {@code UriInfo}
          * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
-        protected Impl(JobdefService jobdefSvc, JobService jobSvc) {
+        protected Impl(JobdefService jobdefSvc, JobService jobSvc, UriInfo uriInfo) {
             this.jobdefSvc = Objects.requireNonNull(jobdefSvc);
             this.jobSvc = Objects.requireNonNull(jobSvc);
+            this.uriInfo = Objects.requireNonNull(uriInfo);
         }
 
         /**
