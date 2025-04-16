@@ -25,6 +25,12 @@
  */
 package jp.mydns.projectk.safi.resource;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
@@ -37,6 +43,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
+import static jakarta.ws.rs.core.HttpHeaders.LOCATION;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
@@ -116,6 +123,17 @@ public interface JobResource {
         @Consumes(APPLICATION_JSON)
         @Produces(APPLICATION_JSON)
         @ProcessName("CreateJob")
+        @Operation(tags = {"jobs"}, summary = "Create a new job. Used to create a job manualy.",
+                   requestBody = @RequestBody(content = @Content(schema = @Schema(implementation
+                       = JobCreationRequest.class))),
+                   responses = {
+                       @ApiResponse(responseCode = "201", description = "Successful operation.",
+                                    headers = @Header(name = LOCATION, description = "Created job.",
+                                                      schema = @Schema(type = "string", format = "uri")),
+                                    content = @Content(schema = @Schema(implementation = JobValue.class))),
+                       @ApiResponse(responseCode = "400", description = "If not found job definition."
+                                    + " Additionally, there may be violations of required value constraints.",
+                                    content = @Content(schema = @Schema(implementation = Object.class)))})
         public Response createJob(@NotNull @Valid JobCreationRequest req) {
 
             final JobCreationContext ctx;
