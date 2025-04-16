@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.resource;
 
+import jp.mydns.projectk.safi.resource.trial.ErrorResponseContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -124,30 +125,41 @@ public interface JobResource {
         @Produces(APPLICATION_JSON)
         @ProcessName("CreateJob")
         @Operation(tags = {"jobs"}, summary = "Create a new job. Used to create a job manualy.",
-                   requestBody = @RequestBody(content = @Content(schema = @Schema(implementation
-                       = JobCreationRequest.class))),
-                   responses = {
-                       @ApiResponse(responseCode = "201", description = "Successful operation.",
-                                    headers = @Header(name = LOCATION, description = "Created job.",
-                                                      schema = @Schema(type = "string", format = "uri")),
-                                    content = @Content(schema = @Schema(implementation = JobValue.class))),
-                       @ApiResponse(responseCode = "400", description = "If not found job definition."
-                                    + " Additionally, there may be violations of required value constraints.",
-                                    content = @Content(schema = @Schema(implementation = Object.class)))})
+            requestBody = @RequestBody(content = @Content(schema = @Schema(implementation
+                = JobCreationRequest.class))),
+            responses = {
+                @ApiResponse(responseCode = "201", description = "Successful operation.",
+                    headers = @Header(name = LOCATION, description = "Created job.",
+                        schema = @Schema(type = "string", format = "uri")),
+                    content = @Content(schema = @Schema(implementation = JobValue.class))),
+                @ApiResponse(responseCode = "400", description = "If not found job definition."
+                    + " Additionally, there may be violations of required value constraints.",
+                    content = @Content(schema = @Schema(implementation = ErrorResponseContext.class)))})
         public Response createJob(@NotNull @Valid JobCreationRequest req) {
 
             final JobCreationContext ctx;
+
             try {
                 ctx = jobdefSvc.buildJobCreationContext(req);
+
             } catch (JobdefService.JobdefIOException ex) {
                 throw new BadRequestException(ex);
+
+            } catch (ConstraintViolationException ex) {
+                throw new InternalConstraintViolationException(ex);
             }
 
-            JobValue job = jobSvc.createJob(ctx);
+            try {
 
-            URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
+                JobValue job = jobSvc.createJob(ctx);
 
-            return Response.created(location).entity(job).build();
+                URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
+
+                return Response.created(location).entity(job).build();
+
+            } catch (ConstraintViolationException ex) {
+                throw new InternalConstraintViolationException(ex);
+            }
         }
     }
 }
