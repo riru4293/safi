@@ -27,13 +27,18 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
+import jakarta.enterprise.inject.Typed;
 import java.net.URI;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
-import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
+import jakarta.inject.Inject;
+import java.util.Objects;
 import jp.mydns.projectk.safi.value.RequestContext;
+import jp.mydns.projectk.safi.value.RequestContext.AccountIdContext;
+import jp.mydns.projectk.safi.value.RequestContext.BatchProcessNameContext;
+import jp.mydns.projectk.safi.value.RequestContext.RestApiPathContext;
+import jp.mydns.projectk.safi.value.RequestContext.RestApiProcessNameContext;
 
 /**
  Producer of the {@link RequestContext}.
@@ -42,61 +47,7 @@ import jp.mydns.projectk.safi.value.RequestContext;
  @version 3.0.0
  @since 3.0.0
  */
-@RequestScoped
-public class RequestContextProducer {
-
-private RequestContext.AccountIdContext accountIdCtx;
-private RequestContext.RestApiProcessNameContext restApiProcNameCtx;
-private RequestContext.BatchProcessNameContext batchProcNameCtx;
-private RequestContext.PathContext pathCtx;
-
-/**
- Inject the {@code AccountIdContext}.
-
- @param accountIdCtx the {@code AccountIdContext}
- @since 3.0.0
- */
-@Inject
-@SuppressWarnings("unused")
-public void setAccountIdCtx(RequestContext.AccountIdContext accountIdCtx) {
-    this.accountIdCtx = accountIdCtx;
-}
-
-/**
- Inject the {@code RestApiProcessNameContext}.
-
- @param restApiProcNameCtx the {@code RestApiProcessNameContext}
- @since 3.0.0
- */
-@Inject
-@SuppressWarnings("unused")
-public void setRestApiProcNameCtx(RequestContext.RestApiProcessNameContext restApiProcNameCtx) {
-    this.restApiProcNameCtx = restApiProcNameCtx;
-}
-
-/**
- Inject the {@code BatchProcessNameContext}.
-
- @param batchProcNameCtx the {@code BatchProcessNameContext}
- @since 3.0.0
- */
-@Inject
-@SuppressWarnings("unused")
-public void setBatchProcNameCtx(RequestContext.BatchProcessNameContext batchProcNameCtx) {
-    this.batchProcNameCtx = batchProcNameCtx;
-}
-
-/**
- Inject the {@code PathContext}.
-
- @param pathCtx the {@code PathContext}
- @since 3.0.0
- */
-@Inject
-@SuppressWarnings("unused")
-void setPathCtx(RequestContext.PathContext pathCtx) {
-    this.pathCtx = pathCtx;
-}
+public interface RequestContextProducer {
 
 /**
  Produce the {@code RequestContext}.
@@ -104,66 +55,94 @@ void setPathCtx(RequestContext.PathContext pathCtx) {
  @return the {@code RequestContext}
  @since 3.0.0
  */
+RequestContext produce();
+
+/**
+ Implements of the {@code RequestContextProducer}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(RequestContextProducer.class)
+@RequestScoped
+class Impl implements RequestContextProducer {
+
+private AccountIdContext accountIdCtx;
+private RestApiProcessNameContext restApiProcNameCtx;
+private BatchProcessNameContext batchProcNameCtx;
+private RestApiPathContext restApiPathCtx;
+
+@SuppressWarnings("unused")
+Impl() {
+}
+
+@Inject
+@SuppressWarnings("unused")
+void setAccountIdCtx(AccountIdContext accountIdCtx) {
+    this.accountIdCtx = accountIdCtx;
+}
+
+@Inject
+@SuppressWarnings("unused")
+void setRestApiProcNameCtx(RestApiProcessNameContext restApiProcNameCtx) {
+    this.restApiProcNameCtx = restApiProcNameCtx;
+}
+
+@Inject
+@SuppressWarnings("unused")
+void setBatchProcNameCtx(BatchProcessNameContext batchProcNameCtx) {
+    this.batchProcNameCtx = batchProcNameCtx;
+}
+
+@Inject
+@SuppressWarnings("unused")
+void setRestApiPathCtx(RestApiPathContext restApiPathCtx) {
+    this.restApiPathCtx = restApiPathCtx;
+}
+
 @Produces
 @RequestScoped
+@Override
 public RequestContext produce() {
     return new RequestContextImpl();
 }
 
 private class RequestContextImpl implements RequestContext {
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
-public Optional<String> getAccountId() {
-    return Optional.ofNullable(accountIdCtx.getValue());
+public String getAccountId() {
+    return accountIdCtx.getValue();
 }
 
-/**
- {@inheritDoc}
-
- @throws PublishableIllegalStateException if no found or multiple definitions.
- @since 3.0.0
- */
 @Override
 public String getProcessName() {
-
-    final Supplier<IllegalStateException> noSingularProcName = () ->
-        new PublishableIllegalStateException(new IllegalStateException(
-            "Multiple process name definitions found, only one is allowed."));
-
-    return Stream.of(restApiProcNameCtx, batchProcNameCtx)
-        .filter(ProcessNameContext::isAvailable).map(ProcessNameContext::getValue)
-        .reduce((a, b) -> {
-            throw noSingularProcName.get();
-        })
-        .orElseThrow(noSingularProcName);
+    return Stream.of(restApiProcNameCtx, batchProcNameCtx).sequential()
+        .map(ProcessNameContext::getValue)
+        .filter(Objects::nonNull)
+        .findFirst().orElse(null);
 }
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
-public Optional<URI> getPath() {
-    return Optional.ofNullable(pathCtx.getValue());
+public URI getRestApiPath() {
+    return Optional.ofNullable(getRawRestApiPath()).orElseThrow(() ->
+        new PublishableIllegalStateException(new IllegalStateException(
+            "There is no request path to the REST API."
+            + " Either it is not an HTTP request or the request path has not been extracted."
+            + " Either way, it is an implementation defect.")));
 }
 
-/**
- Returns a string representation.
+@Override
+public URI getRawRestApiPath() {
+    return restApiPathCtx.getValue();
+}
 
- @return a string representation
- @since 3.0.0
- */
 @Override
 public String toString() {
-    return "RequestContext{" + "accountId=" + accountIdCtx + ", path=" + pathCtx
-        + ", restApiProcessName=" + restApiProcNameCtx + ", batchProcessName=" + batchProcNameCtx
-        + '}';
+    return "RequestContext{" + "accountId=" + getAccountId()
+        + ", restApiPath=" + getRawRestApiPath() + ", processName=" + getProcessName() + '}';
+}
+
 }
 
 }

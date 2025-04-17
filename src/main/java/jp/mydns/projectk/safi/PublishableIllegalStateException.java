@@ -23,58 +23,47 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.service;
+package jp.mydns.projectk.safi;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Typed;
-import java.util.UUID;
+import java.util.Objects;
 
 /**
- ID generator.
+ An {@code IllegalStateException} implementation with a message that can be exposed to the consumer.
+ This exception has a message for the consumer. This message conveys that the consumer is not
+ responsible, that the problem was caused by a flaw in the implementation, and that they should ask
+ a maintainer to deal with it. The message should not include information about the internals of the
+ implementation, as that is unnecessary for the consumer. Any message or stack trace for the
+ maintainer should be provided in the internal {@code Throwable}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface IdService {
+public class PublishableIllegalStateException extends IllegalStateException {
+
+@java.io.Serial
+private static final long serialVersionUID = 8274928374928374900L;
 
 /**
- Generate job id. It is UUIDv4.
+ Construct with the {@code Throwable}.
 
- @return generated job id.
+ @param cause the {@code Throwable} for maintainer.
+ @throws NullPointerException if {@code cause} is {@code null}
  @since 3.0.0
  */
-String generateJobId();
-
-/**
- Implements of the {@code IdService}.
-
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-@Typed(IdService.class)
-@RequestScoped
-class Impl implements IdService {
-
-@SuppressWarnings("unused")
-Impl() {
+public PublishableIllegalStateException(Throwable cause) {
+    super(Objects.requireNonNull(cause));
 }
 
 /**
- {@inheritDoc}
+ Get publishable message.
 
+ @return the reason for the exception and how to handle it to users
  @since 3.0.0
  */
 @Override
-public String generateJobId() {
-    return randomUUID();
-}
-
-private String randomUUID() {
-    return UUID.randomUUID().toString();
-}
-
+public String getMessage() {
+    return "Illegal internal configuration. Please contact your system administrator.";
 }
 
 }

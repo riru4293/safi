@@ -41,93 +41,88 @@ import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.value.SJson;
 
 /**
- * Provides a time inside the application.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Provides a time inside the application.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface AppTimeService {
 
-    /**
-     * Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the same value is
-     * returned.
-     *
-     * @return current time inside the application.
-     * @throws PersistenceException if failed database operation
-     * @since 3.0.0
-     */
-    OffsetDateTime getOffsetNow();
+/**
+ Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the
+ same value is returned.
 
-    /**
-     * Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the same value is
-     * returned.
-     *
-     * @return current time inside the application, in that case timezone is UTC.
-     * @throws PersistenceException if failed database operation
-     * @since 3.0.0
-     */
-    LocalDateTime getLocalNow();
+ @return current time inside the application.
+ @throws PersistenceException if failed database operation
+ @since 3.0.0
+ */
+OffsetDateTime getOffsetNow();
 
-    /**
-     * Implements of the {@code AppTimeService}
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(AppTimeService.class)
-    @RequestScoped
-    class Impl implements AppTimeService {
+/**
+ Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the
+ same value is returned.
 
-        private final AtomicReference<LocalDateTime> cached = new AtomicReference<>();
-        private final RealTimeService realTimeSvc;
-        private final AppConfigDao appConfigDao;
+ @return current time inside the application, in that case timezone is UTC.
+ @throws PersistenceException if failed database operation
+ @since 3.0.0
+ */
+LocalDateTime getLocalNow();
 
-        /**
-         * Constructor.
-         *
-         * @param realTimeSvc the {@code RealTimeService}
-         * @param appConfigDao the {@code appConfigDao}
-         * @throws NullPointerException if any argument is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(RealTimeService realTimeSvc, AppConfigDao appConfigDao) {
-            this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
-            this.appConfigDao = Objects.requireNonNull(appConfigDao);
-        }
+/**
+ Implements of the {@code AppTimeService}
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws PersistenceException if failed database operation
-         * @since 3.0.0
-         */
-        @Override
-        public OffsetDateTime getOffsetNow() {
-            return TimeUtils.toOffsetDateTime(getLocalNow());
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(AppTimeService.class)
+@RequestScoped
+class Impl implements AppTimeService {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @return current time inside the application, in that case timezone is UTC.
-         * @throws PersistenceException if failed database operation
-         * @since 3.0.0
-         */
-        @Override
-        public LocalDateTime getLocalNow() {
-            cached.compareAndSet(null, appConfigDao.getAppConfig(AppConfigId.NOW).filter(this::isEnabled)
-                .map(AppConfigEntity::getValue).map(SJson::unwrap).map(JsonValueUtils::toString)
-                .map(TimeUtils::toLocalDateTime).orElseGet(realTimeSvc::getLocalNow));
-            return cached.get();
-        }
+private final AtomicReference<LocalDateTime> cached = new AtomicReference<>();
+private final RealTimeService realTimeSvc;
+private final AppConfigDao appConfigDao;
 
-        private boolean isEnabled(AppConfigEntity e) {
-            return !e.getValidityPeriod().isIgnored()
-                && !e.getValidityPeriod().getFrom().isAfter(realTimeSvc.getLocalNow())
-                && !e.getValidityPeriod().getTo().isBefore(realTimeSvc.getLocalNow());
-        }
-    }
+@Inject
+@SuppressWarnings("unused")
+Impl(RealTimeService realTimeSvc, AppConfigDao appConfigDao) {
+    this.realTimeSvc = realTimeSvc;
+    this.appConfigDao = appConfigDao;
+}
+
+/**
+ {@inheritDoc}
+
+ @throws PersistenceException if failed database operation
+ @since 3.0.0
+ */
+@Override
+public OffsetDateTime getOffsetNow() {
+    return TimeUtils.toOffsetDateTime(getLocalNow());
+}
+
+/**
+ {@inheritDoc}
+
+ @return current time inside the application, in that case timezone is UTC.
+ @throws PersistenceException if failed database operation
+ @since 3.0.0
+ */
+@Override
+public LocalDateTime getLocalNow() {
+    cached.compareAndSet(null, appConfigDao.getAppConfig(AppConfigId.NOW).filter(this::isEnabled)
+        .map(AppConfigEntity::getValue).map(SJson::unwrap).map(JsonValueUtils::toString)
+        .map(TimeUtils::toLocalDateTime).orElseGet(realTimeSvc::getLocalNow));
+    return cached.get();
+}
+
+private boolean isEnabled(AppConfigEntity e) {
+    return !e.getValidityPeriod().isIgnored()
+        && !e.getValidityPeriod().getFrom().isAfter(realTimeSvc.getLocalNow())
+        && !e.getValidityPeriod().getTo().isBefore(realTimeSvc.getLocalNow());
+}
+
+}
+
 }

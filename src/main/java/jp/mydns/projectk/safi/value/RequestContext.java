@@ -26,12 +26,11 @@
 package jp.mydns.projectk.safi.value;
 
 import java.net.URI;
-import java.util.Optional;
-import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
 
 /**
  Current request information. A <i>Request</i> is a processing request, and there are processing
- requests via Web API and background processing requests by the system.
+ requests via Web API and batch processing requests by the <i>SAFI</i>.
 
  @author riru
  @version 3.0.0
@@ -40,26 +39,37 @@ import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
 public interface RequestContext {
 
 /**
- Get request path.
+ Get HTTP request path. Used to create the HTTP header <i>Location</i>.
 
- @return request path. Empty if request not from web API.
+ @return request path. It ends with {@code /}.
+ @throws PublishableIllegalStateException @throws PublishableIllegalStateException if no found the
+ HTTP request path. It is bug.
  @since 3.0.0
  */
-Optional<URI> getPath();
+URI getRestApiPath();
+
+/**
+ Get raw HTTP request path.
+
+ @return request path. It ends with {@code /}. {@code null} If the process is not based on an HTTP
+ request.
+ @since 3.0.0
+ */
+URI getRawRestApiPath();
 
 /**
  Get account id.
 
- @return logged account id. Empty if not logged in.
+ @return logged account id. {@code null} if not logged in.
  @since 3.0.0
  */
-Optional<String> getAccountId();
+String getAccountId();
 
 /**
- Get processing name.
+ Get processing name. Although this is not usually the case, if a value is provided both via REST
+ API and via batch processing, the value provided via REST API will be returned.
 
- @return current processing name
- @throws PublishableIllegalStateException if no found or multiple definitions.
+ @return current processing name. {@code null} if no found process name.
  @since 3.0.0
  */
 String getProcessName();
@@ -80,6 +90,7 @@ interface AccountIdContext {
  @since 3.0.0
  */
 String getValue();
+
 }
 
 /**
@@ -90,15 +101,17 @@ String getValue();
  @version 3.0.0
  @since 3.0.0
  */
-interface PathContext {
+interface RestApiPathContext {
 
 /**
- Get current request path.
+ Get current HTTP request path.
 
- @return current request path. {@code null} if the request did not come from HTTP.
+ @return current HTTP request path. It ends with {@code /}. {@code null} if the request did not come
+ from HTTP.
  @since 3.0.0
  */
 URI getValue();
+
 }
 
 /**
@@ -118,13 +131,6 @@ interface ProcessNameContext {
  */
 String getValue();
 
-/**
- Returns {@code true} if available get value.
-
- @return {@code true} if available get value, otherwise {@code false}.
- @since 3.0.0
- */
-boolean isAvailable();
 }
 
 /**

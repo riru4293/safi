@@ -25,7 +25,6 @@
  */
 package jp.mydns.projectk.safi.resource;
 
-import jp.mydns.projectk.safi.resource.trial.ErrorResponseContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -47,14 +46,15 @@ import jakarta.ws.rs.Produces;
 import static jakarta.ws.rs.core.HttpHeaders.LOCATION;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Objects;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.JobService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobCreationRequest;
 import jp.mydns.projectk.safi.value.JobValue;
+import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
  JAX-RS resource for <i>Job</i>.
@@ -91,22 +91,14 @@ class Impl implements JobResource {
 
 private final JobdefService jobdefSvc;
 private final JobService jobSvc;
-private final UriInfo uriInfo;
+private final RequestContext reqCtx;
 
-/**
- Constructor.
-
- @param jobdefSvc the {@code JobdefService}
- @param jobSvc the {@code JobService}
- @param uriInfo the {@code UriInfo}
- @throws NullPointerException if any argument is {@code null}
- @since 3.0.0
- */
 @Inject
-protected Impl(JobdefService jobdefSvc, JobService jobSvc, UriInfo uriInfo) {
+@SuppressWarnings("unused")
+Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
     this.jobdefSvc = Objects.requireNonNull(jobdefSvc);
     this.jobSvc = Objects.requireNonNull(jobSvc);
-    this.uriInfo = Objects.requireNonNull(uriInfo);
+    this.reqCtx = Objects.requireNonNull(reqCtx);
 }
 
 /**
@@ -115,6 +107,8 @@ protected Impl(JobdefService jobdefSvc, JobService jobSvc, UriInfo uriInfo) {
  @throws ConstraintViolationException if {@code req} is not valid
  @throws BadRequestException if not found valid job definition
  @throws PersistenceException if failed database operation
+ @throws PublishableIllegalStateException if an exception occurs due to an implementation bug or
+ data inconsistency.
  @since 3.0.0
  */
 @Override
@@ -140,25 +134,15 @@ public Response createJob(@NotNull @Valid JobCreationRequest req) {
 
     try {
         ctx = jobdefSvc.buildJobCreationContext(req);
-
     } catch (JobdefService.JobdefIOException ex) {
         throw new BadRequestException(ex);
-
-    } catch (ConstraintViolationException ex) {
-        throw new InternalConstraintViolationException(ex);
     }
 
-    try {
+    JobValue job = jobSvc.createJob(ctx);
+    URI location = reqCtx.getRestApiPath().resolve(job.getId());
 
-        JobValue job = jobSvc.createJob(ctx);
+    return Response.created(location).entity(job).build();
 
-        URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
-
-        return Response.created(location).entity(job).build();
-
-    } catch (ConstraintViolationException ex) {
-        throw new InternalConstraintViolationException(ex);
-    }
 }
 
 }

@@ -33,69 +33,64 @@ import jakarta.persistence.PersistenceException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.entity.JobdefEntity_;
 
 /**
- * Data access for <i>Job definition</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Data access for <i>Job definition</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface JobdefDao {
 
-    /**
-     * Get a job definition entity.
-     *
-     * @param id job definition id
-     * @return job definition entity
-     * @throws PersistenceException if the query execution was failed
-     * @since 3.0.0
-     */
-    Optional<JobdefEntity> getJobdef(String id);
+/**
+ Get a job definition entity.
 
-    /**
-     * Implements of the {@code JobdefDao}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(JobdefDao.class)
-    @RequestScoped
-    class Impl implements JobdefDao {
+ @param id job definition id
+ @return job definition entity
+ @throws PersistenceException if the query execution was failed
+ @since 3.0.0
+ */
+Optional<JobdefEntity> getJobdef(String id);
 
-        private final EntityManager em;
+/**
+ Implements of the {@code JobdefDao}.
 
-        /**
-         * Constructor.
-         *
-         * @param em the {@code EntityManager}
-         * @throws NullPointerException if {@code em} is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(EntityManager em) {
-            this.em = Objects.requireNonNull(em);
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(JobdefDao.class)
+@RequestScoped
+class Impl implements JobdefDao {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws PersistenceException if the query execution was failed
-         * @since 3.0.0
-         */
-        @Override
-        public Optional<JobdefEntity> getJobdef(String id) {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<JobdefEntity> cq = cb.createQuery(JobdefEntity.class);
+private final EntityManager em;
 
-            Root<JobdefEntity> mJobdef = cq.from(JobdefEntity.class);
+@Inject
+@SuppressWarnings("unused")
+Impl(EntityManager em) {
+    this.em = em;
+}
 
-            return em.createQuery(cq.where(cb.equal(mJobdef.get(JobdefEntity_.id), id))).getResultStream().findFirst();
-        }
-    }
+/**
+ {@inheritDoc}
+
+ @throws PersistenceException if the query execution was failed
+ @since 3.0.0
+ */
+@Override
+public Optional<JobdefEntity> getJobdef(String id) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<JobdefEntity> cq = cb.createQuery(JobdefEntity.class);
+
+    Root<JobdefEntity> mJobdef = cq.from(JobdefEntity.class);
+
+    return em.createQuery(cq.where(cb.equal(mJobdef.get(JobdefEntity_.id), id))).getResultStream().findFirst();
+}
+
+}
+
 }

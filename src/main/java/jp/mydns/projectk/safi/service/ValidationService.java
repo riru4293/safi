@@ -39,124 +39,119 @@ import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.NamedValue;
 
 /**
- * Provides validation of values.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Provides validation of values.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface ValidationService {
 
-    /**
-     * Validate that it is within the validity period.
-     *
-     * @param value the {@code NamedValue}
-     * @return {@code true} if enabled, otherwise {@code false}
-     * @throws NullPointerException if {@code value} is {@code null}
-     * @since 3.0.0
-     */
-    boolean isEnabled(NamedValue value);
+/**
+ Validate that it is within the validity period.
 
-    /**
-     * Validate that it is within the validity period.
-     *
-     * @param entity the {@code NamedEntity}
-     * @return {@code true} if enabled, otherwise {@code false}
-     * @throws NullPointerException if {@code entity} is {@code null}
-     * @since 3.0.0
-     */
-    boolean isEnabled(NamedEntity entity);
+ @param value the {@code NamedValue}
+ @return {@code true} if enabled, otherwise {@code false}
+ @throws NullPointerException if {@code value} is {@code null}
+ @since 3.0.0
+ */
+boolean isEnabled(NamedValue value);
 
-    /**
-     * Validate that the value is valid.
-     *
-     * @param <V> value type
-     * @param value validation value
-     * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-     * @return valid value
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws ConstraintViolationException if {@code value} has constraint violation
-     * @since 3.0.0
-     */
-    <V> V requireValid(V value, Class<?>... groups);
+/**
+ Validate that it is within the validity period.
 
-    /**
-     * Implements of the {@code ValidationService}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(ValidationService.class)
-    @RequestScoped
-    class Impl implements ValidationService {
+ @param entity the {@code NamedEntity}
+ @return {@code true} if enabled, otherwise {@code false}
+ @throws NullPointerException if {@code entity} is {@code null}
+ @since 3.0.0
+ */
+boolean isEnabled(NamedEntity entity);
 
-        private final Validator validator;
-        private final AppTimeService appTimeSvc;
+/**
+ Validate that the value is valid.
 
-        /**
-         * Constructor.
-         *
-         * @param validator the {@code Validator}
-         * @param appTimeSvc the {@code AppTimeService}
-         * @throws NullPointerException if any argument is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(Validator validator, AppTimeService appTimeSvc) {
-            this.validator = Objects.requireNonNull(validator);
-            this.appTimeSvc = Objects.requireNonNull(appTimeSvc);
-        }
+ @param <V> value type
+ @param value validation value
+ @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+ @return valid value
+ @throws NullPointerException if any argument is {@code null}
+ @throws ConstraintViolationException if {@code value} has constraint violation
+ @since 3.0.0
+ */
+<V> V requireValid(V value, Class<?>... groups);
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NullPointerException if {@code value} is {@code null}
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isEnabled(NamedValue value) {
-            Objects.requireNonNull(value);
+/**
+ Implements of the {@code ValidationService}.
 
-            return isEnabled(value.getValidityPeriod().getFrom(), value.getValidityPeriod().getTo(),
-                value.getValidityPeriod().isIgnored());
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(ValidationService.class)
+@RequestScoped
+class Impl implements ValidationService {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NullPointerException if {@code entity} is {@code null}
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isEnabled(NamedEntity entity) {
-            Objects.requireNonNull(entity);
+private final Validator validator;
+private final AppTimeService appTimeSvc;
 
-            return isEnabled(OffsetDateTime.of(entity.getValidityPeriod().getFrom(), ZoneOffset.UTC),
-                OffsetDateTime.of(entity.getValidityPeriod().getTo(), ZoneOffset.UTC),
-                entity.getValidityPeriod().isIgnored());
-        }
+@Inject
+@SuppressWarnings("unused")
+Impl(Validator validator, AppTimeService appTimeSvc) {
+    this.validator = validator;
+    this.appTimeSvc = appTimeSvc;
+}
 
-        private boolean isEnabled(OffsetDateTime from, OffsetDateTime to, boolean ignored) {
-            OffsetDateTime refTime = appTimeSvc.getOffsetNow();
+/**
+ {@inheritDoc}
 
-            return !ignored && !from.isAfter(refTime) && !to.isBefore(refTime);
-        }
+ @throws NullPointerException if {@code value} is {@code null}
+ @since 3.0.0
+ */
+@Override
+public boolean isEnabled(NamedValue value) {
+    Objects.requireNonNull(value);
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if {@code value} has constraint violation
-         * @since 3.0.0
-         */
-        @Override
-        public <V> V requireValid(V value, Class<?>... groups) {
-            Objects.requireNonNull(value);
-            Objects.requireNonNull(validator);
-            Stream.of(Objects.requireNonNull(groups)).forEach(Objects::requireNonNull);
+    return isEnabled(value.getValidityPeriod().getFrom(), value.getValidityPeriod().getTo(),
+        value.getValidityPeriod().isIgnored());
+}
 
-            return ValidationUtils.requireValid(value, validator, groups);
-        }
-    }
+/**
+ {@inheritDoc}
+
+ @throws NullPointerException if {@code entity} is {@code null}
+ @since 3.0.0
+ */
+@Override
+public boolean isEnabled(NamedEntity entity) {
+    Objects.requireNonNull(entity);
+
+    return isEnabled(OffsetDateTime.of(entity.getValidityPeriod().getFrom(), ZoneOffset.UTC),
+        OffsetDateTime.of(entity.getValidityPeriod().getTo(), ZoneOffset.UTC),
+        entity.getValidityPeriod().isIgnored());
+}
+
+private boolean isEnabled(OffsetDateTime from, OffsetDateTime to, boolean ignored) {
+    OffsetDateTime refTime = appTimeSvc.getOffsetNow();
+
+    return !ignored && !from.isAfter(refTime) && !to.isBefore(refTime);
+}
+
+/**
+ {@inheritDoc}
+
+ @throws NullPointerException if any argument is {@code null}
+ @throws ConstraintViolationException if {@code value} has constraint violation
+ @since 3.0.0
+ */
+@Override
+public <V> V requireValid(V value, Class<?>... groups) {
+    Objects.requireNonNull(value);
+    Objects.requireNonNull(validator);
+    Stream.of(Objects.requireNonNull(groups)).forEach(Objects::requireNonNull);
+
+    return ValidationUtils.requireValid(value, validator, groups);
+}
+
+}
+
 }

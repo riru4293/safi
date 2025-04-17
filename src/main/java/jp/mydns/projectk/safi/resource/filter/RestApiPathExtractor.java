@@ -23,54 +23,68 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.producer;
+package jp.mydns.projectk.safi.resource.filter;
 
+import jakarta.annotation.Priority;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
+import jakarta.ws.rs.Priorities;
 import jakarta.inject.Inject;
-import java.time.LocalDateTime;
-import java.util.Objects;
-import jp.mydns.projectk.safi.service.RealTimeService;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
+import jakarta.ws.rs.ext.Provider;
+import java.net.URI;
+import java.util.Optional;
+import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import jp.mydns.projectk.safi.value.RequestContext;
-import jp.mydns.projectk.safi.entity.listener.EntityFooterUpdater;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- Produce the {@link EntityFooterUpdater.Context}.
+ HTTP request path extractor to <i>JAX-RS</i> resource.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface EntityFooterContextProducer {
+public interface RestApiPathExtractor {
 
 /**
- Produce the {@code EntityFooterUpdater.Context}.
+ Extract HTTP request path to <i>JAX-RS</i> resource.
 
- @return the {@code EntityFooterUpdater.Context}
+ @param crc the {@code ContainerRequestContext}
  @since 3.0.0
  */
-EntityFooterUpdater.Context produce();
+void filter(ContainerRequestContext crc);
 
 /**
- Implements of the {@code EntityFooterContextProducer}.
+ Implements of the {@code RestApiPathExtractor}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-@Typed(EntityFooterContextProducer.class)
+@Typed(RestApiPathExtractor.class)
 @RequestScoped
-class Impl implements EntityFooterContextProducer {
+@Provider
+@Priority(Priorities.USER)
+class Impl implements ContainerRequestFilter, RestApiPathExtractor {
 
-private final RequestContext reqCtx;
-private final RealTimeService realTimeSvc;
+private static final Logger log = LoggerFactory.getLogger(RestApiPathExtractor.class);
+
+// Note: It is CDI Bean.
+private RestApiPathContextImpl ctx;
+
+@SuppressWarnings("unused")
+Impl() {
+}
 
 @Inject
 @SuppressWarnings("unused")
-Impl(RequestContext reqCtx, RealTimeService realTimeSvc) {
-    this.reqCtx = Objects.requireNonNull(reqCtx);
-    this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
+void setCtx(RestApiPathContextImpl ctx) {
+    this.ctx = ctx;
 }
 
 /**
@@ -78,34 +92,31 @@ Impl(RequestContext reqCtx, RealTimeService realTimeSvc) {
 
  @since 3.0.0
  */
-@Produces
+@Override
+public void filter(ContainerRequestContext crc) {
+    Optional.of(crc.getUriInfo())
+        .map(UriInfo::getAbsolutePath)
+        .map(p -> UriBuilder.fromUri(p).build(new Object[]{}, true))
+        .ifPresent(c(ctx::setValue).andThen(p -> log.debug("Request path is {}.", p)));
+}
+
 @RequestScoped
+static class RestApiPathContextImpl implements RequestContext.RestApiPathContext {
+
+private URI value;
+
 @Override
-public EntityFooterUpdater.Context produce() {
-    return new ContextImpl();
+public URI getValue() {
+    return value;
 }
 
-private class ContextImpl implements EntityFooterUpdater.Context {
-
-@Override
-public LocalDateTime getUtcNow() {
-    return realTimeSvc.getLocalNow();
-}
-
-@Override
-public String getAccountId() {
-    return reqCtx.getAccountId();
-}
-
-@Override
-public String getProcessName() {
-    return reqCtx.getProcessName();
+void setValue(URI value) {
+    this.value = value;
 }
 
 @Override
 public String toString() {
-    return "EntityFooterContext{" + "utcNow=" + getUtcNow() + ", accountId=" + getAccountId()
-        + ", processName=" + getProcessName() + '}';
+    return "RestApiPathContextImpl{" + "value=" + value + '}';
 }
 
 }

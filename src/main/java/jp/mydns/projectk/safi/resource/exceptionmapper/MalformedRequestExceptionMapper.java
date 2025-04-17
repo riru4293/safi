@@ -23,58 +23,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.service;
+package jp.mydns.projectk.safi.resource.exceptionmapper;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Typed;
-import java.util.UUID;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
+import java.net.URI;
+import jp.mydns.projectk.safi.JakartaRestJsonBinder.MalformedRequestException;
+import jp.mydns.projectk.safi.resource.ErrorResponseContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- ID generator.
+ Catch the {@code MalformedRequestException} and creates a <i>400 Bad Request</i> response.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface IdService {
+@Provider
+public class MalformedRequestExceptionMapper implements ExceptionMapper<MalformedRequestException> {
+
+private static final URI CODE = URI.create(
+    "https://project-k.mydns.jp/safi/errors/malformed-request.html");
+private static final String MSG = "Malformed request.";
+
+private static final Logger log = LoggerFactory.getLogger(MalformedRequestExceptionMapper.class);
 
 /**
- Generate job id. It is UUIDv4.
+ Create a <i>400 Bad Request</i> response.
 
- @return generated job id.
- @since 3.0.0
- */
-String generateJobId();
-
-/**
- Implements of the {@code IdService}.
-
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-@Typed(IdService.class)
-@RequestScoped
-class Impl implements IdService {
-
-@SuppressWarnings("unused")
-Impl() {
-}
-
-/**
- {@inheritDoc}
-
+ @param ex the {@code MalformedRequestException}
+ @return a <i>400 Bad Request</i> response
  @since 3.0.0
  */
 @Override
-public String generateJobId() {
-    return randomUUID();
-}
+public Response toResponse(MalformedRequestException ex) {
 
-private String randomUUID() {
-    return UUID.randomUUID().toString();
-}
+    log.debug("Malformed request was detected.", ex);
 
+    return Response.status(BAD_REQUEST).type(APPLICATION_JSON).entity(
+        new ErrorResponseContext.Builder().withCode(CODE).withMessage(MSG).unsafeBuild()).build();
 }
 
 }

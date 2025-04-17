@@ -27,20 +27,20 @@ package jp.mydns.projectk.safi.test;
 
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.util.TypeLiteral;
-import jakarta.ws.rs.core.UriInfo;
+import jp.mydns.projectk.safi.value.RequestContext;
 import org.jboss.weld.junit.MockBean;
 import static org.mockito.Mockito.mock;
 
 /**
- * Provides the {@code UriInfo} as CDI bean for testing.
+ * Provides the {@code RequestContext} as CDI bean for testing.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class UriInfoProvider {
+public class RequestContextProvider {
 
-    private final UriInfo mock;
+    private final RequestContext mock;
     private final Bean<?> bean;
 
     /**
@@ -48,9 +48,9 @@ public class UriInfoProvider {
      *
      * @since 3.0.0
      */
-    public UriInfoProvider() {
-        mock = mock(UriInfo.class);
-        bean = MockBean.builder().types(new TypeLiteral<UriInfo>() {
+    public RequestContextProvider() {
+        mock = mock(RequestContext.class);
+        bean = MockBean.builder().types(new TypeLiteral<RequestContext>() {
             @java.io.Serial
             private static final long serialVersionUID = 1L;
         }.getType()).creating(mock).build();
@@ -62,7 +62,7 @@ public class UriInfoProvider {
      * @return mock
      * @since 3.0.0
      */
-    public UriInfo getMock() {
+    public RequestContext getMock() {
         return mock;
     }
 

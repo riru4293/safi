@@ -23,35 +23,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.producer;
+package jp.mydns.projectk.safi.service;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.UriInfo;
+import jakarta.validation.Validator;
 
 /**
- * Producer of the {@link UriInfo}. Requires JAX-RS runtime when produce.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Copy of the {@code ValidationService.Impl} for testing.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
-@RequestScoped
-public class UriInfoProducer {
+public class MockValidationService extends ValidationService.Impl {
 
-    @Context
-    private UriInfo uriInfo;
+/**
+ Construct with {@code Jsonv}
 
-    /**
-     * Produce the {@code UriInfo}.
-     *
-     * @return the {@code UriInfo}
-     * @since 3.0.0
-     */
-    @Produces
-    @RequestScoped
-    public UriInfo produceUriInfo() {
-        return uriInfo;
-    }
+ @param validator the {@code Validator}
+ @param appTimeSvc the {@code AppTimeService}
+ @since 3.0.0
+ */
+public MockValidationService(Validator validator, AppTimeService appTimeSvc) {
+    super(validator, appTimeSvc);
+}
+
 }

@@ -40,64 +40,60 @@ import jp.mydns.projectk.safi.entity.AppConfigEntity;
 import jp.mydns.projectk.safi.entity.AppConfigEntity_;
 
 /**
- * Data access for <i>Application Configuration</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Data access for <i>Application Configuration</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface AppConfigDao {
 
-    /**
-     * Get an application configuration.
-     *
-     * @param id the {@code AppConfigId}
-     * @return application configuration entity
-     * @throws PersistenceException if the query execution was failed
-     * @since 3.0.0
-     */
-    Optional<AppConfigEntity> getAppConfig(AppConfigId id);
+/**
+ Get an application configuration.
 
-    /**
-     * Implements of the {@code AppConfigDao}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(AppConfigDao.class)
-    @RequestScoped
-    class Impl implements AppConfigDao {
+ @param id the {@code AppConfigId}
+ @return application configuration entity
+ @throws PersistenceException if the query execution was failed
+ @since 3.0.0
+ */
+Optional<AppConfigEntity> getAppConfig(AppConfigId id);
 
-        private final EntityManager em;
+/**
+ Implements of the {@code AppConfigDao}.
 
-        /**
-         * Constructor.
-         *
-         * @param em the {@code EntityManager}
-         * @throws NullPointerException if {@code em} is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(EntityManager em) {
-            this.em = Objects.requireNonNull(em);
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(AppConfigDao.class)
+@RequestScoped
+class Impl implements AppConfigDao {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws PersistenceException if the query execution was failed
-         * @since 3.0.0
-         */
-        @Override
-        public Optional<AppConfigEntity> getAppConfig(AppConfigId id) {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<AppConfigEntity> cq = cb.createQuery(AppConfigEntity.class);
+private final EntityManager em;
 
-            Root<AppConfigEntity> mAppConfig = cq.from(AppConfigEntity.class);
+@Inject
+@SuppressWarnings("unused")
+Impl(EntityManager em) {
+    this.em = em;
+}
 
-            return em.createQuery(cq.where(cb.equal(mAppConfig.get(AppConfigEntity_.id), id)))
-                .getResultStream().findFirst();
-        }
-    }
+/**
+ {@inheritDoc}
+
+ @throws PersistenceException if the query execution was failed
+ @since 3.0.0
+ */
+@Override
+public Optional<AppConfigEntity> getAppConfig(AppConfigId id) {
+    CriteriaBuilder cb = em.getCriteriaBuilder();
+    CriteriaQuery<AppConfigEntity> cq = cb.createQuery(AppConfigEntity.class);
+
+    Root<AppConfigEntity> mAppConfig = cq.from(AppConfigEntity.class);
+
+    return em.createQuery(cq.where(cb.equal(mAppConfig.get(AppConfigEntity_.id), id)))
+        .getResultStream().findFirst();
+}
+
+}
+
 }

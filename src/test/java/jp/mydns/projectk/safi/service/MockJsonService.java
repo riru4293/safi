@@ -25,56 +25,25 @@
  */
 package jp.mydns.projectk.safi.service;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Typed;
-import java.util.UUID;
+import jakarta.json.bind.Jsonb;
 
 /**
- ID generator.
+ Copy of the {@code JsonService.Impl} for testing.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface IdService {
+public class MockJsonService extends JsonService.Impl {
 
 /**
- Generate job id. It is UUIDv4.
+ Construct with {@code Jsonb}
 
- @return generated job id.
+ @param jsonb the {@code Jsonb}
  @since 3.0.0
  */
-String generateJobId();
-
-/**
- Implements of the {@code IdService}.
-
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-@Typed(IdService.class)
-@RequestScoped
-class Impl implements IdService {
-
-@SuppressWarnings("unused")
-Impl() {
-}
-
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Override
-public String generateJobId() {
-    return randomUUID();
-}
-
-private String randomUUID() {
-    return UUID.randomUUID().toString();
-}
-
+public MockJsonService(Jsonb jsonb) {
+    super(jsonb);
 }
 
 }

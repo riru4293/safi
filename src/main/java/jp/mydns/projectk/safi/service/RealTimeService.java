@@ -35,103 +35,109 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * Provides a real date-time.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Provides a real date-time.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface RealTimeService {
 
-    /**
-     * Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the same value is
-     * returned.
-     *
-     * @return current time, in that case timezone is UTC.
-     * @since 3.0.0
-     */
-    OffsetDateTime getOffsetNow();
+/**
+ Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the
+ same value is returned.
 
-    /**
-     * Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the same value is
-     * returned.
-     *
-     * @return current time, in that case timezone is UTC.
-     * @since 3.0.0
-     */
-    LocalDateTime getLocalNow();
+ @return current time, in that case timezone is UTC.
+ @since 3.0.0
+ */
+OffsetDateTime getOffsetNow();
 
-    /**
-     * Get exactly current time. Can only be used when {@link #getOffsetNow()} has insufficient precision. The first
-     * value is remembered so that subsequent times the same value is returned.
-     *
-     * @return current time, in that case timezone is UTC.
-     * @since 3.0.0
-     */
-    OffsetDateTime getExactlyOffsetNow();
+/**
+ Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the
+ same value is returned.
 
-    /**
-     * Get exactly current time. Can only be used when {@link #getLocalNow()} has insufficient precision. The first
-     * value is remembered so that subsequent times the same value is returned.
-     *
-     * @return current time, in that case timezone is UTC.
-     * @since 3.0.0
-     */
-    LocalDateTime getExactlyLocalNow();
+ @return current time, in that case timezone is UTC.
+ @since 3.0.0
+ */
+LocalDateTime getLocalNow();
 
-    /**
-     * Implements of the {@code RealTimeService}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(RealTimeService.class)
-    @RequestScoped
-    class Impl implements RealTimeService {
+/**
+ Get exactly current time. Can only be used when {@link #getOffsetNow()} has insufficient precision.
+ The first value is remembered so that subsequent times the same value is returned.
 
-        private final AtomicReference<OffsetDateTime> cached = new AtomicReference<>();
+ @return current time, in that case timezone is UTC.
+ @since 3.0.0
+ */
+OffsetDateTime getExactlyOffsetNow();
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public OffsetDateTime getOffsetNow() {
-            return getExactlyOffsetNow().truncatedTo(ChronoUnit.SECONDS);
-        }
+/**
+ Get exactly current time. Can only be used when {@link #getLocalNow()} has insufficient precision.
+ The first value is remembered so that subsequent times the same value is returned.
 
-        /**
-         * {@inheritDoc}
-         *
-         * @return current time, in that case timezone is UTC.
-         * @since 3.0.0
-         */
-        @Override
-        public LocalDateTime getLocalNow() {
-            return getExactlyLocalNow().truncatedTo(ChronoUnit.SECONDS);
-        }
+ @return current time, in that case timezone is UTC.
+ @since 3.0.0
+ */
+LocalDateTime getExactlyLocalNow();
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public OffsetDateTime getExactlyOffsetNow() {
-            cached.compareAndSet(null, OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized()));
-            return cached.get();
-        }
+/**
+ Implements of the {@code RealTimeService}.
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public LocalDateTime getExactlyLocalNow() {
-            return getExactlyOffsetNow().toLocalDateTime();
-        }
-    }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(RealTimeService.class)
+@RequestScoped
+class Impl implements RealTimeService {
+
+private final AtomicReference<OffsetDateTime> cached = new AtomicReference<>();
+
+@SuppressWarnings("unused")
+Impl() {
+}
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public OffsetDateTime getOffsetNow() {
+    return getExactlyOffsetNow().truncatedTo(ChronoUnit.SECONDS);
+}
+
+/**
+ {@inheritDoc}
+
+ @return current time, in that case timezone is UTC.
+ @since 3.0.0
+ */
+@Override
+public LocalDateTime getLocalNow() {
+    return getExactlyLocalNow().truncatedTo(ChronoUnit.SECONDS);
+}
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public OffsetDateTime getExactlyOffsetNow() {
+    cached.compareAndSet(null, OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized()));
+    return cached.get();
+}
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public LocalDateTime getExactlyLocalNow() {
+    return getExactlyOffsetNow().toLocalDateTime();
+}
+
+}
+
 }

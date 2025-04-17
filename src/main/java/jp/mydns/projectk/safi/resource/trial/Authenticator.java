@@ -27,15 +27,13 @@ package jp.mydns.projectk.safi.resource.trial;
 
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
-import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.resource.NeedToAuth;
-import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
@@ -70,19 +68,13 @@ void filter(ContainerRequestContext crc);
 @Priority(Priorities.AUTHENTICATION)
 class Impl implements ContainerRequestFilter, Authenticator {
 
-// Note: It is CDI Bean. Obtaining the request scoped CDI bean via Instance.
-private Instance<ContextImpl> ctxInst;
+// Note: It is CDI Bean.
+private ContextImpl ctx;
 
-/**
- Inject the {@code ContextImpl} as {@code Instance}.
-
- @param ctxInst the {@code ContextImpl} as {@code Instance}
- @since 3.0.0
- */
 @Inject
 @SuppressWarnings("unused")
-void setCtxInst(Instance<ContextImpl> ctxInst) {
-    this.ctxInst = ctxInst;
+void setCtx(ContextImpl ctx) {
+    this.ctx = ctx;
 }
 
 /**
@@ -97,7 +89,7 @@ void setCtxInst(Instance<ContextImpl> ctxInst) {
 @NeedToAuth
 public void filter(ContainerRequestContext crc) {
 // ToDo: Require implements of the auth process.
-    requireResolvable(ctxInst).setValue("anonymous");
+    ctx.setValue("anonymous");
 }
 
 @RequestScoped
@@ -105,11 +97,6 @@ static class ContextImpl implements RequestContext.AccountIdContext {
 
 private String value = null;
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
 public String getValue() {
     return value;
@@ -119,15 +106,9 @@ void setValue(String value) {
     this.value = value;
 }
 
-/**
- Returns a string representation.
-
- @return a string representation
- @since 3.0.0
- */
 @Override
 public String toString() {
-    return String.valueOf(value);
+    return "AccountIdContext{" + "value=" + value + '}';
 }
 
 }

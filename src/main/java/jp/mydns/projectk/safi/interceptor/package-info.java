@@ -23,46 +23,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.exception.trial;
-
-import java.util.Objects;
-
 /**
- An {@code IllegalStateException} implementation with a message that can be exposed to the consumer.
- This exception has a message for the consumer. This message conveys that the consumer is not
- responsible, that the problem was caused by a flaw in the implementation, and that they should ask
- a maintainer to deal with it. The message should not include information about the internals of the
- implementation, as that is unnecessary for the consumer. Any message or stack trace for the
- maintainer should be provided in the internal {@code Throwable}.
-
- @author riru
- @version 3.0.0
- @since 3.0.0
+ * Jakarta CDI interceptor.
+ *
+ * @author riru
+ * @version 3.0.0
+ * @since 3.0.0
  */
-public class PublishableIllegalStateException extends IllegalStateException {
-
-/**
- Construct with the {@code Throwable}.
-
- @param cause the {@code Throwable} for maintainer.
- @throws NullPointerException if {@code cause} is {@code null}
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-public PublishableIllegalStateException(Throwable cause) {
-    super(Objects.requireNonNull(cause));
-}
-
-/**
- Get publishable message.
-
- @return the reason for the exception and how to handle it to users
- @since 3.0.0
- */
-@Override
-public String getMessage() {
-    return "Illegal internal configuration. Please contact your system administrator.";
-}
-
-}
+package jp.mydns.projectk.safi.interceptor;
