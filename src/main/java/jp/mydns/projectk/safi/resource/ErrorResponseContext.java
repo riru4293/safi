@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.resource.trial;
+package jp.mydns.projectk.safi.resource;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import static io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
@@ -62,9 +62,9 @@ public interface ErrorResponseContext extends ValueTemplate {
      * @since 3.0.0
      */
     @JsonbProperty("$schema")
-    @Schema(description = "", requiredMode = NOT_REQUIRED, accessMode = READ_ONLY)
+    @Schema(description = "JSON schema.", accessMode = READ_ONLY)
     @NotNull
-    Optional<URI> getSchema();
+    URI getSchema();
 
     /**
      * Get error code.
@@ -105,7 +105,7 @@ public interface ErrorResponseContext extends ValueTemplate {
      */
     class Builder extends ValueTemplate.AbstractBuilder<Builder, ErrorResponseContext> {
 
-        private URI schema;
+        private URI contextRoot;
         private URI code;
         private String message;
         private List<JsonObject> details;
@@ -120,14 +120,15 @@ public interface ErrorResponseContext extends ValueTemplate {
         }
 
         /**
-         * Set JSON schema
+         * Set context root of SAFI.
          *
-         * @param schema the JSON schema URI
+         * @param contextRoot context root of SAFI. URI must be opaque. A URI is opaque if, and only if, it is absolute
+         * and its scheme-specific part does not begin with a slash character ('/').
          * @return updated this
          * @since 3.0.0
          */
-        public Builder withSchema(URI schema) {
-            this.schema = schema;
+        public Builder withContextRoot(URI contextRoot) {
+            this.contextRoot = contextRoot;
             return this;
         }
 
@@ -179,21 +180,23 @@ public interface ErrorResponseContext extends ValueTemplate {
 
         private class Bean implements ErrorResponseContext {
 
+            private final URI relativeSchemPath = URI.create("./schemas/error-response-context.schema.json");
             private final URI schema;
             private final URI code;
             private final String message;
             private final List<JsonObject> details;
 
             public Bean(Builder builder) {
-                this.schema = builder.schema;
+                this.schema = Optional.ofNullable(builder.contextRoot).filter(URI::isOpaque)
+                    .map(r -> r.resolve(relativeSchemPath)).map(URI::normalize).orElseGet(() -> null);
                 this.code = builder.code;
                 this.message = builder.message;
                 this.details = builder.details;
             }
 
             @Override
-            public Optional<URI> getSchema() {
-                return Optional.ofNullable(schema);
+            public URI getSchema() {
+                return schema;
             }
 
             @Override

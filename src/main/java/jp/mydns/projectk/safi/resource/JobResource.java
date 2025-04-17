@@ -25,7 +25,6 @@
  */
 package jp.mydns.projectk.safi.resource;
 
-import jp.mydns.projectk.safi.resource.trial.ErrorResponseContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
