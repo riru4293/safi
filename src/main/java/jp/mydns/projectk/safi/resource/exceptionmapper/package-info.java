@@ -30,4 +30,4 @@
  * @version 3.0.0
  * @since 3.0.0
  */
-package jp.mydns.projectk.safi.resource.exception;
+package jp.mydns.projectk.safi.resource.exceptionmapper;
