@@ -8,7 +8,7 @@ ${ErrorActionPreference} = 'Continue'
 
 # OpenSSL configuration
 ${PREFIX} = "${env:LOCALAPPDATA}\Programs\OpenSSL"
-${VER} = '3.4.0'
+${VER} = '3.5.0'
 ${DEST} = "${PREFIX}\${VER}"
 
 ${OPENSSL_HOME} = "${DEST}"
@@ -17,19 +17,19 @@ ${OPENSSL_ORIGIN_CONF} = "${OPENSSL_HOME}\ssl\openssl.cnf"
 # See: https://kb.firedaemon.com/support/solutions/articles/4000121705
 ${SRC} = "https://download.firedaemon.com/FireDaemon-OpenSSL/openssl-${VER}.zip"
 ${ZIP} = "${env:TMP}\$( Split-Path -Path ${SRC} -Leaf )"
-${SRC_HASH} = 'FFF7C56C1588644A609F63F60FAD15275E2CE6FFC310C320CDCB72554449CCA5'.ToUpper()
+${SRC_HASH} = '99F778ADA6DDE8499C62299323CB868D7B35C571CF82F1165C36009A2FD456DB'.ToUpper()
 ${HASH_ALG} = 'SHA256' # [MD5|SHA1|SHA256|SHA512]
 
 # Certificate configuration
 ${COUNTRY} = 'JP'
 ${STATION} = 'Osaka'
-${ORG} = 'project-k'
+${ORG} = 'Project-k'
 ${DOMAIN} = 'project-k.mydns.jp'
 
 # CA configuration
 ${CA_CONF} = "${env:CA_HOME}\openssl.ca.cnf"
 ${CA_SUBJ} = "/C=${COUNTRY}/ST=${STATION}/O=${ORG}/CN=ca.${DOMAIN}"
-${CA_CERT_NAME} = "ca.${ORG}"
+${CA_CERT_NAME} = "ca.$(${ORG}.toLower())"
 ${CA_DAYS} = 3650
 
 # Server configuration
@@ -187,8 +187,8 @@ Read-Host "Press enter to exit"
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU2BCQLJAPDOeHi+Itniq6DsUT
-# 1IGgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUvEcSoY6UCatP/qxaoNOYPO31
+# /oOgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -212,11 +212,11 @@ Read-Host "Press enter to exit"
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBQIop9sgVIG
-# xknWW/TPrQpS+0X+7jANBgkqhkiG9w0BAQEFAASCAQC69tkLIibGU9j5BlHn3Efm
-# CbYinCihfp2xZLh0Y0WNKXv60ECf4FJKfs3CTh7K5Pjeo+GQ+anokTv3pFxyjBWd
-# hVMFaqeUqYNLMrlr/bXnwu9qz9su4n3BmkqZEZJPLw/GZQp+C4mj2ObDmE2LImPY
-# WiZ0gyWxvwnlMzoIOaLzi5DieLiuI9LRP6Nf5EoHIsksmBckhPdUoZuEI8phqePJ
-# Vji09Pw98ueKMm3/lGunY0rw6lrBNSI3EiGM95kU5tvrBJPnqjVbh0CjOitt7akU
-# 2GK7Q5UgjNLP+6SNrXzQ6I7l4KFodBqanLv7utx3uYfGyYt5aMjflkM25fpij5Cy
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBS89TUUk64q
+# L2qHf+wGCJ4/X/XfkTANBgkqhkiG9w0BAQEFAASCAQDTqu/GZnledaRwkOTxyv82
+# VDBocZB4p4cliwz20/ix0JPL+6Cc8GgWLSia3F+Y+xNWx/xaKc6aR+vAMaOISP74
+# IGkPsg2YYkaw9GGIVTDT8/iENHWMczV/ylWiRUsTyNtVXCIlzlMr4poR8KVg57KD
+# +3stZdTLUK5u88DJT/bMQVNLIsTUkRJTWpkVdELp4L6E/dB8dSqpYFNhZBe86IGG
+# GNqX4jnurh9HRLzMrMS01rtodHedInOAk6bEHrz1e/0KJWbsbS/I+U55bNWIZ3f/
+# ygqeZz3rA3aFxtZOV/vbHuBGlWOInjxTwQUhp1x2Lb2thzsZVqahltF3ypFo4v8A
 # SIG # End signature block

@@ -1,14 +1,14 @@
 #Requires -Version 7
 $ErrorActionPreference = 'Continue'
 
-${ORG} = 'project-k'
-${CA_CERT} = "${env:LOCALAPPDATA}\CA\certs\ca.${ORG}.crt"
+${ORG} = 'Project-k'
+${CA_CERT} = "${env:LOCALAPPDATA}\CA\certs\ca.$(${ORG}.toLower()).crt"
 ${JDKS} = @(
-  @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk8" ; STORE_PASS = 'changeit' }
-  @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk11"; STORE_PASS = 'changeit' }
-  @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk17"; STORE_PASS = 'changeit' }
+  # @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk8" ; STORE_PASS = 'changeit' }
+  # @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk11"; STORE_PASS = 'changeit' }
+  # @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk17"; STORE_PASS = 'changeit' }
   @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk21"; STORE_PASS = 'changeit' }
-  @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk23"; STORE_PASS = 'changeit' }
+  # @{ HOME = "${env:LOCALAPPDATA}\Programs\Java\jdk24"; STORE_PASS = 'changeit' }
 )
 
 foreach ( ${jdk} in ${JDKS} ) {
@@ -54,8 +54,8 @@ Read-Host 'Press enter to exit'
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU4RezKb8utaCsbPEfNElE7uMF
-# roqgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU5JESl3ZDlwUujREJfzGRYaXM
+# JfSgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -79,11 +79,11 @@ Read-Host 'Press enter to exit'
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBRpwSrG0ABi
-# dYXMatSxoyHypQarFTANBgkqhkiG9w0BAQEFAASCAQDcBXTkyTY66PbUYuA5w4q6
-# jiwT8wWCq1fOdJFrCyQNM4q6eIOaoevKfzcEWY+w+nkjSL1HVX/VNVZeERMthKfH
-# 4p2da1IlOYTN0iU6tzlT4cgvmAE3YGfTfxv6tk3uphPwsAuy50D9WNRT1pIEKexn
-# opu+jCMIZWRJ5uTLOOlJmZtlqBxJhqjf9Wj0Csknjllo0CXyyZ8ECPoQ42BvsbK5
-# WtEX7zUdzhL8zlBJoBnsIGAqcKJgpCjIBwvsu3s3gKcy3BEHOp25pyICRLzt/ZGt
-# Y2Ywha3JQjgOdArjD/mzAsyoE5SzjuuvmQoLixo9/FWKvsHvXwtB81rY23wgSZRv
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBTpyuC8Twhw
+# Us5S+mhqeIvVzcZpGTANBgkqhkiG9w0BAQEFAASCAQB+VUhnXv7SQXI0e/mmICEk
+# mdb42FERdRZE180MoxtcSqC7ApFhdJzlTrsebwWPYgeydvv7k8KstudckmEnkSHQ
+# Iwj6ikK7ASaYwenREMATkTcUb0jqYSLR3p6fvsKF3H28AeKRNa7AkHqQVqDsngxJ
+# fbtJ6Zd8YbNJb9MQ4fAbktYbz8yvDVIKlXai3fanWZEF/uVD6m+Of5Y+ifmsyPp4
+# mRF9I5PGVQGmtVCAJyzD4lqW2dET+nJ1+JWKBZX6OnsXUrIqKpSzDpAq9+iGYBaD
+# zGcdEiBeAI3Pc8VFAVyfhRwowwOw/1PN3S5yTEGMF7iobdlA5keJVfZFJGVO42Ei
 # SIG # End signature block
