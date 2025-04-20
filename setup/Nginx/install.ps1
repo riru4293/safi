@@ -156,6 +156,12 @@ ssl_certificate_key $( ${CA_HOME}.Replace( '\', '/' ) )/private/${SV_CERT_NAME}.
 @"
 location /safi/ {
     proxy_pass http://safi-host/safi/;
+
+    proxy_set_header Forwarded "for=`$proxy_add_x_forwarded_for; proto=`$scheme; by=`$server_addr";
+
+    proxy_set_header X-Forwarded-For `$proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto `$scheme;
+    proxy_set_header X-Forwarded-Host `$host;
 }
 "@ | Out-File -enc default "${NGINX_HOME}\conf\conf.d\tls-server\safi-tls-server.conf"
 
@@ -187,8 +193,8 @@ Read-Host 'Press enter to exit'
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUlJ7jKWEfTVnJEVaCZq6wprku
-# DqKgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU2pmHSe99MRbBjQpdkQPdAOHv
+# i8SgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -212,11 +218,11 @@ Read-Host 'Press enter to exit'
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBQQv8n0Sxqv
-# c0vRin6plg6SvQx49TANBgkqhkiG9w0BAQEFAASCAQDXTEeFveoAjXSnoHK7FR4s
-# fh1TJdzFqmxmJ6bCarTHZ22jUmNbGWq7jwrXQN4C2N6sxv1c1RmGftZnO6a+oq+C
-# whfD/fRq4hwHKteSQ+339b+TWLpFIT9uL1nJeUWTfFjrjIjLEMCDQvtxNt4Fsuel
-# cMz1khh+K11rqwQmjd06EoCgUCE5o7XFqoiLbLRRX6FTUjNMu5t2wqRtzwDtQxDc
-# roUs2SzOdCos8zPF9/TLR8hyU+R7ZtFeEoEmlqNYGWxelBuMGt0DY/Ll6YiLzSSY
-# TU6e0XlQLWQ8I00Q8LJGRDlW/oHa+A31kxn/ojBKp9ITgyA4Yb/BULdI0XaO+W8m
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBSZ/FzDycf8
+# mjBUEkDsgFazNj1UpTANBgkqhkiG9w0BAQEFAASCAQC+SxF9fLhX6Fmp9egzYir6
+# LCloohN8jMTKaOvImwITla56kpfEdjP70Ty68CR6C0CWP0Mpu+Q4QpU8vzj8xdOc
+# e1iMcFdwFW9N3t0DNfPQro9Mious2L6jmJ5+YaH9tkHNGDvrJ5gEA+xVzd1QUpzL
+# PSMCIcLHlS0mnjdccemI8ai+j0Dg+Du106B8ZulZGPxeseNn9ijmQWZSyjRT9Wf6
+# Bh+4isa3AoOsAI7uzA75VijOaqZcub7cVw7hrKwy14NTkPdq/H7/HPpFsTJqkPEr
+# YHkPmH6y+2UPKn/OCIdqCs3aL1MBadsRj/miHb5zfFU5GWgH95vu7CUFwKSBIXrX
 # SIG # End signature block
