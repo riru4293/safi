@@ -26,10 +26,10 @@ ${TZ_SQL} = "${DEST}\zoneinfo.sql"
 ${OPENSSL_PATH} = "${env:LOCALAPPDATA}\Programs\OpenSSL\primary\$( [System.Environment]::Is64BitProcess ? 'x64' : 'x86' )\bin"
 
 # CA configuration
-${ORG} = 'project-k'
+${ORG} = 'Project-k'
 ${CA_HOME} = "${env:LOCALAPPDATA}\CA"
-${CA_CERT_NAME} = "ca.${ORG}"
-${SV_CERT_NAME} = "$( ${env:COMPUTERNAME}.ToLower() ).${ORG}"
+${CA_CERT_NAME} = "ca.$(${ORG}.toLower())"
+${SV_CERT_NAME} = "$( ${env:COMPUTERNAME}.ToLower() ).$(${ORG}.toLower())"
 
 # Environment variables
 ${env:PATH} = "${MARIA_HOME}\bin" + ';' + "${OPENSSL_PATH}" + ';' + "${env:PATH}"
@@ -245,8 +245,8 @@ Read-Host 'Press enter to exit'
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUGoD1OppJrf8kF7fSXuuPO2et
-# hSmgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUxYNjpCZ9vovlCcDElNXpjRMs
+# pYugggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -270,11 +270,11 @@ Read-Host 'Press enter to exit'
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBTHCQpNoUq8
-# EbSrRFgaWhkz29S6dTANBgkqhkiG9w0BAQEFAASCAQAqcEzodtmdMu1BTsY77Eb7
-# si/w+VvepUQlhxWIWNhlza7FF4g7gTHOMi779axQFZ3dKxV8BHDeSuZFDzfnLyfB
-# B/pxPSFORr3hMUMPB+ToH6p9E3T284IBwhSPMm43hW6ttPyXEZE8kt5JETDPhOwm
-# bzqwyr3biqoLkdNijkj/lcsvU09Dp25D7yyfsJ2wILflepHpU6ttnWhED1cS/xwU
-# EkDm68fqVFSChJPVVHbhjiiblVJjSbI06ItePoHOZk+ad9rFis2pcN5hue0H/Lbc
-# M6UsTlzBmDR+fuYbOFAlPv+qC3XCVeEr7RdcOo6gFuuwHnV6jFUPSsOx2tER5TE6
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBQwAtcs2ECt
+# maUQ5k1TOXVyYH3cvTANBgkqhkiG9w0BAQEFAASCAQCh/U54CQjorVUAg4Wbjmtn
+# fC5PhUw0Z98dKxDic1vsMKvBLHaDlXwzyOX/bCjhg3YXcFFwfbVJjg5h7ugJUjC6
+# XAh/0WLfYS7CIgg/22hP1/Dcch7b6T5P/iRFZZLb2NpcJhxhBdR7kg+ml8Dfd90A
+# Z326Dbv6kr3LC/zzXSrKW3wMllwDZ7L0v63vymzwcA+TxWJGzcO2ntRnXSbR6Z9L
+# vrZdytDkVZwFSG0jjhjwceCVOYhCbePXMc+K3rNmuOgth53aY3jd9H9tbTVqgL19
+# pvZ7kRF1etymKbBptZEJZt/dvVdRgLbOvtR293AolwixlZsRPti+PUA7hu17s66S
 # SIG # End signature block
