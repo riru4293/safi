@@ -156,6 +156,7 @@ ssl_certificate_key $( ${CA_HOME}.Replace( '\', '/' ) )/private/${SV_CERT_NAME}.
 @"
 location /safi/ {
     proxy_pass http://safi-host/safi/;
+    proxy_redirect default;
 
     proxy_set_header Forwarded "for=`$proxy_add_x_forwarded_for; proto=`$scheme; by=`$server_addr";
 
