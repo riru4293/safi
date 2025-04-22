@@ -8,9 +8,9 @@ fi
 
 
 # Configuration
-ORG='project-k'
-CA_CERT_NAME="ca.${ORG}"
-SV_CERT_NAME="$(hostname).${ORG}"
+ORG='Project-k'
+CA_CERT_NAME="ca.${ORG,,}"
+SV_CERT_NAME="$(hostname).${ORG,,}"
 
 
 # For latest

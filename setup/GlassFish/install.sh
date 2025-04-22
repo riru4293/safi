@@ -62,8 +62,15 @@ systemctl --user --now enable glassfish
 --restype=javax.sql.DataSource \
 --property=user=safi:password="${SAFI_PASS}":sessionVariables='innodb_lock_wait_timeout\=60':sslMode='verify-full':\
 trustStore="file\:///${CA_HOME}/mariadb-connector-cacerts":\
-trustStoreType='pkcs12':trustStorePassword="${STORE_PASS}":URL='jdbc\:mariadb\://localhost/safi' \
+trustStoreType='pkcs12':trustStorePassword="${STORE_PASS}":URL='jdbc\:mariadb\://localhost/safi?serverTimezone\=UTC' \
 SafiPool
+
+"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.statement-timeout-in-seconds=300"
+"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.statement-cache-size=20"
+"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.validation-table-name=DUAL"
+"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.connection-validation-method=table"
+"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.is-connection-validation-required=true"
+"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.fail-all-connections=true"
 
 "${GLASSFISH_HOME}/bin/asadmin" create-jdbc-resource --connectionpoolid SafiPool jdbc/safi
 
