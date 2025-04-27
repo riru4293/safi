@@ -36,82 +36,85 @@ import java.net.URI;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- * Request path extractor to <i>JAX-RS</i> resource.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Request path extractor to <i>JAX-RS</i> resource.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface RequestPathExtractor {
 
-    /**
-     * Extract request path to <i>JAX-RS</i> resource.
-     *
-     * @param crc the {@code ContainerRequestContext}
-     * @since 3.0.0
-     */
-    void filter(ContainerRequestContext crc);
+/**
+ Extract request path to <i>JAX-RS</i> resource.
 
-    /**
-     * Implements of the {@code RequestPathExtractor}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @RequestScoped
-    @Provider
-    @Priority(Priorities.USER)
-    class Impl implements ContainerRequestFilter, RequestPathExtractor {
+ @param crc the {@code ContainerRequestContext}
+ @since 3.0.0
+ */
+void filter(ContainerRequestContext crc);
 
-        // Note: It is CDI Bean.
-        private PathContextImpl ctx;
+/**
+ Implements of the {@code RequestPathExtractor}.
 
-        @Inject
-        @SuppressWarnings("unused")
-        void setCtx(PathContextImpl ctx) {
-            this.ctx = ctx;
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@RequestScoped
+@Provider
+@Priority(Priorities.USER)
+class Impl implements ContainerRequestFilter, RequestPathExtractor {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public void filter(ContainerRequestContext crc) {
-            ctx.setValue(crc.getUriInfo().getAbsolutePath());
-        }
+// Note: It is CDI Bean.
+private PathContextImpl ctx;
 
-        @RequestScoped
-        static class PathContextImpl implements RequestContext.PathContext {
+@Inject
+@SuppressWarnings("unused")
+void setCtx(PathContextImpl ctx) {
+    this.ctx = ctx;
+}
 
-            private URI value;
+/**
+ {@inheritDoc}
 
-            /**
-             * {@inheritDoc}
-             *
-             * @since 3.0.0
-             */
-            @Override
-            public URI getValue() {
-                return value;
-            }
+ @since 3.0.0
+ */
+@Override
+public void filter(ContainerRequestContext crc) {
+    ctx.setValue(crc.getUriInfo().getAbsolutePath());
+}
 
-            void setValue(URI value) {
-                this.value = value;
-            }
+@RequestScoped
+static class PathContextImpl implements RequestContext.PathContext {
 
-            /**
-             * Returns a string representation.
-             *
-             * @return a string representation
-             * @since 3.0.0
-             */
-            @Override
-            public String toString() {
-                return String.valueOf(value);
-            }
-        }
-    }
+private URI value;
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public URI getValue() {
+    return value;
+}
+
+void setValue(URI value) {
+    this.value = value;
+}
+
+/**
+ Returns a string representation.
+
+ @return a string representation
+ @since 3.0.0
+ */
+@Override
+public String toString() {
+    return String.valueOf(value);
+}
+
+}
+
+}
+
 }

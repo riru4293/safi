@@ -25,33 +25,13 @@
  */
 package jp.mydns.projectk.safi.producer;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Produces;
-import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.UriInfo;
+import jp.mydns.projectk.safi.value.WebApiRequestPath;
 
 /**
- * Producer of the {@link UriInfo}. Requires JAX-RS runtime when produce.
  *
  * @author riru
- * @version 3.0.0
- * @since 3.0.0
  */
-@RequestScoped
-public class UriInfoProducer {
+public interface WebApiRequestPathProducer {
 
-    @Context
-    private UriInfo uriInfo;
-
-    /**
-     * Produce the {@code UriInfo}.
-     *
-     * @return the {@code UriInfo}
-     * @since 3.0.0
-     */
-    @Produces
-    @RequestScoped
-    public UriInfo produceUriInfo() {
-        return uriInfo;
-    }
+     WebApiRequestPath produce();
 }
