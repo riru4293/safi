@@ -68,7 +68,7 @@ public interface RequestContext {
      * @version 3.0.0
      * @since 3.0.0
      */
-    interface Path {
+    interface PathContext {
 
         /**
          * Get current request path.
@@ -77,5 +77,23 @@ public interface RequestContext {
          * @since 3.0.0
          */
         URI getValue();
+    }
+
+    /**
+     * Current process name information.
+     *
+     * @author riru
+     * @version 3.0.0
+     * @since 3.0.0
+     */
+    interface ProcessNameContext {
+
+        /**
+         * Get current process name.
+         *
+         * @return current process name
+         * @since 3.0.0
+         */
+        String getValue();
     }
 }

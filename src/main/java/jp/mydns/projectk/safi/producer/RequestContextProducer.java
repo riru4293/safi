@@ -29,7 +29,6 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import java.net.URI;
-import java.util.Optional;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
@@ -43,13 +42,19 @@ import jp.mydns.projectk.safi.value.RequestContext;
 public class RequestContextProducer {
 
     private String accountId;
-    private String processName;
-    private RequestContext.Path pathCtx;
+    private RequestContext.ProcessNameContext procNameCtx;
+    private RequestContext.PathContext pathCtx;
 
     @Inject
     @SuppressWarnings("unused")
-    void setPathCtx(RequestContext.Path pathCtx) {
+    void setPathCtx(RequestContext.PathContext pathCtx) {
         this.pathCtx = pathCtx;
+    }
+
+    @Inject
+    @SuppressWarnings("unused")
+    public void setProcNameCtx(RequestContext.ProcessNameContext procNameCtx) {
+        this.procNameCtx = procNameCtx;
     }
 
     /**
@@ -63,16 +68,6 @@ public class RequestContextProducer {
     }
 
     /**
-     * Set current processing name.
-     *
-     * @param processName current processing name. It is screen or batch processing name.
-     * @since 3.0.0
-     */
-    public void setProcessName(String processName) {
-        this.processName = processName;
-    }
-
-    /**
      * Produce the {@code RequestContext}.
      *
      * @return the {@code RequestContext}
@@ -81,17 +76,15 @@ public class RequestContextProducer {
     @Produces
     @RequestScoped
     public RequestContext produce() {
-        return new RequestContextImpl(accountId, processName);
+        return new RequestContextImpl(accountId);
     }
 
     private class RequestContextImpl implements RequestContext {
 
         private final String accountId;
-        private final String processName;
 
-        public RequestContextImpl(String accountId, String processName) {
+        public RequestContextImpl(String accountId) {
             this.accountId = accountId;
-            this.processName = processName;
         }
 
         /**
@@ -121,7 +114,7 @@ public class RequestContextProducer {
          */
         @Override
         public String getProcessName() {
-            return processName;
+            return procNameCtx.getValue();
         }
 
         /**
@@ -132,8 +125,8 @@ public class RequestContextProducer {
          */
         @Override
         public String toString() {
-            return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId
-                + ", path=" + Optional.ofNullable(pathCtx).map(RequestContext.Path::getValue).orElse(null) + '}';
+            return "RequestContext{" + "accountId=" + accountId + ", processName=" + procNameCtx + ", path=" + pathCtx
+                + '}';
         }
     }
 }

@@ -65,11 +65,11 @@ public interface RequestPathExtractor {
     class Impl implements ContainerRequestFilter, RequestPathExtractor {
 
         // Note: It is CDI Bean.
-        private PathImpl ctx;
+        private PathContextImpl ctx;
 
         @Inject
         @SuppressWarnings("unused")
-        void setCtx(PathImpl ctx) {
+        void setCtx(PathContextImpl ctx) {
             this.ctx = ctx;
         }
 
@@ -84,7 +84,7 @@ public interface RequestPathExtractor {
         }
 
         @RequestScoped
-        static class PathImpl implements RequestContext.Path {
+        static class PathContextImpl implements RequestContext.PathContext {
 
             private URI value;
 
@@ -100,6 +100,17 @@ public interface RequestPathExtractor {
 
             void setValue(URI value) {
                 this.value = value;
+            }
+
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 3.0.0
+             */
+            @Override
+            public String toString() {
+                return String.valueOf(value);
             }
         }
     }
