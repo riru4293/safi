@@ -23,59 +23,84 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.value;
+package jp.mydns.projectk.safi.resource.filter;
 
+import jakarta.annotation.Priority;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.ws.rs.Priorities;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.ext.Provider;
 import java.net.URI;
+import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- * Current request information. A <i>Request</i> is a processing request, and there are processing requests via Web API
- * and background processing requests by the system.
+ * Request path extractor to <i>JAX-RS</i> resource.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public interface RequestContext {
+public interface RequestPathExtractor {
 
     /**
-     * Get request path.
+     * Extract request path to <i>JAX-RS</i> resource.
      *
-     * @return request path. {@code null} if request not from web API.
+     * @param crc the {@code ContainerRequestContext}
      * @since 3.0.0
      */
-    URI getPath();
+    void filter(ContainerRequestContext crc);
 
     /**
-     * Get account id.
-     *
-     * @return logged account id
-     * @since 3.0.0
-     */
-    String getAccountId();
-
-    /**
-     * Get processing name.
-     *
-     * @return current processing name
-     * @since 3.0.0
-     */
-    String getProcessName();
-
-    /**
-     * Current request path information.
+     * Implements of the {@code RequestPathExtractor}.
      *
      * @author riru
      * @version 3.0.0
      * @since 3.0.0
      */
-    interface Path {
+    @RequestScoped
+    @Provider
+    @Priority(Priorities.USER)
+    class Impl implements ContainerRequestFilter, RequestPathExtractor {
+
+        // Note: It is CDI Bean.
+        private PathImpl ctx;
+
+        @Inject
+        @SuppressWarnings("unused")
+        void setCtx(PathImpl ctx) {
+            this.ctx = ctx;
+        }
 
         /**
-         * Get current request path.
+         * {@inheritDoc}
          *
-         * @return current request path
          * @since 3.0.0
          */
-        URI getValue();
+        @Override
+        public void filter(ContainerRequestContext crc) {
+            ctx.setValue(crc.getUriInfo().getAbsolutePath());
+        }
+
+        @RequestScoped
+        static class PathImpl implements RequestContext.Path {
+
+            private URI value;
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public URI getValue() {
+                return value;
+            }
+
+            void setValue(URI value) {
+                this.value = value;
+            }
+        }
     }
 }

@@ -27,6 +27,9 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import java.net.URI;
+import java.util.Optional;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
@@ -41,6 +44,13 @@ public class RequestContextProducer {
 
     private String accountId;
     private String processName;
+    private RequestContext.Path pathCtx;
+
+    @Inject
+    @SuppressWarnings("unused")
+    void setPathCtx(RequestContext.Path pathCtx) {
+        this.pathCtx = pathCtx;
+    }
 
     /**
      * Set current account id.
@@ -90,6 +100,16 @@ public class RequestContextProducer {
          * @since 3.0.0
          */
         @Override
+        public URI getPath() {
+            return pathCtx.getValue();
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @since 3.0.0
+         */
+        @Override
         public String getAccountId() {
             return accountId;
         }
@@ -112,7 +132,8 @@ public class RequestContextProducer {
          */
         @Override
         public String toString() {
-            return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId + '}';
+            return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId
+                + ", path=" + Optional.ofNullable(pathCtx).map(RequestContext.Path::getValue).orElse(null) + '}';
         }
     }
 }

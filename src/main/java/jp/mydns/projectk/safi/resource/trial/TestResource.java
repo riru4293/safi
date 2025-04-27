@@ -34,11 +34,13 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.service.trial.TestService;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
+import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.value.SchedefValue;
 
 /**
@@ -55,6 +57,9 @@ public class TestResource {
     @Inject
     private TestService svc;
 
+    @Inject
+    private RequestContext reqCtx;
+
     @Context
     private UriInfo uriInfo;
 
@@ -68,9 +73,10 @@ public class TestResource {
     @Path("ping")
     @Produces(TEXT_PLAIN)
     @ProcessName("ping")
-    public String ping() {
-        uriInfo.getAbsolutePath();
-        return "Hello SAFI API.";
+    public Response ping() {
+        return Response.created(reqCtx.getPath()).status(200).entity("""
+               Hello SAFI API.
+               """ + reqCtx).build();
     }
 
     @GET
