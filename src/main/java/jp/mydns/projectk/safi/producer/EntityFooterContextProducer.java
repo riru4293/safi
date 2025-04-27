@@ -30,6 +30,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Optional;
 import jp.mydns.projectk.safi.service.RealTimeService;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.entity.listener.EntityFooterUpdater;

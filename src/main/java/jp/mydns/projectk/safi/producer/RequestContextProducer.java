@@ -27,7 +27,12 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Typed;
+import java.net.URI;
+import java.util.Optional;
 import jp.mydns.projectk.safi.value.RequestContext;
+import jp.mydns.projectk.safi.value.WebApiRequestPath;
+import jakarta.inject.Inject;
 
 /**
  * Producer of the {@link RequestContext}. Must be set values before producing.
@@ -36,83 +41,111 @@ import jp.mydns.projectk.safi.value.RequestContext;
  * @version 3.0.0
  * @since 3.0.0
  */
-@RequestScoped
-public class RequestContextProducer {
+public interface RequestContextProducer {
 
-    private String accountId;
-    private String processName;
+    void setAccountId(String accountId);
+    void setProcessName(String processName);
 
-    /**
-     * Set current account id.
-     *
-     * @param accountId logged account id
-     * @since 3.0.0
-     */
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    /**
-     * Set current processing name.
-     *
-     * @param processName current processing name. It is screen or batch processing name.
-     * @since 3.0.0
-     */
-    public void setProcessName(String processName) {
-        this.processName = processName;
-    }
-
-    /**
-     * Produce the {@code RequestContext}.
-     *
-     * @return the {@code RequestContext}
-     * @since 3.0.0
-     */
-    @Produces
+    @Typed(RequestContextProducer.class)
     @RequestScoped
-    public RequestContext produce() {
-        return new RequestContextImpl(accountId, processName);
-    }
+    class Impl implements RequestContextProducer {
 
-    private class RequestContextImpl implements RequestContext {
+        private String accountId;
+        private String processName;
+        private WebApiRequestPath requestPath;
 
-        private final String accountId;
-        private final String processName;
-
-        public RequestContextImpl(String accountId, String processName) {
+        /**
+         * Set current account id.
+         *
+         * @param accountId logged account id. It can be set {@code null}.
+         * @since 3.0.0
+         */
+        @Override
+        public void setAccountId(String accountId) {
             this.accountId = accountId;
+        }
+
+        /**
+         * Set current processing name.
+         *
+         * @param processName current processing name. It can be set {@code null}.
+         * @since 3.0.0
+         */
+        @Override
+        public void setProcessName(String processName) {
             this.processName = processName;
         }
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public String getAccountId() {
-            return accountId;
+        @Inject
+        public void setRequestPath(WebApiRequestPath requestPath) {
+            this.requestPath = requestPath;
         }
 
         /**
-         * {@inheritDoc}
+         * Produce the {@code RequestContext}.
          *
+         * @return the {@code RequestContext}
          * @since 3.0.0
          */
-        @Override
-        public String getProcessName() {
-            return processName;
+        @Produces
+        @RequestScoped
+        public RequestContext produce() {
+            return new RequestContextImpl(accountId, processName, requestPath);
         }
 
-        /**
-         * Returns a string representation.
-         *
-         * @return a string representation
-         * @since 3.0.0
-         */
-        @Override
-        public String toString() {
-            return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId + '}';
+        private class RequestContextImpl implements RequestContext {
+
+            private final String accountId;
+            private final String processName;
+            private final WebApiRequestPath requestPath;
+
+            public RequestContextImpl(String id, String name, WebApiRequestPath reqPath) {
+                this.accountId = id;
+                this.processName = name;
+                this.requestPath = reqPath;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public String getAccountId() {
+                return accountId;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public String getProcessName() {
+                return processName;
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @since 3.0.0
+             */
+            @Override
+            public Optional<URI> getRequestPath() {
+                return requestPath.getValue();
+            }
+
+            /**
+             * Returns a string representation.
+             *
+             * @return a string representation
+             * @since 3.0.0
+             */
+            @Override
+            public String toString() {
+                return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId
+                    + ", requestPath=" + requestPath + '}';
+            }
         }
     }
 }
