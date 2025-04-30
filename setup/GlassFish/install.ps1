@@ -171,10 +171,12 @@ SafiPool
 & "${GLASSFISH_HOME}\bin\asadmin.bat" set "resources.jdbc-connection-pool.SafiPool.connection-validation-method=table"
 & "${GLASSFISH_HOME}\bin\asadmin.bat" set "resources.jdbc-connection-pool.SafiPool.is-connection-validation-required=true"
 & "${GLASSFISH_HOME}\bin\asadmin.bat" set "resources.jdbc-connection-pool.SafiPool.fail-all-connections=true"
-
+& "${GLASSFISH_HOME}\bin\asadmin.bat" set "resources.jdbc-connection-pool.SafiPool.statement-cache-type="
 
 & "${GLASSFISH_HOME}\bin\asadmin.bat" create-jdbc-resource --connectionpoolid SafiPool jdbc/safi
 
+# Configure Logging
+& "${GLASSFISH_HOME}\bin\asadmin.bat" set-log-levels "jp.mydns.projectk.safi=FINEST"
 
 # Configure JVM options
 & "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Dsafi.home=/, $( ${env:LOCALAPPDATA}.Replace( '\', ', ' ).Replace( ':', '\:' ) ), safi"
@@ -199,8 +201,8 @@ Read-Host 'Press enter to exit'
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUZ9yEVfWkj9PD2eIdXg0FIVVk
-# mXugggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUCp2++IVvxE5n+FhfY5HSnjvA
+# bJmgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -224,11 +226,11 @@ Read-Host 'Press enter to exit'
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBTPKVWtVlDG
-# vVOUOKBfFWLYqIsGnzANBgkqhkiG9w0BAQEFAASCAQBSkXJCNsj/siBAr9bp9hjH
-# iCph4owG31d3JL4ymIAIVvH7lJFiNumt0gwLKrKw7m3L0CwKkwnS299go/C8c2pP
-# 2o0Rk8V4yp05rChcShbP/xpFK41mAs6PT75rSQt7KojOpBlM5eBRx/cxehkAqAfj
-# qKaA/+u2vZR0ciJOoG7POOdXQeiVMqNc8fwpaoqzcPItLkUqqm/gpDyDR0TO45An
-# WU603ubxPQGewawqsL9ZvQcUf2wAaBcvwXHmpnGtTUEmPE6iazIFtEz+ZXPayLwT
-# uHbumHZypvH2m3GU6kWU4XT6FsUgFhMq32tW/cQp+1D4TyCmOCA1oK4wkuGggTBz
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBSKeJapxHYG
+# deahJ9EefEOWC4mpUjANBgkqhkiG9w0BAQEFAASCAQC3fqReEcSEo8O9oEqLaxD3
+# TNtKpOOHzPj35ERjmArEJQ3s00PCCwZDjdi/QEsctwKxuhvQK1r8ZrIRkxzJtjja
+# NoeDiG21iZROoe5RGhqkAj1b8N7CywRO9yPzfkjBSzQRya3L0X/qpMit+cT3nDoN
+# YtFeg+3BJFFx62D8ZgP0dqMC7aOhHGqrRU5D4zKY1JliUyzyI1UmU3ZwRXx38xi1
+# edX02b9PLOS6H9Cbek332r7Wd5WKIg9Fu0EuPLprdNZjJsO7WZTmC82Mi6O9sf1r
+# 8X7GpFM8nk+dZT4KWG0VZeDskxxELMHSJzQ9mriX/nvJNSoE9aLoZr66eas9ijF9
 # SIG # End signature block

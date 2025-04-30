@@ -71,9 +71,12 @@ SafiPool
 "${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.connection-validation-method=table"
 "${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.is-connection-validation-required=true"
 "${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.fail-all-connections=true"
+"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.statement-cache-type="
 
 "${GLASSFISH_HOME}/bin/asadmin" create-jdbc-resource --connectionpoolid SafiPool jdbc/safi
 
+# Configure Logging
+"${GLASSFISH_HOME}/bin/asadmin" set-log-levels "jp.mydns.projectk.safi=FINEST"
 
 # Configure JVM options
 "${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/, opt, safi'
