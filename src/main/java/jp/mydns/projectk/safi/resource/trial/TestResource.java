@@ -31,82 +31,91 @@ import jakarta.transaction.Transactional;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
-import jp.mydns.projectk.safi.resource.filter.ProcessName;
+import jp.mydns.projectk.safi.batch.BatchProcessName;
 import jp.mydns.projectk.safi.service.trial.TestService;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.value.SchedefValue;
+import jp.mydns.projectk.safi.resource.RestApiProcessName;
 
 /**
- * JAX-RS resource for test.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JAX-RS resource for test.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @RequestScoped
 @Path("tests")
 public class TestResource {
 
-    @Inject
-    private TestService svc;
+@Inject
+private TestService svc;
 
-    @Inject
-    private RequestContext reqCtx;
+@Inject
+private RequestContext reqCtx;
 
-    @Context
-    private UriInfo uriInfo;
+/**
+ API communication check.
 
-    /**
-     * API communication check.
-     *
-     * @return response message
-     * @since 3.0.0
-     */
-    @GET
-    @Path("ping")
-    @Produces(TEXT_PLAIN)
-    @ProcessName("ping")
-    public Response ping() {
-        return Response.created(reqCtx.getPath()).status(200).entity("""
-               Hello SAFI API.
-               """ + reqCtx).build();
-    }
+ @return response message
+ @since 3.0.0
+ */
+@GET
+@Path("ping")
+@Produces(TEXT_PLAIN)
+@RestApiProcessName("ping")
+public Response ping() {
+    return Response.created(reqCtx.getPath().orElseThrow()).status(200).entity(
+        """
+        Hello SAFI API.
+        """ + reqCtx).build();
+}
 
-    @GET
-    @Path("jobdef")
-    @Produces(APPLICATION_JSON)
-    public JobdefValue getJobdef() {
-        return null;
-    }
+@GET
+@Path("ping2")
+@Produces(TEXT_PLAIN)
+@RestApiProcessName("ping2")
+@BatchProcessName("ping-ping")
+public Response ping2() {
+    return Response.created(reqCtx.getPath().orElseThrow()).status(200).entity(
+        """
+        Test of process name.
+        """ + reqCtx).build();
+}
 
-    @GET
-    @Path("schedef")
-    @Produces(APPLICATION_JSON)
-    public SchedefValue getSchedef() {
-        return null;
-    }
+@GET
+@Path("jobdef")
+@Produces(APPLICATION_JSON)
+public JobdefValue getJobdef() {
+    return null;
+}
 
-    @GET
-    @Path("job")
-    @Produces(APPLICATION_JSON)
-    public JobValue getJob() {
-        return null;
-    }
+@GET
+@Path("schedef")
+@Produces(APPLICATION_JSON)
+public SchedefValue getSchedef() {
+    return null;
+}
 
-    @GET
-    @Path("p")
-    @Produces(TEXT_PLAIN)
-    @Transactional
-    @ProcessName("DRE")
-    public String getPath() {
-        svc.test();
-        return svc.getPluginDir().toString();
-    }
+@GET
+@Path("job")
+@Produces(APPLICATION_JSON)
+public JobValue getJob() {
+    return null;
+}
+
+@GET
+@Path("p")
+@Produces(TEXT_PLAIN)
+@Transactional
+@RestApiProcessName("DRE")
+public String getPath() {
+    svc.test();
+    return svc.getPluginDir().toString();
+}
 }

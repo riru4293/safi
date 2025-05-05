@@ -29,104 +29,143 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 import java.net.URI;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- * Producer of the {@link RequestContext}. Must be set values before producing.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Producer of the {@link RequestContext}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @RequestScoped
 public class RequestContextProducer {
 
-    private String accountId;
-    private RequestContext.ProcessNameContext procNameCtx;
-    private RequestContext.PathContext pathCtx;
+private RequestContext.AccountIdContext accountIdCtx;
+private RequestContext.RestApiProcessNameContext restApiProcNameCtx;
+private RequestContext.BatchProcessNameContext batchProcNameCtx;
+private RequestContext.PathContext pathCtx;
 
-    @Inject
-    @SuppressWarnings("unused")
-    void setPathCtx(RequestContext.PathContext pathCtx) {
-        this.pathCtx = pathCtx;
-    }
+/**
+ Inject the {@code AccountIdContext}.
 
-    @Inject
-    @SuppressWarnings("unused")
-    public void setProcNameCtx(RequestContext.ProcessNameContext procNameCtx) {
-        this.procNameCtx = procNameCtx;
-    }
+ @param accountIdCtx the {@code AccountIdContext}
+ @since 3.0.0
+ */
+@Inject
+@SuppressWarnings("unused")
+public void setAccountIdCtx(RequestContext.AccountIdContext accountIdCtx) {
+    this.accountIdCtx = accountIdCtx;
+}
 
-    /**
-     * Set current account id.
-     *
-     * @param accountId logged account id
-     * @since 3.0.0
-     */
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
+/**
+ Inject the {@code RestApiProcessNameContext}.
 
-    /**
-     * Produce the {@code RequestContext}.
-     *
-     * @return the {@code RequestContext}
-     * @since 3.0.0
-     */
-    @Produces
-    @RequestScoped
-    public RequestContext produce() {
-        return new RequestContextImpl(accountId);
-    }
+ @param restApiProcNameCtx the {@code RestApiProcessNameContext}
+ @since 3.0.0
+ */
+@Inject
+@SuppressWarnings("unused")
+public void setRestApiProcNameCtx(RequestContext.RestApiProcessNameContext restApiProcNameCtx) {
+    this.restApiProcNameCtx = restApiProcNameCtx;
+}
 
-    private class RequestContextImpl implements RequestContext {
+/**
+ Inject the {@code BatchProcessNameContext}.
 
-        private final String accountId;
+ @param batchProcNameCtx the {@code BatchProcessNameContext}
+ @since 3.0.0
+ */
+@Inject
+@SuppressWarnings("unused")
+public void setBatchProcNameCtx(RequestContext.BatchProcessNameContext batchProcNameCtx) {
+    this.batchProcNameCtx = batchProcNameCtx;
+}
 
-        public RequestContextImpl(String accountId) {
-            this.accountId = accountId;
-        }
+/**
+ Inject the {@code PathContext}.
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public URI getPath() {
-            return pathCtx.getValue();
-        }
+ @param pathCtx the {@code PathContext}
+ @since 3.0.0
+ */
+@Inject
+@SuppressWarnings("unused")
+void setPathCtx(RequestContext.PathContext pathCtx) {
+    this.pathCtx = pathCtx;
+}
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public String getAccountId() {
-            return accountId;
-        }
+/**
+ Produce the {@code RequestContext}.
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public String getProcessName() {
-            return procNameCtx.getValue();
-        }
+ @return the {@code RequestContext}
+ @since 3.0.0
+ */
+@Produces
+@RequestScoped
+public RequestContext produce() {
+    return new RequestContextImpl();
+}
 
-        /**
-         * Returns a string representation.
-         *
-         * @return a string representation
-         * @since 3.0.0
-         */
-        @Override
-        public String toString() {
-            return "RequestContext{" + "accountId=" + accountId + ", processName=" + procNameCtx + ", path=" + pathCtx
-                + '}';
-        }
-    }
+private class RequestContextImpl implements RequestContext {
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public Optional<String> getAccountId() {
+    return Optional.ofNullable(accountIdCtx.getValue());
+}
+
+/**
+ {@inheritDoc}
+
+ @throws PublishableIllegalStateException if no found or multiple definitions.
+ @since 3.0.0
+ */
+@Override
+public String getProcessName() {
+
+    final Supplier<IllegalStateException> noSingularProcName = () ->
+        new PublishableIllegalStateException(new IllegalStateException(
+            "Multiple process name definitions found, only one is allowed."));
+
+    return Stream.of(restApiProcNameCtx, batchProcNameCtx)
+        .filter(ProcessNameContext::isAvailable).map(ProcessNameContext::getValue)
+        .reduce((a, b) -> {
+            throw noSingularProcName.get();
+        })
+        .orElseThrow(noSingularProcName);
+}
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public Optional<URI> getPath() {
+    return Optional.ofNullable(pathCtx.getValue());
+}
+
+/**
+ Returns a string representation.
+
+ @return a string representation
+ @since 3.0.0
+ */
+@Override
+public String toString() {
+    return "RequestContext{" + "accountId=" + accountIdCtx + ", path=" + pathCtx
+        + ", restApiProcessName=" + restApiProcNameCtx + ", batchProcessName=" + batchProcNameCtx
+        + '}';
+}
+
+}
+
 }

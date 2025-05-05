@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.entity.listener;
 
 import jakarta.enterprise.context.Dependent;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.persistence.PrePersist;
@@ -33,117 +34,166 @@ import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import jp.mydns.projectk.safi.entity.CommonEntity;
+import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 
 /**
- * Update JPA entity footer values in the {@link CommonEntity} when prePersist and preUpdate.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Update <i>JPA</i> entity footer values in the {@link CommonEntity} when prePersist and preUpdate.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface EntityFooterUpdater {
 
-    /**
-     * Set only values related to register.
-     *
-     * @param entity the {@code CommonEntity}
-     * @since 3.0.0
-     */
-    void insert(CommonEntity entity);
+/**
+ Set <i>JPA</i> entity footer values when previous persist.
 
-    /**
-     * only values related to update.
-     *
-     * @param entity the {@code CommonEntity}
-     * @since 3.0.0
-     */
-    void update(CommonEntity entity);
+ @param entity the {@code CommonEntity}
+ @throws NullPointerException if {@code entity} is {@code null}
+ @throws PublishableIllegalStateException if the prerequisite information is not found. This
+ exception result from an illegal state due to an implementation bug, and the caller should not
+ continue processing.
+ @since 3.0.0
+ */
+void insert(CommonEntity entity);
 
-    /**
-     * Implements of the {@code EntityFooterUpdater}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(EntityFooterUpdater.class)
-    @Dependent
-    class Impl implements EntityFooterUpdater {
+/**
+ Set <i>JPA</i> entity footer values when previous update.
 
-        private final Context ctx;
+ @param entity the {@code CommonEntity}
+ @throws NullPointerException if {@code entity} is {@code null}
+ @throws PublishableIllegalStateException if the prerequisite information is not found. This
+ exception result from an illegal state due to an implementation bug, and the caller should not
+ continue processing.
+ @since 3.0.0
+ */
+void update(CommonEntity entity);
 
-        /**
-         * Constructor.
-         *
-         * @param ctx instance of the {@code EntityFooterUpdater.Context}
-         * @throws NullPointerException if {@code ctx} id {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(Context ctx) {
-            this.ctx = Objects.requireNonNull(ctx);
-        }
+/**
+ Implements of the {@code EntityFooterUpdater}.
 
-        /**
-         * Set only values related to register.
-         *
-         * @param entity the {@code CommonEntity}
-         * @since 3.0.0
-         */
-        @Override
-        @PrePersist
-        public void insert(CommonEntity entity) {
-            entity.setRegTime(ctx.getUtcNow());
-            entity.setRegId(ctx.getAccountId());
-            entity.setRegName(ctx.getProcessName());
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(EntityFooterUpdater.class)
+@Dependent
+class Impl implements EntityFooterUpdater {
 
-        /**
-         * only values related to update.
-         *
-         * @param entity the {@code CommonEntity}
-         * @since 3.0.0
-         */
-        @Override
-        @PreUpdate
-        public void update(CommonEntity entity) {
-            entity.setUpdTime(ctx.getUtcNow());
-            entity.setUpdId(ctx.getAccountId());
-            entity.setUpdName(ctx.getProcessName());
-        }
-    }
+// Note: Obtaining the request scoped CDI bean via Instance.
+private final Instance<Context> ctxInst;
 
-    /**
-     * Provides a footer values for {@link CommonEntity}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    interface Context {
+/**
+ Constructor.
 
-        /**
-         * Get real time of UTC time zone. Rounded down to the nearest millisecond.
-         *
-         * @return real time
-         * @since 3.0.0
-         */
-        LocalDateTime getUtcNow();
+ @param ctxInst instance of the {@code EntityFooterUpdater.Context}
+ @throws NullPointerException if {@code ctxInst} id {@code null}
+ @since 3.0.0
+ */
+@Inject
+public Impl(Instance<Context> ctxInst) {
+    this.ctxInst = Objects.requireNonNull(ctxInst);
+}
 
-        /**
-         * Get login account id.
-         *
-         * @return account id
-         * @since 3.0.0
-         */
-        String getAccountId();
+/**
+ {@inheritDoc}
 
-        /**
-         * Get current process name.
-         *
-         * @return process name
-         * @since 3.0.0
-         */
-        String getProcessName();
-    }
+ @throws NullPointerException if {@code entity} is {@code null}
+ @throws PublishableIllegalStateException if the prerequisite information is not found. This
+ exception result from an illegal state due to an implementation bug, and the caller should not
+ continue processing.
+ @since 3.0.0
+ */
+@Override
+@PrePersist
+public void insert(CommonEntity entity) {
+    Objects.requireNonNull(entity);
+
+    Context ctx = requireResolvable(ctxInst);
+
+    entity.setRegTime(ctx.getUtcNow());
+    entity.setRegId(ctx.getAccountId());
+    entity.setRegName(ctx.getProcessName());
+}
+
+/**
+ {@inheritDoc}
+
+ @param entity the {@code CommonEntity}
+ @throws NullPointerException if {@code entity} is {@code null}
+ @throws PublishableIllegalStateException if the prerequisite information is not found. This
+ exception result from an illegal state due to an implementation bug, and the caller should not
+ continue processing.
+ @since 3.0.0
+ */
+@Override
+@PreUpdate
+public void update(CommonEntity entity) {
+    Objects.requireNonNull(entity);
+
+    Context ctx = requireResolvable(ctxInst);
+
+    entity.setUpdTime(ctx.getUtcNow());
+    entity.setUpdId(ctx.getAccountId());
+    entity.setUpdName(ctx.getProcessName());
+}
+
+}
+
+/**
+ Provides a footer values for {@link CommonEntity}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+interface Context {
+
+/**
+ Get real time of UTC time zone. Rounded down to the nearest millisecond.
+
+ @return real time
+ @throws PublishableIllegalStateException if the prerequisite information is not found. This
+ exception result from an illegal state due to an implementation bug, and the caller should not
+ continue processing.
+ @since 3.0.0
+ */
+LocalDateTime getUtcNow();
+
+/**
+ Get login account id.
+
+ @return account id
+ @throws PublishableIllegalStateException if the prerequisite information is not found. This
+ exception result from an illegal state due to an implementation bug, and the caller should not
+ continue processing.
+ @since 3.0.0
+ */
+String getAccountId();
+
+/**
+ Get current process name.
+
+ @return process name
+ @throws PublishableIllegalStateException if the prerequisite information is not found. This
+ exception result from an illegal state due to an implementation bug, and the caller should not
+ continue processing.
+ @since 3.0.0
+ */
+String getProcessName();
+}
+
+/**
+ Returns a string representation.
+
+ @return a string representation
+ @throws PublishableIllegalStateException if the prerequisite information is not found. This
+ exception result from an illegal state due to an implementation bug, and the caller should not
+ continue processing.
+ @since 3.0.0
+ */
+@Override
+String toString();
+
 }
