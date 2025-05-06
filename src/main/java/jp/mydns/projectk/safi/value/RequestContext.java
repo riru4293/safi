@@ -40,12 +40,12 @@ import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 public interface RequestContext {
 
 /**
- Get request path.
+ Get HTTP request path.
 
  @return request path. Empty if request not from web API.
  @since 3.0.0
  */
-Optional<URI> getPath();
+Optional<URI> getRestApiPath();
 
 /**
  Get account id.
@@ -80,6 +80,7 @@ interface AccountIdContext {
  @since 3.0.0
  */
 String getValue();
+
 }
 
 /**
@@ -90,15 +91,16 @@ String getValue();
  @version 3.0.0
  @since 3.0.0
  */
-interface PathContext {
+interface RestApiPathContext {
 
 /**
- Get current request path.
+ Get current HTTP request path.
 
- @return current request path. {@code null} if the request did not come from HTTP.
+ @return current HTTP request path. {@code null} if the request did not come from HTTP.
  @since 3.0.0
  */
 URI getValue();
+
 }
 
 /**
@@ -125,6 +127,7 @@ String getValue();
  @since 3.0.0
  */
 boolean isAvailable();
+
 }
 
 /**
