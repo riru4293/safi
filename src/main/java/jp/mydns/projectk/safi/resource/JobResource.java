@@ -46,14 +46,17 @@ import jakarta.ws.rs.Produces;
 import static jakarta.ws.rs.core.HttpHeaders.LOCATION;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
-import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.JobService;
+import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobCreationRequest;
 import jp.mydns.projectk.safi.value.JobValue;
+import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
  JAX-RS resource for <i>Job</i>.
@@ -90,22 +93,22 @@ class Impl implements JobResource {
 
 private final JobdefService jobdefSvc;
 private final JobService jobSvc;
-private final UriInfo uriInfo;
+private final RequestContext reqCtx;
 
 /**
  Constructor.
 
  @param jobdefSvc the {@code JobdefService}
  @param jobSvc the {@code JobService}
- @param uriInfo the {@code UriInfo}
+ @param reqCtx the {@code RequestContext}
  @throws NullPointerException if any argument is {@code null}
  @since 3.0.0
  */
 @Inject
-protected Impl(JobdefService jobdefSvc, JobService jobSvc, UriInfo uriInfo) {
+protected Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
     this.jobdefSvc = Objects.requireNonNull(jobdefSvc);
     this.jobSvc = Objects.requireNonNull(jobSvc);
-    this.uriInfo = Objects.requireNonNull(uriInfo);
+    this.reqCtx = Objects.requireNonNull(reqCtx);
 }
 
 /**
@@ -150,8 +153,7 @@ public Response createJob(@NotNull @Valid JobCreationRequest req) {
     try {
 
         JobValue job = jobSvc.createJob(ctx);
-
-        URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
+        URI location = reqCtx.getRestApiPath().map(f(URI::resolve, job.getId())).orElseThrow();
 
         return Response.created(location).entity(job).build();
 
