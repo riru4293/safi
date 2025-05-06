@@ -27,7 +27,7 @@ package jp.mydns.projectk.safi.util;
 
 import jakarta.enterprise.inject.Instance;
 import java.util.Objects;
-import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 
 /**
  Utilities for Jakarta Contexts and Dependency Injection.

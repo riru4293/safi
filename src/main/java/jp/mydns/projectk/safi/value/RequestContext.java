@@ -27,7 +27,7 @@ package jp.mydns.projectk.safi.value;
 
 import java.net.URI;
 import java.util.Optional;
-import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 
 /**
  Current request information. A <i>Request</i> is a processing request, and there are processing

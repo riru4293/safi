@@ -38,7 +38,7 @@ import jakarta.ws.rs.ext.Provider;
 import java.lang.reflect.Method;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
-import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.resource.RestApiProcessName;
 import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;

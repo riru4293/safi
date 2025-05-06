@@ -33,7 +33,7 @@ import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
-import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.resource.NeedToAuth;
 import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 import jp.mydns.projectk.safi.value.RequestContext;

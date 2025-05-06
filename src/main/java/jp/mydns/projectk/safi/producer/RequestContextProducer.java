@@ -32,7 +32,7 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
