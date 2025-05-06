@@ -34,6 +34,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.value.RequestContext;
+import jp.mydns.projectk.safi.value.WebApiRequestPath;
+import jakarta.inject.Inject;
 
 /**
  Producer of the {@link RequestContext}.
@@ -42,8 +44,7 @@ import jp.mydns.projectk.safi.value.RequestContext;
  @version 3.0.0
  @since 3.0.0
  */
-@RequestScoped
-public class RequestContextProducer {
+public interface RequestContextProducer {
 
 private RequestContext.AccountIdContext accountIdCtx;
 private RequestContext.RestApiProcessNameContext restApiProcNameCtx;
