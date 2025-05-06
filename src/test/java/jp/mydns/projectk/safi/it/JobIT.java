@@ -110,7 +110,7 @@ class JobIT {
             EntityManagerProducer.class,
             EntityFooterContextProducer.class,
             ValidatorProducer.class,
-            JsonbProducer.class,
+            JsonbProducer.Impl.class,
             CommonDao.Impl.class,
             JobdefDao.Impl.class,
             JobDao.Impl.class,
@@ -240,7 +240,7 @@ class JobIT {
         ArgumentCaptor<String> jobIdCaptor = ArgumentCaptor.forClass(String.class);
         var uriBuilder = spy(UriBuilder.fromUri("http://hostname/api"));
         doReturn(uriBuilder).when(uriInfo).getAbsolutePathBuilder();
-        
+
         // Filtering definition
         var filter = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
             .withName("n").withValue("v").unsafeBuild();
