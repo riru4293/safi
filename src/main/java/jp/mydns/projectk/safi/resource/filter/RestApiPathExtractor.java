@@ -36,16 +36,16 @@ import java.net.URI;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- Request path extractor to <i>JAX-RS</i> resource.
+ HTTP request path extractor to <i>JAX-RS</i> resource.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface RequestPathExtractor {
+public interface RestApiPathExtractor {
 
 /**
- Extract request path to <i>JAX-RS</i> resource.
+ Extract HTTP request path to <i>JAX-RS</i> resource.
 
  @param crc the {@code ContainerRequestContext}
  @since 3.0.0
@@ -53,7 +53,7 @@ public interface RequestPathExtractor {
 void filter(ContainerRequestContext crc);
 
 /**
- Implements of the {@code RequestPathExtractor}.
+ Implements of the {@code RestApiPathExtractor}.
 
  @author riru
  @version 3.0.0
@@ -62,14 +62,14 @@ void filter(ContainerRequestContext crc);
 @RequestScoped
 @Provider
 @Priority(Priorities.USER)
-class Impl implements ContainerRequestFilter, RequestPathExtractor {
+class Impl implements ContainerRequestFilter, RestApiPathExtractor {
 
 // Note: It is CDI Bean.
-private PathContextImpl ctx;
+private RestApiPathContextImpl ctx;
 
 @Inject
 @SuppressWarnings("unused")
-void setCtx(PathContextImpl ctx) {
+void setCtx(RestApiPathContextImpl ctx) {
     this.ctx = ctx;
 }
 
@@ -84,7 +84,7 @@ public void filter(ContainerRequestContext crc) {
 }
 
 @RequestScoped
-static class PathContextImpl implements RequestContext.PathContext {
+static class RestApiPathContextImpl implements RequestContext.RestApiPathContext {
 
 private URI value;
 
