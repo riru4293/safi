@@ -80,7 +80,6 @@ Impl(RequestContext reqCtx, RealTimeService realTimeSvc) {
  */
 @Produces
 @RequestScoped
-@SuppressWarnings("unused")
 @Override
 public EntityFooterUpdater.Context produce() {
     return new ContextImpl();

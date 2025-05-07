@@ -27,6 +27,7 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Typed;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
@@ -54,6 +55,7 @@ public EntityManager produce();
  @version 3.0.0
  @since 3.0.0
  */
+@Typed(EntityManagerProducer.class)
 @RequestScoped
 class Impl implements EntityManagerProducer {
 
