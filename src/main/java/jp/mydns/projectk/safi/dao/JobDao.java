@@ -35,7 +35,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.util.Objects;
 import java.util.stream.Stream;
 import static jp.mydns.projectk.safi.constant.JobStatus.RUNNING;
 import static jp.mydns.projectk.safi.constant.JobStatus.SCHEDULE;
@@ -44,75 +43,70 @@ import jp.mydns.projectk.safi.entity.JobEntity_;
 import jp.mydns.projectk.safi.service.RealTimeService;
 
 /**
- * Data access for <i>Job</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Data access for <i>Job</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface JobDao {
 
-    /**
-     * Lock the all schedule jobs and all running jobs. The sort order is by schedule time.
-     *
-     * @return all runnable and all running jobs
-     * @throws PersistenceException if the query execution was failed
-     * @since 3.0.0
-     */
-    Stream<JobEntity> lockActiveJobs();
+/**
+ Lock the all schedule jobs and all running jobs. The sort order is by schedule time.
 
-    /**
-     * Implements of the {@code JobDao}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(JobDao.class)
-    @RequestScoped
-    class Impl implements JobDao {
+ @return all runnable and all running jobs
+ @throws PersistenceException if the query execution was failed
+ @since 3.0.0
+ */
+Stream<JobEntity> lockActiveJobs();
 
-        private final EntityManager em;
-        private final RealTimeService realTimeSvc;
+/**
+ Implements of the {@code JobDao}.
 
-        /**
-         * Constructor.
-         *
-         * @param em the {@code EntityManager}
-         * @param realTimeSvc the {@code RealTimeService}
-         * @throws NullPointerException if any argument is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(EntityManager em, RealTimeService realTimeSvc) {
-            this.em = Objects.requireNonNull(em);
-            this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(JobDao.class)
+@RequestScoped
+class Impl implements JobDao {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws PersistenceException if the query execution was failed
-         * @since 3.0.0
-         */
-        @Override
-        public Stream<JobEntity> lockActiveJobs() {
+private final EntityManager em;
+private final RealTimeService realTimeSvc;
 
-            CriteriaBuilder cb = em.getCriteriaBuilder();
+@Inject
+@SuppressWarnings("unused")
+Impl(EntityManager em, RealTimeService realTimeSvc) {
+    this.em = em;
+    this.realTimeSvc = realTimeSvc;
+}
 
-            CriteriaQuery<JobEntity> cq = cb.createQuery(JobEntity.class);
+/**
+ {@inheritDoc}
 
-            Root<JobEntity> jobEntity = cq.from(JobEntity.class);
+ @throws PersistenceException if the query execution was failed
+ @since 3.0.0
+ */
+@Override
+public Stream<JobEntity> lockActiveJobs() {
 
-            Predicate onlyActive = jobEntity.get(JobEntity_.status).in(SCHEDULE, RUNNING);
+    CriteriaBuilder cb = em.getCriteriaBuilder();
 
-            Predicate isRunnable = cb.lessThanOrEqualTo(jobEntity.get(JobEntity_.scheduleTime),
-                realTimeSvc.getLocalNow());
+    CriteriaQuery<JobEntity> cq = cb.createQuery(JobEntity.class);
 
-            return em.createQuery(cq.where(onlyActive, isRunnable).orderBy(
-                cb.asc(jobEntity.get(JobEntity_.scheduleTime)),
-                cb.asc(jobEntity.get(JobEntity_.id)))
-            ).setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultStream();
-        }
-    }
+    Root<JobEntity> jobEntity = cq.from(JobEntity.class);
+
+    Predicate onlyActive = jobEntity.get(JobEntity_.status).in(SCHEDULE, RUNNING);
+
+    Predicate isRunnable = cb.lessThanOrEqualTo(jobEntity.get(JobEntity_.scheduleTime),
+        realTimeSvc.getLocalNow());
+
+    return em.createQuery(cq.where(onlyActive, isRunnable).orderBy(
+        cb.asc(jobEntity.get(JobEntity_.scheduleTime)),
+        cb.asc(jobEntity.get(JobEntity_.id)))
+    ).setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultStream();
+}
+
+}
+
 }

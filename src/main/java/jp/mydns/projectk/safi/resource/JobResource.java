@@ -93,17 +93,9 @@ private final JobdefService jobdefSvc;
 private final JobService jobSvc;
 private final RequestContext reqCtx;
 
-/**
- Constructor.
-
- @param jobdefSvc the {@code JobdefService}
- @param jobSvc the {@code JobService}
- @param reqCtx the {@code RequestContext}
- @throws NullPointerException if any argument is {@code null}
- @since 3.0.0
- */
 @Inject
-protected Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
+@SuppressWarnings("unused")
+Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
     this.jobdefSvc = Objects.requireNonNull(jobdefSvc);
     this.jobSvc = Objects.requireNonNull(jobSvc);
     this.reqCtx = Objects.requireNonNull(reqCtx);

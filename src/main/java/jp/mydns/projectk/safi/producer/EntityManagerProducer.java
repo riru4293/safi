@@ -62,6 +62,10 @@ class Impl implements EntityManagerProducer {
 @PersistenceContext(unitName = "safi_persistence_unit")
 private EntityManager em;
 
+@SuppressWarnings("unused")
+Impl() {
+}
+
 /**
  {@inheritDoc}
 

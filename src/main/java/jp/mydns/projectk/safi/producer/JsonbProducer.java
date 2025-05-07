@@ -68,6 +68,10 @@ void close(Jsonb jsonb);
 @ApplicationScoped
 class Impl implements JsonbProducer {
 
+@SuppressWarnings("unused")
+Impl() {
+}
+
 /**
  {@inheritDoc}
 

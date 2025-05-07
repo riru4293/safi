@@ -69,6 +69,10 @@ class Impl implements ContainerRequestFilter, RestApiPathExtractor {
 // Note: It is CDI Bean.
 private RestApiPathContextImpl ctx;
 
+@SuppressWarnings("unused")
+Impl() {
+}
+
 @Inject
 @SuppressWarnings("unused")
 void setCtx(RestApiPathContextImpl ctx) {

@@ -82,6 +82,10 @@ private ContextImpl ctx;
 // Note: It is JAX-RS context.
 private ResourceInfo resInf;
 
+@SuppressWarnings("unused")
+Impl() {
+}
+
 @Inject
 @SuppressWarnings("unused")
 void setCtx(ContextImpl ctx) {
