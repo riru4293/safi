@@ -27,9 +27,9 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Typed;
 import java.net.URI;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 import jakarta.inject.Inject;
@@ -64,6 +64,7 @@ RequestContext produce();
  @version 3.0.0
  @since 3.0.0
  */
+@Typed(RequestContextProducer.class)
 @RequestScoped
 class Impl implements RequestContextProducer {
 
@@ -72,48 +73,28 @@ private RestApiProcessNameContext restApiProcNameCtx;
 private BatchProcessNameContext batchProcNameCtx;
 private RestApiPathContext restApiPathCtx;
 
-/**
- Inject the {@code AccountIdContext}.
+@SuppressWarnings("unused")
+Impl() {
+}
 
- @param accountIdCtx the {@code AccountIdContext}
- @since 3.0.0
- */
 @Inject
 @SuppressWarnings("unused")
 void setAccountIdCtx(AccountIdContext accountIdCtx) {
     this.accountIdCtx = accountIdCtx;
 }
 
-/**
- Inject the {@code RestApiProcessNameContext}.
-
- @param restApiProcNameCtx the {@code RestApiProcessNameContext}
- @since 3.0.0
- */
 @Inject
 @SuppressWarnings("unused")
 void setRestApiProcNameCtx(RestApiProcessNameContext restApiProcNameCtx) {
     this.restApiProcNameCtx = restApiProcNameCtx;
 }
 
-/**
- Inject the {@code BatchProcessNameContext}.
-
- @param batchProcNameCtx the {@code BatchProcessNameContext}
- @since 3.0.0
- */
 @Inject
 @SuppressWarnings("unused")
 void setBatchProcNameCtx(BatchProcessNameContext batchProcNameCtx) {
     this.batchProcNameCtx = batchProcNameCtx;
 }
 
-/**
- Inject the {@code RestApiPathContext}.
-
- @param restApiPathCtx the {@code RestApiPathContext}
- @since 3.0.0
- */
 @Inject
 @SuppressWarnings("unused")
 void setRestApiPathCtx(RestApiPathContext restApiPathCtx) {
@@ -151,12 +132,10 @@ public String getAccountId() {
  */
 @Override
 public String getProcessName() {
-    return Stream.of(restApiProcNameCtx, batchProcNameCtx)
-        .sequential()
+    return Stream.of(restApiProcNameCtx, batchProcNameCtx).sequential()
         .map(ProcessNameContext::getValue)
         .filter(Objects::nonNull)
-        .findFirst()
-        .orElse(null);
+        .findFirst().orElse(null);
 }
 
 /**
@@ -167,13 +146,11 @@ public String getProcessName() {
  */
 @Override
 public URI getRestApiPath() {
-    final Supplier<IllegalStateException> noFoundRestApiPath = () ->
+    return Optional.ofNullable(getRawRestApiPath()).orElseThrow(() ->
         new PublishableIllegalStateException(new IllegalStateException(
             "There is no request path to the REST API."
             + " Either it is not an HTTP request or the request path has not been extracted."
-            + " Either way, it is an implementation defect."));
-
-    return Optional.ofNullable(getRawRestApiPath()).orElseThrow(noFoundRestApiPath);
+            + " Either way, it is an implementation defect.")));
 }
 
 /**
