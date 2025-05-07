@@ -25,9 +25,7 @@
  */
 package jp.mydns.projectk.safi.producer;
 
-import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
 import java.net.URI;
 import java.util.Optional;
@@ -35,7 +33,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 import jakarta.inject.Inject;
-import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
+import java.util.Objects;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.value.RequestContext.AccountIdContext;
 import jp.mydns.projectk.safi.value.RequestContext.BatchProcessNameContext;
@@ -69,58 +67,57 @@ RequestContext produce();
 @RequestScoped
 class Impl implements RequestContextProducer {
 
-// Note: It is CDI Bean. Obtaining the request scoped CDI bean via Instance.
-private Instance<AccountIdContext> accountIdCtxInst;
-private Instance<RestApiProcessNameContext> restApiProcNameCtxInst;
-private Instance<BatchProcessNameContext> batchProcNameCtxInst;
-private Instance<RestApiPathContext> restApiPathCtxInst;
+private AccountIdContext accountIdCtx;
+private RestApiProcessNameContext restApiProcNameCtx;
+private BatchProcessNameContext batchProcNameCtx;
+private RestApiPathContext restApiPathCtx;
 
 /**
  Inject the {@code AccountIdContext}.
 
- @param accountIdCtxInst the {@code AccountIdContext} as {@code Instance}
+ @param accountIdCtx the {@code AccountIdContext}
  @since 3.0.0
  */
 @Inject
 @SuppressWarnings("unused")
-public void setAccountIdCtxInst(Instance<AccountIdContext> accountIdCtxInst) {
-    this.accountIdCtxInst = accountIdCtxInst;
+void setAccountIdCtx(AccountIdContext accountIdCtx) {
+    this.accountIdCtx = accountIdCtx;
 }
 
 /**
  Inject the {@code RestApiProcessNameContext}.
 
- @param restApiProcNameCtxInst the {@code RestApiProcessNameContext} as {@code Instance}
+ @param restApiProcNameCtx the {@code RestApiProcessNameContext}
  @since 3.0.0
  */
 @Inject
 @SuppressWarnings("unused")
-public void setRestApiProcNameCtxInst(Instance<RestApiProcessNameContext> restApiProcNameCtxInst) {
-    this.restApiProcNameCtxInst = restApiProcNameCtxInst;
+void setRestApiProcNameCtx(RestApiProcessNameContext restApiProcNameCtx) {
+    this.restApiProcNameCtx = restApiProcNameCtx;
 }
 
 /**
  Inject the {@code BatchProcessNameContext}.
 
- @param batchProcNameCtxInst the {@code BatchProcessNameContext} as {@code Instance}
+ @param batchProcNameCtx the {@code BatchProcessNameContext}
  @since 3.0.0
  */
 @Inject
 @SuppressWarnings("unused")
-public void setBatchProcNameCtxInst(Instance<BatchProcessNameContext> batchProcNameCtxInst) {
-    this.batchProcNameCtxInst = batchProcNameCtxInst;
+void setBatchProcNameCtx(BatchProcessNameContext batchProcNameCtx) {
+    this.batchProcNameCtx = batchProcNameCtx;
 }
 
 /**
  Inject the {@code RestApiPathContext}.
 
- @param restApiPathCtxInst the {@code RestApiPathContext} as {@code Instance}
+ @param restApiPathCtx the {@code RestApiPathContext}
  @since 3.0.0
  */
 @Inject
 @SuppressWarnings("unused")
-void setRestApiPathCtxInst(Instance<RestApiPathContext> restApiPathCtxInst) {
-    this.restApiPathCtxInst = restApiPathCtxInst;
+void setRestApiPathCtx(RestApiPathContext restApiPathCtx) {
+    this.restApiPathCtx = restApiPathCtx;
 }
 
 /**
@@ -140,68 +137,65 @@ private class RequestContextImpl implements RequestContext {
 /**
  {@inheritDoc}
 
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 @Override
-public Optional<String> getAccountId() {
-    return Optional.ofNullable(requireResolvable(accountIdCtxInst).getValue());
+public String getAccountId() {
+    return accountIdCtx.getValue();
 }
 
 /**
  {@inheritDoc}
 
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 @Override
 public String getProcessName() {
-
-    final Supplier<IllegalStateException> noSingularProcName = () ->
-        new PublishableIllegalStateException(new IllegalStateException(
-            "Multiple process name definitions found, only one is allowed."));
-
-    return Stream.of(
-        requireResolvable(restApiProcNameCtxInst),
-        requireResolvable(batchProcNameCtxInst)
-    )
-        .filter(ProcessNameContext::isAvailable).map(ProcessNameContext::getValue)
-        .reduce((a, b) -> {
-            throw noSingularProcName.get();
-        })
-        .orElseThrow(noSingularProcName);
+    return Stream.of(restApiProcNameCtx, batchProcNameCtx)
+        .sequential()
+        .map(ProcessNameContext::getValue)
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(null);
 }
 
 /**
  {@inheritDoc}
 
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
+ @throws PublishableIllegalStateException if no found the HTTP request path. It is bug.
  @since 3.0.0
  */
 @Override
-public Optional<URI> getRestApiPath() {
-    return Optional.ofNullable(requireResolvable(restApiPathCtxInst).getValue());
+public URI getRestApiPath() {
+    final Supplier<IllegalStateException> noFoundRestApiPath = () ->
+        new PublishableIllegalStateException(new IllegalStateException(
+            "There is no request path to the REST API."
+            + " Either it is not an HTTP request or the request path has not been extracted."
+            + " Either way, it is an implementation defect."));
+
+    return Optional.ofNullable(getRawRestApiPath()).orElseThrow(noFoundRestApiPath);
+}
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public URI getRawRestApiPath() {
+    return restApiPathCtx.getValue();
 }
 
 /**
  Returns a string representation.
 
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @return a string representation
  @since 3.0.0
  */
 @Override
 public String toString() {
-    return "RequestContext{" + "accountId=" + getAccountId() + ", restApiPath=" + getRestApiPath()
-        + ", processName=" + getProcessName() + '}';
+    return "RequestContext{" + "accountId=" + getAccountId()
+        + ", restApiPath=" + getRawRestApiPath() + ", processName=" + getProcessName() + '}';
 }
 
 }

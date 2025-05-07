@@ -42,7 +42,8 @@ public interface RequestContext {
  Get HTTP request path. Used to create the HTTP header <i>Location</i>.
 
  @return request path. It ends with {@code /}.
- @throws PublishableIllegalStateException if {@code restApiPath} is {@code null}
+ @throws PublishableIllegalStateException @throws PublishableIllegalStateException if no found the
+ HTTP request path. It is bug.
  @since 3.0.0
  */
 URI getRestApiPath();
