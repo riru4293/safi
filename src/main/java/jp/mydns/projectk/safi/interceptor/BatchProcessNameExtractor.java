@@ -52,22 +52,29 @@ import org.slf4j.LoggerFactory;
  @version 3.0.0
  @since 3.0.0
  */
+public interface BatchProcessNameExtractor {
+
+/**
+ Implements of the {@code BatchProcessNameExtractor}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
 @Interceptor
 @Priority(Interceptor.Priority.APPLICATION)
 @BatchProcessName
-public class BatchProcessNameExtractor {
+class Impl implements BatchProcessNameExtractor {
 
 private static final Logger log = LoggerFactory.getLogger(BatchProcessNameExtractor.class);
 
 // Note: It is CDI Bean. Obtaining the request scoped CDI bean via Instance.
 private Instance<ContextImpl> ctxInst;
 
-/**
- Inject the {@code ContextImpl} as {@code Instance}.
+@SuppressWarnings("unused")
+Impl() {
+}
 
- @param ctxInst the {@code ContextImpl} as {@code Instance}
- @since 3.0.0
- */
 @Inject
 @SuppressWarnings("unused")
 void setCtxInst(Instance<ContextImpl> ctxInst) {
@@ -103,11 +110,6 @@ static class ContextImpl implements RequestContext.BatchProcessNameContext {
 
 private String value = null;
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
 public String getValue() {
     return value;
@@ -117,25 +119,11 @@ void setValue(String value) {
     this.value = value;
 }
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Override
-public boolean isAvailable() {
-    return value != null;
-}
-
-/**
- Returns a string representation.
-
- @return a string representation
- @since 3.0.0
- */
 @Override
 public String toString() {
-    return String.valueOf(value);
+    return "BatchProcessNameContext{" + "value=" + value + '}';
+}
+
 }
 
 }
