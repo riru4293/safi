@@ -48,11 +48,9 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Stream;
+import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.JobService;
-import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobCreationRequest;
 import jp.mydns.projectk.safi.value.JobValue;
@@ -117,6 +115,8 @@ protected Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx
  @throws ConstraintViolationException if {@code req} is not valid
  @throws BadRequestException if not found valid job definition
  @throws PersistenceException if failed database operation
+ @throws PublishableIllegalStateException if an exception occurs due to an implementation bug or
+ data inconsistency.
  @since 3.0.0
  */
 @Override
@@ -153,7 +153,7 @@ public Response createJob(@NotNull @Valid JobCreationRequest req) {
     try {
 
         JobValue job = jobSvc.createJob(ctx);
-        URI location = reqCtx.getRestApiPath().map(f(URI::resolve, job.getId())).orElseThrow();
+        URI location = reqCtx.getRestApiPath().resolve(job.getId());
 
         return Response.created(location).entity(job).build();
 

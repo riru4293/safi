@@ -36,10 +36,10 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 
 import jp.mydns.projectk.safi.resource.ErrorResponseContext;
+import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
  *
@@ -54,17 +54,17 @@ public interface ConstraintViolationExceptionMapper extends ExceptionMapper<Cons
 
         private static final URI CODE = URI.create("https://www.google.com");
         private static final String MESSAGE = "ggrks";
-        
+
         private final Validator validator;
-        private final UriInfo uriInfo;
+        private final RequestContext reqCtx;
 
         @Inject
-        protected Impl(UriInfo uriInfo, Validator validator) {
-            this.uriInfo = uriInfo;
+        protected Impl(RequestContext reqCtx, Validator validator) {
+            this.reqCtx = reqCtx;
             this.validator = validator;
         }
-        
-        
+
+
 
         /**
          *
@@ -76,7 +76,7 @@ public interface ConstraintViolationExceptionMapper extends ExceptionMapper<Cons
 
             var builder = new ErrorResponseContext.Builder();
 
-            builder.withCode(CODE).withMessage(MESSAGE).withContextRoot(uriInfo.getBaseUri());
+            builder.withCode(CODE).withMessage(MESSAGE).withContextRoot(reqCtx.getRestApiPath());
 
             for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
                 Json.createObjectBuilder()
@@ -90,6 +90,6 @@ public interface ConstraintViolationExceptionMapper extends ExceptionMapper<Cons
                 .build();
         }
     }
-    
-    
+
+
 }
