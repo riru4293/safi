@@ -27,7 +27,7 @@ package jp.mydns.projectk.safi.resource.filter;
 
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -37,10 +37,7 @@ import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.ext.Provider;
 import java.lang.reflect.Method;
 import java.util.Optional;
-import static java.util.function.Predicate.not;
-import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.resource.RestApiProcessName;
-import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.value.RequestContext;
@@ -54,15 +51,12 @@ import org.slf4j.LoggerFactory;
  @version 3.0.0
  @since 3.0.0
  */
-interface RestApiProcessNameExtractor {
+public interface RestApiProcessNameExtractor {
 
 /**
  Extract and store the process name.
 
  @param crc the {@code ContainerRequestContext}. It no use.
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 void filter(ContainerRequestContext crc);
@@ -74,29 +68,24 @@ void filter(ContainerRequestContext crc);
  @version 3.0.0
  @since 3.0.0
  */
+@Typed(RestApiProcessNameExtractor.class)
 @RequestScoped
 @Provider
 @Priority(Priorities.USER)
 class Impl implements ContainerRequestFilter, RestApiProcessNameExtractor {
 
-private static final Logger log = LoggerFactory.getLogger(Impl.class);
+private static final Logger log = LoggerFactory.getLogger(RestApiProcessNameExtractor.class);
 
-// Note: It is CDI Bean. Obtaining the request scoped CDI bean via Instance.
-private Instance<ContextImpl> ctxInst;
+// Note: It is CDI Bean.
+private ContextImpl ctx;
 
 // Note: It is JAX-RS context.
 private ResourceInfo resInf;
 
-/**
- Inject the {@code ContextImpl} as {@code Instance}.
-
- @param ctxInst the {@code ContextImpl} as {@code Instance}
- @since 3.0.0
- */
 @Inject
 @SuppressWarnings("unused")
-void setCtxInst(Instance<ContextImpl> ctxInst) {
-    this.ctxInst = ctxInst;
+void setCtx(ContextImpl ctx) {
+    this.ctx = ctx;
 }
 
 @Context
@@ -108,9 +97,6 @@ void setResInf(ResourceInfo resInf) {
 /**
  {@inheritDoc}
 
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 @Override
@@ -120,9 +106,7 @@ public void filter(ContainerRequestContext crc) {
         .map(ResourceInfo::getResourceMethod)
         .map(f(Method::getAnnotation, RestApiProcessName.class))
         .map(RestApiProcessName::value)
-        .filter(not(String::isBlank))
-        .ifPresent(c(requireResolvable(ctxInst)::setValue)
-            .andThen(n -> log.debug("Process name is {}.", n)));
+        .ifPresent(c(ctx::setValue).andThen(n -> log.debug("Process name is {}.", n)));
 }
 
 @RequestScoped
@@ -130,11 +114,6 @@ static class ContextImpl implements RequestContext.RestApiProcessNameContext {
 
 private String value = null;
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
 public String getValue() {
     return value;
@@ -144,22 +123,6 @@ void setValue(String value) {
     this.value = value;
 }
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Override
-public boolean isAvailable() {
-    return value != null;
-}
-
-/**
- Returns a string representation.
-
- @return a string representation
- @since 3.0.0
- */
 @Override
 public String toString() {
     return String.valueOf(value);
