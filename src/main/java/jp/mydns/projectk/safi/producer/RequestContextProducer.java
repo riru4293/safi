@@ -101,11 +101,6 @@ void setRestApiPathCtx(RestApiPathContext restApiPathCtx) {
     this.restApiPathCtx = restApiPathCtx;
 }
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Produces
 @RequestScoped
 @Override
@@ -115,21 +110,11 @@ public RequestContext produce() {
 
 private class RequestContextImpl implements RequestContext {
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
 public String getAccountId() {
     return accountIdCtx.getValue();
 }
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
 public String getProcessName() {
     return Stream.of(restApiProcNameCtx, batchProcNameCtx).sequential()
@@ -138,12 +123,6 @@ public String getProcessName() {
         .findFirst().orElse(null);
 }
 
-/**
- {@inheritDoc}
-
- @throws PublishableIllegalStateException if no found the HTTP request path. It is bug.
- @since 3.0.0
- */
 @Override
 public URI getRestApiPath() {
     return Optional.ofNullable(getRawRestApiPath()).orElseThrow(() ->
@@ -153,22 +132,11 @@ public URI getRestApiPath() {
             + " Either way, it is an implementation defect.")));
 }
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
 public URI getRawRestApiPath() {
     return restApiPathCtx.getValue();
 }
 
-/**
- Returns a string representation.
-
- @return a string representation
- @since 3.0.0
- */
 @Override
 public String toString() {
     return "RequestContext{" + "accountId=" + getAccountId()
