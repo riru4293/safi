@@ -27,6 +27,7 @@ package jp.mydns.projectk.safi.resource.filter;
 
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.ws.rs.Priorities;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
@@ -59,6 +60,7 @@ void filter(ContainerRequestContext crc);
  @version 3.0.0
  @since 3.0.0
  */
+@Typed(RestApiPathExtractor.class)
 @RequestScoped
 @Provider
 @Priority(Priorities.USER)
@@ -88,11 +90,6 @@ static class RestApiPathContextImpl implements RequestContext.RestApiPathContext
 
 private URI value;
 
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
 @Override
 public URI getValue() {
     return value;
@@ -102,15 +99,9 @@ void setValue(URI value) {
     this.value = value;
 }
 
-/**
- Returns a string representation.
-
- @return a string representation
- @since 3.0.0
- */
 @Override
 public String toString() {
-    return String.valueOf(value);
+    return "RestApiPathContextImpl{" + "value=" + value + '}';
 }
 
 }
