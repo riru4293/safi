@@ -70,7 +70,7 @@ private RequestContext reqCtx;
 @Produces(TEXT_PLAIN)
 @RestApiProcessName("ping")
 public Response ping() {
-    return Response.created(reqCtx.getRestApiPath().orElseThrow()).status(200).entity(
+    return Response.created(reqCtx.getRestApiPath()).status(200).entity(
         """
         Hello SAFI API.
         """ + reqCtx).build();
@@ -82,7 +82,7 @@ public Response ping() {
 @RestApiProcessName("ping2")
 @BatchProcessName("ping-ping")
 public Response ping2() {
-    return Response.created(reqCtx.getRestApiPath().orElseThrow()).status(200).entity(
+    return Response.created(reqCtx.getRestApiPath()).status(200).entity(
         """
         Test of process name.
         """ + reqCtx).build();

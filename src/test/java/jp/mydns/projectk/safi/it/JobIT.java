@@ -175,7 +175,7 @@ void testCreateJobMinimum(AppTimeService appTimeSvc, JobResource jobRsc, EntityM
     // Resource URI
     ArgumentCaptor<String> jobIdCaptor = ArgumentCaptor.forClass(String.class);
     var apiBaseUri = spy(URI.create("http://hostname/api/"));
-    doReturn(Optional.of(apiBaseUri)).when(reqCtx).getRestApiPath();
+    doReturn(apiBaseUri).when(reqCtx).getRestApiPath();
 
     // Job creation request(Minimum)
     var req = new JobCreationRequest.Builder().withJobdefId("jobdef-id").unsafeBuild();
@@ -240,7 +240,7 @@ void testCreateJobMaximum(AppTimeService appTimeSvc, JobResource jobRsc, EntityM
     // Resource URI
     ArgumentCaptor<String> jobIdCaptor = ArgumentCaptor.forClass(String.class);
     var apiBaseUri = spy(URI.create("http://hostname/api/"));
-    doReturn(Optional.of(apiBaseUri)).when(reqCtx).getRestApiPath();
+    doReturn(apiBaseUri).when(reqCtx).getRestApiPath();
 
     // Filtering definition
     var filter = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
