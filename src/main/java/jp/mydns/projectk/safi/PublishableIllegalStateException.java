@@ -23,7 +23,7 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.exception;
+package jp.mydns.projectk.safi;
 
 import java.util.Objects;
 
@@ -40,6 +40,9 @@ import java.util.Objects;
  @since 3.0.0
  */
 public class PublishableIllegalStateException extends IllegalStateException {
+
+@java.io.Serial
+private static final long serialVersionUID = 8274928374928374900L;
 
 /**
  Construct with the {@code Throwable}.

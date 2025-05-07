@@ -34,7 +34,7 @@ import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import jp.mydns.projectk.safi.entity.CommonEntity;
-import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 
 /**

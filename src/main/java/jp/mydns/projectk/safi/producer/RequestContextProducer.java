@@ -31,7 +31,7 @@ import jakarta.enterprise.inject.Typed;
 import java.net.URI;
 import java.util.Optional;
 import java.util.stream.Stream;
-import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jakarta.inject.Inject;
 import java.util.Objects;
 import jp.mydns.projectk.safi.value.RequestContext;

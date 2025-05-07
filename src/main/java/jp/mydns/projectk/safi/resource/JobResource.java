@@ -48,7 +48,7 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Objects;
-import jp.mydns.projectk.safi.exception.PublishableIllegalStateException;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.JobService;
 import jp.mydns.projectk.safi.value.JobCreationContext;

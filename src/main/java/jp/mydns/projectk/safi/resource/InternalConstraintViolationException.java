@@ -60,9 +60,9 @@ public InternalConstraintViolationException(ConstraintViolationException cvex) {
 }
 
 /**
- Get the {@code ConstraintViolationException}.
+ Get the wrapped {@code ConstraintViolationException}.
 
- @return the {@code ConstraintViolationException}
+ @return the wrapped {@code ConstraintViolationException}
  @since 3.0.0
  */
 public ConstraintViolationException getConstraintViolationException() {

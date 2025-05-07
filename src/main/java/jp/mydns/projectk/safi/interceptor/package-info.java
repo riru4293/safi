@@ -23,49 +23,11 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.util;
-
-import jakarta.enterprise.inject.Instance;
-import java.util.Objects;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
-
 /**
- Utilities for Jakarta Contexts and Dependency Injection.
-
- <p>
- Implementation requirements.
- <ul>
- <li>This class has not variable field member and it has all method is static.</li>
- </ul>
-
- @author riru
- @version 3.0.0
- @since 3.0.0
+ * Jakarta CDI interceptor.
+ *
+ * @author riru
+ * @version 3.0.0
+ * @since 3.0.0
  */
-public class CdiUtils {
-
-private CdiUtils() {
-}
-
-/**
- Validate the {@code Instance} to see if there is exactly one bean that matches the required type
- and qualifiers.
-
- @param <T> the required bean type
- @param inst the {@code Instance}
- @return instance of {@code T}
- @throws NullPointerException if {@code inst} is {@code null}
- @throws PublishableIllegalStateException if {@code inst} is not resolvable
- @since 3.0.0
- */
-public static <T> T requireResolvable(Instance<T> inst) {
-    Objects.requireNonNull(inst);
-
-    try {
-        return inst.get();
-    } catch (RuntimeException ex) {
-        throw new PublishableIllegalStateException(ex);
-    }
-}
-
-}
+package jp.mydns.projectk.safi.interceptor;
