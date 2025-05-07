@@ -25,56 +25,26 @@
  */
 package jp.mydns.projectk.safi.service;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Typed;
-import java.util.UUID;
+import jakarta.validation.Validator;
 
 /**
- ID generator.
+ Copy of the {@code ValidationService.Impl} for testing.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface IdService {
+public class MockValidationService extends ValidationService.Impl {
 
 /**
- Generate job id. It is UUIDv4.
+ Construct with {@code Jsonv}
 
- @return generated job id.
+ @param validator the {@code Validator}
+ @param appTimeSvc the {@code AppTimeService}
  @since 3.0.0
  */
-String generateJobId();
-
-/**
- Implements of the {@code IdService}.
-
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-@Typed(IdService.class)
-@RequestScoped
-class Impl implements IdService {
-
-@SuppressWarnings("unused")
-Impl() {
-}
-
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Override
-public String generateJobId() {
-    return randomUUID();
-}
-
-private String randomUUID() {
-    return UUID.randomUUID().toString();
-}
-
+public MockValidationService(Validator validator, AppTimeService appTimeSvc) {
+    super(validator, appTimeSvc);
 }
 
 }

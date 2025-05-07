@@ -36,111 +36,118 @@ import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
 /**
- * Provides configuration values for this application.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Provides configuration values for this application.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface ConfigService {
 
-    /**
-     * Get variable data directory. This directory is guaranteed to exist and be writable.
-     *
-     * @return variable data directory
-     * @throws NoSuchElementException if no value is found. If this exception occurs, the execution environment does not
-     * meet the prerequisites.
-     * @since 3.0.0
-     */
-    Path getVarDir();
+/**
+ Get variable data directory. This directory is guaranteed to exist and be writable.
 
-    /**
-     * Get temporary directory. This directory is guaranteed to exist and be writable.
-     *
-     * @return temporary directory
-     * @throws NoSuchElementException if no value is found. If this exception occurs, the execution environment does not
-     * meet the prerequisites.
-     * @since 3.0.0
-     */
-    Path getTmpDir();
+ @return variable data directory
+ @throws NoSuchElementException if no value is found. If this exception occurs, the execution
+ environment does not meet the prerequisites.
+ @since 3.0.0
+ */
+Path getVarDir();
 
-    /**
-     * Get plugin stored directory. This directory is guaranteed to exist and be readable.
-     *
-     * @return plugin stored directory
-     * @throws NoSuchElementException if no value is found. If this exception occurs, the execution environment does not
-     * meet the prerequisites.
-     * @since 3.0.0
-     */
-    Path getPluginDir();
+/**
+ Get temporary directory. This directory is guaranteed to exist and be writable.
 
-    /**
-     * Implements of the {@code ConfigService}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(ConfigService.class)
-    @ApplicationScoped
-    class Impl implements ConfigService {
+ @return temporary directory
+ @throws NoSuchElementException if no value is found. If this exception occurs, the execution
+ environment does not meet the prerequisites.
+ @since 3.0.0
+ */
+Path getTmpDir();
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NoSuchElementException if no value is found. If this exception occurs, the execution environment does
-         * not meet the prerequisites.
-         * @since 3.0.0
-         */
-        @Override
-        public Path getVarDir() {
-            return getValueAsPath("safi.var.dir").orElseThrow();
-        }
+/**
+ Get plugin stored directory. This directory is guaranteed to exist and be readable.
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NoSuchElementException if no value is found. If this exception occurs, the execution environment does
-         * not meet the prerequisites.
-         * @since 3.0.0
-         */
-        @Override
-        public Path getTmpDir() {
-            return getValueAsPath("safi.tmp.dir").orElseThrow();
-        }
+ @return plugin stored directory
+ @throws NoSuchElementException if no value is found. If this exception occurs, the execution
+ environment does not meet the prerequisites.
+ @since 3.0.0
+ */
+Path getPluginDir();
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NoSuchElementException if no value is found. If this exception occurs, the execution environment does
-         * not meet the prerequisites.
-         * @since 3.0.0
-         */
-        @Override
-        public Path getPluginDir() {
-            return getValueAsPath("safi.plugin.dir").orElseThrow();
-        }
+/**
+ Implements of the {@code ConfigService}.
 
-        Config getConfig() {
-            return ConfigProvider.getConfig();
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(ConfigService.class)
+@ApplicationScoped
+class Impl implements ConfigService {
 
-        List<String> getValueAsList(String name) {
-            return getConfig().getOptionalValues(name, String.class).orElseGet(List::of);
-        }
+@SuppressWarnings("unused")
+Impl() {
+}
 
-        Optional<Path> getValueAsPath(String name) {
+/**
+ {@inheritDoc}
 
-            List<String> paths = getValueAsList(name);
+ @throws NoSuchElementException if no value is found. If this exception occurs, the execution
+ environment does not meet the prerequisites.
+ @since 3.0.0
+ */
+@Override
+public Path getVarDir() {
+    return getValueAsPath("safi.var.dir").orElseThrow();
+}
 
-            if (paths.isEmpty()) {
-                return Optional.empty();
-            }
+/**
+ {@inheritDoc}
 
-            String first = paths.get(0);
-            String[] remainings = IntStream.range(1, paths.size()).mapToObj(paths::get).toArray(String[]::new);
+ @throws NoSuchElementException if no value is found. If this exception occurs, the execution
+ environment does not meet the prerequisites.
+ @since 3.0.0
+ */
+@Override
+public Path getTmpDir() {
+    return getValueAsPath("safi.tmp.dir").orElseThrow();
+}
 
-            return Optional.of(Path.of(first, remainings));
-        }
+/**
+ {@inheritDoc}
+
+ @throws NoSuchElementException if no value is found. If this exception occurs, the execution
+ environment does not meet the prerequisites.
+ @since 3.0.0
+ */
+@Override
+public Path getPluginDir() {
+    return getValueAsPath("safi.plugin.dir").orElseThrow();
+}
+
+Config getConfig() {
+    return ConfigProvider.getConfig();
+}
+
+List<String> getValueAsList(String name) {
+    return getConfig().getOptionalValues(name, String.class).orElseGet(List::of);
+}
+
+Optional<Path> getValueAsPath(String name) {
+
+    List<String> paths = getValueAsList(name);
+
+    if (paths.isEmpty()) {
+        return Optional.empty();
     }
+
+    String first = paths.get(0);
+    String[] remainings = IntStream.range(1, paths.size()).mapToObj(paths::get).toArray(
+        String[]::new);
+
+    return Optional.of(Path.of(first, remainings));
+}
+
+}
+
 }
