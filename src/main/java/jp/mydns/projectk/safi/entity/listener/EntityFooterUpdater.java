@@ -84,16 +84,10 @@ class Impl implements EntityFooterUpdater {
 // Note: Obtaining the request scoped CDI bean via Instance.
 private final Instance<Context> ctxInst;
 
-/**
- Constructor.
-
- @param ctxInst instance of the {@code EntityFooterUpdater.Context}
- @throws NullPointerException if {@code ctxInst} id {@code null}
- @since 3.0.0
- */
 @Inject
-public Impl(Instance<Context> ctxInst) {
-    this.ctxInst = Objects.requireNonNull(ctxInst);
+@SuppressWarnings("unused")
+Impl(Instance<Context> ctxInst) {
+    this.ctxInst = ctxInst;
 }
 
 /**
@@ -154,20 +148,14 @@ interface Context {
  Get real time of UTC time zone. Rounded down to the nearest millisecond.
 
  @return real time
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 LocalDateTime getUtcNow();
 
 /**
- Get login account id.
+ Get logged account id.
 
  @return account id
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 String getAccountId();
@@ -176,24 +164,10 @@ String getAccountId();
  Get current process name.
 
  @return process name
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 String getProcessName();
+
 }
-
-/**
- Returns a string representation.
-
- @return a string representation
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
- @since 3.0.0
- */
-@Override
-String toString();
 
 }
