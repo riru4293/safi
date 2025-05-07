@@ -106,7 +106,8 @@ interface RestApiPathContext {
 /**
  Get current HTTP request path.
 
- @return current HTTP request path. {@code null} if the request did not come from HTTP.
+ @return current HTTP request path. It ends with {@code /}. {@code null} if the request did not come
+ from HTTP.
  @since 3.0.0
  */
 URI getValue();
