@@ -38,187 +38,174 @@ import jp.mydns.projectk.safi.util.CollectionUtils;
 import jp.mydns.projectk.safi.value.ValueTemplate;
 
 /**
- * Error response information.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class is immutable and thread-safe.</li>
- * <li>Can be converted to JSON.</li>
- * </ul>
- *
- * <a href="{@docRoot}/../schemas/error-response-context.schema.json">Json schema is here</a>
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Error response information.
+
+ <p>
+ Implementation requirements.
+ <ul>
+ <li>This class is immutable and thread-safe.</li>
+ <li>Can be converted to JSON.</li>
+ </ul>
+
+ <a href="{@docRoot}/../schemas/error-response-context.schema.json">Json schema is here</a>
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface ErrorResponseContext extends ValueTemplate {
 
-    /**
-     * Get JSON schema URI.
-     *
-     * @return the URI of this JSON schema
-     * @since 3.0.0
-     */
-    @JsonbProperty("$schema")
-    @Schema(description = "JSON schema.", accessMode = READ_ONLY)
-    @NotNull
-    URI getSchema();
+/**
+ Get JSON schema URI.
 
-    /**
-     * Get error code.
-     *
-     * @return error code
-     * @since 3.0.0
-     */
-    @Schema(description = "Error code.", accessMode = READ_ONLY)
-    @NotNull
-    URI getCode();
+ @return the URI of this JSON schema
+ @since 3.0.0
+ */
+@JsonbProperty("$schema")
+@Schema(description = "JSON schema.", accessMode = READ_ONLY)
+@NotNull
+URI getSchema();
 
-    /**
-     * Get error message.
-     *
-     * @return error message
-     * @since 3.0.0
-     */
-    @Schema(description = "Error message.", accessMode = READ_ONLY)
-    @NotNull
-    String getMessage();
+/**
+ Get error code.
 
-    /**
-     * Get error details.
-     *
-     * @return error details
-     * @since 3.0.0
-     */
-    @Schema(description = "Error details.", requiredMode = NOT_REQUIRED, accessMode = READ_ONLY)
-    @NotNull
-    Optional<List<@NotNull JsonObject>> getDetails();
+ @return error code
+ @since 3.0.0
+ */
+@Schema(description = "Error code.", accessMode = READ_ONLY)
+@NotNull
+URI getCode();
 
-    /**
-     * Builder of the {@code ErrorResponseContext}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class Builder extends ValueTemplate.AbstractBuilder<Builder, ErrorResponseContext> {
+/**
+ Get error message.
 
-        private URI contextRoot;
-        private URI code;
-        private String message;
-        private List<JsonObject> details;
+ @return error message
+ @since 3.0.0
+ */
+@Schema(description = "Error message.", accessMode = READ_ONLY)
+@NotNull
+String getMessage();
 
-        /**
-         * Constructor.
-         *
-         * @since 3.0.0
-         */
-        public Builder() {
-            super(Builder.class);
-        }
+/**
+ Get error details.
 
-        /**
-         * Set context root of SAFI.
-         *
-         * @param contextRoot context root of SAFI. URI must be opaque. A URI is opaque if, and only if, it is absolute
-         * and its scheme-specific part does not begin with a slash character ('/').
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withContextRoot(URI contextRoot) {
-            this.contextRoot = contextRoot;
-            return this;
-        }
+ @return error details
+ @since 3.0.0
+ */
+@Schema(description = "Error details.", requiredMode = NOT_REQUIRED, accessMode = READ_ONLY)
+@NotNull
+Optional<List<@NotNull JsonObject>> getDetails();
 
-        /**
-         * Set error code.
-         *
-         * @param code error code
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withCode(URI code) {
-            this.code = code;
-            return this;
-        }
+/**
+ Builder of the {@code ErrorResponseContext}.
 
-        /**
-         * Set error message.
-         *
-         * @param message error message
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withMessage(String message) {
-            this.message = message;
-            return this;
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class Builder extends ValueTemplate.AbstractBuilder<Builder, ErrorResponseContext> {
 
-        /**
-         * Set error details.
-         *
-         * @param details error details
-         * @return updated this
-         * @since 3.0.0
-         */
-        public Builder withDetails(List<JsonObject> details) {
-            this.details = CollectionUtils.toUnmodifiable(details);
-            return this;
-        }
+private URI code;
+private String message;
+private List<JsonObject> details;
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public ErrorResponseContext unsafeBuild() {
-            return new Bean(this);
-        }
+/**
+ Constructor.
 
-        private class Bean implements ErrorResponseContext {
+ @since 3.0.0
+ */
+public Builder() {
+    super(Builder.class);
+}
 
-            private final URI relativeSchemPath = URI.create("./schemas/error-response-context.schema.json");
-            private final URI schema;
-            private final URI code;
-            private final String message;
-            private final List<JsonObject> details;
+/**
+ Set error code.
 
-            public Bean(Builder builder) {
-                this.schema = Optional.ofNullable(builder.contextRoot).filter(URI::isOpaque)
-                    .map(r -> r.resolve(relativeSchemPath)).map(URI::normalize).orElseGet(() -> null);
-                this.code = builder.code;
-                this.message = builder.message;
-                this.details = builder.details;
-            }
+ @param code error code
+ @return updated this
+ @since 3.0.0
+ */
+public Builder withCode(URI code) {
+    this.code = code;
+    return this;
+}
 
-            @Override
-            public URI getSchema() {
-                return schema;
-            }
+/**
+ Set error message.
 
-            @Override
-            public URI getCode() {
-                return code;
-            }
+ @param message error message
+ @return updated this
+ @since 3.0.0
+ */
+public Builder withMessage(String message) {
+    this.message = message;
+    return this;
+}
 
-            @Override
-            public String getMessage() {
-                return message;
-            }
+/**
+ Set error details.
 
-            @Override
-            public Optional<List<JsonObject>> getDetails() {
-                return Optional.ofNullable(details);
-            }
+ @param details error details
+ @return updated this
+ @since 3.0.0
+ */
+public Builder withDetails(List<JsonObject> details) {
+    this.details = CollectionUtils.toUnmodifiable(details);
+    return this;
+}
 
-            @Override
-            public String toString() {
-                return "ErrorResponseContext{" + "schema=" + schema + ", code=" + code + ", message=" + message
-                    + ", details=" + details + '}';
-            }
-        }
-    }
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public ErrorResponseContext unsafeBuild() {
+    return new Bean(this);
+}
+
+private class Bean implements ErrorResponseContext {
+
+private final URI schema = URI.create(
+    "https://project-k.mydns.jp/safi/schemas/error-response-context.schema.json");
+private final URI code;
+private final String message;
+private final List<JsonObject> details;
+
+public Bean(Builder builder) {
+    this.code = builder.code;
+    this.message = builder.message;
+    this.details = builder.details;
+}
+
+@Override
+public URI getSchema() {
+    return schema;
+}
+
+@Override
+public URI getCode() {
+    return code;
+}
+
+@Override
+public String getMessage() {
+    return message;
+}
+
+@Override
+public Optional<List<JsonObject>> getDetails() {
+    return Optional.ofNullable(details);
+}
+
+@Override
+public String toString() {
+    return "ErrorResponseContext{" + "schema=" + schema + ", code=" + code + ", message=" + message
+        + ", details=" + details + '}';
+}
+
+}
+
+}
+
 }
