@@ -32,9 +32,16 @@ import jakarta.ws.rs.Priorities;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
+import jakarta.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.core.UriInfo;
 import jakarta.ws.rs.ext.Provider;
 import java.net.URI;
+import java.util.Optional;
+import static jp.mydns.projectk.safi.util.LambdaUtils.c;
+import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.value.RequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  HTTP request path extractor to <i>JAX-RS</i> resource.
@@ -66,6 +73,8 @@ void filter(ContainerRequestContext crc);
 @Priority(Priorities.USER)
 class Impl implements ContainerRequestFilter, RestApiPathExtractor {
 
+private static final Logger log = LoggerFactory.getLogger(RestApiPathExtractor.class);
+
 // Note: It is CDI Bean.
 private RestApiPathContextImpl ctx;
 
@@ -86,7 +95,10 @@ void setCtx(RestApiPathContextImpl ctx) {
  */
 @Override
 public void filter(ContainerRequestContext crc) {
-    ctx.setValue(crc.getUriInfo().getAbsolutePath());
+    Optional.of(crc.getUriInfo())
+        .map(UriInfo::getAbsolutePath)
+        .map(p -> UriBuilder.fromUri(p).build(new Object[]{}, true))
+        .ifPresent(c(ctx::setValue).andThen(p -> log.debug("Request path is {}.", p)));
 }
 
 @RequestScoped
