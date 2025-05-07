@@ -26,16 +26,14 @@
 package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 import jp.mydns.projectk.safi.service.RealTimeService;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.entity.listener.EntityFooterUpdater;
-import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 
 /**
  Produce the {@link EntityFooterUpdater.Context}.
@@ -44,28 +42,7 @@ import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
  @version 3.0.0
  @since 3.0.0
  */
-@RequestScoped
-public class EntityFooterContextProducer {
-
-// Note: Obtaining the request scoped CDI bean via Instance.
-private final Instance<RequestContext> reqCtxInst;
-private final Instance<RealTimeService> realTimeSvcInst;
-
-/**
- Constructor.
-
- @param reqCtxInst the {@code RequestContext} as {@code Instance}
- @param realTimeSvcInst the {@code RealTimeService} as {@code Instance}
- @throws NullPointerException if any argument is {@code null}
- @since 3.0.0
- */
-@Inject
-public EntityFooterContextProducer(Instance<RequestContext> reqCtxInst,
-    Instance<RealTimeService> realTimeSvcInst) {
-
-    this.reqCtxInst = Objects.requireNonNull(reqCtxInst);
-    this.realTimeSvcInst = Objects.requireNonNull(realTimeSvcInst);
-}
+public interface EntityFooterContextProducer {
 
 /**
  Produce the {@code EntityFooterUpdater.Context}.
@@ -73,42 +50,65 @@ public EntityFooterContextProducer(Instance<RequestContext> reqCtxInst,
  @return the {@code EntityFooterUpdater.Context}
  @since 3.0.0
  */
-@Produces
+EntityFooterUpdater.Context produce();
+
+/**
+ Implements of the {@code EntityFooterContextProducer}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(EntityFooterContextProducer.class)
 @RequestScoped
-public EntityFooterUpdater.Context produce() {
-    return new Impl();
+class Impl implements EntityFooterContextProducer {
+
+private final RequestContext reqCtx;
+private final RealTimeService realTimeSvc;
+
+@Inject
+@SuppressWarnings("unused")
+Impl(RequestContext reqCtx, RealTimeService realTimeSvc) {
+    this.reqCtx = Objects.requireNonNull(reqCtx);
+    this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
 }
 
-private class Impl implements EntityFooterUpdater.Context {
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Produces
+@RequestScoped
+@SuppressWarnings("unused")
+@Override
+public EntityFooterUpdater.Context produce() {
+    return new ContextImpl();
+}
+
+private class ContextImpl implements EntityFooterUpdater.Context {
 
 @Override
 public LocalDateTime getUtcNow() {
-    return requireResolvable(realTimeSvcInst).getLocalNow();
+    return realTimeSvc.getLocalNow();
 }
 
 @Override
 public String getAccountId() {
-    return requireResolvable(reqCtxInst).getAccountId().orElse(null);
+    return reqCtx.getAccountId();
 }
 
 @Override
 public String getProcessName() {
-    return requireResolvable(reqCtxInst).getProcessName();
+    return reqCtx.getProcessName();
 }
 
-/**
- Returns a string representation.
-
- @return a string representation
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
- @since 3.0.0
- */
 @Override
 public String toString() {
     return "EntityFooterContext{" + "utcNow=" + getUtcNow() + ", accountId=" + getAccountId()
         + ", processName=" + getProcessName() + '}';
+}
+
 }
 
 }
