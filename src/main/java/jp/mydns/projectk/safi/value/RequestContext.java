@@ -25,29 +25,127 @@
  */
 package jp.mydns.projectk.safi.value;
 
+import java.net.URI;
+import java.util.Optional;
+import jp.mydns.projectk.safi.exception.trial.PublishableIllegalStateException;
+
 /**
- * Current request information. A <i>Request</i> is a processing request, and there are processing requests via Web API
- * and background processing requests by the system.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Current request information. A <i>Request</i> is a processing request, and there are processing
+ requests via Web API and background processing requests by the system.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface RequestContext {
 
-    /**
-     * Get account id.
-     *
-     * @return logged account id
-     * @since 3.0.0
-     */
-    String getAccountId();
+/**
+ Get request path.
 
-    /**
-     * Get processing name.
-     *
-     * @return current processing name
-     * @since 3.0.0
-     */
-    String getProcessName();
+ @return request path. Empty if request not from web API.
+ @since 3.0.0
+ */
+Optional<URI> getPath();
+
+/**
+ Get account id.
+
+ @return logged account id. Empty if not logged in.
+ @since 3.0.0
+ */
+Optional<String> getAccountId();
+
+/**
+ Get processing name.
+
+ @return current processing name
+ @throws PublishableIllegalStateException if no found or multiple definitions.
+ @since 3.0.0
+ */
+String getProcessName();
+
+/**
+ Current logged account id information.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+interface AccountIdContext {
+
+/**
+ Get current logged account id.
+
+ @return current logged account id
+ @since 3.0.0
+ */
+String getValue();
+}
+
+/**
+ Current HTTP request path information. If the request did not come from HTTP, the value will be
+ {@code null}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+interface PathContext {
+
+/**
+ Get current request path.
+
+ @return current request path. {@code null} if the request did not come from HTTP.
+ @since 3.0.0
+ */
+URI getValue();
+}
+
+/**
+ Current process name information.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+interface ProcessNameContext {
+
+/**
+ Get current process name.
+
+ @return current process name
+ @since 3.0.0
+ */
+String getValue();
+
+/**
+ Returns {@code true} if available get value.
+
+ @return {@code true} if available get value, otherwise {@code false}.
+ @since 3.0.0
+ */
+boolean isAvailable();
+}
+
+/**
+ Current HTTP request process name information. This and {@link BatchProcessNameContext} cannot
+ coexist.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+interface RestApiProcessNameContext extends ProcessNameContext {
+}
+
+/**
+ Current batch process name information. This and {@link RestApiProcessNameContext} cannot coexist.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+interface BatchProcessNameContext extends ProcessNameContext {
+}
+
 }

@@ -43,7 +43,7 @@ import jp.mydns.projectk.safi.constant.JobTarget;
 import jp.mydns.projectk.safi.validator.DurationRange;
 import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * JPA entity for the <i>m_jobdef</i> table.
@@ -83,14 +83,14 @@ public class JobdefEntity extends NamedEntity {
     private String pluginName;
 
     @Column(name = "trnsdef")
-    private JsonWrapper trnsdef;
+    private SJson trnsdef;
 
     @Column(name = "filtdef")
-    private JsonWrapper filtdef;
+    private SJson filtdef;
 
     @Basic(optional = false)
     @Column(name = "job_props", nullable = false)
-    private JsonWrapper jobProperties;
+    private SJson jobProperties;
 
     /**
      * Get job definition id.
@@ -206,7 +206,7 @@ public class JobdefEntity extends NamedEntity {
      * @return transform definition. It may be {@code null}.
      * @since 3.0.0
      */
-    public JsonWrapper getTrnsdef() {
+    public SJson getTrnsdef() {
         return trnsdef;
     }
 
@@ -216,7 +216,7 @@ public class JobdefEntity extends NamedEntity {
      * @param trnsdef transform definition. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setTrnsdef(JsonWrapper trnsdef) {
+    public void setTrnsdef(SJson trnsdef) {
         this.trnsdef = trnsdef;
     }
 
@@ -226,7 +226,7 @@ public class JobdefEntity extends NamedEntity {
      * @return filtering definition. It may be {@code null}.
      * @since 3.0.0
      */
-    public JsonWrapper getFiltdef() {
+    public SJson getFiltdef() {
         return filtdef;
     }
 
@@ -236,7 +236,7 @@ public class JobdefEntity extends NamedEntity {
      * @param filtdef filtering definition. It can be set {@code null}.
      * @since 3.0.0
      */
-    public void setFiltdef(JsonWrapper filtdef) {
+    public void setFiltdef(SJson filtdef) {
         this.filtdef = filtdef;
     }
 
@@ -247,7 +247,7 @@ public class JobdefEntity extends NamedEntity {
      * @since 3.0.0
      */
     @NotNull
-    public JsonWrapper getJobProperties() {
+    public SJson getJobProperties() {
         return jobProperties;
     }
 
@@ -257,7 +257,7 @@ public class JobdefEntity extends NamedEntity {
      * @param jobProperties job properties
      * @since 3.0.0
      */
-    public void setJobProperties(JsonWrapper jobProperties) {
+    public void setJobProperties(SJson jobProperties) {
         this.jobProperties = jobProperties;
     }
 

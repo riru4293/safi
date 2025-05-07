@@ -157,6 +157,6 @@ public class ValidityPeriodEmb implements Serializable {
      */
     @Override
     public String toString() {
-        return "ValidityPeriodEmd{" + "from=" + from + ", to=" + to + ", ignored=" + ignored + '}';
+        return "ValidityPeriodEmb{" + "from=" + from + ", to=" + to + ", ignored=" + ignored + '}';
     }
 }

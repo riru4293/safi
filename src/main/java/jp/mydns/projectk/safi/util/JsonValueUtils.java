@@ -37,6 +37,7 @@ import jakarta.json.stream.JsonCollectors;
 import jakarta.json.stream.JsonParser;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -147,11 +148,22 @@ public class JsonValueUtils {
      * @since 3.0.0
      */
     public static JsonValue toJsonValue(OffsetDateTime time) {
-        return Optional.ofNullable(time).map(JsonValueUtils::asJsonValue).orElse(JsonValue.NULL);
+        return Optional.ofNullable(time).map(t -> time.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .map(Json::createValue).map(JsonValue.class::cast).orElse(JsonValue.NULL);
+
     }
 
-    private static JsonValue asJsonValue(OffsetDateTime time) {
-        return Json.createValue(time.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+    /**
+     * Returns a JSON string representation of time.
+     *
+     * @param time the {@code LocalDateTime}. It's can be {@code null}.
+     * @return a JSON string representation of time. That format is ISO8601. For example {@literal 2000-01-01T12:34:56}.
+     * Return {@link JsonValue#NULL} if {@code time} is {@code null}.
+     * @since 3.0.0
+     */
+    public static JsonValue toJsonValue(LocalDateTime time) {
+        return Optional.ofNullable(time).map(t -> time.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
+            .map(Json::createValue).map(JsonValue.class::cast).orElse(JsonValue.NULL);
     }
 
     /**

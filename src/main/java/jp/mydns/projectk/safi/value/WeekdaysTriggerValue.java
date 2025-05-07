@@ -58,7 +58,7 @@ import jp.mydns.projectk.safi.value.adapter.SequencedSetAdapter.SequencedMonthSe
  * @since 3.0.0
  */
 @Schema(name = "ScheduleTrigger.Weekdays", description = "Weekdays schedule trigger configuration.")
-interface WeekdaysTriggerValue extends ScheduleTriggerValue {
+public interface WeekdaysTriggerValue extends ScheduleTriggerValue {
 
     /**
      * {@inheritDoc}
@@ -214,7 +214,6 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
             public SequencedSet<Month> getMonths() {
                 return months;
             }
@@ -225,8 +224,7 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
              * @param months target months of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SequencedMonthSetAdapter.class)
-            public void setMonths(SequencedSet<Month> months) {
+            public void setMonths(@JsonbTypeAdapter(SequencedMonthSetAdapter.class) SequencedSet<Month> months) {
                 this.months = CollectionUtils.toUnmodifiable(months);
             }
 
@@ -236,7 +234,6 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
             public SequencedSet<Integer> getWeeks() {
                 return weeks;
             }
@@ -248,8 +245,7 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
              * @param weeks target week numbers of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SequencedIntegerSetAdapter.class)
-            public void setWeeks(SequencedSet<Integer> weeks) {
+            public void setWeeks(@JsonbTypeAdapter(SequencedIntegerSetAdapter.class) SequencedSet<Integer> weeks) {
                 this.weeks = CollectionUtils.toUnmodifiable(weeks);
             }
 
@@ -259,7 +255,6 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
              * @since 3.0.0
              */
             @Override
-            @JsonbTypeAdapter(SequencedDayOfWeekSetAdapter.class)
             public SequencedSet<DayOfWeek> getWeekdays() {
                 return weekdays;
             }
@@ -270,8 +265,7 @@ interface WeekdaysTriggerValue extends ScheduleTriggerValue {
              * @param weekdays target weekdays of scheduling
              * @since 3.0.0
              */
-            @JsonbTypeAdapter(SequencedDayOfWeekSetAdapter.class)
-            public void setWeekdays(SequencedSet<DayOfWeek> weekdays) {
+            public void setWeekdays(@JsonbTypeAdapter(SequencedDayOfWeekSetAdapter.class) SequencedSet<DayOfWeek> weekdays) {
                 this.weekdays = CollectionUtils.toUnmodifiable(weekdays);
             }
 

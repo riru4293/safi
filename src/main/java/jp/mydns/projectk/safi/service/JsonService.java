@@ -33,7 +33,9 @@ import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbException;
 import java.util.Objects;
+import java.util.function.Function;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Provides JSON conversion.
@@ -78,6 +80,28 @@ public interface JsonService {
      * @since 3.0.0
      */
     JsonObject merge(JsonObject base, JsonObject ow);
+
+    /**
+     * Conversion to {@code SJson}.
+     *
+     * @param value source value
+     * @return converted value
+     * @throws NullPointerException if {@code value} is {@code null}
+     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+     * @since 3.0.0
+     */
+    SJson toSJson(Object value);
+
+    /**
+     * Returns a deserialize function to {@code T} from JSON.
+     *
+     * @param <T> destination type. It should support deserialization from JSON.
+     * @param clazz destination type
+     * @return deserialized value
+     * @throws NullPointerException if {@code clazz} is {@code null}
+     * @since 3.0.0
+     */
+    <T> Function<JsonValue, T> fromJsonValue(Class<T> clazz);
 
     /**
      * Implements the {@code JsonService}.
@@ -137,6 +161,30 @@ public interface JsonService {
         @Override
         public JsonObject merge(JsonObject base, JsonObject ow) {
             return JsonValueUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code value} is {@code null}
+         * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+         * @since 3.0.0
+         */
+        @Override
+        public SJson toSJson(Object value) {
+            return SJson.of(toJsonValue(value));
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * @throws NullPointerException if {@code clazz} is {@code null}
+         * @since 3.0.0
+         */
+        @Override
+        public <T> Function<JsonValue, T> fromJsonValue(Class<T> clazz) {
+            Objects.requireNonNull(clazz);
+            return j -> fromJsonValue(j, clazz);
         }
     }
 }

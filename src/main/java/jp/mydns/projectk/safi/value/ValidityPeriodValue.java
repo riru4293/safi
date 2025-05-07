@@ -62,7 +62,7 @@ import jp.mydns.projectk.safi.validator.TimeRange;
  */
 @JsonbTypeDeserializer(ValidityPeriodValue.Deserializer.class)
 @Schema(name = "ValidityPeriod", description = "It has a validity period and an ignore flag, the combination of which"
-        + " indicates whether a value that has this as a property is valid or invalid.")
+    + " indicates whether a value that has this as a property is valid or invalid.")
 public interface ValidityPeriodValue extends ValueTemplate {
 
     /**
@@ -72,7 +72,7 @@ public interface ValidityPeriodValue extends ValueTemplate {
      * @since 3.0.0
      */
     @Schema(defaultValue = "2000-01-01T00:00:00Z", description = "Begin date-time of validity period."
-            + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
+        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})
@@ -85,7 +85,7 @@ public interface ValidityPeriodValue extends ValueTemplate {
      * @since 3.0.0
      */
     @Schema(defaultValue = "2999-12-31T23:59:59Z", description = "End date-time of validity period."
-            + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
+        + " Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.")
     @NotNull(groups = {Default.class})
     @TimeRange(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})

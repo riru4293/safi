@@ -314,8 +314,7 @@ public interface SchedefValue extends NamedValue {
             @Override
             public String toString() {
                 return "SchedefValue{" + "id=" + id + ", jobdefId=" + jobdefId + ", validityPeriod=" + validityPeriod
-                    + ", priority=" + priority + ", trigger=" + trigger + ", name=" + name + ", version=" + version
-                    + '}';
+                    + ", priority=" + priority + ", trigger=" + trigger + ", name=" + name + ", version=" + version + '}';
             }
         }
     }

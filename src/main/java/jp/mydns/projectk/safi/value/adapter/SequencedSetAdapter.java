@@ -64,8 +64,7 @@ public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, Li
      */
     @Override
     default SequencedSet<T> adaptFromJson(List<T> l) {
-        LinkedHashSet<T> s = Objects.requireNonNull(l).stream().sequential()
-            .collect(toCollection(LinkedHashSet::new));
+        LinkedHashSet<T> s = Objects.requireNonNull(l).stream().sequential().collect(toCollection(LinkedHashSet::new));
         return Collections.unmodifiableSequencedSet(s);
     }
 

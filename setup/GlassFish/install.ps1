@@ -179,7 +179,7 @@ SafiPool
 & "${GLASSFISH_HOME}\bin\asadmin.bat" set-log-levels "jp.mydns.projectk.safi=FINEST"
 
 # Configure JVM options
-& "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Dsafi.home=/, $( ${env:LOCALAPPDATA}.Replace( '\', ', ' ).Replace( ':', '\:' ) ), safi"
+& "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Dsafi.home=$( ${env:LOCALAPPDATA}.Replace( '\', ',' ).Replace( ':', '\:' ) ),safi"
 
 
 # Configure console log-level

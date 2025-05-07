@@ -23,59 +23,64 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity;
+package jp.mydns.projectk.safi.test;
 
-import jakarta.enterprise.inject.Instance;
-import jakarta.inject.Inject;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Disposes;
+import jakarta.enterprise.inject.Produces;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 /**
- * Set footer values in the {@link CommonEntity} when insert and update to database.
+ * CDI Producer that provides instances of {@link EntityManager}.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class FooterUpdater {
+@ApplicationScoped
+public class EntityManagerProducer {
 
-    private final FooterContext ctx;
+    private final EntityManagerFactory emf = Persistence.createEntityManagerFactory("test_persistence_unit");
 
     /**
-     * Constructor.
+     * Produces an the {@code EntityManager}.
      *
-     * @param ctx instance of the {@code FooterContext}
+     * @return the {@code EntityManager}
      * @since 3.0.0
      */
-    @Inject
-    public FooterUpdater(Instance<FooterContext> ctx) {
-        this.ctx = ctx.get();
+    @Produces
+    @Alternative
+    @RequestScoped
+    public EntityManager produce() {
+        return emf.createEntityManager();
     }
 
     /**
-     * Set entity common footer values when insert. Set only values related to register.
+     * Close the produced {@code EntityManager} if disposed.
      *
-     * @param entity the {@code CommonEntity}
+     * @param em the produced {@code EntityManager}
      * @since 3.0.0
      */
-    @PrePersist
-    public void insert(CommonEntity entity) {
-        entity.setRegTime(ctx.getUtcNow());
-        entity.setRegId(ctx.getAccountId());
-        entity.setRegName(ctx.getProcessName());
-        update(entity);
+    public void closeEntityManager(@Disposes EntityManager em) {
+        if (em.isOpen()) {
+            em.close();
+        }
     }
 
     /**
-     * Set entity common footer values when update. Set only values related to update.
+     * Close the entity manager factory.
      *
-     * @param entity the {@code CommonEntity}
      * @since 3.0.0
      */
-    @PreUpdate
-    public void update(CommonEntity entity) {
-        entity.setUpdTime(ctx.getUtcNow());
-        entity.setUpdId(ctx.getAccountId());
-        entity.setUpdName(ctx.getProcessName());
+    @PreDestroy
+    public void closeEntityManagerFactory() {
+        if (emf.isOpen()) {
+            emf.close();
+        }
     }
 }

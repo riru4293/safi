@@ -142,7 +142,7 @@ public interface JobValue extends PersistableValue {
      */
     @Schema(description
         = "Begin time at job execution. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
-            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getBeginTime();
 
@@ -154,7 +154,7 @@ public interface JobValue extends PersistableValue {
      */
     @Schema(description
         = "End time at job execution. Values from 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z can be specified.",
-            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@TimeRange @TimeAccuracy OffsetDateTime> getEndTime();
 
@@ -565,7 +565,7 @@ public interface JobValue extends PersistableValue {
              * @param kind the {@code JobKind}
              * @since 3.0.0
              */
-            public void setJobKind(JobKind kind) {
+            public void setKind(JobKind kind) {
                 this.kind = kind;
             }
 
@@ -789,7 +789,7 @@ public interface JobValue extends PersistableValue {
                     + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
                     + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId
                     + ", jobdef=" + jobdef + ", schedefId=" + schedefId + ", schedef=" + schedef
-                    + ", resultMessages=" + resultMessages + '}';
+                    + ", resultMessages=" + resultMessages + ", version=" + version + '}';
             }
         }
     }

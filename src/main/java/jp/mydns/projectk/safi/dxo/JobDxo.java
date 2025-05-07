@@ -25,21 +25,23 @@
  */
 package jp.mydns.projectk.safi.dxo;
 
-import io.azam.ulidj.ULID;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.json.JsonValue;
 import java.util.Objects;
+import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.entity.JobEntity;
 import jp.mydns.projectk.safi.service.JsonService;
+import static jp.mydns.projectk.safi.util.CollectionUtils.convertElements;
 import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
-import jp.mydns.projectk.safi.value.JsonWrapper;
 import jp.mydns.projectk.safi.value.SchedefValue;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Data exchange processing for <i>Job</i>.
@@ -114,14 +116,19 @@ public interface JobDxo {
         public JobEntity newEntity(JobCreationContext ctx) {
             Objects.requireNonNull(ctx);
 
+            var jobdef = ctx.getJobdef();
+
             var entity = new JobEntity();
 
-            entity.setId(ULID.random());
+            entity.setId(ctx.getJobId());
             entity.setStatus(JobStatus.SCHEDULE);
+            entity.setKind(jobdef.getJobKind());
+            entity.setTarget(jobdef.getJobTarget());
             entity.setScheduleTime(ctx.getScheduleTime());
-            entity.setLimitTime(ctx.getScheduleTime().plus(ctx.getJobdef().getTimeout()));
-            entity.setProperties(JsonWrapper.of(ctx.getJobdef().getJobProperties()));
-            entity.setJobdef(JsonWrapper.of(jsonSvc.toJsonValue(ctx.getJobdef())));
+            entity.setLimitTime(ctx.getScheduleTime().plus(jobdef.getTimeout()));
+            entity.setProperties(jsonSvc.toSJson(jobdef.getJobProperties()));
+            entity.setJobdefId(jobdef.getId());
+            entity.setJobdef(jsonSvc.toSJson(jobdef));
 
             return entity;
         }
@@ -146,13 +153,12 @@ public interface JobDxo {
             entity.setLimitTime(TimeUtils.toLocalDateTime(value.getLimitTime()));
             entity.setBeginTime(TimeUtils.toLocalDateTime(value.getBeginTime().orElse(null)));
             entity.setEndTime(TimeUtils.toLocalDateTime(value.getEndTime().orElse(null)));
-            entity.setProperties(JsonWrapper.of(value.getProperties()));
+            entity.setProperties(jsonSvc.toSJson(value.getProperties()));
             entity.setJobdefId(value.getJobdefId());
-            entity.setJobdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getJobdef())));
+            entity.setJobdef(jsonSvc.toSJson(value.getJobdef()));
             entity.setSchedefId(value.getSchedefId().orElse(null));
-            entity.setSchedef(value.getSchedef().map(jsonSvc::toJsonValue).map(JsonWrapper::of).orElse(null));
-            entity.setResultMessages(value.getResultMessages().map(jsonSvc::toJsonValue).map(JsonWrapper::of)
-                .orElse(null));
+            entity.setSchedef(value.getSchedef().map(jsonSvc::toSJson).orElse(null));
+            entity.setResultMessages(value.getResultMessages().map(jsonSvc::toSJson).orElse(null));
             entity.setNote(value.getNote().orElse(null));
             entity.setVersion(value.getVersion());
             entity.setRegTime(value.getRegisterTime().map(TimeUtils::toLocalDateTime).orElse(null));
@@ -188,9 +194,10 @@ public interface JobDxo {
                 .withJobdefId(entity.getJobdefId())
                 .withJobdef(jsonSvc.fromJsonValue(entity.getJobdef().unwrap(), JobdefValue.class))
                 .withSchedefId(entity.getSchedefId())
-                .withSchedef(jsonSvc.fromJsonValue(entity.getSchedef().unwrap(), SchedefValue.class))
-                .withResultMessages(entity.getResultMessages().unwrap().asJsonArray().stream()
-                    .map(JsonValueUtils::toString).toList())
+                .withSchedef(Optional.ofNullable(entity.getSchedef()).map(SJson::unwrap)
+                    .map(jsonSvc.fromJsonValue(SchedefValue.class)).orElse(null))
+                .withResultMessages(Optional.ofNullable(entity.getResultMessages()).map(SJson::unwrap)
+                    .map(JsonValue::asJsonArray).map(convertElements(JsonValueUtils::toString)).orElse(null))
                 .withNote(entity.getNote())
                 .withVersion(entity.getVersion())
                 .withRegisterTime(TimeUtils.toOffsetDateTime(entity.getRegTime()))

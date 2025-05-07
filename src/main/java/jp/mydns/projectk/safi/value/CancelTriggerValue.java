@@ -51,7 +51,7 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
  * @since 3.0.0
  */
 @Schema(name = "ScheduleTrigger.Cancel", description = "Schedule cancelling trigger configuration.")
-interface CancelTriggerValue extends ScheduleTriggerValue {
+public interface CancelTriggerValue extends ScheduleTriggerValue {
 
     /**
      * {@inheritDoc}
@@ -69,7 +69,7 @@ interface CancelTriggerValue extends ScheduleTriggerValue {
      * @since 3.0.0
      */
     @Schema(type = "string", example = "PT24H", description
-            = "Schedule canceling duration. Value equal to or greater than PT0S can be specified.")
+        = "Schedule canceling duration. Value equal to or greater than PT0S can be specified.")
     @NotNull(groups = {Default.class})
     @PositiveOrZeroDuration(groups = {Default.class})
     @TimeAccuracy(groups = {Default.class})

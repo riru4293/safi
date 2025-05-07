@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Test of class {@code UserEntity}.
@@ -133,7 +133,7 @@ class UserEntityTest {
         entity.setEnabled(false);
         entity.setValidityPeriod(vp);
         entity.setName("user-name");
-        entity.setProperties(JsonWrapper.of(Json.createObjectBuilder().add("name", "user-props").build()));
+        entity.setProperties(SJson.of(Json.createObjectBuilder().add("name", "user-props").build()));
         entity.setDigest("digest");
 
         assertThat(entity).hasToString(tmpl, "user-id", "false", vp, "user-name", "{\"name\":\"user-props\"}", "digest");

@@ -25,6 +25,13 @@
  */
 package jp.mydns.projectk.safi.resource;
 
+import jp.mydns.projectk.safi.resource.trial.ErrorResponseContext;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
@@ -37,13 +44,12 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
+import static jakarta.ws.rs.core.HttpHeaders.LOCATION;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.util.Objects;
-import jp.mydns.projectk.safi.resource.filter.ProcessName;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.JobService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
@@ -51,86 +57,110 @@ import jp.mydns.projectk.safi.value.JobCreationRequest;
 import jp.mydns.projectk.safi.value.JobValue;
 
 /**
- * JAX-RS resource for <i>Job</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JAX-RS resource for <i>Job</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface JobResource {
 
-    /**
-     * Creates a new job. Used to manually schedule job execution.
-     *
-     * @param req the {@code JobCreationRequest}
-     * @return created job
-     * @throws ConstraintViolationException if {@code req} is not valid
-     * @throws BadRequestException if not found valid job definition
-     * @throws PersistenceException if failed database operation
-     * @since 3.0.0
-     */
-    Response createJob(@NotNull @Valid JobCreationRequest req);
+/**
+ Creates a new job. Used to manually schedule job execution.
 
-    /**
-     * JAX-RS resource for <i>Job</i>.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(JobResource.class)
-    @RequestScoped
-    @Path("jobs")
-    class Impl implements JobResource {
+ @param req the {@code JobCreationRequest}
+ @return created job
+ @throws ConstraintViolationException if {@code req} is not valid
+ @throws BadRequestException if not found valid job definition
+ @throws PersistenceException if failed database operation
+ @since 3.0.0
+ */
+Response createJob(@NotNull @Valid JobCreationRequest req);
 
-        private final JobdefService jobdefSvc;
-        private final JobService jobSvc;
+/**
+ JAX-RS resource for <i>Job</i>.
 
-        @Context
-        private UriInfo uriInfo;
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(JobResource.class)
+@RequestScoped
+@Path("jobs")
+class Impl implements JobResource {
 
-        /**
-         * Constructor.
-         *
-         * @param jobdefSvc the {@code JobdefService}
-         * @param jobSvc the {@code JobService}
-         * @throws NullPointerException if any argument is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        protected Impl(JobdefService jobdefSvc, JobService jobSvc) {
-            this.jobdefSvc = Objects.requireNonNull(jobdefSvc);
-            this.jobSvc = Objects.requireNonNull(jobSvc);
-        }
+private final JobdefService jobdefSvc;
+private final JobService jobSvc;
+private final UriInfo uriInfo;
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws ConstraintViolationException if {@code req} is not valid
-         * @throws BadRequestException if not found valid job definition
-         * @throws PersistenceException if failed database operation
-         * @since 3.0.0
-         */
-        @Override
-        @Path("")
-        @POST
-        @Consumes(APPLICATION_JSON)
-        @Produces(APPLICATION_JSON)
-        @ProcessName("CreateJob")
-        public Response createJob(@NotNull @Valid JobCreationRequest req) {
+/**
+ Constructor.
 
-            final JobCreationContext ctx;
-            try {
-                ctx = jobdefSvc.buildJobCreationContext(req);
-            } catch (JobdefService.JobdefIOException ex) {
-                throw new BadRequestException(ex);
-            }
+ @param jobdefSvc the {@code JobdefService}
+ @param jobSvc the {@code JobService}
+ @param uriInfo the {@code UriInfo}
+ @throws NullPointerException if any argument is {@code null}
+ @since 3.0.0
+ */
+@Inject
+protected Impl(JobdefService jobdefSvc, JobService jobSvc, UriInfo uriInfo) {
+    this.jobdefSvc = Objects.requireNonNull(jobdefSvc);
+    this.jobSvc = Objects.requireNonNull(jobSvc);
+    this.uriInfo = Objects.requireNonNull(uriInfo);
+}
 
-            JobValue job = jobSvc.createJob(ctx);
+/**
+ {@inheritDoc}
 
-            URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
+ @throws ConstraintViolationException if {@code req} is not valid
+ @throws BadRequestException if not found valid job definition
+ @throws PersistenceException if failed database operation
+ @since 3.0.0
+ */
+@Override
+@POST
+@Consumes(APPLICATION_JSON)
+@Produces(APPLICATION_JSON)
+@RestApiProcessName("CreateJob")
+@Operation(tags = {"jobs"}, summary = "Create a new job. Used to create a job manualy.",
+           requestBody = @RequestBody(content = @Content(schema = @Schema(implementation
+               = JobCreationRequest.class))),
+           responses = {
+               @ApiResponse(responseCode = "201", description = "Successful operation.",
+                            headers = @Header(name = LOCATION, description = "Created job.",
+                                              schema = @Schema(type = "string", format = "uri")),
+                            content = @Content(schema = @Schema(implementation = JobValue.class))),
+               @ApiResponse(responseCode = "400", description = "If not found job definition."
+                            + " Additionally, there may be violations of required value constraints.",
+                            content = @Content(schema = @Schema(
+                                implementation = ErrorResponseContext.class)))})
+public Response createJob(@NotNull @Valid JobCreationRequest req) {
 
-            return Response.created(location).entity(job).build();
-        }
+    final JobCreationContext ctx;
+
+    try {
+        ctx = jobdefSvc.buildJobCreationContext(req);
+
+    } catch (JobdefService.JobdefIOException ex) {
+        throw new BadRequestException(ex);
+
+    } catch (ConstraintViolationException ex) {
+        throw new InternalConstraintViolationException(ex);
     }
+
+    try {
+
+        JobValue job = jobSvc.createJob(ctx);
+
+        URI location = uriInfo.getAbsolutePathBuilder().path(job.getId()).build();
+
+        return Response.created(location).entity(job).build();
+
+    } catch (ConstraintViolationException ex) {
+        throw new InternalConstraintViolationException(ex);
+    }
+}
+
+}
+
 }

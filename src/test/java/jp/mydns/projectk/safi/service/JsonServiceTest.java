@@ -93,7 +93,8 @@ class JsonServiceTest {
         var val = Json.createArrayBuilder().add(Json.createValue(1)).add(JsonValue.NULL).add(Json.createValue("hello"))
             .add(JsonValue.TRUE).build();
 
-        var result = instance.fromJsonValue(val, List.class);
+        @SuppressWarnings("unchecked")
+        var result = (List<Object>) instance.fromJsonValue(val, List.class);
 
         assertThat(result).containsExactlyElementsOf(expect);
     }

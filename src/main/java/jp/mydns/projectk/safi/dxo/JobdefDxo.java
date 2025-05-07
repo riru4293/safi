@@ -29,9 +29,12 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.ValidationService;
@@ -41,7 +44,7 @@ import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
 import jp.mydns.projectk.safi.value.FiltdefValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Data exchange processing for <i>Job definition</i>.
@@ -130,9 +133,9 @@ public interface JobdefDxo {
             entity.setTimeout(value.getTimeout());
             entity.setName(value.getName().orElse(null));
             entity.setPluginName(value.getPluginName().orElse(null));
-            entity.setTrnsdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getTrnsdef())));
-            entity.setFiltdef(JsonWrapper.of(jsonSvc.toJsonValue(value.getFiltdef())));
-            entity.setJobProperties(JsonWrapper.of(value.getJobProperties()));
+            entity.setTrnsdef(jsonSvc.toSJson(value.getTrnsdef()));
+            entity.setFiltdef(jsonSvc.toSJson(value.getFiltdef()));
+            entity.setJobProperties(SJson.of(value.getJobProperties()));
             entity.setNote(value.getNote().orElse(null));
             entity.setVersion(value.getVersion());
             entity.setRegTime(TimeUtils.toLocalDateTime(value.getRegisterTime().orElse(null)));
@@ -189,13 +192,15 @@ public interface JobdefDxo {
                 .unsafeBuild();
         }
 
-        private Map<String, String> toTrnsdef(JsonWrapper json) {
-            return json.unwrap().asJsonObject().entrySet().stream()
-                .map(compute(JsonValueUtils::toString)).collect(toLinkedHashMap());
+        private Map<String, String> toTrnsdef(SJson json) {
+            return Optional.ofNullable(json).map(SJson::unwrap).map(JsonValue::asJsonObject).map(JsonObject::entrySet)
+                .map(Set::stream).map(s -> s.map(compute(JsonValueUtils::toString)).collect(toLinkedHashMap()))
+                .orElseGet(() -> null);
         }
 
-        private FiltdefValue toFiltdef(JsonWrapper json) {
-            return jsonSvc.fromJsonValue(jsonSvc.toJsonValue(json), FiltdefValue.class);
+        private FiltdefValue toFiltdef(SJson json) {
+            return Optional.ofNullable(json).map(jsonSvc::toJsonValue)
+                .map(jsonSvc.fromJsonValue(FiltdefValue.class)).orElseGet(() -> null);
         }
     }
 }

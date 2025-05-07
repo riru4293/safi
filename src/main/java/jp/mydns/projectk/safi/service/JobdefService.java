@@ -100,6 +100,7 @@ public interface JobdefService {
         private final ValidationService validationSvc;
         private final JsonService jsonSvc;
         private final RealTimeService realTimeSvc;
+        private final IdService idSvc;
 
         /**
          * Constructor.
@@ -109,18 +110,20 @@ public interface JobdefService {
          * @param validationSvc the {@code ValidationService}
          * @param jsonSvc the {@code JsonService}
          * @param realTimeSvc the {@code RealTimeService}
+         * @param idSvc the {@code IdService}
          * @throws NullPointerException if any argument is {@code null}
          * @since 3.0.0
          */
         @Inject
         public Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
-            JsonService jsonSvc, RealTimeService realTimeSvc) {
+            JsonService jsonSvc, RealTimeService realTimeSvc, IdService idSvc) {
 
             this.jobdefDxo = Objects.requireNonNull(jobdefDxo);
             this.jobdefDao = Objects.requireNonNull(jobdefDao);
             this.validationSvc = Objects.requireNonNull(validationSvc);
             this.jsonSvc = Objects.requireNonNull(jsonSvc);
             this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
+            this.idSvc = Objects.requireNonNull(idSvc);
         }
 
         /**
@@ -143,7 +146,7 @@ public interface JobdefService {
                 .map(jobdefDxo::toValue).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject).map(overWriteRequest)
                 .map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
 
-            return new JobCreationContext(req.getScheduleTime().orElseGet(realTimeSvc::getOffsetNow), jobdef);
+            return new JobCreationContext(idSvc.generateJobId(), req.getScheduleTime().orElseGet(realTimeSvc::getOffsetNow), jobdef);
         }
     }
 }

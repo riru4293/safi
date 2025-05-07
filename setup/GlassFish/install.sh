@@ -79,7 +79,7 @@ SafiPool
 "${GLASSFISH_HOME}/bin/asadmin" set-log-levels "jp.mydns.projectk.safi=FINEST"
 
 # Configure JVM options
-"${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/, opt, safi'
+"${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/,opt,safi'
 
 
 # Restart service

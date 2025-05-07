@@ -121,35 +121,6 @@ class LambdaUtilsTest {
     }
 
     /**
-     * Test of narrowDown method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testNarrowDown() {
-        List<Integer> src = List.of(3, 2, 1, 0);
-        Predicate<Integer> pred = i -> i % 2 == 0;
-
-        List<Integer> result = LambdaUtils.narrowDown(pred).apply(src);
-
-        assertThat(result).containsExactly(2, 0);
-    }
-
-    /**
-     * Test of convertElements method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testConvertElements() {
-        List<Object> src = List.of(3, 2, "1", 0);
-
-        List<String> result = LambdaUtils.convertElements(String::valueOf).apply(src);
-
-        assertThat(result).containsExactly("3", "2", "1", "0");
-    }
-
-    /**
      * Test of f method.
      *
      * @since 3.0.0

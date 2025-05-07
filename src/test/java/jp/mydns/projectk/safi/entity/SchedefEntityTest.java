@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Test of class {@code SchedefEntity}.
@@ -136,7 +136,7 @@ class SchedefEntityTest {
 
         entity.setPriority("7");
         entity.setName("schedef-name");
-        entity.setTrigger(JsonWrapper.of(Json.createObjectBuilder().add("name", "schedef").build()));
+        entity.setTrigger(SJson.of(Json.createObjectBuilder().add("name", "schedef").build()));
 
         assertThat(entity).hasToString(tmpl, "schedef-id", vp, "7", "schedef-name", "{\"name\":\"schedef\"}");
     }

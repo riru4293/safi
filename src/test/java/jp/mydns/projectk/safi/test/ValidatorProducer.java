@@ -23,40 +23,48 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.entity;
+package jp.mydns.projectk.safi.test;
 
-import java.time.LocalDateTime;
+import jakarta.annotation.PreDestroy;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Alternative;
+import jakarta.enterprise.inject.Produces;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 /**
- * Provides a footer values for {@link CommonEntity}.
+ * CDI Producer that provides instances of {@link Validator} for testing.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public interface FooterContext {
+@ApplicationScoped
+public class ValidatorProducer {
+
+    private final ValidatorFactory fact = Validation.buildDefaultValidatorFactory();
 
     /**
-     * Get real time of UTC time zone. Rounded down to the nearest millisecond.
+     * Produces an the {@code Validator}.
      *
-     * @return real time
+     * @return the {@code Validator}
      * @since 3.0.0
      */
-    LocalDateTime getUtcNow();
+    @Produces
+    @Alternative
+    @ApplicationScoped
+    public Validator produce() {
+        return fact.getValidator();
+    }
 
     /**
-     * Get login account id.
+     * Close the {@code ValidatorFactory}.
      *
-     * @return account id
      * @since 3.0.0
      */
-    String getAccountId();
-
-    /**
-     * Get current process name.
-     *
-     * @return process name
-     * @since 3.0.0
-     */
-    String getProcessName();
+    @PreDestroy
+    public void closeValidatorFactory() {
+        fact.close();
+    }
 }

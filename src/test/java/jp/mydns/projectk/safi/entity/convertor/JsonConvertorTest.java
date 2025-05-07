@@ -29,7 +29,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonValue;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
  * Test of class {@code JsonConvertor}.
@@ -49,7 +49,7 @@ class JsonConvertorTest {
     void testConvertToDatabaseColumn() {
         var expect = "{\"k\":\"v\"}";
 
-        var result = new JsonConvertor().convertToDatabaseColumn(JsonWrapper.of(Json.createObjectBuilder()
+        var result = new JsonConvertor().convertToDatabaseColumn(SJson.of(Json.createObjectBuilder()
             .add("k", "v").build()));
 
         assertThat(result).isEqualTo(expect);
@@ -74,7 +74,7 @@ class JsonConvertorTest {
      */
     @Test
     void testConvertToEntityAttribute() {
-        var expect = JsonWrapper.of(JsonValue.EMPTY_JSON_OBJECT);
+        var expect = SJson.of(JsonValue.EMPTY_JSON_OBJECT);
 
         var result = new JsonConvertor().convertToEntityAttribute("{}");
 
