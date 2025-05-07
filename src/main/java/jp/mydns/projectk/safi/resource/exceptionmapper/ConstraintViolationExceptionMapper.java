@@ -42,54 +42,50 @@ import jp.mydns.projectk.safi.resource.ErrorResponseContext;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- *
- * @author riru
+
+ @author riru
  */
-public interface ConstraintViolationExceptionMapper extends ExceptionMapper<ConstraintViolationException> {
+public interface ConstraintViolationExceptionMapper extends
+    ExceptionMapper<ConstraintViolationException> {
 
-    @Typed(ConstraintViolationExceptionMapper.class)
-    @Provider
-    @RequestScoped
-    class Impl implements ConstraintViolationExceptionMapper {
+@Typed(ConstraintViolationExceptionMapper.class)
+@Provider
+@RequestScoped
+class Impl implements ConstraintViolationExceptionMapper {
 
-        private static final URI CODE = URI.create("https://www.google.com");
-        private static final String MESSAGE = "ggrks";
+private static final URI CODE = URI.create("https://www.google.com");
+private static final String MESSAGE = "ggrks";
 
-        private final Validator validator;
-        private final RequestContext reqCtx;
+private final Validator validator;
 
-        @Inject
-        protected Impl(RequestContext reqCtx, Validator validator) {
-            this.reqCtx = reqCtx;
-            this.validator = validator;
-        }
+@Inject
+protected Impl(Validator validator) {
+    this.validator = validator;
+}
 
+/**
 
+ @param ex
+ @return
+ */
+@Override
+public Response toResponse(ConstraintViolationException ex) {
 
-        /**
-         *
-         * @param ex
-         * @return
-         */
-        @Override
-        public Response toResponse(ConstraintViolationException ex) {
+    var builder = new ErrorResponseContext.Builder();
 
-            var builder = new ErrorResponseContext.Builder();
+    builder.withCode(CODE).withMessage(MESSAGE);
 
-            builder.withCode(CODE).withMessage(MESSAGE).withContextRoot(reqCtx.getRestApiPath());
-
-            for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
-                Json.createObjectBuilder()
-                    .add("path", violation.getPropertyPath().toString())
-                    .add("message", violation.getMessage());
-            }
-
-
-            return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON)
-                .entity(builder.build(validator))
-                .build();
-        }
+    for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+        Json.createObjectBuilder()
+            .add("path", violation.getPropertyPath().toString())
+            .add("message", violation.getMessage());
     }
 
+    return Response.status(Response.Status.BAD_REQUEST).type(MediaType.APPLICATION_JSON)
+        .entity(builder.build(validator))
+        .build();
+}
+
+}
 
 }
