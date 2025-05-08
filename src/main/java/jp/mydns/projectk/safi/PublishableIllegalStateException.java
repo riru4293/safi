@@ -49,8 +49,6 @@ private static final long serialVersionUID = 8274928374928374900L;
 
  @param cause the {@code Throwable} for maintainer.
  @throws NullPointerException if {@code cause} is {@code null}
- @author riru
- @version 3.0.0
  @since 3.0.0
  */
 public PublishableIllegalStateException(Throwable cause) {
