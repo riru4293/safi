@@ -134,24 +134,15 @@ public Response createJob(@NotNull @Valid JobCreationRequest req) {
 
     try {
         ctx = jobdefSvc.buildJobCreationContext(req);
-
     } catch (JobdefService.JobdefIOException ex) {
         throw new BadRequestException(ex);
-
-    } catch (ConstraintViolationException ex) {
-        throw new InternalConstraintViolationException(ex);
     }
 
-    try {
+    JobValue job = jobSvc.createJob(ctx);
+    URI location = reqCtx.getRestApiPath().resolve(job.getId());
 
-        JobValue job = jobSvc.createJob(ctx);
-        URI location = reqCtx.getRestApiPath().resolve(job.getId());
+    return Response.created(location).entity(job).build();
 
-        return Response.created(location).entity(job).build();
-
-    } catch (ConstraintViolationException ex) {
-        throw new InternalConstraintViolationException(ex);
-    }
 }
 
 }
