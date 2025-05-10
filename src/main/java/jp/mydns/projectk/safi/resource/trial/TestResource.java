@@ -28,13 +28,14 @@ package jp.mydns.projectk.safi.resource.trial;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import jakarta.ws.rs.core.Response;
-import jp.mydns.projectk.safi.batch.BatchProcessName;
+import java.util.Set;
 import jp.mydns.projectk.safi.service.trial.TestService;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
@@ -77,15 +78,11 @@ public Response ping() {
 }
 
 @GET
-@Path("ping2")
-@Produces(TEXT_PLAIN)
-@RestApiProcessName("ping2")
-@BatchProcessName("ping-ping")
-public Response ping2() {
-    return Response.created(reqCtx.getRestApiPath()).status(200).entity(
-        """
-        Test of process name.
-        """ + reqCtx).build();
+@Path("err")
+@Produces(APPLICATION_JSON)
+@RestApiProcessName("err")
+public Response err() {
+    throw new ConstraintViolationException(Set.of());
 }
 
 @GET
