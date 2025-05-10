@@ -38,7 +38,6 @@ import jakarta.ws.rs.ext.Provider;
 import java.net.URI;
 import java.util.Optional;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
-import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.value.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
