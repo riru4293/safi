@@ -46,7 +46,6 @@ import jp.mydns.projectk.safi.value.ValueTemplate;
  <li>This class is immutable and thread-safe.</li>
  <li>Can be converted to JSON.</li>
  </ul>
-
  <a href="{@docRoot}/../schemas/error-response-context.schema.json">Json schema is here</a>
 
  @author riru
@@ -164,7 +163,7 @@ public ErrorResponseContext unsafeBuild() {
     return new Bean(this);
 }
 
-private class Bean implements ErrorResponseContext {
+protected class Bean implements ErrorResponseContext {
 
 private final URI schema = URI.create(
     "https://project-k.mydns.jp/safi/schemas/error-response-context.schema.json");
