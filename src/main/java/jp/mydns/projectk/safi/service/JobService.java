@@ -38,65 +38,60 @@ import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobValue;
 
 /**
- * Service for <i>Job</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Service for <i>Job</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface JobService {
 
-    /**
-     * Create a job. The state of the job that is created is schedule, and the schedule means schedule of batch process
-     * execution.
-     *
-     * @param ctx the {@code JobCreationContext}
-     * @return created job
-     * @throws NullPointerException if {@code ctx} is {@code null}
-     * @throws PersistenceException if register fail to database
-     * @since 3.0.0
-     */
-    JobValue createJob(JobCreationContext ctx);
+/**
+ Create a job. The state of the job that is created is schedule, and the schedule means schedule of
+ batch process execution.
 
-    /**
-     * Implements of the {@code JobdefService}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(JobService.class)
-    @RequestScoped
-    class Impl implements JobService {
+ @param ctx the {@code JobCreationContext}
+ @return created job
+ @throws NullPointerException if {@code ctx} is {@code null}
+ @throws PersistenceException if register fail to database
+ @since 3.0.0
+ */
+JobValue createJob(JobCreationContext ctx);
 
-        private final CommonDao comDao;
-        private final JobDxo jobDxo;
+/**
+ Implements of the {@code JobService}.
 
-        /**
-         * Constructor.
-         *
-         * @param comDao the {@code CommonDao}
-         * @param jobDxo the {@code JobDxo}
-         * @throws NullPointerException if any argument is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(CommonDao comDao, JobDxo jobDxo) {
-            this.comDao = Objects.requireNonNull(comDao);
-            this.jobDxo = Objects.requireNonNull(jobDxo);
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(JobService.class)
+@RequestScoped
+class Impl implements JobService {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NullPointerException if {@code ctx} is {@code null}
-         * @throws PersistenceException if register fail to database
-         * @since 3.0.0
-         */
-        @Override
-        @Transactional(TxType.REQUIRES_NEW)
-        public JobValue createJob(JobCreationContext ctx) {
-            return jobDxo.toValue(comDao.persistAndflush(jobDxo.newEntity(Objects.requireNonNull(ctx))));
-        }
-    }
+private final CommonDao comDao;
+private final JobDxo jobDxo;
+
+@Inject
+@SuppressWarnings("unused")
+Impl(CommonDao comDao, JobDxo jobDxo) {
+    this.comDao = comDao;
+    this.jobDxo = jobDxo;
+}
+
+/**
+ {@inheritDoc}
+
+ @throws NullPointerException if {@code ctx} is {@code null}
+ @throws PersistenceException if register fail to database
+ @since 3.0.0
+ */
+@Override
+@Transactional(TxType.REQUIRES_NEW)
+public JobValue createJob(JobCreationContext ctx) {
+    return jobDxo.toValue(comDao.persistAndflush(jobDxo.newEntity(Objects.requireNonNull(ctx))));
+}
+
+}
+
 }

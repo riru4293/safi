@@ -27,79 +27,92 @@ package jp.mydns.projectk.safi.resource.trial;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.Context;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
-import jakarta.ws.rs.core.UriInfo;
-import jp.mydns.projectk.safi.resource.filter.ProcessName;
-import jp.mydns.projectk.safi.service.ConfigService;
+import jakarta.ws.rs.core.Response;
+import java.util.Set;
+import jp.mydns.projectk.safi.service.trial.TestService;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
+import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.value.SchedefValue;
+import jp.mydns.projectk.safi.resource.RestApiProcessName;
 
 /**
- * JAX-RS resource for test.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JAX-RS resource for test.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @RequestScoped
 @Path("tests")
 public class TestResource {
 
-    @Inject
-    private EntityManager em;
+@Inject
+private TestService svc;
 
-    @Context
-    private UriInfo uriInfo;
+@Inject
+private RequestContext reqCtx;
 
-    @Inject private ConfigService configSvc;
+/**
+ API communication check.
 
-    /**
-     * API communication check.
-     *
-     * @return response message
-     * @since 3.0.0
-     */
-    @GET
-    @Path("ping")
-    @Produces(TEXT_PLAIN)
-    @ProcessName("ping")
-    public String ping() {
-        uriInfo.getAbsolutePath();
-        return "Hello SAFI API.";
-    }
+ @return response message
+ @since 3.0.0
+ */
+@GET
+@Path("ping")
+@Produces(TEXT_PLAIN)
+@RestApiProcessName("ping")
+public Response ping() {
+    return Response.created(reqCtx.getRestApiPath()).status(200).entity(
+        """
+        Hello SAFI API.
+        """ + reqCtx).build();
+}
 
-    @GET
-    @Path("jobdef")
-    @Produces(APPLICATION_JSON)
-    public JobdefValue getJobdef() {
-        return null;
-    }
+@GET
+@Path("err")
+@Produces(APPLICATION_JSON)
+@RestApiProcessName("err")
+public Response err() {
+    throw new ConstraintViolationException(Set.of());
+}
 
-    @GET
-    @Path("schedef")
-    @Produces(APPLICATION_JSON)
-    public SchedefValue getSchedef() {
-        return null;
-    }
+@GET
+@Path("jobdef")
+@Produces(APPLICATION_JSON)
+public JobdefValue getJobdef() {
+    return null;
+}
 
-    @GET
-    @Path("job")
-    @Produces(APPLICATION_JSON)
-    public JobValue getJob() {
-        return null;
-    }
+@GET
+@Path("schedef")
+@Produces(APPLICATION_JSON)
+public SchedefValue getSchedef() {
+    return null;
+}
 
-    @GET
-    @Path("p")
-    @Produces(TEXT_PLAIN)
-    public String getPath() {
-        return configSvc.getPluginDir().toString();
-    }
+@GET
+@Path("job")
+@Produces(APPLICATION_JSON)
+public JobValue getJob() {
+    return null;
+}
+
+@GET
+@Path("p")
+@Produces(TEXT_PLAIN)
+@Transactional
+@RestApiProcessName("DRE")
+public String getPath() {
+    svc.test();
+    return svc.getPluginDir().toString();
+}
 }

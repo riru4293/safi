@@ -43,107 +43,105 @@ import jp.mydns.projectk.safi.value.JobCreationRequest;
 import jp.mydns.projectk.safi.value.JobdefValue;
 
 /**
- * Service for <i>Job definition</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Service for <i>Job definition</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface JobdefService {
 
-    /**
-     * Indicates that a jobdef I/O exception has occurred. For example, it doesn't exist, you don't have permission to
-     * modify it, and so on.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class JobdefIOException extends IOException {
+/**
+ Indicates that a jobdef I/O exception has occurred. For example, it doesn't exist, you don't have
+ permission to modify it, and so on.
 
-        @java.io.Serial
-        private static final long serialVersionUID = 7853095085270398570L;
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class JobdefIOException extends IOException {
 
-        private JobdefIOException(String message) {
-            super(message);
-        }
-    }
+@java.io.Serial
+private static final long serialVersionUID = 7853095085270398570L;
 
-    /**
-     * Build the {@code JobCreationContext} from the {@code JobCreationRequest}.
-     *
-     * @param req the {@code JobCreationRequest}
-     * @return the {@code JobCreationContext}
-     * @throws NullPointerException if {@code req} is {@code null}
-     * @throws JobdefIOException if not found valid job definition
-     * @throws PersistenceException if failed database operation
-     * @since 3.0.0
-     */
-    JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException;
+private JobdefIOException(String message) {
+    super(message);
+}
 
-    /**
-     * Implements of the {@code JobdefService}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(JobdefService.class)
-    @RequestScoped
-    class Impl implements JobdefService {
+}
 
-        private final Supplier<JobdefIOException> noFoundJobdef
-            = () -> new JobdefIOException("No found job definition.");
+/**
+ Build the {@code JobCreationContext} from the {@code JobCreationRequest}.
 
-        private final JobdefDao jobdefDao;
-        private final JobdefDxo jobdefDxo;
-        private final ValidationService validationSvc;
-        private final JsonService jsonSvc;
-        private final RealTimeService realTimeSvc;
+ @param req the {@code JobCreationRequest}
+ @return the {@code JobCreationContext}
+ @throws NullPointerException if {@code req} is {@code null}
+ @throws JobdefIOException if not found valid job definition
+ @throws PersistenceException if failed database operation
+ @since 3.0.0
+ */
+JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException;
 
-        /**
-         * Constructor.
-         *
-         * @param jobdefDxo the {@code JobdefDxo}
-         * @param jobdefDao the {@code JobdefDao}
-         * @param validationSvc the {@code ValidationService}
-         * @param jsonSvc the {@code JsonService}
-         * @param realTimeSvc the {@code RealTimeService}
-         * @throws NullPointerException if any argument is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
-            JsonService jsonSvc, RealTimeService realTimeSvc) {
+/**
+ Implements of the {@code JobdefService}.
 
-            this.jobdefDxo = Objects.requireNonNull(jobdefDxo);
-            this.jobdefDao = Objects.requireNonNull(jobdefDao);
-            this.validationSvc = Objects.requireNonNull(validationSvc);
-            this.jsonSvc = Objects.requireNonNull(jsonSvc);
-            this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(JobdefService.class)
+@RequestScoped
+class Impl implements JobdefService {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx} or if
-         * malformed return value.
-         * @throws NullPointerException if {@code req} is {@code null}
-         * @throws JobdefIOException if not found valid job definition
-         * @throws PersistenceException if failed database operation
-         * @since 3.0.0
-         */
-        @Override
-        public JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException {
-            Objects.requireNonNull(req);
+private final Supplier<JobdefIOException> noFoundJobdef
+    = () -> new JobdefIOException("No found job definition.");
 
-            UnaryOperator<JsonObject> overWriteRequest = b -> jsonSvc.merge(b, jsonSvc.toJsonValue(req).asJsonObject());
+private final JobdefDao jobdefDao;
+private final JobdefDxo jobdefDxo;
+private final ValidationService validationSvc;
+private final JsonService jsonSvc;
+private final RealTimeService realTimeSvc;
+private final IdService idSvc;
 
-            JobdefValue jobdef = jobdefDao.getJobdef(req.getJobdefId()).filter(validationSvc::isEnabled)
-                .map(jobdefDxo::toValue).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject).map(overWriteRequest)
-                .map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
+@Inject
+@SuppressWarnings("unused")
+Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
+    JsonService jsonSvc, RealTimeService realTimeSvc, IdService idSvc) {
 
-            return new JobCreationContext(req.getScheduleTime().orElseGet(realTimeSvc::getOffsetNow), jobdef);
-        }
-    }
+    this.jobdefDxo = jobdefDxo;
+    this.jobdefDao = jobdefDao;
+    this.validationSvc = validationSvc;
+    this.jsonSvc = jsonSvc;
+    this.realTimeSvc = realTimeSvc;
+    this.idSvc = idSvc;
+}
+
+/**
+ {@inheritDoc}
+
+ @throws ConstraintViolationException if not exists a job definition that specified in {@code ctx}
+ or if malformed return value.
+ @throws NullPointerException if {@code req} is {@code null}
+ @throws JobdefIOException if not found valid job definition
+ @throws PersistenceException if failed database operation
+ @since 3.0.0
+ */
+@Override
+public JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException {
+    Objects.requireNonNull(req);
+
+    UnaryOperator<JsonObject> overWriteRequest = b -> jsonSvc.merge(b,
+        jsonSvc.toJsonValue(req).asJsonObject());
+
+    JobdefValue jobdef = jobdefDao.getJobdef(req.getJobdefId()).filter(validationSvc::isEnabled)
+        .map(jobdefDxo::toValue).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject).map(
+        overWriteRequest)
+        .map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
+
+    return new JobCreationContext(idSvc.generateJobId(), req.getScheduleTime().orElseGet(
+        realTimeSvc::getOffsetNow), jobdef);
+}
+
+}
+
 }

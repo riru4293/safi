@@ -79,9 +79,9 @@ Filtering condition.
     {"operation": "EQUAL", "name": "userName", "value": "taro"},
     {"operation": "EQUAL", "name": "userName", "value": "jiro"}]}
 ```""",
-        example = "{\"operation\": \"AND\", \"children\": [{\"operation\": \"EQUAL\", \"name\": \"kind\","
-        + " \"value\": \"A\"}, {\"operation\": \"LESS_THAN\", \"name\": \"version\", \"value\": \"3\"}]}",
-        oneOf = {LeafConditionValue.class, NodeConditionValue.class})
+    example = "{\"operation\": \"AND\", \"children\": [{\"operation\": \"EQUAL\", \"name\": \"kind\","
+    + " \"value\": \"A\"}, {\"operation\": \"LESS_THAN\", \"name\": \"version\", \"value\": \"3\"}]}",
+    oneOf = {LeafConditionValue.class, NodeConditionValue.class})
 public interface FilteringConditionValue extends ValueTemplate {
 
     /**

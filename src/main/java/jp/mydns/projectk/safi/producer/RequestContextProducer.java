@@ -27,92 +27,124 @@ package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Typed;
+import java.net.URI;
+import java.util.Optional;
+import java.util.stream.Stream;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
+import jakarta.inject.Inject;
+import java.util.Objects;
 import jp.mydns.projectk.safi.value.RequestContext;
+import jp.mydns.projectk.safi.value.RequestContext.AccountIdContext;
+import jp.mydns.projectk.safi.value.RequestContext.BatchProcessNameContext;
+import jp.mydns.projectk.safi.value.RequestContext.RestApiPathContext;
+import jp.mydns.projectk.safi.value.RequestContext.RestApiProcessNameContext;
 
 /**
- * Producer of the {@link RequestContext}. Must be set values before producing.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Producer of the {@link RequestContext}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
+public interface RequestContextProducer {
+
+/**
+ Produce the {@code RequestContext}.
+
+ @return the {@code RequestContext}
+ @since 3.0.0
+ */
+RequestContext produce();
+
+/**
+ Implements of the {@code RequestContextProducer}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(RequestContextProducer.class)
 @RequestScoped
-public class RequestContextProducer {
+class Impl implements RequestContextProducer {
 
-    private String accountId;
-    private String processName;
+private AccountIdContext accountIdCtx;
+private RestApiProcessNameContext restApiProcNameCtx;
+private BatchProcessNameContext batchProcNameCtx;
+private RestApiPathContext restApiPathCtx;
 
-    /**
-     * Set current account id.
-     *
-     * @param accountId logged account id
-     * @since 3.0.0
-     */
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
+@SuppressWarnings("unused")
+Impl() {
+}
 
-    /**
-     * Set current processing name.
-     *
-     * @param processName current processing name. It is screen or batch processing name.
-     * @since 3.0.0
-     */
-    public void setProcessName(String processName) {
-        this.processName = processName;
-    }
+@Inject
+@SuppressWarnings("unused")
+void setAccountIdCtx(AccountIdContext accountIdCtx) {
+    this.accountIdCtx = accountIdCtx;
+}
 
-    /**
-     * Produce the {@code RequestContext}.
-     *
-     * @return the {@code RequestContext}
-     * @since 3.0.0
-     */
-    @Produces
-    @RequestScoped
-    public RequestContext produce() {
-        return new RequestContextImpl(accountId, processName);
-    }
+@Inject
+@SuppressWarnings("unused")
+void setRestApiProcNameCtx(RestApiProcessNameContext restApiProcNameCtx) {
+    this.restApiProcNameCtx = restApiProcNameCtx;
+}
 
-    private class RequestContextImpl implements RequestContext {
+@Inject
+@SuppressWarnings("unused")
+void setBatchProcNameCtx(BatchProcessNameContext batchProcNameCtx) {
+    this.batchProcNameCtx = batchProcNameCtx;
+}
 
-        private final String accountId;
-        private final String processName;
+@Inject
+@SuppressWarnings("unused")
+void setRestApiPathCtx(RestApiPathContext restApiPathCtx) {
+    this.restApiPathCtx = restApiPathCtx;
+}
 
-        public RequestContextImpl(String accountId, String processName) {
-            this.accountId = accountId;
-            this.processName = processName;
-        }
+@Produces
+@RequestScoped
+@Override
+public RequestContext produce() {
+    return new RequestContextImpl();
+}
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public String getAccountId() {
-            return accountId;
-        }
+private class RequestContextImpl implements RequestContext {
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public String getProcessName() {
-            return processName;
-        }
+@Override
+public String getAccountId() {
+    return accountIdCtx.getValue();
+}
 
-        /**
-         * Returns a string representation.
-         *
-         * @return a string representation
-         * @since 3.0.0
-         */
-        @Override
-        public String toString() {
-            return "RequestContext{" + "processName=" + processName + ", accountId=" + accountId + '}';
-        }
-    }
+@Override
+public String getProcessName() {
+    return Stream.of(restApiProcNameCtx, batchProcNameCtx).sequential()
+        .map(ProcessNameContext::getValue)
+        .filter(Objects::nonNull)
+        .findFirst().orElse(null);
+}
+
+@Override
+public URI getRestApiPath() {
+    return Optional.ofNullable(getRawRestApiPath()).orElseThrow(() ->
+        new PublishableIllegalStateException(new IllegalStateException(
+            "There is no request path to the REST API."
+            + " Either it is not an HTTP request or the request path has not been extracted."
+            + " Either way, it is an implementation defect.")));
+}
+
+@Override
+public URI getRawRestApiPath() {
+    return restApiPathCtx.getValue();
+}
+
+@Override
+public String toString() {
+    return "RequestContext{" + "accountId=" + getAccountId()
+        + ", restApiPath=" + getRawRestApiPath() + ", processName=" + getProcessName() + '}';
+}
+
+}
+
+}
+
 }

@@ -25,7 +25,9 @@
  */
 package jp.mydns.projectk.safi.util;
 
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
@@ -113,5 +115,34 @@ class CollectionUtilsTest {
             .collect(CollectionUtils.toCaseInsensitiveMap((v1, v2) -> v1 + v2));
 
         assertThat(result).containsKeys("a", "b").containsExactlyInAnyOrderEntriesOf(Map.of("A", "no2", "B", "no1--"));
+    }
+
+    /**
+     * Test of narrowDown method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testNarrowDown() {
+        List<Integer> src = List.of(3, 2, 1, 0);
+        Predicate<Integer> pred = i -> i % 2 == 0;
+
+        List<Integer> result = CollectionUtils.narrowDown(pred).apply(src);
+
+        assertThat(result).containsExactly(2, 0);
+    }
+
+    /**
+     * Test of convertElements method.
+     *
+     * @since 3.0.0
+     */
+    @Test
+    void testConvertElements() {
+        List<Object> src = List.of(3, 2, "1", 0);
+
+        List<String> result = CollectionUtils.convertElements(String::valueOf).apply(src);
+
+        assertThat(result).containsExactly("3", "2", "1", "0");
     }
 }

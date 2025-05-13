@@ -26,45 +26,79 @@
 package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Typed;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
 /**
- * Producer of the {@link Jsonb}. Instances are created only once, reducing construction costs.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Producer of the {@link Jsonb}. Instances are created only once, reducing construction costs.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
-@Dependent
-public class JsonbProducer {
+public interface JsonbProducer {
 
-    /**
-     * Produce the {@code Jsonb}.
-     *
-     * @return the {@code Jsonb}
-     * @since 3.0.0
-     */
-    @Produces
-    @ApplicationScoped
-    public Jsonb produce() {
-        return JsonbBuilder.create();
-    }
+/**
+ Produce the {@code Jsonb}.
 
-    /**
-     * Close the produced {@code Jsonb} if disposed.
-     *
-     * @param jsonb the produced {@code Jsonb}
-     * @since 3.0.0
-     */
-    public void close(@Disposes Jsonb jsonb) {
-        try {
-            jsonb.close();
-        } catch (Exception ex) {
-            // Do nothing. Because not expected to occur the exception.
-        }
+ @return the {@code Jsonb}
+ @since 3.0.0
+ */
+Jsonb produce();
+
+/**
+ Close the produced {@code Jsonb} if disposed.
+
+ @param jsonb the produced {@code Jsonb}
+ @since 3.0.0
+ */
+void close(Jsonb jsonb);
+
+/**
+ Implements of the {@code JsonbProducer}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(JsonbProducer.class)
+@ApplicationScoped
+class Impl implements JsonbProducer {
+
+@SuppressWarnings("unused")
+Impl() {
+}
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Produces
+@ApplicationScoped
+@Override
+public Jsonb produce() {
+    return JsonbBuilder.create();
+}
+
+/**
+ Close the produced {@code Jsonb} if disposed.
+
+ @param jsonb the produced {@code Jsonb}
+ @since 3.0.0
+ */
+@Override
+public void close(@Disposes Jsonb jsonb) {
+    try {
+        jsonb.close();
+    } catch (Exception ex) {
+        // Do nothing. Because not expected to occur the exception.
     }
+}
+
+}
+
 }

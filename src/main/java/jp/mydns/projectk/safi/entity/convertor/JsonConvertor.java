@@ -30,28 +30,28 @@ import jakarta.json.stream.JsonParsingException;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 import java.io.StringReader;
-import jp.mydns.projectk.safi.value.JsonWrapper;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
- * JPA attribute convertor for the {@code JsonWrapper}. This convertor is applied automatically.
+ * JPA attribute convertor for the {@code SJson}.This convertor is applied automatically.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
 @Converter(autoApply = true)
-public final class JsonConvertor implements AttributeConverter<JsonWrapper, String> {
+public final class JsonConvertor implements AttributeConverter<SJson, String> {
 
     /**
      * Convert to database column type.
      *
-     * @param javaVal the {@code JsonWrapper}
-     * @return {@code javaVal} that converted to string representation of {@code JsonWrapper}. Returns {@code null} if
+     * @param javaVal the {@code SJson}
+     * @return {@code javaVal} that converted to string representation of {@code SJson}. Returns {@code null} if
      * {@code javaVal} is {@code null}.
      * @since 3.0.0
      */
     @Override
-    public String convertToDatabaseColumn(JsonWrapper javaVal) {
+    public String convertToDatabaseColumn(SJson javaVal) {
         if (javaVal == null) {
             return null;
         }
@@ -62,19 +62,19 @@ public final class JsonConvertor implements AttributeConverter<JsonWrapper, Stri
     /**
      * Convert to entity attribute type.
      *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code JsonWrapper}.
-     * @return {@code dbVal} as {@code JsonWrapper}. Returns {@code null} if {@code dbVal} is {@code null}.
-     * @throws JsonParsingException if {@code dbVal} is malformed as {@code JsonWrapper}
+     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code SJson}.
+     * @return {@code dbVal} as {@code SJson}. Returns {@code null} if {@code dbVal} is {@code null}.
+     * @throws JsonParsingException if {@code dbVal} is malformed as {@code SJson}
      * @since 3.0.0
      */
     @Override
-    public JsonWrapper convertToEntityAttribute(String dbVal) {
+    public SJson convertToEntityAttribute(String dbVal) {
         if (dbVal == null) {
             return null;
         }
 
         try (var r = Json.createReader(new StringReader(dbVal))) {
-            return JsonWrapper.of(r.readValue());
+            return SJson.of(r.readValue());
         }
     }
 }

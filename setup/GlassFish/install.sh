@@ -8,7 +8,7 @@ GLASSFISH_HOME="${DEST}"
 SRC="https://mirror.kakao.com/eclipse/ee4j/glassfish/glassfish-${VER}.zip"
 HASH="https://www.eclipse.org/downloads/sums.php?file=/ee4j/glassfish/glassfish-${VER}.zip&type=sha512"
 ZIP="/tmp/$( basename "${SRC}" )"
-ORIGIN_NAME="glassfish7"
+ORIGIN_NAME='glassfish7'
 JAVA_HOME="${HOME}/.local/Java/primary"
 CA_HOME="${HOME}/.local/CA"
 
@@ -65,21 +65,27 @@ trustStore="file\:///${CA_HOME}/mariadb-connector-cacerts":\
 trustStoreType='pkcs12':trustStorePassword="${STORE_PASS}":URL='jdbc\:mariadb\://localhost/safi?serverTimezone\=UTC' \
 SafiPool
 
-"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.statement-timeout-in-seconds=300"
-"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.statement-cache-size=20"
-"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.validation-table-name=DUAL"
-"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.connection-validation-method=table"
-"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.is-connection-validation-required=true"
-"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.fail-all-connections=true"
-"${GLASSFISH_HOME}/bin/asadmin" set "resources.jdbc-connection-pool.SafiPool.statement-cache-type="
+"${GLASSFISH_HOME}/bin/asadmin" set 'resources.jdbc-connection-pool.SafiPool.statement-timeout-in-seconds=300'
+"${GLASSFISH_HOME}/bin/asadmin" set 'resources.jdbc-connection-pool.SafiPool.statement-cache-size=20'
+"${GLASSFISH_HOME}/bin/asadmin" set 'resources.jdbc-connection-pool.SafiPool.validation-table-name=DUAL'
+"${GLASSFISH_HOME}/bin/asadmin" set 'resources.jdbc-connection-pool.SafiPool.connection-validation-method=table'
+"${GLASSFISH_HOME}/bin/asadmin" set 'resources.jdbc-connection-pool.SafiPool.is-connection-validation-required=true'
+"${GLASSFISH_HOME}/bin/asadmin" set 'resources.jdbc-connection-pool.SafiPool.fail-all-connections=true'
+"${GLASSFISH_HOME}/bin/asadmin" set 'resources.jdbc-connection-pool.SafiPool.statement-cache-type='
 
 "${GLASSFISH_HOME}/bin/asadmin" create-jdbc-resource --connectionpoolid SafiPool jdbc/safi
 
 # Configure Logging
-"${GLASSFISH_HOME}/bin/asadmin" set-log-levels "jp.mydns.projectk.safi=FINEST"
+"${GLASSFISH_HOME}/bin/asadmin" set-log-levels 'jp.mydns.projectk.safi=FINEST'
 
 # Configure JVM options
-"${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/, opt, safi'
+"${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Dsafi.home=/,opt,safi'
+"${GLASSFISH_HOME}/bin/asadmin" delete-jvm-options '-Xmx512m'
+"${GLASSFISH_HOME}/bin/asadmin" create-jvm-options '-Xmx256m'
+
+# Configura deployment
+"${GLASSFISH_HOME}/bin/asadmin" set 'server.admin-service.das-config.autodeploy-enabled=false'
+"${GLASSFISH_HOME}/bin/asadmin" set 'server.admin-service.das-config.dynamic-reload-enabled=false'
 
 
 # Restart service

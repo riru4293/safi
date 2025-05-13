@@ -118,7 +118,7 @@ public interface JobdefValue extends NamedValue {
      * @since 3.0.0
      */
     @Schema(description = "The name of the plugin that processes the content. It is case insensitive.", maxLength = 50,
-            requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<@Size(max = 50, groups = {Default.class}) String> getPluginName();
 
@@ -164,8 +164,8 @@ The key is the property name after transformation, and the value is the transfor
 | Step.2 | [name] & \\`'s number is \\` & LPAD( __\\`01\\`__, \\`4\\`, \\`P\\` ) |
 | Step.3 | __\\`taro\\`__ & \\`'s number is \\` & __\\`PP01\\`__ |
 | Result | __taro's number is PP01__ |""",
-            example = "{\"name\":\"toTitleCase([firstName]) & ` ` & toTitleCase([lastName])\", \"id\":\"[userId]\"}",
-            type = "object", additionalPropertiesSchema = String.class, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        example = "{\"name\":\"toTitleCase([firstName]) & ` ` & toTitleCase([lastName])\", \"id\":\"[userId]\"}",
+        type = "object", additionalPropertiesSchema = String.class, requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull(groups = Default.class)
     Optional<Map<String, String>> getTrnsdef();
 

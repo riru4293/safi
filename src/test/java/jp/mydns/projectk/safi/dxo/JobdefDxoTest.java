@@ -30,9 +30,9 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.validation.Validator;
-import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.AppTimeService;
-import jp.mydns.projectk.safi.service.ValidationService;
+import jp.mydns.projectk.safi.service.MockJsonService;
+import jp.mydns.projectk.safi.service.MockValidationService;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,58 +42,63 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test of class {@code JobdefDxo}.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Test of class {@code JobdefDxo}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @ExtendWith(JsonbParameterResolver.class)
 @ExtendWith(ValidatorParameterResolver.class)
 @ExtendWith(MockitoExtension.class)
 class JobdefDxoTest {
 
-    /**
-     * Test of toValue method.
-     *
-     * @param validator the {@code Validator}. This parameter resolved by {@code ValidatorParameterResolver}.
-     * @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
-     * @param appTimeSvc it is mock
-     * @since 3.0.0
-     */
-    @Test
-    void testToValue(Validator validator, Jsonb jsonb, @Mock AppTimeService appTimeSvc) {
-        JsonObject expect = Json.createObjectBuilder()
-            .add("id", "jobdef-id")
-            .add("validityPeriod", Json.createObjectBuilder()
-                .add("from", "2000-01-01T00:00:00Z")
-                .add("to", "2999-12-31T23:59:59Z")
-                .add("ignored", false))
-            .add("jobKind", "REBUILD")
-            .add("jobTarget", "ASSET")
-            .add("timeout", "PT0S")
-            .add("name", "jobdef-name")
-            .add("pluginName", "plg")
-            .add("trnsdef", JsonValue.EMPTY_JSON_OBJECT)
-            .add("filtdef", Json.createObjectBuilder()
-                .add("trnsdef", Json.createObjectBuilder().add("k1", "v1"))
-                .add("condition", Json.createObjectBuilder()
-                    .add("operation", "AND").add("children", JsonValue.EMPTY_JSON_ARRAY)))
-            .add("jobProperties", Json.createObjectBuilder().add("p1", "A"))
-            .add("note", "note").add("version", 7)
-            .add("registerTime", "2222-12-30T00:12:34Z").add("registerAccountId", "rid")
-            .add("registerProcessName", "rnm")
-            .add("updateTime", "2134-11-20T10:12:11Z").add("updateAccountId", "uid").add("updateProcessName", "unm")
-            .build();
+/**
+ Test of toValue method.
 
-        var validationSvc = new ValidationService.Impl(validator, appTimeSvc);
-        var jsonSvc = new JsonService.Impl(jsonb);
-        var instance = new JobdefDxo.Impl(validationSvc, jsonSvc);
+ @param validator the {@code Validator}. This parameter resolved by
+ {@code ValidatorParameterResolver}.
+ @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
+ @param appTimeSvc it is mock
+ @since 3.0.0
+ */
+@Test
+void testToValue(Validator validator, Jsonb jsonb, @Mock AppTimeService appTimeSvc) {
 
-        var val = instance.toValue(expect);
-        var entity = instance.toEntity(val);
-        var result = jsonSvc.toJsonValue(instance.toValue(entity));
+    var validationSvc = new MockValidationService(validator, appTimeSvc);
+    var jsonSvc = new MockJsonService(jsonb);
+    
+    JsonObject expect = Json.createObjectBuilder()
+        .add("id", "jobdef-id")
+        .add("validityPeriod", Json.createObjectBuilder()
+            .add("from", "2000-01-01T00:00:00Z")
+            .add("to", "2999-12-31T23:59:59Z")
+            .add("ignored", false))
+        .add("jobKind", "REBUILD")
+        .add("jobTarget", "ASSET")
+        .add("timeout", "PT0S")
+        .add("name", "jobdef-name")
+        .add("pluginName", "plg")
+        .add("trnsdef", JsonValue.EMPTY_JSON_OBJECT)
+        .add("filtdef", Json.createObjectBuilder()
+            .add("trnsdef", Json.createObjectBuilder().add("k1", "v1"))
+            .add("condition", Json.createObjectBuilder()
+                .add("operation", "AND").add("children", JsonValue.EMPTY_JSON_ARRAY)))
+        .add("jobProperties", Json.createObjectBuilder().add("p1", "A"))
+        .add("note", "note").add("version", 7)
+        .add("registerTime", "2222-12-30T00:12:34Z").add("registerAccountId", "rid")
+        .add("registerProcessName", "rnm")
+        .add("updateTime", "2134-11-20T10:12:11Z").add("updateAccountId", "uid").add(
+        "updateProcessName", "unm")
+        .build();
 
-        assertThat(result).isEqualTo(expect);
-    }
+    var instance = new JobdefDxo.Impl(validationSvc, jsonSvc);
+
+    var val = instance.toValue(expect);
+    var entity = instance.toEntity(val);
+    var result = jsonSvc.toJsonValue(instance.toValue(entity));
+
+    assertThat(result).isEqualTo(expect);
+}
+
 }

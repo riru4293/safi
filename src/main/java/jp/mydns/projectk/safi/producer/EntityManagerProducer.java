@@ -26,43 +26,58 @@
 package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Typed;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 /**
- * CDI Producer that provides instances of {@link EntityManager}.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ CDI Producer that provides instances of {@link EntityManager}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
+public interface EntityManagerProducer {
+
+/**
+ Produces an the {@code EntityManager}.
+
+ @return the {@code EntityManager}
+ @since 3.0.0
+ */
+public EntityManager produce();
+
+/**
+ Implements of the {@code EntityManagerProducer}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(EntityManagerProducer.class)
 @RequestScoped
-public class EntityManagerProducer {
+class Impl implements EntityManagerProducer {
 
-    @PersistenceContext(unitName = "safi_persistence_unit")
-    private EntityManager em;
+@PersistenceContext(unitName = "safi_persistence_unit")
+private EntityManager em;
 
-    /**
-     * Produces an the {@code EntityManager}.
-     *
-     * @return the {@code EntityManager}
-     * @since 3.0.0
-     */
-    @Produces
-    @RequestScoped
-    public EntityManager produce() {
-        return em;
-    }
+@SuppressWarnings("unused")
+Impl() {
+}
 
-    /**
-     * Close the produced {@code EntityManager} if disposed.
-     *
-     * @param em the produced {@code EntityManager}
-     * @since 3.0.0
-     */
-    public void close(@Disposes EntityManager em) {
-        em.close();
-    }
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Produces
+@RequestScoped
+@Override
+public EntityManager produce() {
+    return em;
+}
+
+}
+
 }

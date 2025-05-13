@@ -47,8 +47,8 @@ import java.util.Objects;
  * @since 3.0.0
  */
 @Schema(name = "FilteringCondition.Leaf", description = "Leaf filtering condition.",
-        example = "{\"operation\": \"PARTIAL_MATCH\", \"name\": \"userName\", \"value\": \"ike\"}")
-interface LeafConditionValue extends FilteringConditionValue {
+    example = "{\"operation\": \"PARTIAL_MATCH\", \"name\": \"userName\", \"value\": \"ike\"}")
+public interface LeafConditionValue extends FilteringConditionValue {
 
     /**
      * {@inheritDoc}

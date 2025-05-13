@@ -40,6 +40,9 @@ import java.util.SequencedSet;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.BinaryOperator;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toMap;
@@ -227,5 +230,34 @@ public class CollectionUtils {
             value.putAll(map);
             return Collections.unmodifiableSequencedMap(value);
         }).orElse(map);
+    }
+
+    /**
+     * Returns a function that test the list values with a predicate to narrow it down.
+     *
+     * @param <T> element type of list
+     * @param predicate the {@code Predicate}
+     * @return function that returns a narrowed list
+     * @throws NullPointerException if {@code p} is {@code null}
+     * @since 3.0.0
+     */
+    public static <T> UnaryOperator<List<T>> narrowDown(Predicate<T> predicate) {
+        return l -> l.stream().filter(predicate).toList();
+    }
+
+    /**
+     * Returns a function that convert list elements.
+     *
+     * @param <B> element type that before conversion
+     * @param <A> element type that after conversion
+     * @param converter function that convert list elements
+     * @return function that convert list elements
+     * @throws NullPointerException if {@code converter} is {@code null}
+     * @since 3.0.0
+     */
+    public static <B, A> Function<List<B>, List<A>> convertElements(Function<B, A> converter) {
+        Objects.requireNonNull(converter);
+
+        return l -> l.stream().map(converter).toList();
     }
 }

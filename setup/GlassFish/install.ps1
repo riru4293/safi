@@ -179,7 +179,13 @@ SafiPool
 & "${GLASSFISH_HOME}\bin\asadmin.bat" set-log-levels "jp.mydns.projectk.safi=FINEST"
 
 # Configure JVM options
-& "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Dsafi.home=/, $( ${env:LOCALAPPDATA}.Replace( '\', ', ' ).Replace( ':', '\:' ) ), safi"
+& "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Dsafi.home=$( ${env:LOCALAPPDATA}.Replace( '\', ',' ).Replace( ':', '\:' ) ),safi"
+& "${GLASSFISH_HOME}\bin\asadmin.bat" delete-jvm-options "-Xmx512m"
+& "${GLASSFISH_HOME}\bin\asadmin.bat" create-jvm-options "-Xmx256m"
+
+# Configura deployment
+& "${GLASSFISH_HOME}\bin\asadmin.bat" set "server.admin-service.das-config.autodeploy-enabled=false"
+& "${GLASSFISH_HOME}\bin\asadmin.bat" set "server.admin-service.das-config.dynamic-reload-enabled=false"
 
 
 # Configure console log-level
@@ -201,8 +207,8 @@ Read-Host 'Press enter to exit'
 # SIG # Begin signature block
 # MIIGXAYJKoZIhvcNAQcCoIIGTTCCBkkCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUCp2++IVvxE5n+FhfY5HSnjvA
-# bJmgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUASFXDfpaBNCErf1JmGd+S3YJ
+# 5tqgggPPMIIDyzCCArOgAwIBAgIBBjANBgkqhkiG9w0BAQsFADBRMQswCQYDVQQG
 # EwJKUDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UE
 # AwwVY2EucHJvamVjdC1rLm15ZG5zLmpwMB4XDTI1MDEwMjEzNDcxN1oXDTI3MDky
 # OTEzNDcxN1owYzELMAkGA1UEBhMCSlAxDjAMBgNVBAgMBU9zYWthMRIwEAYDVQQK
@@ -226,11 +232,11 @@ Read-Host 'Press enter to exit'
 # UDEOMAwGA1UECAwFT3Nha2ExEjAQBgNVBAoMCVByb2plY3QtSzEeMBwGA1UEAwwV
 # Y2EucHJvamVjdC1rLm15ZG5zLmpwAgEGMAkGBSsOAwIaBQCgeDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBSKeJapxHYG
-# deahJ9EefEOWC4mpUjANBgkqhkiG9w0BAQEFAASCAQC3fqReEcSEo8O9oEqLaxD3
-# TNtKpOOHzPj35ERjmArEJQ3s00PCCwZDjdi/QEsctwKxuhvQK1r8ZrIRkxzJtjja
-# NoeDiG21iZROoe5RGhqkAj1b8N7CywRO9yPzfkjBSzQRya3L0X/qpMit+cT3nDoN
-# YtFeg+3BJFFx62D8ZgP0dqMC7aOhHGqrRU5D4zKY1JliUyzyI1UmU3ZwRXx38xi1
-# edX02b9PLOS6H9Cbek332r7Wd5WKIg9Fu0EuPLprdNZjJsO7WZTmC82Mi6O9sf1r
-# 8X7GpFM8nk+dZT4KWG0VZeDskxxELMHSJzQ9mriX/nvJNSoE9aLoZr66eas9ijF9
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEWMCMGCSqGSIb3DQEJBDEWBBRz+4jESw70
+# LWCbNo+8ggD4qxj7ljANBgkqhkiG9w0BAQEFAASCAQCY7FPg6MlAynKteilU4XUi
+# 3vMxCNx24LkH+9MaOjh90VY9XqsxHXz+p2tPvR93jZ9QETS+ooF6O3C9A6Pz06kr
+# mQyTqvSm4fKa6gfMrzXfLqg02jkuy54wCvNnRzeHNZ5KpFfxc4U40ZuzqwxMKQ2w
+# 2gtaP0zPla5418axlcfHaQPjrNCxODUXJTePj2G+4rBFL0G+ge5GphdaJbc68XEo
+# wzGWjygdeiwjp6U80pF6xQ9DS1ZVdD90exvv3QdsSuMDA1u7SwqrYoY8gGATd06x
+# YTs8lvBb1lI6ctmv1jnwxDSu2YUZA66q0hWT+QieYa09sU+V3UjVhAhVtIGPJ8nG
 # SIG # End signature block

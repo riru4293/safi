@@ -33,110 +33,154 @@ import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbException;
 import java.util.Objects;
+import java.util.function.Function;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
+import jp.mydns.projectk.safi.value.SJson;
 
 /**
- * Provides JSON conversion.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Provides JSON conversion.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface JsonService {
 
-    /**
-     * Conversion to {@code JsonValue}.
-     *
-     * @param value source value
-     * @return converted value
-     * @throws NullPointerException if {@code value} is {@code null}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @since 3.0.0
-     */
-    JsonValue toJsonValue(Object value);
+/**
+ Conversion to {@code JsonValue}.
 
-    /**
-     * Deserialize to {@code T} from JSON.
-     *
-     * @param <T> destination type. It should support deserialization from JSON.
-     * @param json source value
-     * @param clazz destination type
-     * @return deserialized value
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-     * @since 3.0.0
-     */
-    <T> T fromJsonValue(JsonValue json, Class<T> clazz);
+ @param value source value
+ @return converted value
+ @throws NullPointerException if {@code value} is {@code null}
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+ @since 3.0.0
+ */
+JsonValue toJsonValue(Object value);
 
-    /**
-     * Merge two {@code JsonObject}.
-     *
-     * @param base base value
-     * @param ow overwrite value
-     * @return merged value
-     * @throws NullPointerException if any argument is {@code null}
-     * @since 3.0.0
-     */
-    JsonObject merge(JsonObject base, JsonObject ow);
+/**
+ Deserialize to {@code T} from JSON.
 
-    /**
-     * Implements the {@code JsonService}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    @Typed(JsonService.class)
-    @RequestScoped
-    class Impl implements JsonService {
+ @param <T> destination type. It should support deserialization from JSON.
+ @param json source value
+ @param clazz destination type
+ @return deserialized value
+ @throws NullPointerException if any argument is {@code null}
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+ @since 3.0.0
+ */
+<T> T fromJsonValue(JsonValue json, Class<T> clazz);
 
-        private final Jsonb jsonb;
+/**
+ Merge two {@code JsonObject}.
 
-        /**
-         * Constructor.
-         *
-         * @param jsonb the {@code Jsonb}
-         * @throws NullPointerException if {@code jsonb} is {@code null}
-         * @since 3.0.0
-         */
-        @Inject
-        public Impl(Jsonb jsonb) {
-            this.jsonb = Objects.requireNonNull(jsonb);
-        }
+ @param base base value
+ @param ow overwrite value
+ @return merged value
+ @throws NullPointerException if any argument is {@code null}
+ @since 3.0.0
+ */
+JsonObject merge(JsonObject base, JsonObject ow);
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NullPointerException if {@code value} is {@code null}
-         * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-         * @since 3.0.0
-         */
-        @Override
-        public JsonValue toJsonValue(Object value) {
-            return JsonValueUtils.toJsonValue(Objects.requireNonNull(value), jsonb);
-        }
+/**
+ Conversion to {@code SJson}.
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws JsonbException if any unexpected error(s) occur(s) during conversion.
-         * @since 3.0.0
-         */
-        @Override
-        public <T> T fromJsonValue(JsonValue json, Class<T> clazz) {
-            return jsonb.fromJson(Objects.requireNonNull(json).toString(), Objects.requireNonNull(clazz));
-        }
+ @param value source value
+ @return converted value
+ @throws NullPointerException if {@code value} is {@code null}
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+ @since 3.0.0
+ */
+SJson toSJson(Object value);
 
-        /**
-         * {@inheritDoc}
-         *
-         * @throws NullPointerException if any argument is {@code null}
-         * @since 3.0.0
-         */
-        @Override
-        public JsonObject merge(JsonObject base, JsonObject ow) {
-            return JsonValueUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
-        }
-    }
+/**
+ Returns a deserialize function to {@code T} from JSON.
+
+ @param <T> destination type. It should support deserialization from JSON.
+ @param clazz destination type
+ @return deserialized value
+ @throws NullPointerException if {@code clazz} is {@code null}
+ @since 3.0.0
+ */
+<T> Function<JsonValue, T> fromJsonValue(Class<T> clazz);
+
+/**
+ Implements the {@code JsonService}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@Typed(JsonService.class)
+@RequestScoped
+class Impl implements JsonService {
+
+private final Jsonb jsonb;
+
+@Inject
+@SuppressWarnings("unused")
+Impl(Jsonb jsonb) {
+    this.jsonb = jsonb;
+}
+
+/**
+ {@inheritDoc}
+
+ @throws NullPointerException if {@code value} is {@code null}
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+ @since 3.0.0
+ */
+@Override
+public JsonValue toJsonValue(Object value) {
+    return JsonValueUtils.toJsonValue(Objects.requireNonNull(value), jsonb);
+}
+
+/**
+ {@inheritDoc}
+
+ @throws NullPointerException if any argument is {@code null}
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+ @since 3.0.0
+ */
+@Override
+public <T> T fromJsonValue(JsonValue json, Class<T> clazz) {
+    return jsonb.fromJson(Objects.requireNonNull(json).toString(), Objects.requireNonNull(clazz));
+}
+
+/**
+ {@inheritDoc}
+
+ @throws NullPointerException if any argument is {@code null}
+ @since 3.0.0
+ */
+@Override
+public JsonObject merge(JsonObject base, JsonObject ow) {
+    return JsonValueUtils.merge(Objects.requireNonNull(base), Objects.requireNonNull(ow));
+}
+
+/**
+ {@inheritDoc}
+
+ @throws NullPointerException if {@code value} is {@code null}
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
+ @since 3.0.0
+ */
+@Override
+public SJson toSJson(Object value) {
+    return SJson.of(toJsonValue(value));
+}
+
+/**
+ {@inheritDoc}
+
+ @throws NullPointerException if {@code clazz} is {@code null}
+ @since 3.0.0
+ */
+@Override
+public <T> Function<JsonValue, T> fromJsonValue(Class<T> clazz) {
+    Objects.requireNonNull(clazz);
+    return j -> fromJsonValue(j, clazz);
+}
+
+}
+
 }
