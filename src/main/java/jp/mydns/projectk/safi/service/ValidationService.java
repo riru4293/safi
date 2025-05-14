@@ -30,7 +30,6 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
-import jakarta.ws.rs.NameBinding;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -41,7 +40,7 @@ import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.entity.NamedEntity;
-import jp.mydns.projectk.safi.producer.ValidatorFactoryProducer;
+import jp.mydns.projectk.safi.producer.ValidatorProducer;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.NamedValue;
 
