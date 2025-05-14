@@ -25,7 +25,8 @@
  */
 package jp.mydns.projectk.safi.dao;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityExistsException;
@@ -33,7 +34,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TransactionRequiredException;
 import java.util.Objects;
+import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.entity.CommonEntity;
+import jp.mydns.projectk.safi.util.CdiUtils;
 
 /**
  Common processing of data access using JPA.
@@ -80,6 +83,7 @@ public interface CommonDao {
  @return entity that to be removed
  @throws NullPointerException if {@code entity} is {@code null}
  @throws PersistenceException if failed remove
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 <T> T remove(T entity);
@@ -89,6 +93,7 @@ public interface CommonDao {
 
  @throws TransactionRequiredException if there is no transaction
  @throws PersistenceException if the flush fails
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 void flush();
@@ -97,6 +102,7 @@ void flush();
  Clear the persistence context, causing all managed entities to become detached. Changes made to
  entities that have not been flushed to the database will not be persisted.
 
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 void clear();
@@ -111,6 +117,7 @@ void clear();
  @throws EntityExistsException if the entity already exists when persist
  @throws IllegalArgumentException if the instance is not an entity
  @throws TransactionRequiredException if there is no transaction
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 <T extends CommonEntity> T persistOrMerge(T entity);
@@ -123,6 +130,7 @@ void clear();
  @return entity that persisted
  @throws NullPointerException if {@code entity} is {@code null}
  @throws PersistenceException if failed persist or flush
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 <T> T persistAndflush(T entity);
@@ -131,6 +139,7 @@ void clear();
  Call both the {@link #flush} and the {@link #clear}.
 
  @throws PersistenceException if failed flush
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 void flushAndClear();
@@ -143,15 +152,15 @@ void flushAndClear();
  @since 3.0.0
  */
 @Typed(CommonDao.class)
-@RequestScoped
+@ApplicationScoped
 class Impl implements CommonDao {
 
-private final EntityManager em;
+private final Instance<EntityManager> emInst;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(EntityManager em) {
-    this.em = em;
+Impl(Instance<EntityManager> emInst) {
+    this.emInst = emInst;
 }
 
 /**
@@ -161,11 +170,12 @@ Impl(EntityManager em) {
  @throws EntityExistsException if the entity already exists
  @throws IllegalArgumentException if the instance is not an entity
  @throws TransactionRequiredException if there is no transaction
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
 public <T> T persist(T entity) {
-    em.persist(Objects.requireNonNull(entity));
+    getEntityManager().persist(Objects.requireNonNull(entity));
     return entity;
 }
 
@@ -175,10 +185,12 @@ public <T> T persist(T entity) {
  @throws NullPointerException if {@code entity} is {@code null}
  @throws IllegalArgumentException if the instance is not an entity
  @throws TransactionRequiredException if there is no transaction
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
 public <T> T merge(T entity) {
+    EntityManager em = getEntityManager();
     return !em.contains(Objects.requireNonNull(entity)) ? em.merge(entity) : entity;
 }
 
@@ -187,21 +199,23 @@ public <T> T merge(T entity) {
 
  @throws TransactionRequiredException if there is no transaction
  @throws PersistenceException if the flush fails
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
 public void flush() {
-    em.flush();
+    getEntityManager().flush();
 }
 
 /**
  {@inheritDoc}
 
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
 public void clear() {
-    em.clear();
+    getEntityManager().clear();
 }
 
 /**
@@ -209,11 +223,12 @@ public void clear() {
 
  @throws NullPointerException if {@code entity} is {@code null}
  @throws PersistenceException if failed remove
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
 public <T> T remove(T entity) {
-    em.remove(merge(entity));
+    getEntityManager().remove(merge(entity));
     return entity;
 }
 
@@ -224,6 +239,7 @@ public <T> T remove(T entity) {
  @throws EntityExistsException if the entity already exists when persist
  @throws IllegalArgumentException if the instance is not an entity
  @throws TransactionRequiredException if there is no transaction
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
@@ -236,6 +252,7 @@ public <T extends CommonEntity> T persistOrMerge(T entity) {
 
  @throws NullPointerException if {@code entity} is {@code null}
  @throws PersistenceException if failed persist or flush
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
@@ -249,12 +266,17 @@ public <T> T persistAndflush(T entity) {
  {@inheritDoc}
 
  @throws PersistenceException if failed flush
+ @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
 public void flushAndClear() {
     flush();
     clear();
+}
+
+private EntityManager getEntityManager() {
+    return CdiUtils.requireResolvable(emInst);
 }
 
 }
