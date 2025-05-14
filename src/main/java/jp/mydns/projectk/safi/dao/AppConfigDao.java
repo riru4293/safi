@@ -33,7 +33,6 @@ import jakarta.persistence.PersistenceException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.AppConfigId;
 import jp.mydns.projectk.safi.entity.AppConfigEntity;

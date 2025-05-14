@@ -36,7 +36,6 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Map;
-import java.util.Optional;
 import jp.mydns.projectk.safi.constant.JobKind;
 import jp.mydns.projectk.safi.constant.JobStatus;
 import jp.mydns.projectk.safi.constant.JobTarget;

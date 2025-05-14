@@ -31,7 +31,6 @@ import jakarta.inject.Inject;
 import jakarta.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import jp.mydns.projectk.safi.constant.AppConfigId;
 import jp.mydns.projectk.safi.dao.AppConfigDao;
