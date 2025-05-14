@@ -85,9 +85,8 @@ public Jsonb produce() {
 }
 
 /**
- Close the produced {@code Jsonb} if disposed.
+ {@inheritDoc}
 
- @param jsonb the produced {@code Jsonb}
  @since 3.0.0
  */
 @Override
