@@ -30,11 +30,18 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
+import jakarta.ws.rs.NameBinding;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.entity.NamedEntity;
+import jp.mydns.projectk.safi.producer.ValidatorFactoryProducer;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.NamedValue;
 
@@ -96,7 +103,7 @@ private final AppTimeService appTimeSvc;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(Validator validator, AppTimeService appTimeSvc) {
+Impl(@SafiValidator Validator validator, AppTimeService appTimeSvc) {
     this.validator = validator;
     this.appTimeSvc = appTimeSvc;
 }
@@ -152,6 +159,20 @@ public <V> V requireValid(V value, Class<?>... groups) {
     return ValidationUtils.requireValid(value, validator, groups);
 }
 
+}
+
+/**
+ Indicate that inject custom validator.
+
+ @author riru
+ @version 3.0.0
+ @see ValidatorProducer
+ @since 3.0.0
+ */
+@Documented
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@interface SafiValidator {
 }
 
 }
