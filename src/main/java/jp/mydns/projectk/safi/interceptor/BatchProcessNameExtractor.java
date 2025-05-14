@@ -66,7 +66,7 @@ public interface BatchProcessNameExtractor {
 @BatchProcessName
 class Impl implements BatchProcessNameExtractor {
 
-private static final Logger log = LoggerFactory.getLogger(BatchProcessNameExtractor.class);
+private static final Logger log = LoggerFactory.getLogger(Impl.class);
 
 // Note: It is CDI Bean. Obtaining the request scoped CDI bean via Instance.
 private Instance<ContextImpl> ctxInst;

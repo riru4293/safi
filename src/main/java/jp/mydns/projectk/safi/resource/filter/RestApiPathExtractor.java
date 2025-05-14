@@ -72,7 +72,7 @@ void filter(ContainerRequestContext crc);
 @Priority(Priorities.USER)
 class Impl implements ContainerRequestFilter, RestApiPathExtractor {
 
-private static final Logger log = LoggerFactory.getLogger(RestApiPathExtractor.class);
+private static final Logger log = LoggerFactory.getLogger(Impl.class);
 
 // Note: It is CDI Bean.
 private RestApiPathContextImpl ctx;
