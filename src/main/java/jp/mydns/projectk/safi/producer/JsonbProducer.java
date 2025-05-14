@@ -26,6 +26,7 @@
 package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
@@ -65,7 +66,7 @@ void close(Jsonb jsonb);
  @since 3.0.0
  */
 @Typed(JsonbProducer.class)
-@ApplicationScoped
+@Dependent
 class Impl implements JsonbProducer {
 
 @SuppressWarnings("unused")
