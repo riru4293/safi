@@ -81,6 +81,9 @@ public B with(V src) {
  Build a new inspected instance.
  <p>
  The {@link Validator} to use for validation will attempt to obtain it from the CDI container.
+ <p>
+ Note that while this is convenient, it can be slow, so if you are doing large builds, consider
+ using {@link #build(jakarta.validation.Validator, java.lang.Class...)}.
 
  @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
  @return new inspected instance
