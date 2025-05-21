@@ -26,9 +26,12 @@
 package jp.mydns.projectk.safi.value;
 
 import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.Locale;
 import jp.mydns.projectk.safi.PublishableRuntimeException;
 import jp.mydns.projectk.safi.interceptor.BatchProcessNameExtractor;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
+import jp.mydns.projectk.safi.resource.filter.LocaleExtractor;
 import jp.mydns.projectk.safi.resource.filter.RestApiPathExtractor;
 import jp.mydns.projectk.safi.resource.filter.RestApiProcessNameExtractor;
 import jp.mydns.projectk.safi.resource.trial.Authenticator;
@@ -83,6 +86,16 @@ URI getRawRestApiPath();
 String getAccountId();
 
 /**
+ Returns current locale.
+
+ @return the {@code Locale}. It's default value is {@link Locale#ENGLISH}. Note that if you retrieve
+ the locale before it has been determined, it will be the default value.
+ @since 3.0.0
+ @see LocaleContext
+ */
+Locale getLocale();
+
+/**
  Get processing name. Although this is not usually the case, if a value is provided both via REST
  API and via batch processing, the value provided via REST API will be returned.
 
@@ -92,6 +105,20 @@ String getAccountId();
  @see BatchProcessNameContext
  */
 String getProcessName();
+
+/**
+ Get a reference time for the validity period. It is fixed at the value at the start of the
+ processing request. This is to prevent switching between valid and invalid during processing.
+ <p>
+ Although this is not usually the case, if a value is provided both via REST API and via batch
+ processing, the value provided via REST API will be returned.
+
+ @return reference time, or {@code null} if no reference time is available.
+ @since 3.0.0
+ @see RestApiReferenceTimeContext
+ @see BatchReferenceTimeContext
+ */
+LocalDateTime getReferenceTime();
 
 /**
  Current logged account id information.
@@ -184,7 +211,7 @@ interface RestApiProcessNameContext extends ProcessNameContext {
 }
 
 /**
- Represents the process name for an HTTP request. This context cannot coexist with
+ Represents the process name for a batch process. This context cannot coexist with
  {@link RestApiProcessNameContext}.
  <p>
  Do not use this class directly. It is used as part of {@link RequestContext}.
@@ -195,6 +222,90 @@ interface RestApiProcessNameContext extends ProcessNameContext {
  @see BatchProcessNameExtractor
  */
 interface BatchProcessNameContext extends ProcessNameContext {
+}
+
+/**
+ Current {@link Locale}.
+ <p>
+ The locale is determined for each HTTP request. If not set, English will be used. This is used to
+ determine the language of the response message.
+ <p>
+ Do not use this class directly. It is used as part of {@link RequestContext}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ @see LocaleExtractor
+ */
+interface LocaleContext {
+
+/**
+ Get current {@code Locale}.
+
+ @return current {@code Locale}
+ @since 3.0.0
+ */
+Locale getValue();
+
+}
+
+/**
+ The reference time for the validity period. It is fixed at the value at the start of the processing
+ request. This is to prevent switching between valid and invalid during processing.
+ <p>
+ Do not use this class directly. It is used as part of {@link RequestContext}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+interface ReferenceTimeContext {
+
+/**
+ Get reference time.
+
+ @return reference time. This value represents a unique identifier assigned to each
+ <i>Process</i>.
+
+ Here, <i>Process</i> refers to a single HTTP request or a single batch operation. It must never be
+ {@code null} under correct implementation. However, if a developer forgets to assign a valid
+ identifier when adding new <i>Process</i>, this value may unintentionally remain {@code null}.
+
+ Do not handle this case by simply checking for {@code null}. Doing so may hide critical
+ implementation mistakes. Instead, ensure that all functional units are properly assigned unique
+ identifiers at the time of implementation.
+ @since 3.0.0
+ */
+LocalDateTime getValue();
+
+}
+
+/**
+ The reference time for the validity period per a HTTP request. This context cannot coexist with
+ {@link BatchReferenceTimeContext}.
+ <p>
+ Do not use this class directly. It is used as part of {@link RequestContext}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ @see RestApiReferenceTimeResolver
+ */
+interface RestApiReferenceTimeContext extends ReferenceTimeContext {
+}
+
+/**
+ The reference time for the validity period per a batch process. This context cannot coexist with
+ {@link RestApiReferenceTimeContext}.
+ <p>
+ Do not use this class directly. It is used as part of {@link RequestContext}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ @see BatchReferenceTimeResolver
+ */
+interface BatchReferenceTimeContext extends ReferenceTimeContext {
 }
 
 }

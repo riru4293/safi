@@ -31,17 +31,29 @@ import jakarta.enterprise.inject.Typed;
 import java.net.URI;
 import java.util.Optional;
 import java.util.stream.Stream;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jakarta.inject.Inject;
+import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.Objects;
+import jp.mydns.projectk.safi.PublishableRuntimeException;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.value.RequestContext.AccountIdContext;
 import jp.mydns.projectk.safi.value.RequestContext.BatchProcessNameContext;
+import jp.mydns.projectk.safi.value.RequestContext.BatchReferenceTimeContext;
+import jp.mydns.projectk.safi.value.RequestContext.LocaleContext;
 import jp.mydns.projectk.safi.value.RequestContext.RestApiPathContext;
 import jp.mydns.projectk.safi.value.RequestContext.RestApiProcessNameContext;
+import jp.mydns.projectk.safi.value.RequestContext.RestApiReferenceTimeContext;
 
 /**
  Producer of the {@link RequestContext}.
+ <p>
+ Implementation requirements.
+ <ul>
+ <li>This class is immutable and thread-safe.</li>
+ <li>A unique instance per HTTP request or batch process.</li>
+ </ul>
+
 
  @author riru
  @version 3.0.0
@@ -68,39 +80,35 @@ RequestContext produce();
 @RequestScoped
 class Impl implements RequestContextProducer {
 
-private AccountIdContext accountIdCtx;
-private RestApiProcessNameContext restApiProcNameCtx;
-private BatchProcessNameContext batchProcNameCtx;
-private RestApiPathContext restApiPathCtx;
-
-@SuppressWarnings("unused")
-Impl() {
-}
+private final AccountIdContext accountIdCtx;
+private final RestApiProcessNameContext restApiProcNameCtx;
+private final BatchProcessNameContext batchProcNameCtx;
+private final RestApiReferenceTimeContext restApiRefTimeCtx;
+private final BatchReferenceTimeContext batchRefTimeCtx;
+private final RestApiPathContext restApiPathCtx;
+private final LocaleContext localeCtx;
 
 @Inject
 @SuppressWarnings("unused")
-void setAccountIdCtx(AccountIdContext accountIdCtx) {
+Impl(AccountIdContext accountIdCtx, RestApiProcessNameContext restApiProcNameCtx,
+    BatchProcessNameContext batchProcNameCtx, RestApiPathContext restApiPathCtx,
+    RestApiReferenceTimeContext restApiRefTimeCtx, BatchReferenceTimeContext batchRefTimeCtx,
+    LocaleContext localeCtx) {
+
     this.accountIdCtx = accountIdCtx;
-}
-
-@Inject
-@SuppressWarnings("unused")
-void setRestApiProcNameCtx(RestApiProcessNameContext restApiProcNameCtx) {
     this.restApiProcNameCtx = restApiProcNameCtx;
-}
-
-@Inject
-@SuppressWarnings("unused")
-void setBatchProcNameCtx(BatchProcessNameContext batchProcNameCtx) {
     this.batchProcNameCtx = batchProcNameCtx;
-}
-
-@Inject
-@SuppressWarnings("unused")
-void setRestApiPathCtx(RestApiPathContext restApiPathCtx) {
+    this.restApiRefTimeCtx = restApiRefTimeCtx;
+    this.batchRefTimeCtx = batchRefTimeCtx;
     this.restApiPathCtx = restApiPathCtx;
+    this.localeCtx = localeCtx;
 }
 
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
 @Produces
 @RequestScoped
 @Override
@@ -116,6 +124,11 @@ public String getAccountId() {
 }
 
 @Override
+public Locale getLocale() {
+    return localeCtx.getValue();
+}
+
+@Override
 public String getProcessName() {
     return Stream.of(restApiProcNameCtx, batchProcNameCtx).sequential()
         .map(ProcessNameContext::getValue)
@@ -124,9 +137,17 @@ public String getProcessName() {
 }
 
 @Override
+public LocalDateTime getReferenceTime() {
+    return Stream.of(restApiRefTimeCtx, batchRefTimeCtx).sequential()
+        .map(ReferenceTimeContext::getValue)
+        .filter(Objects::nonNull)
+        .findFirst().orElse(null);
+}
+
+@Override
 public URI getRestApiPath() {
     return Optional.ofNullable(getRawRestApiPath()).orElseThrow(() ->
-        new PublishableIllegalStateException(new IllegalStateException(
+        new PublishableRuntimeException(new IllegalStateException(
             "There is no request path to the REST API."
             + " Either it is not an HTTP request or the request path has not been extracted."
             + " Either way, it is an implementation defect.")));
@@ -140,7 +161,8 @@ public URI getRawRestApiPath() {
 @Override
 public String toString() {
     return "RequestContext{" + "accountId=" + getAccountId()
-        + ", restApiPath=" + getRawRestApiPath() + ", processName=" + getProcessName() + '}';
+        + ", restApiPath=" + getRawRestApiPath() + ", processName=" + getProcessName()
+        + ", referenceTime=" + getReferenceTime() + ", locale=" + getLocale() + '}';
 }
 
 }
