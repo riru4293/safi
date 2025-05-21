@@ -26,8 +26,12 @@
 package jp.mydns.projectk.safi.util;
 
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Provider;
+import java.lang.annotation.Annotation;
 import java.util.Objects;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
+import java.util.stream.Stream;
+import jp.mydns.projectk.safi.PublishableRuntimeException;
 
 /**
  Utilities for Jakarta Contexts and Dependency Injection.
@@ -48,24 +52,97 @@ private CdiUtils() {
 }
 
 /**
- Validate the {@code Instance} to see if there is exactly one bean that matches the required type
+ Validate the {@code Provider} to see if there is exactly one bean that matches the required type
  and qualifiers.
 
  @param <T> the required bean type
- @param inst the {@code Instance}
+ @param pvd the {@code Provider}
  @return instance of {@code T}
- @throws NullPointerException if {@code inst} is {@code null}
- @throws PublishableIllegalStateException if {@code inst} is not resolvable
+ @throws NullPointerException if {@code pvd} is {@code null}
+ @throws PublishableRuntimeException if {@code pvd} is not resolvable
  @since 3.0.0
  */
-public static <T> T requireResolvable(Instance<T> inst) {
-    Objects.requireNonNull(inst);
+public static <T> T requireResolvable(Provider<T> pvd) {
+    Objects.requireNonNull(pvd);
 
     try {
-        return inst.get();
+        return pvd.get();
     } catch (RuntimeException ex) {
-        throw new PublishableIllegalStateException(ex);
+        throw new UnresolvedInstanceException(ex);
     }
+}
+
+/**
+ Obtains a child Instance for the given additional required qualifiers.
+
+ @param <T> the required type.
+ @param clazz a {@link java.lang.Class} representing the required type.
+ @param qualifiers the additional required qualifiers.
+ @return the child <code>Instance</code>
+ @throws NullPointerException if any argument is {@code null} or if contains {@code null} in
+ {@code qualifiers}.
+ @throws PublishableRuntimeException if passed two instances of the same non repeating qualifier
+ type, or an instance of an annotation that is not a qualifier type.
+ @throws IllegalStateException if the CDI container is already shutdown.
+ @since 3.0.0
+ */
+public static <T> Instance<T> getInstance(Class<T> clazz, Annotation... qualifiers) {
+    Objects.requireNonNull(clazz);
+    Stream.of(Objects.requireNonNull(qualifiers)).forEach(Objects::requireNonNull);
+
+    try {
+        return CDI.current().select(clazz, qualifiers);
+    } catch (IllegalArgumentException | IllegalStateException ex) {
+        throw new UnresolvedInstanceException(ex);
+    }
+}
+
+/**
+ Provides a fully-constructed and injected instance of {@code T}.
+
+ @param <T> the required type.
+ @param clazz a {@link java.lang.Class} representing the required type.
+ @param qualifiers the additional required qualifiers.
+ @return instance of {@code T}.
+ @throws NullPointerException if any argument is {@code null} or if contains {@code null} in
+ {@code qualifiers}.
+ @throws PublishableRuntimeException if can't get a unique instance
+ @since 3.0.0
+ */
+public static <T> T get(Class<T> clazz, Annotation... qualifiers) {
+    try {
+        return getInstance(clazz, qualifiers).get();
+    } catch (NullPointerException | PublishableRuntimeException ex) {
+        throw ex;
+    } catch (RuntimeException ex) {
+        throw new UnresolvedInstanceException(ex);
+    }
+}
+
+/**
+ Exception where a CDI bean instance cannot be resolved. This can only occur due to implementation
+ errors.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+private static class UnresolvedInstanceException extends PublishableRuntimeException {
+
+@java.io.Serial
+private static final long serialVersionUID = 7274928374928374907L;
+
+/**
+ Construct with the {@code Throwable}.
+
+ @param cause the {@code Throwable} for maintainer.
+ @throws NullPointerException if {@code cause} is {@code null}
+ @since 3.0.0
+ */
+public UnresolvedInstanceException(Throwable cause) {
+    super(Objects.requireNonNull(cause));
+}
+
 }
 
 }
