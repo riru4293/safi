@@ -31,7 +31,7 @@ import jakarta.inject.Provider;
 import java.lang.annotation.Annotation;
 import java.util.Objects;
 import java.util.stream.Stream;
-import jp.mydns.projectk.safi.PublishableRuntimeException;
+import jp.mydns.projectk.safi.UnresolvedInstanceException;
 
 /**
  Utilities for Jakarta Contexts and Dependency Injection.
@@ -59,7 +59,7 @@ private CdiUtils() {
  @param pvd the {@code Provider}
  @return instance of {@code T}
  @throws NullPointerException if {@code pvd} is {@code null}
- @throws PublishableRuntimeException if {@code pvd} is not resolvable
+ @throws UnresolvedInstanceException if instance of {@code pvd} is not resolvable
  @since 3.0.0
  */
 public static <T> T requireResolvable(Provider<T> pvd) {
@@ -81,7 +81,7 @@ public static <T> T requireResolvable(Provider<T> pvd) {
  @return the child <code>Instance</code>
  @throws NullPointerException if any argument is {@code null} or if contains {@code null} in
  {@code qualifiers}.
- @throws PublishableRuntimeException if passed two instances of the same non repeating qualifier
+ @throws UnresolvedInstanceException if passed two instances of the same non repeating qualifier
  type, or an instance of an annotation that is not a qualifier type.
  @throws IllegalStateException if the CDI container is already shutdown.
  @since 3.0.0
@@ -106,43 +106,17 @@ public static <T> Instance<T> getInstance(Class<T> clazz, Annotation... qualifie
  @return instance of {@code T}.
  @throws NullPointerException if any argument is {@code null} or if contains {@code null} in
  {@code qualifiers}.
- @throws PublishableRuntimeException if can't get a unique instance
+ @throws UnresolvedInstanceException if can't get a unique instance
  @since 3.0.0
  */
 public static <T> T get(Class<T> clazz, Annotation... qualifiers) {
     try {
         return getInstance(clazz, qualifiers).get();
-    } catch (NullPointerException | PublishableRuntimeException ex) {
+    } catch (NullPointerException | UnresolvedInstanceException ex) {
         throw ex;
     } catch (RuntimeException ex) {
         throw new UnresolvedInstanceException(ex);
     }
-}
-
-/**
- Exception where a CDI bean instance cannot be resolved. This can only occur due to implementation
- errors.
-
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-private static class UnresolvedInstanceException extends PublishableRuntimeException {
-
-@java.io.Serial
-private static final long serialVersionUID = 7274928374928374907L;
-
-/**
- Construct with the {@code Throwable}.
-
- @param cause the {@code Throwable} for maintainer.
- @throws NullPointerException if {@code cause} is {@code null}
- @since 3.0.0
- */
-public UnresolvedInstanceException(Throwable cause) {
-    super(Objects.requireNonNull(cause));
-}
-
 }
 
 }
