@@ -26,35 +26,35 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * Kind of the <i>Schedule trigger configuration</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Kind of the <i>Schedule trigger configuration</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public enum ScheduleTriggerKing {
-    /**
-     * Execute on a specified day in specified months.
-     *
-     * @since 3.0.0
-     */
-    DAYS,
-    /**
-     * Execute on a specified weekday in specified months and week numbers.
-     *
-     * @since 3.0.0
-     */
-    WEEKDAYS,
-    /**
-     * Execute once at a specified date and time.
-     *
-     * @since 3.0.0
-     */
-    ONCE,
-    /**
-     * Cancel scheduling of the same job definition id within a specified duration.
-     *
-     * @since 3.0.0
-     */
-    CANCEL
+/**
+ Execute on a specified day in specified months.
+
+ @since 3.0.0
+ */
+DAYS,
+/**
+ Execute on a specified weekday in specified months and week numbers.
+
+ @since 3.0.0
+ */
+WEEKDAYS,
+/**
+ Execute once at a specified date and time.
+
+ @since 3.0.0
+ */
+ONCE,
+/**
+ Cancel scheduling of the same job definition id within a specified duration.
+
+ @since 3.0.0
+ */
+CANCEL
 }

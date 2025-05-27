@@ -26,41 +26,41 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * Status of the <i>Job</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Status of the <i>Job</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public enum JobStatus {
-    /**
-     * Indicates that the job run is scheduled.
-     *
-     * @since 3.0.0
-     */
-    SCHEDULE,
-    /**
-     * Indicates that the job is now running.
-     *
-     * @since 3.0.0
-     */
-    RUNNING,
-    /**
-     * Indicates that job execution has been aborted.
-     *
-     * @since 3.0.0
-     */
-    ABORT,
-    /**
-     * Indicates that the job execution ended normally.
-     *
-     * @since 3.0.0
-     */
-    SUCCESS,
-    /**
-     * Indicates that job execution ended abnormally.
-     *
-     * @since 3.0.0
-     */
-    FAILURE,
+/**
+ Indicates that the job run is scheduled.
+
+ @since 3.0.0
+ */
+SCHEDULE,
+/**
+ Indicates that the job is now running.
+
+ @since 3.0.0
+ */
+RUNNING,
+/**
+ Indicates that job execution has been aborted.
+
+ @since 3.0.0
+ */
+ABORT,
+/**
+ Indicates that the job execution ended normally.
+
+ @since 3.0.0
+ */
+SUCCESS,
+/**
+ Indicates that job execution ended abnormally.
+
+ @since 3.0.0
+ */
+FAILURE,
 }

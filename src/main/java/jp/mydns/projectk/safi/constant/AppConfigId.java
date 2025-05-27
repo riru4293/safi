@@ -26,18 +26,11 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * Id of the <i>Application Configuration</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Id of the <i>Application Configuration</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public enum AppConfigId {
-    /**
-     * The current time for this application. Value format is YYYY-MM-DDTHH:MM:SS. It timezone is UTC. If value is null
-     * it means current time in real world.
-     *
-     * @since 3.0.0
-     */
-    NOW
 }

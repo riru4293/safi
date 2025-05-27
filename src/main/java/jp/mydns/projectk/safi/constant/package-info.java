@@ -24,10 +24,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Constant value.
- * 
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Constant value.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 package jp.mydns.projectk.safi.constant;

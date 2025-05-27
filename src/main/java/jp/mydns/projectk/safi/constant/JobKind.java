@@ -26,34 +26,34 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * Kind of the <i>Job</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Kind of the <i>Job</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public enum JobKind {
-    /**
-     * Represents the contents import processing. Import process is the processing of registering contents from external
-     * sources into the database.
-     *
-     * @since 3.0.0
-     */
-    IMPORT,
-    /**
-     * Represents the contents export processing. Export process is the processing of exporting content stored in the
-     * database to externally.
-     *
-     * @since 3.0.0
-     */
-    EXPORT,
-    /**
-     * Represents the contents rebuild and archive processing. Rebuild process is the processing of rebuilding the
-     * content stored in the database with current information. Current information includes the current date and time,
-     * etc. Archive process is the processing of physically deleting old content. It will be exported externally before
-     * being deleted.
-     *
-     * @since 3.0.0
-     */
-    REBUILD,
+/**
+ Represents the contents import processing. Import process is the processing of registering contents
+ from external sources into the database.
+
+ @since 3.0.0
+ */
+IMPORT,
+/**
+ Represents the contents export processing. Export process is the processing of exporting content
+ stored in the database to externally.
+
+ @since 3.0.0
+ */
+EXPORT,
+/**
+ Represents the contents rebuild and archive processing. Rebuild process is the processing of
+ rebuilding the content stored in the database with current information. Current information
+ includes the current date and time, etc. Archive process is the processing of physically deleting
+ old content. It will be exported externally before being deleted.
+
+ @since 3.0.0
+ */
+REBUILD,
 }
