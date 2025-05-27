@@ -26,17 +26,15 @@
 package jp.mydns.projectk.safi.dao;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
 import jakarta.persistence.TransactionRequiredException;
 import java.util.Objects;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.entity.CommonEntity;
-import jp.mydns.projectk.safi.util.CdiUtils;
 
 /**
  Common processing of data access using JPA.
@@ -50,13 +48,13 @@ public interface CommonDao {
 /**
  Make an {@code entity} managed and persistent.
 
- @param <T> entity type
- @param entity an any entity
- @return entity that persisted
- @throws NullPointerException if {@code entity} is {@code null}
- @throws EntityExistsException if the entity already exists
- @throws IllegalArgumentException if the instance is not an entity
- @throws TransactionRequiredException if there is no transaction
+ @param <T> entity type.
+ @param entity an any entity.
+ @return entity that persisted.
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws EntityExistsException if the {@code entity} already exists.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 <T> T persist(T entity);
@@ -64,12 +62,12 @@ public interface CommonDao {
 /**
  Make an {@code entity} merge.
 
- @param <T> entity type
- @param entity an any entity
- @return entity that persisted
- @throws NullPointerException if {@code entity} is {@code null}
- @throws IllegalArgumentException if the instance is not an entity
- @throws TransactionRequiredException if there is no transaction
+ @param <T> entity type.
+ @param entity an any entity.
+ @return entity that merged.
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 <T> T merge(T entity);
@@ -78,12 +76,12 @@ public interface CommonDao {
  Make an {@code entity} remove. If the entity is not managed by the entity manager, make it managed
  first.
 
- @param <T> entity type
- @param entity an any entity
- @return entity that to be removed
- @throws NullPointerException if {@code entity} is {@code null}
- @throws PersistenceException if failed remove
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @param <T> entity type.
+ @param entity an any entity.
+ @return entity that to be removed.
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 <T> T remove(T entity);
@@ -91,9 +89,8 @@ public interface CommonDao {
 /**
  Synchronize the persistence context to the underlying database.
 
- @throws TransactionRequiredException if there is no transaction
- @throws PersistenceException if the flush fails
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws TransactionRequiredException if there is no transaction.
+ @throws PersistenceException if the flush fails. bug.
  @since 3.0.0
  */
 void flush();
@@ -102,7 +99,6 @@ void flush();
  Clear the persistence context, causing all managed entities to become detached. Changes made to
  entities that have not been flushed to the database will not be persisted.
 
- @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 void clear();
@@ -110,14 +106,13 @@ void clear();
 /**
  Make an {@code entity} persistent or merge. Persist if version is less than 1, merge otherwise.
 
- @param <T> entity type
- @param entity an any entity
- @return entity that persisted or merged
- @throws NullPointerException if {@code entity} is {@code null}
- @throws EntityExistsException if the entity already exists when persist
- @throws IllegalArgumentException if the instance is not an entity
- @throws TransactionRequiredException if there is no transaction
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @param <T> entity type.
+ @param entity an any entity.
+ @return entity that persisted or merged.
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws EntityExistsException if the {@code entity} already exists.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 <T extends CommonEntity> T persistOrMerge(T entity);
@@ -125,12 +120,12 @@ void clear();
 /**
  Call both the {@link #persist} and the {@link #flush}.
 
- @param <T> entity type
- @param entity an any entity
- @return entity that persisted
- @throws NullPointerException if {@code entity} is {@code null}
- @throws PersistenceException if failed persist or flush
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @param <T> entity type.
+ @param entity an any entity.
+ @return entity that persisted.
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws EntityExistsException if the {@code entity} already exists.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
  @since 3.0.0
  */
 <T> T persistAndflush(T entity);
@@ -138,8 +133,8 @@ void clear();
 /**
  Call both the {@link #flush} and the {@link #clear}.
 
- @throws PersistenceException if failed flush
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws PersistenceException if failed flush.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 void flushAndClear();
@@ -155,91 +150,86 @@ void flushAndClear();
 @ApplicationScoped
 class Impl implements CommonDao {
 
-private final Instance<EntityManager> emInst;
+private final Provider<EntityManager> emPvd;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(Instance<EntityManager> emInst) {
-    this.emInst = emInst;
+Impl(Provider<EntityManager> emPvd) {
+    this.emPvd = emPvd;
 }
 
 /**
  {@inheritDoc}
 
- @throws NullPointerException if {@code entity} is {@code null}
- @throws EntityExistsException if the entity already exists
- @throws IllegalArgumentException if the instance is not an entity
- @throws TransactionRequiredException if there is no transaction
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws EntityExistsException if the {@code entity} already exists.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
+ @throws TransactionRequiredException if there is no transaction. bug.
  @since 3.0.0
  */
 @Override
 public <T> T persist(T entity) {
-    getEntityManager().persist(Objects.requireNonNull(entity));
+    emPvd.get().persist(Objects.requireNonNull(entity));
     return entity;
 }
 
 /**
  {@inheritDoc}
 
- @throws NullPointerException if {@code entity} is {@code null}
- @throws IllegalArgumentException if the instance is not an entity
- @throws TransactionRequiredException if there is no transaction
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 @Override
 public <T> T merge(T entity) {
-    EntityManager em = getEntityManager();
+    EntityManager em = emPvd.get();
     return !em.contains(Objects.requireNonNull(entity)) ? em.merge(entity) : entity;
 }
 
 /**
  {@inheritDoc}
 
- @throws TransactionRequiredException if there is no transaction
- @throws PersistenceException if the flush fails
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws TransactionRequiredException if there is no transaction.
+ @throws PersistenceException if the flush fails.
  @since 3.0.0
  */
 @Override
 public void flush() {
-    getEntityManager().flush();
+    emPvd.get().flush();
 }
 
 /**
  {@inheritDoc}
 
- @throws PublishableIllegalStateException if dependent instance can not resolvable
  @since 3.0.0
  */
 @Override
 public void clear() {
-    getEntityManager().clear();
+    emPvd.get().clear();
 }
 
 /**
  {@inheritDoc}
 
- @throws NullPointerException if {@code entity} is {@code null}
- @throws PersistenceException if failed remove
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 @Override
 public <T> T remove(T entity) {
-    getEntityManager().remove(merge(entity));
+    emPvd.get().remove(merge(entity));
     return entity;
 }
 
 /**
  {@inheritDoc}
 
- @throws NullPointerException if {@code entity} is {@code null}
- @throws EntityExistsException if the entity already exists when persist
- @throws IllegalArgumentException if the instance is not an entity
- @throws TransactionRequiredException if there is no transaction
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws EntityExistsException if the {@code entity} already exists.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 @Override
@@ -250,9 +240,9 @@ public <T extends CommonEntity> T persistOrMerge(T entity) {
 /**
  {@inheritDoc}
 
- @throws NullPointerException if {@code entity} is {@code null}
- @throws PersistenceException if failed persist or flush
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws EntityExistsException if the {@code entity} already exists.
+ @throws IllegalArgumentException if the {@code entity} is not an entity.
  @since 3.0.0
  */
 @Override
@@ -265,18 +255,14 @@ public <T> T persistAndflush(T entity) {
 /**
  {@inheritDoc}
 
- @throws PersistenceException if failed flush
- @throws PublishableIllegalStateException if dependent instance can not resolvable
+ @throws PersistenceException if failed flush.
+ @throws TransactionRequiredException if there is no transaction.
  @since 3.0.0
  */
 @Override
 public void flushAndClear() {
     flush();
     clear();
-}
-
-private EntityManager getEntityManager() {
-    return CdiUtils.requireResolvable(emInst);
 }
 
 }

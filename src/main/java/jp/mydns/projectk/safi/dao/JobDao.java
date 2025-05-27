@@ -25,12 +25,17 @@
  */
 package jp.mydns.projectk.safi.dao;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
+import jakarta.persistence.LockTimeoutException;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.PessimisticLockException;
+import jakarta.persistence.QueryTimeoutException;
+import jakarta.persistence.TransactionRequiredException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -40,10 +45,10 @@ import static jp.mydns.projectk.safi.constant.JobStatus.RUNNING;
 import static jp.mydns.projectk.safi.constant.JobStatus.SCHEDULE;
 import jp.mydns.projectk.safi.entity.JobEntity;
 import jp.mydns.projectk.safi.entity.JobEntity_;
-import jp.mydns.projectk.safi.service.RealTimeService;
+import jp.mydns.projectk.safi.service.TimeService;
 
 /**
- Data access for <i>Job</i>.
+ <i>Job</i> data access processing.
 
  @author riru
  @version 3.0.0
@@ -55,7 +60,12 @@ public interface JobDao {
  Lock the all schedule jobs and all running jobs. The sort order is by schedule time.
 
  @return all runnable and all running jobs
- @throws PersistenceException if the query execution was failed
+ @throws QueryTimeoutException if the query execution exceeds the query timeout value set and only
+ the statement is rolled back.
+ @throws TransactionRequiredException if there is no transaction.
+ @throws PessimisticLockException if pessimistic locking fails and the transaction is rolled back.
+ @throws LockTimeoutException if pessimistic locking fails and only the statement is rolled back.
+ @throws PersistenceException if the query execution was failed.
  @since 3.0.0
  */
 Stream<JobEntity> lockActiveJobs();
@@ -68,43 +78,52 @@ Stream<JobEntity> lockActiveJobs();
  @since 3.0.0
  */
 @Typed(JobDao.class)
-@RequestScoped
+@ApplicationScoped
 class Impl implements JobDao {
 
-private final EntityManager em;
-private final RealTimeService realTimeSvc;
+private final Provider<EntityManager> emPvd;
+private final TimeService timeSvc;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(EntityManager em, RealTimeService realTimeSvc) {
-    this.em = em;
-    this.realTimeSvc = realTimeSvc;
+Impl(Provider<EntityManager> emPvd, TimeService timeSvc) {
+    this.emPvd = emPvd;
+    this.timeSvc = timeSvc;
 }
 
 /**
  {@inheritDoc}
 
- @throws PersistenceException if the query execution was failed
+ @throws QueryTimeoutException if the query execution exceeds the query timeout value set and only
+ the statement is rolled back.
+ @throws TransactionRequiredException if there is no transaction.
+ @throws PessimisticLockException if pessimistic locking fails and the transaction is rolled back.
+ @throws LockTimeoutException if pessimistic locking fails and only the statement is rolled back.
+ @throws PersistenceException if the query execution was failed.
  @since 3.0.0
  */
 @Override
 public Stream<JobEntity> lockActiveJobs() {
 
+    EntityManager em = emPvd.get();
+
     CriteriaBuilder cb = em.getCriteriaBuilder();
 
     CriteriaQuery<JobEntity> cq = cb.createQuery(JobEntity.class);
 
-    Root<JobEntity> jobEntity = cq.from(JobEntity.class);
+    Root<JobEntity> job = cq.from(JobEntity.class);
 
-    Predicate onlyActive = jobEntity.get(JobEntity_.status).in(SCHEDULE, RUNNING);
+    Predicate onlyActive = job.get(JobEntity_.status).in(SCHEDULE, RUNNING);
 
-    Predicate isRunnable = cb.lessThanOrEqualTo(jobEntity.get(JobEntity_.scheduleTime),
-        realTimeSvc.getLocalNow());
+    Predicate isRunnable = cb.lessThanOrEqualTo(job.get(JobEntity_.scheduleTime),
+        timeSvc.getLocalNow());
 
-    return em.createQuery(cq.where(onlyActive, isRunnable).orderBy(
-        cb.asc(jobEntity.get(JobEntity_.scheduleTime)),
-        cb.asc(jobEntity.get(JobEntity_.id)))
-    ).setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultStream();
+    return em.createQuery(cq.where(onlyActive, isRunnable)
+        .orderBy(
+            cb.asc(job.get(JobEntity_.scheduleTime)),
+            cb.asc(job.get(JobEntity_.id))
+        ))
+        .setLockMode(LockModeType.PESSIMISTIC_WRITE).getResultStream();
 }
 
 }
