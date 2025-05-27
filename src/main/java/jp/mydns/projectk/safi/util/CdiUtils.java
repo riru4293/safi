@@ -27,11 +27,8 @@ package jp.mydns.projectk.safi.util;
 
 import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
-import jakarta.inject.Provider;
 import java.lang.annotation.Annotation;
 import java.util.Objects;
-import java.util.stream.Stream;
-import jp.mydns.projectk.safi.UnresolvedInstanceException;
 
 /**
  Utilities for Jakarta Contexts and Dependency Injection.
@@ -52,49 +49,20 @@ private CdiUtils() {
 }
 
 /**
- Validate the {@code Provider} to see if there is exactly one bean that matches the required type
- and qualifiers.
-
- @param <T> the required bean type
- @param pvd the {@code Provider}
- @return instance of {@code T}
- @throws NullPointerException if {@code pvd} is {@code null}
- @throws UnresolvedInstanceException if instance of {@code pvd} is not resolvable
- @since 3.0.0
- */
-public static <T> T requireResolvable(Provider<T> pvd) {
-    Objects.requireNonNull(pvd);
-
-    try {
-        return pvd.get();
-    } catch (RuntimeException ex) {
-        throw new UnresolvedInstanceException(ex);
-    }
-}
-
-/**
  Obtains a child Instance for the given additional required qualifiers.
 
  @param <T> the required type.
  @param clazz a {@link java.lang.Class} representing the required type.
  @param qualifiers the additional required qualifiers.
  @return the child <code>Instance</code>
- @throws NullPointerException if any argument is {@code null} or if contains {@code null} in
- {@code qualifiers}.
- @throws UnresolvedInstanceException if passed two instances of the same non repeating qualifier
- type, or an instance of an annotation that is not a qualifier type.
+ @throws NullPointerException if any argument is {@code null}.
+ @throws IllegalArgumentException if passed two instances of the same non repeating qualifier type,
+ or an instance of an annotation that is not a qualifier type.
  @throws IllegalStateException if the CDI container is already shutdown.
  @since 3.0.0
  */
 public static <T> Instance<T> getInstance(Class<T> clazz, Annotation... qualifiers) {
-    Objects.requireNonNull(clazz);
-    Stream.of(Objects.requireNonNull(qualifiers)).forEach(Objects::requireNonNull);
-
-    try {
-        return CDI.current().select(clazz, qualifiers);
-    } catch (IllegalArgumentException | IllegalStateException ex) {
-        throw new UnresolvedInstanceException(ex);
-    }
+    return CDI.current().select(Objects.requireNonNull(clazz), Objects.requireNonNull(qualifiers));
 }
 
 /**
@@ -104,19 +72,17 @@ public static <T> Instance<T> getInstance(Class<T> clazz, Annotation... qualifie
  @param clazz a {@link java.lang.Class} representing the required type.
  @param qualifiers the additional required qualifiers.
  @return instance of {@code T}.
- @throws NullPointerException if any argument is {@code null} or if contains {@code null} in
- {@code qualifiers}.
- @throws UnresolvedInstanceException if can't get a unique instance
+ @throws NullPointerException if any argument is {@code null}.
+ @throws IllegalArgumentException if passed two instances of the same non repeating qualifier type,
+ or an instance of an annotation that is not a qualifier type.
+ @throws IllegalStateException if the CDI container is already shutdown.
+ @throws RuntimeException if the injector detects an error while providing the instance. The caller
+ should not attempt to handle such an exception, as this is most likely due to an implementation
+ bug.
  @since 3.0.0
  */
 public static <T> T get(Class<T> clazz, Annotation... qualifiers) {
-    try {
-        return getInstance(clazz, qualifiers).get();
-    } catch (NullPointerException | UnresolvedInstanceException ex) {
-        throw ex;
-    } catch (RuntimeException ex) {
-        throw new UnresolvedInstanceException(ex);
-    }
+    return getInstance(clazz, qualifiers).get();
 }
 
 }
