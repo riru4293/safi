@@ -26,19 +26,18 @@
 package jp.mydns.projectk.safi.entity.listener;
 
 import jakarta.enterprise.context.Dependent;
-import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import jp.mydns.projectk.safi.entity.CommonEntity;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
-import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 
 /**
- Update <i>JPA</i> entity footer values in the {@link CommonEntity} when prePersist and preUpdate.
+ Update <i>JPA</i> entity footer values in the {@link CommonEntity} when previous persist and
+ previous update.
 
  @author riru
  @version 3.0.0
@@ -51,9 +50,6 @@ public interface EntityFooterUpdater {
 
  @param entity the {@code CommonEntity}
  @throws NullPointerException if {@code entity} is {@code null}
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 void insert(CommonEntity entity);
@@ -63,9 +59,6 @@ void insert(CommonEntity entity);
 
  @param entity the {@code CommonEntity}
  @throws NullPointerException if {@code entity} is {@code null}
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 void update(CommonEntity entity);
@@ -82,21 +75,18 @@ void update(CommonEntity entity);
 class Impl implements EntityFooterUpdater {
 
 // Note: Obtaining the request scoped CDI bean via Instance.
-private final Instance<Context> ctxInst;
+private final Provider<Context> ctxPvd;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(Instance<Context> ctxInst) {
-    this.ctxInst = ctxInst;
+Impl(Provider<Context> ctxPvd) {
+    this.ctxPvd = ctxPvd;
 }
 
 /**
  {@inheritDoc}
 
  @throws NullPointerException if {@code entity} is {@code null}
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 @Override
@@ -104,7 +94,7 @@ Impl(Instance<Context> ctxInst) {
 public void insert(CommonEntity entity) {
     Objects.requireNonNull(entity);
 
-    Context ctx = requireResolvable(ctxInst);
+    Context ctx = ctxPvd.get();
 
     entity.setRegTime(ctx.getUtcNow());
     entity.setRegId(ctx.getAccountId());
@@ -116,9 +106,6 @@ public void insert(CommonEntity entity) {
 
  @param entity the {@code CommonEntity}
  @throws NullPointerException if {@code entity} is {@code null}
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 @Override
@@ -126,7 +113,7 @@ public void insert(CommonEntity entity) {
 public void update(CommonEntity entity) {
     Objects.requireNonNull(entity);
 
-    Context ctx = requireResolvable(ctxInst);
+    Context ctx = ctxPvd.get();
 
     entity.setUpdTime(ctx.getUtcNow());
     entity.setUpdId(ctx.getAccountId());
