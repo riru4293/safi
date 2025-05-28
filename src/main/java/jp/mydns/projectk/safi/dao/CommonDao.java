@@ -90,7 +90,7 @@ public interface CommonDao {
  Synchronize the persistence context to the underlying database.
 
  @throws TransactionRequiredException if there is no transaction.
- @throws PersistenceException if the flush fails. bug.
+ @throws PersistenceException if the flush fails.
  @since 3.0.0
  */
 void flush();

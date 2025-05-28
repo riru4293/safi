@@ -52,8 +52,8 @@ public interface AppConfigDao {
 /**
  Get an application configuration.
 
- @param id the {@code AppConfigId}
- @return application configuration entity
+ @param id the {@code AppConfigId}.
+ @return application configuration entity.
  @throws PersistenceException if the query execution was failed.
  @throws QueryTimeoutException if the query execution exceeds the query timeout value set and only
  the statement is rolled back.
@@ -96,7 +96,7 @@ Impl(Provider<EntityManager> emPvd) {
 public Optional<AppConfigEntity> getAppConfig(AppConfigId id) {
     EntityManager em = emPvd.get();
 
-    CriteriaBuilder cb = em.getCriteriaBuilder();//IllegalStateException - if the entity manager has been closed
+    CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<AppConfigEntity> cq = cb.createQuery(AppConfigEntity.class);
 
     Root<AppConfigEntity> appConf = cq.from(AppConfigEntity.class);
