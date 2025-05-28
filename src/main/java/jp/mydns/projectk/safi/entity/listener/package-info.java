@@ -24,10 +24,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Jakarta JPA Entity Listener.
- * 
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Jakarta JPA Entity Listener.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 package jp.mydns.projectk.safi.entity.listener;
