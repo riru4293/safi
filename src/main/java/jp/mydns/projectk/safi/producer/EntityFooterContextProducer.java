@@ -25,13 +25,15 @@
  */
 package jp.mydns.projectk.safi.producer;
 
+import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import jp.mydns.projectk.safi.service.RealTimeService;
+import jp.mydns.projectk.safi.service.TimeService;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.entity.listener.EntityFooterUpdater;
 
@@ -60,17 +62,17 @@ EntityFooterUpdater.Context produce();
  @since 3.0.0
  */
 @Typed(EntityFooterContextProducer.class)
-@RequestScoped
+@Dependent
 class Impl implements EntityFooterContextProducer {
 
-private final RequestContext reqCtx;
-private final RealTimeService realTimeSvc;
+private final Provider<RequestContext> reqCtxPvd;
+private final TimeService timeSvc;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(RequestContext reqCtx, RealTimeService realTimeSvc) {
-    this.reqCtx = Objects.requireNonNull(reqCtx);
-    this.realTimeSvc = Objects.requireNonNull(realTimeSvc);
+Impl(Provider<RequestContext> reqCtxPvd, TimeService timeSvc) {
+    this.reqCtxPvd = Objects.requireNonNull(reqCtxPvd);
+    this.timeSvc = Objects.requireNonNull(timeSvc);
 }
 
 /**
@@ -89,17 +91,17 @@ private class ContextImpl implements EntityFooterUpdater.Context {
 
 @Override
 public LocalDateTime getUtcNow() {
-    return realTimeSvc.getLocalNow();
+    return timeSvc.getLocalNow();
 }
 
 @Override
 public String getAccountId() {
-    return reqCtx.getAccountId();
+    return reqCtxPvd.get().getAccountId();
 }
 
 @Override
 public String getProcessName() {
-    return reqCtx.getProcessName();
+    return reqCtxPvd.get().getProcessName();
 }
 
 @Override

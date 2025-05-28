@@ -32,7 +32,7 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import jp.mydns.projectk.safi.service.ValidationService.SafiValidator;
+import jp.mydns.projectk.safi.SafiLimited;
 
 /**
  Producer of the {@link Validator}. Instances are created per requests.
@@ -65,7 +65,7 @@ class Impl implements ValidatorProducer {
 private final ValidatorFactory vf;
 
 @Inject
-protected Impl(ValidatorFactory vf) {
+protected Impl(@SafiLimited ValidatorFactory vf) {
     this.vf = vf;
 }
 
@@ -75,7 +75,7 @@ protected Impl(ValidatorFactory vf) {
  @since 3.0.0
  */
 @Produces
-@SafiValidator
+@SafiLimited
 @RequestScoped
 @Override
 public Validator produce() {

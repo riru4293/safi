@@ -32,6 +32,7 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.enterprise.inject.Typed;
 import jakarta.validation.Validation;
 import jakarta.validation.ValidatorFactory;
+import jp.mydns.projectk.safi.SafiLimited;
 
 /**
  Producer of the {@link ValidatorFactory}. Instances are created only once, reducing construction
@@ -80,6 +81,7 @@ Impl() {
  @since 3.0.0
  */
 @Produces
+@SafiLimited
 @ApplicationScoped
 @Override
 public ValidatorFactory produce() {
@@ -92,7 +94,7 @@ public ValidatorFactory produce() {
  @since 3.0.0
  */
 @Override
-public void close(@Disposes ValidatorFactory vf) {
+public void close(@Disposes @SafiLimited ValidatorFactory vf) {
     vf.close();
 }
 
