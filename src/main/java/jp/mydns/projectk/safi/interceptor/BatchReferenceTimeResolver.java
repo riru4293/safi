@@ -32,87 +32,84 @@ import jakarta.inject.Provider;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-import java.lang.reflect.Method;
-import java.util.Optional;
-import static java.util.function.Predicate.not;
+import java.time.LocalDateTime;
 import jp.mydns.projectk.safi.batch.BatchProcessName;
-import static jp.mydns.projectk.safi.util.LambdaUtils.c;
+import jp.mydns.projectk.safi.service.TimeService;
 import jp.mydns.projectk.safi.value.RequestContext;
-import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- Extract process name from the {@link BatchProcessName} annotation and stores to the
- {@link RequestContext}.
+ Resolve a reference time per batch process and stores to the {@link RequestContext}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface BatchProcessNameExtractor {
+public interface BatchReferenceTimeResolver {
 
 /**
- Implements of the {@code BatchProcessNameExtractor}.
+ Implements of the {@code BatchReferenceTimeResolver}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
 @Interceptor
-@Priority(Interceptor.Priority.APPLICATION)
+@Priority(Interceptor.Priority.APPLICATION - 100)
 @BatchProcessName
-class Impl implements BatchProcessNameExtractor {
+class Impl implements BatchReferenceTimeResolver {
 
 private static final Logger log = LoggerFactory.getLogger(Impl.class);
 
 // Note: It is CDI Bean. Obtaining the request scoped CDI bean via Provider.
 private final Provider<ContextImpl> ctxPvd;
+private final TimeService timeSvc;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(Provider<ContextImpl> ctxPvd) {
+Impl(Provider<ContextImpl> ctxPvd, TimeService timeSvc) {
     this.ctxPvd = ctxPvd;
+    this.timeSvc = timeSvc;
 }
 
 /**
- Extract and store the batch process name.
+ Resolve and store a reference time per batch process.
 
- @param ic the {@code InvocationContext}
- @return the return value of the intercepted method. processing.
+ @param ic the {@code InvocationContext}. It no use.
+ @return the return value of the intercepted method.
  @throws Exception the exception thrown by the intercepted method.
  @since 3.0.0
  */
 @AroundInvoke
 public Object invoke(InvocationContext ic) throws Exception {
 
-    Optional.ofNullable(ic.getMethod())
-        .map(f(Method::getAnnotation, BatchProcessName.class))
-        .map(BatchProcessName::value)
-        .filter(not(String::isBlank))
-        .ifPresent(c(ctxPvd.get()::setValue)
-            .andThen(n -> log.debug("Process name is {}.", n)));
+    LocalDateTime refTime = timeSvc.getSafiTime();
+
+    ctxPvd.get().setValue(refTime);
+
+    log.debug("Reference time is {}.", refTime);
 
     return ic.proceed();
 }
 
 @RequestScoped
-static class ContextImpl implements RequestContext.BatchProcessNameContext {
+static class ContextImpl implements RequestContext.BatchReferenceTimeContext {
 
-private String value = null;
+private LocalDateTime value = null;
 
 @Override
-public String getValue() {
+public LocalDateTime getValue() {
     return value;
 }
 
-void setValue(String value) {
+void setValue(LocalDateTime value) {
     this.value = value;
 }
 
 @Override
 public String toString() {
-    return "BatchProcessNameContext{" + "value=" + value + '}';
+    return "BatchReferenceTimeContext{" + "value=" + value + '}';
 }
 
 }
