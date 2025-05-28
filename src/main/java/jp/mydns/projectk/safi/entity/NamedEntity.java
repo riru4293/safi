@@ -34,64 +34,65 @@ import jakarta.validation.constraints.Size;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 
 /**
- * Common named values JPA entity. This class has name and validity period.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Common named values JPA entity. This class has name and validity period.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @MappedSuperclass
 public abstract class NamedEntity extends CommonEntity {
 
-    @java.io.Serial
-    private static final long serialVersionUID = -6229000110509598422L;
+@java.io.Serial
+private static final long serialVersionUID = -6229000110509598422L;
 
-    @Column(name = "name", length = 250)
-    protected String name;
+@Column(name = "name", length = 250)
+protected String name;
 
-    @Embedded
-    protected ValidityPeriodEmb validityPeriod;
+@Embedded
+protected ValidityPeriodEmb validityPeriod;
 
-    /**
-     * Get name of value.
-     *
-     * @return name of value. It may be {@code null}.
-     * @since 3.0.0
-     */
-    @Size(max = 250)
-    public String getName() {
-        return name;
-    }
+/**
+ Get name of value.
 
-    /**
-     * Set name of value.
-     *
-     * @param name name of value. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
+ @return name of value. It may be {@code null}.
+ @since 3.0.0
+ */
+@Size(max = 250)
+public String getName() {
+    return name;
+}
 
-    /**
-     * Get the {@code ValidityPeriodEmb}.
-     *
-     * @return the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    @NotNull
-    @Valid
-    public ValidityPeriodEmb getValidityPeriod() {
-        return validityPeriod;
-    }
+/**
+ Set name of value.
 
-    /**
-     * Set the {@code ValidityPeriodEmb}.
-     *
-     * @param validityPeriod the {@code ValidityPeriodEmb}
-     * @since 3.0.0
-     */
-    public void setValidityPeriod(ValidityPeriodEmb validityPeriod) {
-        this.validityPeriod = validityPeriod;
-    }
+ @param name name of value. It can be set {@code null}.
+ @since 3.0.0
+ */
+public void setName(String name) {
+    this.name = name;
+}
+
+/**
+ Get the {@code ValidityPeriodEmb}.
+
+ @return the {@code ValidityPeriodEmb}
+ @since 3.0.0
+ */
+@NotNull
+@Valid
+public ValidityPeriodEmb getValidityPeriod() {
+    return validityPeriod;
+}
+
+/**
+ Set the {@code ValidityPeriodEmb}.
+
+ @param validityPeriod the {@code ValidityPeriodEmb}
+ @since 3.0.0
+ */
+public void setValidityPeriod(ValidityPeriodEmb validityPeriod) {
+    this.validityPeriod = validityPeriod;
+}
+
 }
