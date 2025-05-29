@@ -23,11 +23,31 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+package jp.mydns.projectk.safi.resource.exceptionmapper;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import jakarta.ws.rs.core.Response;
+import java.net.URI;
+import jp.mydns.projectk.safi.resource.ErrorResponseContext;
+
 /**
- Jakarta JAX-RS exception mapper.
+ Factory for unexpected error.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-package jp.mydns.projectk.safi.resource.exceptionmapper;
+@ApplicationScoped
+class UnexpectedErrorResponseFactory {
+
+private static final URI CODE = URI.create(
+    "https://project-k.mydns.jp/safi/errors/internal-error.html");
+private static final String MSG = "Sorry. Illegal internal configuration. Please contact your system administrator.";
+
+Response create() {
+    return Response.serverError().type(APPLICATION_JSON).entity(
+        new ErrorResponseContext.Builder().withCode(CODE).withMessage(MSG).unsafeBuild()).build();
+}
+
+}
