@@ -28,12 +28,13 @@ package jp.mydns.projectk.safi.value;
 import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.Locale;
-import jp.mydns.projectk.safi.PublishableRuntimeException;
 import jp.mydns.projectk.safi.interceptor.BatchProcessNameExtractor;
+import jp.mydns.projectk.safi.interceptor.BatchReferenceTimeResolver;
 import jp.mydns.projectk.safi.producer.RequestContextProducer;
 import jp.mydns.projectk.safi.resource.filter.LocaleExtractor;
 import jp.mydns.projectk.safi.resource.filter.RestApiPathExtractor;
 import jp.mydns.projectk.safi.resource.filter.RestApiProcessNameExtractor;
+import jp.mydns.projectk.safi.resource.filter.RestApiReferenceTimeResolver;
 import jp.mydns.projectk.safi.resource.trial.Authenticator;
 
 /**
@@ -58,7 +59,7 @@ public interface RequestContext {
  The returned URI always ends with a slash ({@code /}).
 
  @return the HTTP request path as a {@link URI}. Always ends with {@code /}.
- @throws PublishableRuntimeException if the request path could not be determined—either because the
+ @throws IllegalStateException if the request path could not be determined-either because the
  request is not an HTTP request or the path has not been properly extracted. This indicates an
  implementation defect, and processing should not continue.
  @since 3.0.0

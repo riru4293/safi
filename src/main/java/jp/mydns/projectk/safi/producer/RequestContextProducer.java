@@ -35,7 +35,6 @@ import jakarta.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Objects;
-import jp.mydns.projectk.safi.PublishableRuntimeException;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.value.RequestContext.AccountIdContext;
 import jp.mydns.projectk.safi.value.RequestContext.BatchProcessNameContext;
@@ -147,10 +146,10 @@ public LocalDateTime getReferenceTime() {
 @Override
 public URI getRestApiPath() {
     return Optional.ofNullable(getRawRestApiPath()).orElseThrow(() ->
-        new PublishableRuntimeException(new IllegalStateException(
+        new IllegalStateException(
             "There is no request path to the REST API."
             + " Either it is not an HTTP request or the request path has not been extracted."
-            + " Either way, it is an implementation defect.")));
+            + " Either way, it is an implementation defect."));
 }
 
 @Override
