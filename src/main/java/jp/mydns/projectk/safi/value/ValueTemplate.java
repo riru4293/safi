@@ -29,7 +29,6 @@ import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.util.Objects;
 import jp.mydns.projectk.safi.util.CdiUtils;
-import jp.mydns.projectk.safi.PublishableRuntimeException;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
@@ -86,10 +85,9 @@ public B with(V src) {
  using {@link #build(jakarta.validation.Validator, java.lang.Class...)}.
 
  @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
- @return new inspected instance
- @throws NullPointerException if any argument is {@code null}
- @throws ConstraintViolationException if occurred constraint violations when building
- @throws PublishableRuntimeException if can't get the {@code Validator}
+ @return new inspected instance.
+ @throws NullPointerException if any argument is {@code null}.
+ @throws ConstraintViolationException if occurred constraint violations when building.
  @since 3.0.0
  */
 public V build(Class<?>... groups) {
