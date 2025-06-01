@@ -29,69 +29,88 @@ import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
- * Utilities for date and time.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Utilities for date and time.
+
+ <p>
+ Implementation requirements.
+ <ul>
+ <li>This class has not variable field member and it has all method is static.</li>
+ </ul>
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public class TimeUtils {
 
-    private TimeUtils() {
+private TimeUtils() {
+}
+
+/**
+ Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
+
+ @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
+ @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
+ @since 3.0.0
+ */
+public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
+
+    if (localDateTime == null) {
+        return null;
     }
 
-    /**
-     * Exchange to {@code OffsetDateTime} from {@code LocalDateTime} in UTC.
-     *
-     * @param localDateTime the {@code LocalDateTime} in UTC. It can be set {@code null}.
-     * @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
-     * @since 3.0.0
-     */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
+    return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
+}
 
-        if (localDateTime == null) {
-            return null;
-        }
+/**
+ Parse to the {@code LocalDateTime}.
 
-        return OffsetDateTime.of(localDateTime, ZoneOffset.UTC);
+ @param localDateTime string representation of the {@code LocalDateTime}
+ @return the {@code LocalDateTime}
+ @throws NullPointerException if {@code localDateTime} is {@code null}
+ @throws DateTimeException if failed parse to the {@code LocalDateTime}
+ @since 3.0.0
+ */
+public static LocalDateTime toLocalDateTime(String localDateTime) {
+    return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
+}
+
+/**
+ Exchange to the {@code LocalDateTime}. It time zone is UTC.
+
+ @param offsetDateTime the {@code OffsetDateTime}. It can be set {@code null}.
+ @return the {@code LocalDateTime}. {@code null} if {@code offsetDateTime} is {@code null}.
+ @throws DateTimeException if the result exceeds the supported date range
+ @since 3.0.0
+ */
+public static LocalDateTime toLocalDateTime(OffsetDateTime offsetDateTime) {
+    if (offsetDateTime == null) {
+        return null;
     }
 
-    /**
-     * Parse to the {@code LocalDateTime}.
-     *
-     * @param localDateTime string representation of the {@code LocalDateTime}
-     * @return the {@code LocalDateTime}
-     * @throws NullPointerException if {@code localDateTime} is {@code null}
-     * @throws DateTimeException if failed parse to the {@code LocalDateTime}
-     * @since 3.0.0
-     */
-    public static LocalDateTime toLocalDateTime(String localDateTime) {
-        return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
-    }
+    return offsetDateTime.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime();
+}
 
-    /**
-     * Exchange to the {@code LocalDateTime}. It time zone is UTC.
-     *
-     * @param offsetDateTime the {@code OffsetDateTime}. It can be set {@code null}.
-     * @return the {@code LocalDateTime}. {@code null} if {@code offsetDateTime} is {@code null}.
-     * @throws DateTimeException if the result exceeds the supported date range
-     * @since 3.0.0
-     */
-    public static LocalDateTime toLocalDateTime(OffsetDateTime offsetDateTime) {
-        if (offsetDateTime == null) {
-            return null;
-        }
+/**
+ Try parse to the {@code LocalDateTime}.
 
-        return offsetDateTime.withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime();
+ @param localDateTime string representation of the {@code LocalDateTime}
+ @return the {@code LocalDateTime}. Empty if failed parse to the {@code LocalDateTime}.
+ @see DateTimeFormatter#ISO_LOCAL_DATE_TIME
+ @since 3.0.0
+ */
+public static Optional<LocalDateTime> tryToLocalDateTime(String localDateTime) {
+    try {
+        return Optional.of(toLocalDateTime(localDateTime));
+    } catch (RuntimeException ignore) {
+        return Optional.empty();
     }
+}
+
 }
