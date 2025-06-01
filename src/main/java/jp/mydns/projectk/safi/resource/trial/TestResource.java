@@ -112,7 +112,7 @@ public JobValue getJob() {
 @Transactional
 @RestApiProcessName("DRE")
 public String getPath() {
-    svc.test();
     return svc.getPluginDir().toString();
 }
+
 }

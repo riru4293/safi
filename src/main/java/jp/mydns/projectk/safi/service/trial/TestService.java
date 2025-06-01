@@ -68,24 +68,6 @@ public class TestService {
         this.confSvc = confSvc;
     }
 
-    @Transactional
-    public void test() {
-
-        var e = Optional.ofNullable(em.find(AppConfigEntity.class, AppConfigId.NOW)).orElseGet(AppConfigEntity::new);
-
-        e.setId(AppConfigId.NOW);
-
-        var vp = new ValidityPeriodEmb();
-        vp.setFrom(TimeUtils.toLocalDateTime(ValidityPeriodValue.defaultFrom()));
-        vp.setTo(TimeUtils.toLocalDateTime(ValidityPeriodValue.defaultTo()));
-        e.setValidityPeriod(vp);
-        e.setName(UUID.randomUUID().toString());
-
-        e.setValue(SJson.of(JsonValueUtils.toJsonValue(ValidityPeriodValue.defaultTo())));
-
-        comDao.persistOrMerge(e);
-    }
-
     public Path getPluginDir() {
         var p = confSvc.getPluginDir();
         log.error("[DEBUG INFO] Path is {}", p);
