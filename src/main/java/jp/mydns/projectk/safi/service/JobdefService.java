@@ -28,16 +28,15 @@ package jp.mydns.projectk.safi.service;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
 import jp.mydns.projectk.safi.dao.JobdefDao;
 import jp.mydns.projectk.safi.dxo.JobdefDxo;
+import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobCreationRequest;
 import jp.mydns.projectk.safi.value.JobdefValue;
@@ -93,26 +92,26 @@ JobCreationContext buildJobCreationContext(JobCreationRequest req) throws Jobdef
 @RequestScoped
 class Impl implements JobdefService {
 
-private final Supplier<JobdefIOException> noFoundJobdef
+private final Supplier<JobdefIOException> notFoundJobdef
     = () -> new JobdefIOException("No found job definition.");
 
 private final JobdefDao jobdefDao;
 private final JobdefDxo jobdefDxo;
-private final ValidationService validationSvc;
+private final ValidationService validSvc;
 private final JsonService jsonSvc;
-private final RealTimeService realTimeSvc;
+private final TimeService timeSvc;
 private final IdService idSvc;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
-    JsonService jsonSvc, RealTimeService realTimeSvc, IdService idSvc) {
+Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validSvc,
+    JsonService jsonSvc, TimeService timeSvc, IdService idSvc) {
 
     this.jobdefDxo = jobdefDxo;
     this.jobdefDao = jobdefDao;
-    this.validationSvc = validationSvc;
+    this.validSvc = validSvc;
     this.jsonSvc = jsonSvc;
-    this.realTimeSvc = realTimeSvc;
+    this.timeSvc = timeSvc;
     this.idSvc = idSvc;
 }
 
@@ -130,16 +129,15 @@ Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validationSvc,
 public JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException {
     Objects.requireNonNull(req);
 
-    UnaryOperator<JsonObject> overWriteRequest = b -> jsonSvc.merge(b,
-        jsonSvc.toJsonValue(req).asJsonObject());
+    JobdefValue jobdef = jobdefDao.getJobdef(req.getJobdefId())
+        .filter(validSvc::isEnabled)
+        .map(jobdefDxo::toValue)
+        .map(f(jsonSvc::toJsonValue).andThen(JsonValue::asJsonObject))
+        .map(f(jsonSvc::merge, jsonSvc.toJsonValue(req).asJsonObject())).map(jobdefDxo::toValue)
+        .orElseThrow(notFoundJobdef);
 
-    JobdefValue jobdef = jobdefDao.getJobdef(req.getJobdefId()).filter(validationSvc::isEnabled)
-        .map(jobdefDxo::toValue).map(jsonSvc::toJsonValue).map(JsonValue::asJsonObject).map(
-        overWriteRequest)
-        .map(jobdefDxo::toValue).orElseThrow(noFoundJobdef);
-
-    return new JobCreationContext(idSvc.generateJobId(), req.getScheduleTime().orElseGet(
-        realTimeSvc::getOffsetNow), jobdef);
+    return new JobCreationContext(idSvc.generateJobId(),
+        req.getScheduleTime().orElseGet(timeSvc::getOffsetNow), jobdef);
 }
 
 }

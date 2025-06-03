@@ -25,27 +25,26 @@
  */
 package jp.mydns.projectk.safi.service;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.stream.Stream;
 import jp.mydns.projectk.safi.entity.NamedEntity;
-import jp.mydns.projectk.safi.producer.ValidatorProducer;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.NamedValue;
+import jp.mydns.projectk.safi.SafiLimited;
+import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
+import static jp.mydns.projectk.safi.util.TimeUtils.toLocalDateTime;
+import jp.mydns.projectk.safi.value.RequestContext;
+import jp.mydns.projectk.safi.value.ValidityPeriodValue;
 
 /**
- Provides validation of values.
+ Provides value validation functionality.
 
  @author riru
  @version 3.0.0
@@ -74,14 +73,14 @@ boolean isEnabled(NamedValue value);
 boolean isEnabled(NamedEntity entity);
 
 /**
- Validate that the value is valid.
+ Validate that the value is valid. Validation is performed by <i>Jakarta Bean Validation</i>.
 
  @param <V> value type
  @param value validation value
  @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
- @return valid value
- @throws NullPointerException if any argument is {@code null}
- @throws ConstraintViolationException if {@code value} has constraint violation
+ @return {@code value} as is
+ @throws NullPointerException if any argument is {@code null}.
+ @throws ConstraintViolationException if {@code value} has constraint violation.
  @since 3.0.0
  */
 <V> V requireValid(V value, Class<?>... groups);
@@ -94,17 +93,17 @@ boolean isEnabled(NamedEntity entity);
  @since 3.0.0
  */
 @Typed(ValidationService.class)
-@RequestScoped
+@ApplicationScoped
 class Impl implements ValidationService {
 
-private final Validator validator;
-private final AppTimeService appTimeSvc;
+private final Provider<Validator> validatorPvd;
+private final Provider<RequestContext> reqCtxPvd;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(@SafiValidator Validator validator, AppTimeService appTimeSvc) {
-    this.validator = validator;
-    this.appTimeSvc = appTimeSvc;
+Impl(@SafiLimited Provider<Validator> validatorPvd, Provider<RequestContext> reqCtxPvd) {
+    this.validatorPvd = validatorPvd;
+    this.reqCtxPvd = reqCtxPvd;
 }
 
 /**
@@ -117,8 +116,9 @@ Impl(@SafiValidator Validator validator, AppTimeService appTimeSvc) {
 public boolean isEnabled(NamedValue value) {
     Objects.requireNonNull(value);
 
-    return isEnabled(value.getValidityPeriod().getFrom(), value.getValidityPeriod().getTo(),
-        value.getValidityPeriod().isIgnored());
+    ValidityPeriodValue vp = value.getValidityPeriod();
+
+    return isEnabled(toLocalDateTime(vp.getFrom()), toLocalDateTime(vp.getTo()), vp.isIgnored());
 }
 
 /**
@@ -131,13 +131,14 @@ public boolean isEnabled(NamedValue value) {
 public boolean isEnabled(NamedEntity entity) {
     Objects.requireNonNull(entity);
 
-    return isEnabled(OffsetDateTime.of(entity.getValidityPeriod().getFrom(), ZoneOffset.UTC),
-        OffsetDateTime.of(entity.getValidityPeriod().getTo(), ZoneOffset.UTC),
-        entity.getValidityPeriod().isIgnored());
+    ValidityPeriodEmb vp = entity.getValidityPeriod();
+
+    return isEnabled(vp.getFrom(), vp.getTo(), vp.isIgnored());
 }
 
-private boolean isEnabled(OffsetDateTime from, OffsetDateTime to, boolean ignored) {
-    OffsetDateTime refTime = appTimeSvc.getOffsetNow();
+private boolean isEnabled(LocalDateTime from, LocalDateTime to, boolean ignored) {
+
+    LocalDateTime refTime = reqCtxPvd.get().getReferenceTime();
 
     return !ignored && !from.isAfter(refTime) && !to.isBefore(refTime);
 }
@@ -145,33 +146,18 @@ private boolean isEnabled(OffsetDateTime from, OffsetDateTime to, boolean ignore
 /**
  {@inheritDoc}
 
- @throws NullPointerException if any argument is {@code null}
- @throws ConstraintViolationException if {@code value} has constraint violation
+ @throws NullPointerException if any argument is {@code null}.
+ @throws ConstraintViolationException if {@code value} has constraint violation.
  @since 3.0.0
  */
 @Override
 public <V> V requireValid(V value, Class<?>... groups) {
     Objects.requireNonNull(value);
-    Objects.requireNonNull(validator);
     Stream.of(Objects.requireNonNull(groups)).forEach(Objects::requireNonNull);
 
-    return ValidationUtils.requireValid(value, validator, groups);
+    return ValidationUtils.requireValid(value, validatorPvd.get(), groups);
 }
 
-}
-
-/**
- Indicate that inject custom validator.
-
- @author riru
- @version 3.0.0
- @see ValidatorProducer
- @since 3.0.0
- */
-@Documented
-@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
-@Retention(RetentionPolicy.RUNTIME)
-@interface SafiValidator {
 }
 
 }
