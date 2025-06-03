@@ -48,7 +48,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Objects;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.JobService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
@@ -57,7 +56,13 @@ import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- JAX-RS resource for <i>Job</i>.
+ Rest API for <i>Job</i>.
+ <p>
+ Implementation requirements.
+ <ul>
+ <li>This class is immutable and not thread-safe.</li>
+ <li>A unique instance per HTTP request or batch process.</li>
+ </ul>
 
  @author riru
  @version 3.0.0
@@ -101,14 +106,12 @@ Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
     this.reqCtx = Objects.requireNonNull(reqCtx);
 }
 
+// ToDo: Jobdefの存在バリデーションが追加されたら、この例外はなくなる。;
 /**
  {@inheritDoc}
 
- @throws ConstraintViolationException if {@code req} is not valid
- @throws BadRequestException if not found valid job definition
+ @throws BadRequestException if not found valid job definition.
  @throws PersistenceException if failed database operation
- @throws PublishableIllegalStateException if an exception occurs due to an implementation bug or
- data inconsistency.
  @since 3.0.0
  */
 @Override

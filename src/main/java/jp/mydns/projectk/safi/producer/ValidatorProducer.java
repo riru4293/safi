@@ -65,7 +65,7 @@ class Impl implements ValidatorProducer {
 private final ValidatorFactory vf;
 
 @Inject
-protected Impl(@SafiLimited ValidatorFactory vf) {
+protected Impl(ValidatorFactory vf) {
     this.vf = vf;
 }
 
@@ -79,7 +79,11 @@ protected Impl(@SafiLimited ValidatorFactory vf) {
 @RequestScoped
 @Override
 public Validator produce() {
-    return vf.getValidator();
+
+    return vf.usingContext()
+        // ToDo: Add MessageInterpolator
+        //            .messageInterpolator(customInterpolator)
+        .getValidator();
 }
 
 }
