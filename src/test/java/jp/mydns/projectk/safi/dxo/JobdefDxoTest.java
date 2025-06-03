@@ -25,20 +25,24 @@
  */
 package jp.mydns.projectk.safi.dxo;
 
+import jakarta.inject.Provider;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.validation.Validator;
-import jp.mydns.projectk.safi.service.AppTimeService;
+import jp.mydns.projectk.safi.service.TimeService;
 import jp.mydns.projectk.safi.service.MockJsonService;
 import jp.mydns.projectk.safi.service.MockValidationService;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
+import jp.mydns.projectk.safi.value.RequestContext;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import static org.mockito.Mockito.doReturn;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
@@ -59,15 +63,19 @@ class JobdefDxoTest {
  @param validator the {@code Validator}. This parameter resolved by
  {@code ValidatorParameterResolver}.
  @param jsonb the {@code Jsonb}. This parameter resolved by {@code JsonbParameterResolver}.
- @param appTimeSvc it is mock
+ @param reqCtxPvdMock it is mock
+ @param validatorPvdMock it is mock
  @since 3.0.0
  */
 @Test
-void testToValue(Validator validator, Jsonb jsonb, @Mock AppTimeService appTimeSvc) {
+void testToValue(Validator validator, Jsonb jsonb, @Mock Provider<RequestContext> reqCtxPvdMock,
+    @Mock Provider<Validator> validatorPvdMock) {
 
-    var validationSvc = new MockValidationService(validator, appTimeSvc);
+    doReturn(validator).when(validatorPvdMock).get();
+
+    var validationSvc = new MockValidationService(validatorPvdMock, reqCtxPvdMock);
     var jsonSvc = new MockJsonService(jsonb);
-    
+
     JsonObject expect = Json.createObjectBuilder()
         .add("id", "jobdef-id")
         .add("validityPeriod", Json.createObjectBuilder()

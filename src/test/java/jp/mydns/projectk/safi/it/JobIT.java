@@ -47,18 +47,16 @@ import jp.mydns.projectk.safi.dxo.JobdefDxo;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.producer.JsonbProducer;
 import jp.mydns.projectk.safi.resource.JobResource;
-import jp.mydns.projectk.safi.service.AppTimeService;
+import jp.mydns.projectk.safi.service.TimeService;
 import jp.mydns.projectk.safi.service.IdService;
 import jp.mydns.projectk.safi.service.JobService;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.JsonService;
-import jp.mydns.projectk.safi.service.RealTimeService;
 import jp.mydns.projectk.safi.service.ValidationService;
-import jp.mydns.projectk.safi.test.AppTimeServiceProvider;
 import jp.mydns.projectk.safi.test.EntityFooterContextProducer;
 import jp.mydns.projectk.safi.test.EntityManagerProducer;
 import jp.mydns.projectk.safi.test.JndiServer;
-import jp.mydns.projectk.safi.test.RealTimeServiceProvider;
+import jp.mydns.projectk.safi.test.TimeServiceProvider;
 import jp.mydns.projectk.safi.test.RequestContextProvider;
 import jp.mydns.projectk.safi.test.ValidatorProducer;
 import jp.mydns.projectk.safi.test.Values;
@@ -93,18 +91,19 @@ import static org.mockito.Mockito.verify;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class JobIT {
 
-private final AppTimeServiceProvider appTimeSvcProvider = new AppTimeServiceProvider();
-private final RealTimeServiceProvider realTimeSvcProvider = new RealTimeServiceProvider();
+private final TimeServiceProvider timeSvcProvider = new TimeServiceProvider();
 private final RequestContextProvider reqCtxProvider = new RequestContextProvider();
 
 @WeldSetup
 WeldInitiator weld = WeldInitiator.from(WeldInitiator.createWeld()
     .alternatives(
+        // Enables an alternative implementation for test environments only.
         EntityManagerProducer.class,
         EntityFooterContextProducer.class,
         ValidatorProducer.class
     )
     .beanClasses(
+        // Enables CDI Beans.
         JndiServer.class,
         EntityManagerProducer.class,
         EntityFooterContextProducer.class,
@@ -123,11 +122,17 @@ WeldInitiator weld = WeldInitiator.from(WeldInitiator.createWeld()
         JobResource.Impl.class
     )
 ).addBeans(
+    // Enables mocked CDI Beans.
     reqCtxProvider.getBean(),
-    appTimeSvcProvider.getBean(),
-    realTimeSvcProvider.getBean()
+    timeSvcProvider.getBean()
 ).activate(RequestScoped.class).build();
 
+/**
+ Initialize JNDI and register test values.
+
+ @param jndiSrv the {@code JndiServer}, it inject by CDI.
+ @param em the {@code EntityManager}, it inject by CDI.
+ */
 @BeforeAll
 @SuppressWarnings("unused")
 void init(JndiServer jndiSrv, EntityManager em) {
@@ -153,44 +158,41 @@ private void registerJobdef(EntityManager em) {
 /**
  Test create Job, if minimal request.
 
- @param appTimeSvc the {@code AppTimeService}. This parameter resolved by CDI.
+ @param timeSvc the {@code TimeService}. This parameter resolved by CDI.
  @param jobRsc the {@code JobResource}. This parameter resolved by CDI.
  @param em the {@code EntityManager}. This parameter resolved by CDI.
  @param reqCtx the {@code RequestContext}. This parameter resolved by CDI.
- @param realTimeSvc the {@code RealTimeService}. This parameter resolved by CDI.
  @since 3.0.0
  */
 @Test
-void testCreateJobMinimum(AppTimeService appTimeSvc, JobResource jobRsc, EntityManager em,
-    RequestContext reqCtx, RealTimeService realTimeSvc) {
+void testCreateJobMinimum(TimeService timeSvc, JobResource jobRsc, EntityManager em,
+    RequestContext reqCtx) {
 
-    // Current app-now is 2004-04-04T04:04:04Z
-    doReturn(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, ZoneOffset.UTC)).when(appTimeSvc).getOffsetNow();
-    doReturn(LocalDateTime.of(2004, 4, 4, 4, 4, 4)).when(appTimeSvc).getLocalNow();
+    // [Setup mocks] Current time is 2004-04-04T04:04:04Z
+    doReturn(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, ZoneOffset.UTC)).when(timeSvc).getOffsetNow();
+    doReturn(LocalDateTime.of(2004, 4, 4, 4, 4, 4)).when(reqCtx).getReferenceTime();
 
-    doReturn(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, ZoneOffset.UTC)).when(realTimeSvc).getOffsetNow();
-    doReturn(LocalDateTime.of(2004, 4, 4, 4, 4, 4)).when(realTimeSvc).getLocalNow();
-
-    // Resource URI
+    // [Setup mocks] Resource URI
     ArgumentCaptor<String> jobIdCaptor = ArgumentCaptor.forClass(String.class);
     var apiBaseUri = spy(URI.create("http://hostname/api/"));
     doReturn(apiBaseUri).when(reqCtx).getRestApiPath();
 
-    // Job creation request(Minimum)
+    // [Pre-Exec] Build a request that Job creation(Minimum)
     var req = new JobCreationRequest.Builder().withJobdefId("jobdef-id").unsafeBuild();
 
-    // Create a Job
+    // [Execute] Create a Job.
     em.getTransaction().begin();
     var result = jobRsc.createJob(req);
     em.getTransaction().commit();
 
-    // Get job id
+    // [Pre-Verify] Extraction of the Job id used in the processing.
     verify(apiBaseUri).resolve(jobIdCaptor.capture());
     String jobId = jobIdCaptor.getValue();
 
-    // Expect values
+    // [Pre-Verify] Build an expected Location URI.
     URI expectUri = URI.create("http://hostname/api/%s".formatted(jobId));
 
+    // [Pre-Verify] Build an expected response.
     JobValue expectValue = new JobValue.Builder().withId(jobId)
         .withStatus(JobStatus.SCHEDULE).withKind(JobKind.REBUILD).withTarget(JobTarget.ASSET)
         .withScheduleTime(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, ZoneOffset.UTC))
@@ -209,7 +211,7 @@ void testCreateJobMinimum(AppTimeService appTimeSvc, JobResource jobRsc, EntityM
         .withRegisterTime(OffsetDateTime.of(2000, 4, 27, 20, 34, 56, 0, ZoneOffset.UTC))
         .withRegisterAccountId("accountId").withRegisterProcessName("processName").unsafeBuild();
 
-    // Verify results
+    // [Verify] verify processing results.
     assertThat(result).describedAs("Verify response of create Job.")
         .returns(expectUri, Response::getLocation)
         .extracting(Response::getEntity).usingRecursiveComparison().isEqualTo(expectValue);
@@ -218,35 +220,31 @@ void testCreateJobMinimum(AppTimeService appTimeSvc, JobResource jobRsc, EntityM
 /**
  Test create Job, if maximum request.
 
- @param appTimeSvc the {@code AppTimeService}. This parameter resolved by CDI.
+ @param timeSvc the {@code TimeService}. This parameter resolved by CDI.
  @param jobRsc the {@code JobResource}. This parameter resolved by CDI.
  @param em the {@code EntityManager}. This parameter resolved by CDI.
  @param reqCtx the {@code RequestContext}. This parameter resolved by CDI.
- @param realTimeSvc the {@code RealTimeService}. This parameter resolved by CDI.
  @since 3.0.0
  */
 @Test
-void testCreateJobMaximum(AppTimeService appTimeSvc, JobResource jobRsc, EntityManager em,
-    RequestContext reqCtx, RealTimeService realTimeSvc) {
+void testCreateJobMaximum(TimeService timeSvc, JobResource jobRsc, EntityManager em,
+    RequestContext reqCtx) {
 
-    // Current app-now is 2004-04-04T04:04:04Z
-    doReturn(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, ZoneOffset.UTC)).when(appTimeSvc).getOffsetNow();
-    doReturn(LocalDateTime.of(2004, 4, 4, 4, 4, 4)).when(appTimeSvc).getLocalNow();
+    // [Setup mocks] Current time is 2004-04-04T04:04:04Z
+    doReturn(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, ZoneOffset.UTC)).when(timeSvc).getOffsetNow();
+    doReturn(LocalDateTime.of(2004, 4, 4, 4, 4, 4)).when(reqCtx).getReferenceTime();
 
-    doReturn(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, ZoneOffset.UTC)).when(realTimeSvc).getOffsetNow();
-    doReturn(LocalDateTime.of(2004, 4, 4, 4, 4, 4)).when(realTimeSvc).getLocalNow();
-
-    // Resource URI
+    // [Setup mocks] Resource URI
     ArgumentCaptor<String> jobIdCaptor = ArgumentCaptor.forClass(String.class);
     var apiBaseUri = spy(URI.create("http://hostname/api/"));
     doReturn(apiBaseUri).when(reqCtx).getRestApiPath();
 
-    // Filtering definition
+    // [Pre-Exec] Build a filtering definition
     var filter = new LeafConditionValue.Builder(FilteringOperationValue.LeafOperation.IS_NULL)
         .withName("n").withValue("v").unsafeBuild();
     FiltdefValue filtdef = new FiltdefValue.Builder().withCondition(filter).withTrnsdef(Map.of()).unsafeBuild();
 
-    // Job creation request(Maximum)
+    // [Pre-Exec] Build a request that Job creation(Maximum)
     var req = new JobCreationRequest.Builder().withJobdefId("jobdef-id").withPluginName("PluginName")
         .withJobProperties(Json.createObjectBuilder().add("k", true).build())
         .withTimeout(Duration.ZERO)
@@ -254,18 +252,19 @@ void testCreateJobMaximum(AppTimeService appTimeSvc, JobResource jobRsc, EntityM
         .withFiltdef(filtdef).withTrnsdef(Map.of("p", "f"))
         .unsafeBuild();
 
-    // Create a Job
+    // [Execute] Create a Job.
     em.getTransaction().begin();
     var result = jobRsc.createJob(req);
     em.getTransaction().commit();
 
-    // Get job id
+    // [Pre-Verify] Extraction of the Job id used in the processing.
     verify(apiBaseUri).resolve(jobIdCaptor.capture());
     String jobId = jobIdCaptor.getValue();
 
-    // Expect values
+    // [Pre-Verify] Build an expected Location URI.
     URI expectUri = URI.create("http://hostname/api/%s".formatted(jobId));
 
+    // [Pre-Verify] Build an expected response.
     JobValue expectValue = new JobValue.Builder().withId(jobId)
         .withStatus(JobStatus.SCHEDULE).withKind(JobKind.REBUILD).withTarget(JobTarget.ASSET)
         .withScheduleTime(OffsetDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC))
@@ -286,7 +285,7 @@ void testCreateJobMaximum(AppTimeService appTimeSvc, JobResource jobRsc, EntityM
         .withRegisterTime(OffsetDateTime.of(2000, 4, 27, 20, 34, 56, 0, ZoneOffset.UTC))
         .withRegisterAccountId("accountId").withRegisterProcessName("processName").unsafeBuild();
 
-    // Verify results
+    // [Verify] verify processing results.
     assertThat(result).describedAs("Verify response of create Job.")
         .returns(expectUri, Response::getLocation)
         .extracting(Response::getEntity).usingRecursiveComparison().isEqualTo(expectValue);

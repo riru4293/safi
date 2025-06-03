@@ -25,7 +25,9 @@
  */
 package jp.mydns.projectk.safi.service;
 
+import jakarta.inject.Provider;
 import jakarta.validation.Validator;
+import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
  Copy of the {@code ValidationService.Impl} for testing.
@@ -40,11 +42,11 @@ public class MockValidationService extends ValidationService.Impl {
  Construct with {@code Jsonv}
 
  @param validator the {@code Validator}
- @param appTimeSvc the {@code AppTimeService}
+ @param reqCtx the {@code RequestContext}
  @since 3.0.0
  */
-public MockValidationService(Validator validator, AppTimeService appTimeSvc) {
-    super(validator, appTimeSvc);
+public MockValidationService(Provider<Validator> validator, Provider<RequestContext> reqCtx) {
+    super(validator, reqCtx);
 }
 
 }
