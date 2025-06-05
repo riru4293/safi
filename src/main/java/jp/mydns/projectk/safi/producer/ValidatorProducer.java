@@ -65,7 +65,8 @@ class Impl implements ValidatorProducer {
 private final ValidatorFactory vf;
 
 @Inject
-protected Impl(ValidatorFactory vf) {
+@SuppressWarnings("unused")
+Impl(ValidatorFactory vf) {
     this.vf = vf;
 }
 

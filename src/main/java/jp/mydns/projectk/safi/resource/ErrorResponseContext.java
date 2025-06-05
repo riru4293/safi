@@ -171,7 +171,7 @@ private final URI code;
 private final String message;
 private final List<JsonObject> details;
 
-public Bean(Builder builder) {
+protected Bean(Builder builder) {
     this.code = builder.code;
     this.message = builder.message;
     this.details = builder.details;
