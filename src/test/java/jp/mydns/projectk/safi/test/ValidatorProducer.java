@@ -32,7 +32,6 @@ import jakarta.enterprise.inject.Produces;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import jp.mydns.projectk.safi.SafiLimited;
 
 /**
  CDI Producer that provides instances of {@link Validator} for testing.
@@ -53,7 +52,6 @@ private final ValidatorFactory fact = Validation.buildDefaultValidatorFactory();
  @since 3.0.0
  */
 @Produces
-@SafiLimited
 @Alternative
 @ApplicationScoped
 public Validator produce() {

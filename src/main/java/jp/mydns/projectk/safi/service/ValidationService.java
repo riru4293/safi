@@ -37,7 +37,6 @@ import java.util.stream.Stream;
 import jp.mydns.projectk.safi.entity.NamedEntity;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 import jp.mydns.projectk.safi.value.NamedValue;
-import jp.mydns.projectk.safi.SafiLimited;
 import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import static jp.mydns.projectk.safi.util.TimeUtils.toLocalDateTime;
 import jp.mydns.projectk.safi.value.RequestContext;
@@ -101,7 +100,7 @@ private final Provider<RequestContext> reqCtxPvd;
 
 @Inject
 @SuppressWarnings("unused")
-Impl(@SafiLimited Provider<Validator> validatorPvd, Provider<RequestContext> reqCtxPvd) {
+Impl(Provider<Validator> validatorPvd, Provider<RequestContext> reqCtxPvd) {
     this.validatorPvd = validatorPvd;
     this.reqCtxPvd = reqCtxPvd;
 }
