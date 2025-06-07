@@ -72,11 +72,6 @@ class Validator implements ConstraintValidator<ExistsJobdef, String> {
  */
 @Override
 public boolean isValid(String value, ConstraintValidatorContext ctx) {
-
-    if (value == null || value.isEmpty()) {
-        return true;
-    }
-
     return CdiUtils.get(JobdefDao.class).getJobdef(value).isPresent();
 }
 

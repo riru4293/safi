@@ -74,8 +74,6 @@ public interface JobCreationRequest extends ValueTemplate {
      * @return job definition id
      * @since 3.0.0
      */
-    @NotNull
-    @Size(min = 1, max = 36)
     @ExistsJobdef
     @Schema(description = "Job definition id to use.", example = "test-jobdef")
     String getJobdefId();
