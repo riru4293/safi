@@ -106,11 +106,9 @@ Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
     this.reqCtx = Objects.requireNonNull(reqCtx);
 }
 
-// ToDo: Jobdefの存在バリデーションが追加されたら、この例外はなくなる。;
 /**
  {@inheritDoc}
 
- @throws BadRequestException if not found valid job definition.
  @throws PersistenceException if failed database operation
  @since 3.0.0
  */
@@ -138,7 +136,7 @@ public Response createJob(@NotNull @Valid JobCreationRequest req) {
     try {
         ctx = jobdefSvc.buildJobCreationContext(req);
     } catch (JobdefService.JobdefIOException ex) {
-        throw new BadRequestException(ex);
+        throw new BadRequestException(ex);  // ToDo: ほぼ発生しえない。別の例外が適切。
     }
 
     JobValue job = jobSvc.createJob(ctx);

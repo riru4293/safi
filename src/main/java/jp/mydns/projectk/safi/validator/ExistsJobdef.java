@@ -31,69 +31,39 @@ import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE_USE;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.time.Duration;
+import jp.mydns.projectk.safi.dao.JobdefDao;
+import jp.mydns.projectk.safi.util.CdiUtils;
 
 /**
- Validates that the duration is in the specified range. Supported type is {@code Duration}.
+ Validates that a Job definition exists.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-@Target({METHOD, TYPE_USE})
+@Target({METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = {DurationRange.Validator.class})
-public @interface DurationRange {
+@Constraint(validatedBy = {ExistsJobdef.Validator.class})
+public @interface ExistsJobdef {
 
-String message() default "{jp.mydns.projectk.safi.validator.DurationRange.message}";
+String message() default "{jp.mydns.projectk.safi.validator.ExistsJobdef.message}";
 
 Class<?>[] groups() default {};
 
 Class<? extends Payload>[] payload() default {};
 
 /**
- Minimum of range. It is second. Default value is 0.
-
- @return second the element must be higher or equal to
- */
-long minSecond() default 0L;
-
-/**
- Maximum of range. It is second. Default value is 9223372036854775807.
-
- @return second the element must be lower or equal to
- */
-long maxSecond() default Long.MAX_VALUE;
-
-/**
- A validator that checks that the time is in the specified range. Default range is 0 to
- 9223372036854775807.
+ The value is a Job definition id and the validator checks if a Job definition with this id exists.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-class Validator implements ConstraintValidator<DurationRange, Duration> {
-
-private long min;
-private long max;
-
-/**
- Initialize the minimum and maximum values.
-
- @param annon the {@code DurationRange}
- @since 3.0.0
- */
-@Override
-public void initialize(DurationRange annon) {
-    this.min = annon.minSecond();
-    this.max = annon.maxSecond();
-}
+class Validator implements ConstraintValidator<ExistsJobdef, String> {
 
 /**
  {@inheritDoc}
@@ -101,14 +71,13 @@ public void initialize(DurationRange annon) {
  @since 3.0.0
  */
 @Override
-public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+public boolean isValid(String value, ConstraintValidatorContext ctx) {
 
-    if (value == null) {
+    if (value == null || value.isEmpty()) {
         return true;
     }
 
-    long seconds = value.getSeconds();
-    return seconds >= min && seconds <= max;
+    return CdiUtils.get(JobdefDao.class).getJobdef(value).isPresent();
 }
 
 }
