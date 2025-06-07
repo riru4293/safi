@@ -44,14 +44,14 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 /**
- * Validates that the time is in the specified range. Supported types are {@code LocalDateTime} and
- * {@code OffsetDateTime}.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Validates that the time is in the specified range. Supported types are {@code LocalDateTime} and
+ {@code OffsetDateTime}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+@Target({METHOD, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {
@@ -59,112 +59,110 @@ import java.time.ZoneOffset;
     TimeRange.OffsetDateTimeValidator.class})
 public @interface TimeRange {
 
-    String message() default "{jp.mydns.projectk.safi.validator.TimeRange.message}";
+String message() default "{jp.mydns.projectk.safi.validator.TimeRange.message}";
 
-    Class<?>[] groups() default {};
+Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+Class<? extends Payload>[] payload() default {};
 
-    /**
-     * Minimum of range. It is epoch second. Default value indicates '2000-01-01T00:00:00'.
-     *
-     * @return time the element must be higher or equal to
-     */
-    long minEpochSecond() default 946_684_800L;
+/**
+ Minimum of range. It is epoch second. Default value indicates '2000-01-01T00:00:00'.
 
-    /**
-     * Maximum of range. It is epoch second. Default value indicates '2999-12-31T23:59:59'.
-     *
-     * @return time the element must be lower or equal to
-     */
-    long maxEpochSecond() default 32_503_679_999L;
+ @return time the element must be higher or equal to
+ */
+long minEpochSecond() default 946_684_800L;
 
-    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @interface List {
+/**
+ Maximum of range. It is epoch second. Default value indicates '2999-12-31T23:59:59'.
 
-        TimeRange[] value();
+ @return time the element must be lower or equal to
+ */
+long maxEpochSecond() default 32_503_679_999L;
+
+/**
+ A validator that checks that the time is in the specified range. Default range is
+ 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+abstract class AbstractValidator {
+
+private long min;
+private long max;
+
+/**
+ Initialize the minimum and maximum values.
+
+ @param annon the {@code TimeRange}
+ @since 3.0.0
+ */
+public void initialize(TimeRange annon) {
+    this.min = annon.minEpochSecond();
+    this.max = annon.maxEpochSecond();
+}
+
+protected boolean isValid(long epochSecond) {
+    return epochSecond >= min && epochSecond <= max;
+}
+
+}
+
+/**
+ A validator that checks that the time is in the specified range. Default range is
+ 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class LocalDateTimeValidator extends AbstractValidator implements
+    ConstraintValidator<TimeRange, LocalDateTime> {
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public boolean isValid(LocalDateTime value, ConstraintValidatorContext ctx) {
+
+    if (value == null) {
+        return true;
     }
 
-    /**
-     * A validator that checks that the time is in the specified range. Default range is 2000-01-01T00:00:00Z to
-     * 2999-12-31T23:59:59Z.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    abstract class AbstractValidator {
+    return isValid(value.toInstant(ZoneOffset.UTC).getEpochSecond());
+}
 
-        private long min;
-        private long max;
+}
 
-        /**
-         * Initialize the minimum and maximum values.
-         *
-         * @param annon the {@code TimeRange}
-         * @since 3.0.0
-         */
-        public void initialize(TimeRange annon) {
-            this.min = annon.minEpochSecond();
-            this.max = annon.maxEpochSecond();
-        }
+/**
+ A validator that checks that the time is in the specified range. Default range is
+ 2000-01-01T00:00:00Z to 2999-12-31T23:59:59Z.
 
-        protected boolean isValid(long epochSecond) {
-            return epochSecond >= min && epochSecond <= max;
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class OffsetDateTimeValidator extends AbstractValidator implements
+    ConstraintValidator<TimeRange, OffsetDateTime> {
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public boolean isValid(OffsetDateTime value, ConstraintValidatorContext ctx) {
+
+    if (value == null) {
+        return true;
     }
 
-    /**
-     * A validator that checks that the time is in the specified range. Default range is 2000-01-01T00:00:00Z to
-     * 2999-12-31T23:59:59Z.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class LocalDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, LocalDateTime> {
+    return isValid(value.toInstant().getEpochSecond());
+}
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isValid(LocalDateTime value, ConstraintValidatorContext ctx) {
+}
 
-            if (value == null) {
-                return true;
-            }
-
-            return isValid(value.toInstant(ZoneOffset.UTC).getEpochSecond());
-        }
-    }
-
-    /**
-     * A validator that checks that the time is in the specified range. Default range is 2000-01-01T00:00:00Z to
-     * 2999-12-31T23:59:59Z.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class OffsetDateTimeValidator extends AbstractValidator implements ConstraintValidator<TimeRange, OffsetDateTime> {
-
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isValid(OffsetDateTime value, ConstraintValidatorContext ctx) {
-
-            if (value == null) {
-                return true;
-            }
-
-            return isValid(value.toInstant().getEpochSecond());
-        }
-    }
 }

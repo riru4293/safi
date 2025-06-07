@@ -42,54 +42,48 @@ import java.lang.annotation.Target;
 import java.time.Duration;
 
 /**
- * Validates that the {@code Duration} is positive or zero. Supported type is {@code Duration}.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Validates that the {@code Duration} is positive or zero. Supported type is {@code Duration}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+@Target({METHOD, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {PositiveOrZeroDuration.Validator.class})
 public @interface PositiveOrZeroDuration {
 
-    String message() default "{jp.mydns.projectk.safi.validator.PositiveOrZeroDuration.message}";
+String message() default "{jp.mydns.projectk.safi.validator.PositiveOrZeroDuration.message}";
 
-    Class<?>[] groups() default {};
+Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+Class<? extends Payload>[] payload() default {};
 
-    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @interface List {
+/**
+ A validator that checks that the {@code Duration} is positive or zero.
 
-        PositiveOrZeroDuration[] value();
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class Validator implements ConstraintValidator<PositiveOrZeroDuration, Duration> {
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+
+    if (value == null) {
+        return true;
     }
 
-    /**
-     * A validator that checks that the {@code Duration} is positive or zero.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class Validator implements ConstraintValidator<PositiveOrZeroDuration, Duration> {
+    return !value.isNegative();
+}
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+}
 
-            if (value == null) {
-                return true;
-            }
-
-            return !value.isNegative();
-        }
-    }
 }
