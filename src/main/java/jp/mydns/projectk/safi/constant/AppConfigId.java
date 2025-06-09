@@ -33,10 +33,10 @@ package jp.mydns.projectk.safi.constant;
  @since 3.0.0
  */
 public enum AppConfigId {
-    /**
-     * For testing.
-     *
-     * @since 3.0.0
-     */
-    USELESS
+/**
+ For testing.
+
+ @since 3.0.0
+ */
+USELESS
 }

@@ -28,21 +28,11 @@ package jp.mydns.projectk.safi.service.trial;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import java.nio.file.Path;
-import java.util.Optional;
-import java.util.UUID;
-import jp.mydns.projectk.safi.constant.AppConfigId;
 import jp.mydns.projectk.safi.dao.CommonDao;
-import jp.mydns.projectk.safi.entity.AppConfigEntity;
-import jp.mydns.projectk.safi.entity.embedded.ValidityPeriodEmb;
 import jp.mydns.projectk.safi.service.ConfigService;
-import jp.mydns.projectk.safi.util.JsonValueUtils;
-import jp.mydns.projectk.safi.util.TimeUtils;
-import jp.mydns.projectk.safi.value.ValidityPeriodValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import jp.mydns.projectk.safi.value.SJson;
 
 @RequestScoped
 public class TestService {

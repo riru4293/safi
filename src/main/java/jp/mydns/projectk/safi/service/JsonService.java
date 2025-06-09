@@ -116,6 +116,12 @@ class Impl implements JsonService {
 
 private final Jsonb jsonb;
 
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
+
 @Inject
 @SuppressWarnings("unused")
 Impl(Jsonb jsonb) {

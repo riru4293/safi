@@ -102,6 +102,12 @@ private final JsonService jsonSvc;
 private final TimeService timeSvc;
 private final IdService idSvc;
 
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
+
 @Inject
 @SuppressWarnings("unused")
 Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validSvc,

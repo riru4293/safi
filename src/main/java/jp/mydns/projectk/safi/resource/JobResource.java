@@ -110,6 +110,10 @@ Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
  {@inheritDoc}
 
  @throws PersistenceException if failed database operation
+ @throws BadRequestException if a Job definition is not found. However, the probability of this
+ occurring is very low because the existence of a Job definition has already been confirmed at the
+ time of parameter validation. This occurs only if a Job definition is deleted in the short time
+ between the time of validation and the time a Job definition is retrieved.
  @since 3.0.0
  */
 @Override
@@ -117,18 +121,26 @@ Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
 @Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
 @RestApiProcessName("CreateJob")
-@Operation(tags = {"jobs"}, summary = "Create a new job. Used to create a job manualy.",
-           requestBody = @RequestBody(content = @Content(schema = @Schema(implementation
-               = JobCreationRequest.class))),
-           responses = {
-               @ApiResponse(responseCode = "201", description = "Successful operation.",
-                            headers = @Header(name = LOCATION, description = "Created job.",
-                                              schema = @Schema(type = "string", format = "uri")),
-                            content = @Content(schema = @Schema(implementation = JobValue.class))),
-               @ApiResponse(responseCode = "400", description = "If not found job definition."
-                            + " Additionally, there may be violations of required value constraints.",
-                            content = @Content(schema = @Schema(
-                                implementation = ErrorResponseContext.class)))})
+@Operation(
+    tags = {"jobs"}, summary = "Create a new job. Used to create a job manualy.",
+    requestBody = @RequestBody(
+        content = @Content(schema = @Schema(implementation = JobCreationRequest.class))
+    ),
+    responses = {
+        @ApiResponse(
+            responseCode = "201", description = "Successful operation.",
+            headers = @Header(
+                name = LOCATION, description = "Created job.",
+                schema = @Schema(type = "string", format = "uri")
+            ),
+            content = @Content(
+                schema = @Schema(implementation = JobValue.class))
+        ),
+        @ApiResponse(
+            responseCode = "400", description = "If not found job definition."
+            + " Additionally, there may be violations of required value constraints.",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponseContext.class)))})
 public Response createJob(@NotNull @Valid JobCreationRequest req) {
 
     final JobCreationContext ctx;
@@ -136,7 +148,7 @@ public Response createJob(@NotNull @Valid JobCreationRequest req) {
     try {
         ctx = jobdefSvc.buildJobCreationContext(req);
     } catch (JobdefService.JobdefIOException ex) {
-        throw new BadRequestException(ex);  // ToDo: ほぼ発生しえない。別の例外が適切。
+        throw new BadRequestException(ex);
     }
 
     JobValue job = jobSvc.createJob(ctx);

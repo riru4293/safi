@@ -98,6 +98,12 @@ class Impl extends ValidityPeriodDxo implements JobDxo {
 
 private final JsonService jsonSvc;
 
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
+
 @Inject
 Impl(JsonService jsonSvc) {
     this.jsonSvc = jsonSvc;
