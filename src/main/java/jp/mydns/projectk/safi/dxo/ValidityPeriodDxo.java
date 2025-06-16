@@ -31,49 +31,50 @@ import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.value.ValidityPeriodValue;
 
 /**
- * Data exchange processing for validity period.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Validity period data exchange processing.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public abstract class ValidityPeriodDxo {
 
-    /**
-     * Exchange to built-in part of JPA entity object from value object.
-     *
-     * @param value the {@code ValidityPeriodValue}. Constraint violations must be none.
-     * @return the {@code ValidityPeriodEmb}
-     * @throws NullPointerException if {@code value} is {@code null}
-     * @since 3.0.0
-     */
-    protected ValidityPeriodEmb toValidityPeriodEmb(ValidityPeriodValue value) {
-        Objects.requireNonNull(value);
+/**
+ Exchange to built-in part of JPA entity object from value object.
 
-        var emb = new ValidityPeriodEmb();
+ @param value the {@code ValidityPeriodValue}. Constraint violations must be none.
+ @return the {@code ValidityPeriodEmb}
+ @throws NullPointerException if {@code value} is {@code null}
+ @since 3.0.0
+ */
+protected ValidityPeriodEmb toValidityPeriodEmb(ValidityPeriodValue value) {
+    Objects.requireNonNull(value);
 
-        emb.setFrom(TimeUtils.toLocalDateTime(value.getFrom()));
-        emb.setTo(TimeUtils.toLocalDateTime(value.getTo()));
-        emb.setIgnored(value.isIgnored());
+    var emb = new ValidityPeriodEmb();
 
-        return emb;
-    }
+    emb.setFrom(TimeUtils.toLocalDateTime(value.getFrom()));
+    emb.setTo(TimeUtils.toLocalDateTime(value.getTo()));
+    emb.setIgnored(value.isIgnored());
 
-    /**
-     * Exchange to value object from built-in part of JPA entity.
-     *
-     * @param emb the {@code ValidityPeriodEmb}. Constraint violations must be none.
-     * @return the {@code ValidityPeriodValue}
-     * @throws NullPointerException if {@code emd} is {@code null}
-     * @since 3.0.0
-     */
-    protected ValidityPeriodValue toValidityPeriodValue(ValidityPeriodEmb emb) {
-        Objects.requireNonNull(emb);
+    return emb;
+}
 
-        return new ValidityPeriodValue.Builder()
-            .withFrom(TimeUtils.toOffsetDateTime(emb.getFrom()))
-            .withTo(TimeUtils.toOffsetDateTime(emb.getTo()))
-            .withIgnored(emb.isIgnored())
-            .unsafeBuild();
-    }
+/**
+ Exchange to value object from built-in part of JPA entity.
+
+ @param emb the {@code ValidityPeriodEmb}. Constraint violations must be none.
+ @return the {@code ValidityPeriodValue}
+ @throws NullPointerException if {@code emd} is {@code null}
+ @since 3.0.0
+ */
+protected ValidityPeriodValue toValidityPeriodValue(ValidityPeriodEmb emb) {
+    Objects.requireNonNull(emb);
+
+    return new ValidityPeriodValue.Builder()
+        .withFrom(TimeUtils.toOffsetDateTime(emb.getFrom()))
+        .withTo(TimeUtils.toOffsetDateTime(emb.getTo()))
+        .withIgnored(emb.isIgnored())
+        .unsafeBuild();
+}
+
 }

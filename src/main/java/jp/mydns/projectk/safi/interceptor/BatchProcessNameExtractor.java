@@ -27,8 +27,8 @@ package jp.mydns.projectk.safi.interceptor;
 
 import jakarta.annotation.Priority;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
@@ -36,8 +36,6 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
 import jp.mydns.projectk.safi.batch.BatchProcessName;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
-import static jp.mydns.projectk.safi.util.CdiUtils.requireResolvable;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import jp.mydns.projectk.safi.value.RequestContext;
 import static jp.mydns.projectk.safi.util.LambdaUtils.f;
@@ -66,29 +64,22 @@ public interface BatchProcessNameExtractor {
 @BatchProcessName
 class Impl implements BatchProcessNameExtractor {
 
-private static final Logger log = LoggerFactory.getLogger(BatchProcessNameExtractor.class);
+private static final Logger log = LoggerFactory.getLogger(Impl.class);
 
-// Note: It is CDI Bean. Obtaining the request scoped CDI bean via Instance.
-private Instance<ContextImpl> ctxInst;
-
-@SuppressWarnings("unused")
-Impl() {
-}
+// Note: It is CDI Bean. Obtaining the request scoped CDI bean via Provider.
+private final Provider<ContextImpl> ctxPvd;
 
 @Inject
 @SuppressWarnings("unused")
-void setCtxInst(Instance<ContextImpl> ctxInst) {
-    this.ctxInst = ctxInst;
+Impl(Provider<ContextImpl> ctxPvd) {
+    this.ctxPvd = ctxPvd;
 }
 
 /**
  Extract and store the batch process name.
 
  @param ic the {@code InvocationContext}
- @return the return value of the intercepted method.
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
+ @return the return value of the intercepted method. processing.
  @throws Exception the exception thrown by the intercepted method.
  @since 3.0.0
  */
@@ -99,7 +90,7 @@ public Object invoke(InvocationContext ic) throws Exception {
         .map(f(Method::getAnnotation, BatchProcessName.class))
         .map(BatchProcessName::value)
         .filter(not(String::isBlank))
-        .ifPresent(c(requireResolvable(ctxInst)::setValue)
+        .ifPresent(c(ctxPvd.get()::setValue)
             .andThen(n -> log.debug("Process name is {}.", n)));
 
     return ic.proceed();

@@ -29,12 +29,16 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static jakarta.ws.rs.core.MediaType.TEXT_PLAIN;
 import jakarta.ws.rs.core.Response;
+import java.time.OffsetDateTime;
 import java.util.Set;
 import jp.mydns.projectk.safi.service.trial.TestService;
 import jp.mydns.projectk.safi.value.JobValue;
@@ -42,6 +46,7 @@ import jp.mydns.projectk.safi.value.JobdefValue;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.value.SchedefValue;
 import jp.mydns.projectk.safi.resource.RestApiProcessName;
+import jp.mydns.projectk.safi.validator.TimeRange;
 
 /**
  JAX-RS resource for test.
@@ -75,6 +80,21 @@ public Response ping() {
         """
         Hello SAFI API.
         """ + reqCtx).build();
+}
+
+@POST
+@Path("cvtest")
+@Consumes(APPLICATION_JSON)
+@Produces(APPLICATION_JSON)
+@RestApiProcessName("cvtest")
+public Response cvtest(@Valid Bean b) {
+    return Response.ok(b).build();
+}
+
+public static class Bean {
+
+@TimeRange
+public OffsetDateTime time;
 }
 
 @GET
@@ -112,7 +132,7 @@ public JobValue getJob() {
 @Transactional
 @RestApiProcessName("DRE")
 public String getPath() {
-    svc.test();
     return svc.getPluginDir().toString();
 }
+
 }

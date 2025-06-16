@@ -31,39 +31,40 @@ import java.time.Duration;
 import java.time.format.DateTimeParseException;
 
 /**
- * JPA attribute convertor for the {@code Duration}. This convertor is applied automatically.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JPA attribute convertor for the {@code Duration}. This convertor is applied automatically.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @Converter(autoApply = true)
 public final class DurationConvertor implements AttributeConverter<Duration, String> {
 
-    /**
-     * Convert to database column type.
-     *
-     * @param javaVal the {@code Duration}. It can be set {@code null}.
-     * @return {@code javaVal} that converted to string representation of {@code Duration}. {@code null} if
-     * {@code javaVal} is {@code null}.
-     * @since 3.0.0
-     */
-    @Override
-    public String convertToDatabaseColumn(Duration javaVal) {
-        return javaVal != null ? javaVal.toString() : null;
-    }
+/**
+ Convert to database column type.
 
-    /**
-     * Convert to entity attribute type.
-     *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code Duration}. It can be
-     * set {@code null}.
-     * @return {@code dbVal} as {@code Duration}. {@code null} if {@code dbVal} is {@code null}.
-     * @throws DateTimeParseException if {@code dbVal} is malformed as {@code Duration}
-     * @since 3.0.0
-     */
-    @Override
-    public Duration convertToEntityAttribute(String dbVal) {
-        return dbVal != null ? Duration.parse(dbVal) : null;
-    }
+ @param javaVal the {@code Duration}. It can be set {@code null}.
+ @return {@code javaVal} that converted to string representation of {@code Duration}. {@code null}
+ if {@code javaVal} is {@code null}.
+ @since 3.0.0
+ */
+@Override
+public String convertToDatabaseColumn(Duration javaVal) {
+    return javaVal != null ? javaVal.toString() : null;
+}
+
+/**
+ Convert to entity attribute type.
+
+ @param dbVal value ​​retrieved from database. It must be a string representation of
+ {@code Duration}. It can be set {@code null}.
+ @return {@code dbVal} as {@code Duration}. {@code null} if {@code dbVal} is {@code null}.
+ @throws DateTimeParseException if {@code dbVal} is malformed as {@code Duration}
+ @since 3.0.0
+ */
+@Override
+public Duration convertToEntityAttribute(String dbVal) {
+    return dbVal != null ? Duration.parse(dbVal) : null;
+}
+
 }

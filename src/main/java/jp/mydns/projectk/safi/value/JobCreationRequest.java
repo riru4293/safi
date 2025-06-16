@@ -43,6 +43,7 @@ import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.util.CollectionUtils;
 import jp.mydns.projectk.safi.validator.DurationRange;
+import jp.mydns.projectk.safi.validator.ExistsJobdef;
 import jp.mydns.projectk.safi.validator.PositiveOrZeroDuration;
 import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.validator.TimeRange;
@@ -73,8 +74,7 @@ public interface JobCreationRequest extends ValueTemplate {
      * @return job definition id
      * @since 3.0.0
      */
-    @NotNull
-    @Size(min = 1, max = 36)
+    @ExistsJobdef
     @Schema(description = "Job definition id to use.", example = "test-jobdef")
     String getJobdefId();
 

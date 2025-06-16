@@ -26,23 +26,23 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * Kind of the <i>Filtering operation</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Kind of the <i>Filtering operation</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public enum FilteringOperationKing {
-    /**
-     * Leaf filtering operation. A terminal filtering condition that has no children.
-     *
-     * @since 3.0.0
-     */
-    LEAF,
-    /**
-     * Node filtering operation. A combination of child filtering conditions.
-     *
-     * @since 3.0.0
-     */
-    NODE
+/**
+ Leaf filtering operation. A terminal filtering condition that has no children.
+
+ @since 3.0.0
+ */
+LEAF,
+/**
+ Node filtering operation. A combination of child filtering conditions.
+
+ @since 3.0.0
+ */
+NODE
 }

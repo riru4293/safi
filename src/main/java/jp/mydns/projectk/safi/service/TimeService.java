@@ -25,23 +25,32 @@
  */
 package jp.mydns.projectk.safi.service;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
+import jakarta.inject.Inject;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
- Provides a real date-time.
+ Provides a real date-time, reference date-time.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface RealTimeService {
+public interface TimeService {
+
+/**
+ Gets the current time for the SAFI, which is typically the system time in UTC, but may not be the
+ case depending on the configuration.
+
+ @return reference time
+ @since 3.0.0
+ */
+LocalDateTime getSafiTime();
 
 /**
  Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the
@@ -80,20 +89,38 @@ OffsetDateTime getExactlyOffsetNow();
 LocalDateTime getExactlyLocalNow();
 
 /**
- Implements of the {@code RealTimeService}.
+ Implements of the {@code TimeService}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-@Typed(RealTimeService.class)
-@RequestScoped
-class Impl implements RealTimeService {
+@Typed(TimeService.class)
+@ApplicationScoped
+class Impl implements TimeService {
 
-private final AtomicReference<OffsetDateTime> cached = new AtomicReference<>();
+private final ConfigService confSvc;
 
 @SuppressWarnings("unused")
 Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
+
+@Inject
+@SuppressWarnings("unused")
+Impl(ConfigService confSvc) {
+    this.confSvc = confSvc;
+}
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public LocalDateTime getSafiTime() {
+    return confSvc.getFrozenTime().orElseGet(this::getLocalNow);
 }
 
 /**
@@ -124,8 +151,7 @@ public LocalDateTime getLocalNow() {
  */
 @Override
 public OffsetDateTime getExactlyOffsetNow() {
-    cached.compareAndSet(null, OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized()));
-    return cached.get();
+    return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized());
 }
 
 /**

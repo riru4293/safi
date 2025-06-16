@@ -25,11 +25,13 @@
  */
 package jp.mydns.projectk.safi.dao;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.QueryTimeoutException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
@@ -38,7 +40,7 @@ import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.entity.JobdefEntity_;
 
 /**
- Data access for <i>Job definition</i>.
+ <i>Job definition</i> data access processing.
 
  @author riru
  @version 3.0.0
@@ -49,9 +51,13 @@ public interface JobdefDao {
 /**
  Get a job definition entity.
 
- @param id job definition id
- @return job definition entity
- @throws PersistenceException if the query execution was failed
+ @param id job definition id.
+ @return job definition entity.
+ @throws PersistenceException if the query execution was failed.
+ @throws QueryTimeoutException if the query execution exceeds the query timeout value set and only
+ the statement is rolled back.
+ @throws PersistenceException if the query execution exceeds the query timeout value set and the
+ transaction is rolled back.
  @since 3.0.0
  */
 Optional<JobdefEntity> getJobdef(String id);
@@ -64,31 +70,46 @@ Optional<JobdefEntity> getJobdef(String id);
  @since 3.0.0
  */
 @Typed(JobdefDao.class)
-@RequestScoped
+@ApplicationScoped
 class Impl implements JobdefDao {
 
-private final EntityManager em;
+private final Provider<EntityManager> emPvd;
+
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
 
 @Inject
 @SuppressWarnings("unused")
-Impl(EntityManager em) {
-    this.em = em;
+Impl(Provider<EntityManager> emPvd) {
+    this.emPvd = emPvd;
 }
 
 /**
  {@inheritDoc}
 
- @throws PersistenceException if the query execution was failed
+ @throws PersistenceException if the query execution was failed.
+ @throws QueryTimeoutException if the query execution exceeds the query timeout value set and only
+ the statement is rolled back.
+ @throws PersistenceException if the query execution exceeds the query timeout value set and the
+ transaction is rolled back.
  @since 3.0.0
  */
 @Override
 public Optional<JobdefEntity> getJobdef(String id) {
+
+    EntityManager em = emPvd.get();
+
     CriteriaBuilder cb = em.getCriteriaBuilder();
+
     CriteriaQuery<JobdefEntity> cq = cb.createQuery(JobdefEntity.class);
 
-    Root<JobdefEntity> mJobdef = cq.from(JobdefEntity.class);
+    Root<JobdefEntity> jobdef = cq.from(JobdefEntity.class);
 
-    return em.createQuery(cq.where(cb.equal(mJobdef.get(JobdefEntity_.id), id))).getResultStream().findFirst();
+    return em.createQuery(cq.where(cb.equal(jobdef.get(JobdefEntity_.id), id)))
+        .getResultStream().findFirst();
 }
 
 }

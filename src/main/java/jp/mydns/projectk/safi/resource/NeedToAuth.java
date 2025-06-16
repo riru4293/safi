@@ -41,10 +41,10 @@ import java.lang.annotation.Target;
  @version 3.0.0
  @since 3.0.0
  */
+@NameBinding
 @Documented
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@NameBinding
 public @interface NeedToAuth {
 
 }

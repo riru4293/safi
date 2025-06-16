@@ -32,7 +32,6 @@ import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerRequestContext;
 import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.ext.Provider;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.resource.NeedToAuth;
 import jp.mydns.projectk.safi.value.RequestContext;
 
@@ -49,9 +48,6 @@ public interface Authenticator {
  Authenticate the account of the HTTP request.
 
  @param crc the {@code ContainerRequestContext}
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 void filter(ContainerRequestContext crc);
@@ -80,9 +76,6 @@ void setCtx(ContextImpl ctx) {
 /**
  {@inheritDoc}
 
- @throws PublishableIllegalStateException if the prerequisite information is not found. This
- exception result from an illegal state due to an implementation bug, and the caller should not
- continue processing.
  @since 3.0.0
  */
 @Override

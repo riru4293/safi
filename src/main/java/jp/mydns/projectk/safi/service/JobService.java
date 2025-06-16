@@ -72,6 +72,12 @@ class Impl implements JobService {
 private final CommonDao comDao;
 private final JobDxo jobDxo;
 
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
+
 @Inject
 @SuppressWarnings("unused")
 Impl(CommonDao comDao, JobDxo jobDxo) {

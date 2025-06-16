@@ -74,7 +74,7 @@ void filter(ContainerRequestContext crc);
 @Priority(Priorities.USER)
 class Impl implements ContainerRequestFilter, RestApiProcessNameExtractor {
 
-private static final Logger log = LoggerFactory.getLogger(RestApiProcessNameExtractor.class);
+private static final Logger log = LoggerFactory.getLogger(Impl.class);
 
 // Note: It is CDI Bean.
 private ContextImpl ctx;

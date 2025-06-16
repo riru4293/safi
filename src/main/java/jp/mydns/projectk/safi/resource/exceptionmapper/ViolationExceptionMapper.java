@@ -25,6 +25,8 @@
  */
 package jp.mydns.projectk.safi.resource.exceptionmapper;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
 import jakarta.validation.ConstraintViolation;
@@ -64,20 +66,30 @@ import org.slf4j.LoggerFactory;
  @since 3.0.0
  */
 @Provider
+@ApplicationScoped
 public class ViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
 private static final String RESOURCE_PKG = "jp.mydns.projectk.safi.resource";
 private static final URI CODE = URI.create(
-    "https://project-k.mydns.jp/safi/errors/request-constraint-violation.html");
-private static final String MSG = "Wrong request.";
+    "https://project-k.mydns.jp/safi/errors/request-violation.html");
+private static final String MSG = "A constraint violation was detected in the request.";
 
 private static final Logger log = LoggerFactory.getLogger(ViolationExceptionMapper.class);
+
+private UnexpectedErrorResponseFactory responseFactory;
+
+@Inject
+@SuppressWarnings("unused")
+void setResponseFactory(UnexpectedErrorResponseFactory responseFactory) {
+    this.responseFactory = responseFactory;
+}
 
 /**
  Create a <i>400 Bad Request</i> response if a constraint violation occurs in an HTTP request.
 
  @param ex the {@code ConstraintViolationException}
- @return a <i>400 Bad Request</i> response that contains reason of violations
+ @return if the request violates a constraint, it's a <i>400 Bad Request</i> response containing the
+ reason for the violation, otherwise it's a <i>500 Internal Error</i> response.
  @throws InternalServerErrorException if a constraint violation occurs in a request other than an
  HTTP request.
  @since 3.0.0
@@ -93,10 +105,7 @@ public Response toResponse(ConstraintViolationException ex) {
         .map(new ErrorResponseContext.Builder().withCode(CODE).withMessage(MSG)::withDetails)
         .map(ErrorResponseContext.Builder::unsafeBuild)
         .map(f(status(BAD_REQUEST).type(APPLICATION_JSON)::entity).andThen(ResponseBuilder::build))
-        .orElseThrow(() -> {
-            // Note: Delegating to another ExceptionMapper as 500 error.
-            throw new InternalServerErrorException(ex);
-        });
+        .orElseGet(responseFactory::create);
 }
 
 private boolean isBadRequest(Set<ConstraintViolation<?>> cvSet) {
@@ -106,8 +115,9 @@ private boolean isBadRequest(Set<ConstraintViolation<?>> cvSet) {
     //       This is to determine whether the constraint violation is the user's responsibility or not.
     return cvSet.stream().parallel()
         .filter(this::isParameterViolation)
-        .map(ConstraintViolation::getRootBeanClass).filter(Objects::nonNull)
-        .map(Class::getPackage).map(Package::getName)
+        .map(ConstraintViolation::getRootBeanClass)
+        .filter(Objects::nonNull)
+        .map(f(Package::getName).compose(Class::getPackage))
         .anyMatch(n -> n.startsWith(RESOURCE_PKG));
 }
 
@@ -129,9 +139,9 @@ private List<JsonObject> toDetails(Set<ConstraintViolation<?>> cvSet) {
         .toList();
 }
 
+// Note: Only parameter constraint violations are assumed.
 private String toJsonPath(Path p) {
 
-    // Note: Only parameter constraint violations are assumed.
     Iterator<Path.Node> nodes = p.iterator();
     StringBuilder sb = new StringBuilder("$");
 

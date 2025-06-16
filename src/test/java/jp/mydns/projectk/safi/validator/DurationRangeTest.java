@@ -122,7 +122,15 @@ class DurationRangeTest {
 
     public class Bean {
 
+        private Duration value;
+
         @DurationRange(minSecond = 2, maxSecond = 3)
-        public Duration value;
+        public Duration getValue() {
+            return value;
+        }
+
+        public void setValue(Duration value) {
+            this.value = value;
+        }
     }
 }

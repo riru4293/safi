@@ -27,20 +27,20 @@ package jp.mydns.projectk.safi.test;
 
 import jakarta.enterprise.inject.spi.Bean;
 import jakarta.enterprise.util.TypeLiteral;
-import jp.mydns.projectk.safi.service.AppTimeService;
+import jp.mydns.projectk.safi.service.TimeService;
 import org.jboss.weld.junit.MockBean;
 import static org.mockito.Mockito.mock;
 
 /**
- * Provides the {@code AppTimeService} as CDI bean for testing.
+ * Provides the {@code TimeService} as CDI bean for testing.
  *
  * @author riru
  * @version 3.0.0
  * @since 3.0.0
  */
-public class AppTimeServiceProvider {
+public class TimeServiceProvider {
 
-    private final AppTimeService mock;
+    private final TimeService mock;
     private final Bean<?> bean;
 
     /**
@@ -48,9 +48,9 @@ public class AppTimeServiceProvider {
      *
      * @since 3.0.0
      */
-    public AppTimeServiceProvider() {
-        mock = mock(AppTimeService.class);
-        bean = MockBean.builder().types(new TypeLiteral<AppTimeService>() {
+    public TimeServiceProvider() {
+        mock = mock(TimeService.class);
+        bean = MockBean.builder().types(new TypeLiteral<TimeService>() {
             @java.io.Serial
             private static final long serialVersionUID = 1L;
         }.getType()).creating(mock).build();
@@ -62,7 +62,7 @@ public class AppTimeServiceProvider {
      * @return mock
      * @since 3.0.0
      */
-    public AppTimeService getMock() {
+    public TimeService getMock() {
         return mock;
     }
 

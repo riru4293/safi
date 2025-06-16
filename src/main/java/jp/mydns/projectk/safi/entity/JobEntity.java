@@ -46,410 +46,415 @@ import jp.mydns.projectk.safi.validator.TimeRange;
 import jp.mydns.projectk.safi.value.SJson;
 
 /**
- * JPA entity for the <i>t_job</i> table.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JPA entity for the <i>t_job</i> table.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @Entity
 @Cacheable(false)
 @Table(name = "t_job")
 public class JobEntity extends CommonEntity {
 
-    @java.io.Serial
-    private static final long serialVersionUID = -1878103273727614325L;
+@java.io.Serial
+private static final long serialVersionUID = -1878103273727614325L;
 
-    @Id
-    @Basic(optional = false)
-    @Column(name = "id", nullable = false, updatable = false, length = 36)
-    private String id;
+@Id
+@Basic(optional = false)
+@Column(name = "id", nullable = false, updatable = false, length = 36)
+private String id;
 
-    @Basic(optional = false)
-    @Column(name = "stat", nullable = false, length = 20)
-    @Enumerated(EnumType.STRING)
-    private JobStatus status;
+@Basic(optional = false)
+@Column(name = "stat", nullable = false, length = 20)
+@Enumerated(EnumType.STRING)
+private JobStatus status;
 
-    @Basic(optional = false)
-    @Column(name = "kind", nullable = false, updatable = false, length = 20)
-    @Enumerated(EnumType.STRING)
-    private JobKind kind;
+@Basic(optional = false)
+@Column(name = "kind", nullable = false, updatable = false, length = 20)
+@Enumerated(EnumType.STRING)
+private JobKind kind;
 
-    @Basic(optional = false)
-    @Column(name = "target", nullable = false, updatable = false, length = 20)
-    @Enumerated(EnumType.STRING)
-    private JobTarget target;
+@Basic(optional = false)
+@Column(name = "target", nullable = false, updatable = false, length = 20)
+@Enumerated(EnumType.STRING)
+private JobTarget target;
 
-    @Basic(optional = false)
-    @Column(name = "sche_ts", nullable = false, updatable = false)
-    private LocalDateTime scheduleTime;
+@Basic(optional = false)
+@Column(name = "sche_ts", nullable = false, updatable = false)
+private LocalDateTime scheduleTime;
 
-    @Basic(optional = false)
-    @Column(name = "limit_ts", nullable = false, updatable = false)
-    private LocalDateTime limitTime;
+@Basic(optional = false)
+@Column(name = "limit_ts", nullable = false, updatable = false)
+private LocalDateTime limitTime;
 
-    @Column(name = "begin_ts", insertable = false)
-    private LocalDateTime beginTime;
+@Column(name = "begin_ts", insertable = false)
+private LocalDateTime beginTime;
 
-    @Column(name = "end_ts", insertable = false)
-    private LocalDateTime endTime;
+@Column(name = "end_ts", insertable = false)
+private LocalDateTime endTime;
 
-    @Basic(optional = false)
-    @Column(name = "props", nullable = false, updatable = false)
-    private SJson properties;
+@Basic(optional = false)
+@Column(name = "props", nullable = false, updatable = false)
+private SJson properties;
 
-    @Basic(optional = false)
-    @Column(name = "jobdef_id", nullable = false, updatable = false, length = 36)
-    private String jobdefId;
+@Basic(optional = false)
+@Column(name = "jobdef_id", nullable = false, updatable = false, length = 36)
+private String jobdefId;
 
-    @Basic(optional = false)
-    @Column(name = "jobdef", nullable = false, updatable = false)
-    private SJson jobdef;
+@Basic(optional = false)
+@Column(name = "jobdef", nullable = false, updatable = false)
+private SJson jobdef;
 
-    @Column(name = "schedef_id", updatable = false, length = 36)
-    private String schedefId;
+@Column(name = "schedef_id", updatable = false, length = 36)
+private String schedefId;
 
-    @Column(name = "schedef", updatable = false)
-    private SJson schedef;
+@Column(name = "schedef", updatable = false)
+private SJson schedef;
 
-    @Column(name = "results", insertable = false)
-    private SJson resultMessages;
+@Column(name = "results", insertable = false)
+private SJson resultMessages;
 
-    /**
-     * Get job id.
-     *
-     * @return job id
-     * @since 3.0.0
-     */
-    @NotBlank
-    @Size(max = 36)
-    public String getId() {
-        return id;
-    }
+/**
+ Get job id.
 
-    /**
-     * Set job id.
-     *
-     * @param id job id. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
+ @return job id
+ @since 3.0.0
+ */
+@NotBlank
+@Size(max = 36)
+public String getId() {
+    return id;
+}
 
-    /**
-     * Get job status.
-     *
-     * @return job status
-     * @since 3.0.0
-     */
-    @NotNull
-    public JobStatus getStatus() {
-        return status;
-    }
+/**
+ Set job id.
 
-    /**
-     * Set job status.
-     *
-     * @param status job status
-     * @since 3.0.0
-     */
-    public void setStatus(JobStatus status) {
-        this.status = status;
-    }
+ @param id job id. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setId(String id) {
+    this.id = id;
+}
 
-    /**
-     * Get job kind.
-     *
-     * @return job kind
-     * @since 3.0.0
-     */
-    @NotNull
-    public JobKind getKind() {
-        return kind;
-    }
+/**
+ Get job status.
 
-    /**
-     * Set job kind.
-     *
-     * @param kind job kind. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setKind(JobKind kind) {
-        this.kind = kind;
-    }
+ @return job status
+ @since 3.0.0
+ */
+@NotNull
+public JobStatus getStatus() {
+    return status;
+}
 
-    /**
-     * Get job target.
-     *
-     * @return job target
-     * @since 3.0.0
-     */
-    @NotNull
-    public JobTarget getTarget() {
-        return target;
-    }
+/**
+ Set job status.
 
-    /**
-     * Set job target.
-     *
-     * @param target job target. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setTarget(JobTarget target) {
-        this.target = target;
-    }
+ @param status job status
+ @since 3.0.0
+ */
+public void setStatus(JobStatus status) {
+    this.status = status;
+}
 
-    /**
-     * Get job schedule time.
-     *
-     * @return job schedule time
-     * @since 3.0.0
-     */
-    @NotNull
-    @TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/)
-    @TimeAccuracy
-    public LocalDateTime getScheduleTime() {
-        return scheduleTime;
-    }
+/**
+ Get job kind.
 
-    /**
-     * Set job schedule time.
-     *
-     * @param scheduleTime job schedule time. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setScheduleTime(LocalDateTime scheduleTime) {
-        this.scheduleTime = scheduleTime;
-    }
+ @return job kind
+ @since 3.0.0
+ */
+@NotNull
+public JobKind getKind() {
+    return kind;
+}
 
-    /**
-     * Get limit time at job execution.
-     *
-     * @return limit time
-     * @since 3.0.0
-     */
-    @NotNull
-    @TimeRange
-    @TimeAccuracy
-    public LocalDateTime getLimitTime() {
-        return limitTime;
-    }
+/**
+ Set job kind.
 
-    /**
-     * Set limit time at job execution.
-     *
-     * @param limitTime limit time. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setLimitTime(LocalDateTime limitTime) {
-        this.limitTime = limitTime;
-    }
+ @param kind job kind. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setKind(JobKind kind) {
+    this.kind = kind;
+}
 
-    /**
-     * Get begin time at job execution.
-     *
-     * @return begin time. {@code null} if before begin job execution. {@code null} if yet begun.
-     * @since 3.0.0
-     */
-    @TimeRange
-    @TimeAccuracy
-    public LocalDateTime getBeginTime() {
-        return beginTime;
-    }
+/**
+ Get job target.
 
-    /**
-     * Set begin time at job execution.
-     *
-     * @param beginTime begin time. Cannot insert new.
-     * @since 3.0.0
-     */
-    public void setBeginTime(LocalDateTime beginTime) {
-        this.beginTime = beginTime;
-    }
+ @return job target
+ @since 3.0.0
+ */
+@NotNull
+public JobTarget getTarget() {
+    return target;
+}
 
-    /**
-     * Get end time at job execution.
-     *
-     * @return end time. {@code null} if before end job execution. {@code null} if yet end.
-     * @since 3.0.0
-     */
-    @TimeRange
-    @TimeAccuracy
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
+/**
+ Set job target.
 
-    /**
-     * Set end time at job execution. It is impossible to insert new.
-     *
-     * @param endTime end time. Cannot insert new.
-     * @since 3.0.0
-     */
-    public void setEndTime(LocalDateTime endTime) {
-        this.endTime = endTime;
-    }
+ @param target job target. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setTarget(JobTarget target) {
+    this.target = target;
+}
 
-    /**
-     * Get job properties.
-     *
-     * @return job properties
-     * @since 3.0.0
-     */
-    @NotNull
-    public SJson getProperties() {
-        return properties;
-    }
+/**
+ Get job schedule time.
 
-    /**
-     * Set job properties.
-     *
-     * @param properties job properties. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setProperties(SJson properties) {
-        this.properties = properties;
-    }
+ @return job schedule time
+ @since 3.0.0
+ */
+@NotNull
+@TimeRange(maxEpochSecond = 32_503_593_600L/*2999-12-31T00:00:00*/)
+@TimeAccuracy
+public LocalDateTime getScheduleTime() {
+    return scheduleTime;
+}
 
-    /**
-     * Get job definition id.
-     *
-     * @return job definition id
-     * @since 3.0.0
-     */
-    @NotBlank
-    @Size(max = 36)
-    public String getJobdefId() {
-        return jobdefId;
-    }
+/**
+ Set job schedule time.
 
-    /**
-     * Set job definition id.
-     *
-     * @param jobdefId job definition id. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setJobdefId(String jobdefId) {
-        this.jobdefId = jobdefId;
-    }
+ @param scheduleTime job schedule time. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setScheduleTime(LocalDateTime scheduleTime) {
+    this.scheduleTime = scheduleTime;
+}
 
-    /**
-     * Get job definition.
-     *
-     * @return source job definition
-     * @since 3.0.0
-     */
-    @NotNull
-    public SJson getJobdef() {
-        return jobdef;
-    }
+/**
+ Get limit time at job execution.
 
-    /**
-     * Set job definition.
-     *
-     * @param jobdef source job definition. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setJobdef(SJson jobdef) {
-        this.jobdef = jobdef;
-    }
+ @return limit time
+ @since 3.0.0
+ */
+@NotNull
+@TimeRange
+@TimeAccuracy
+public LocalDateTime getLimitTime() {
+    return limitTime;
+}
 
-    /**
-     * Get schedule definition id.
-     *
-     * @return schedule definition id. It may be {@code null}.
-     * @since 3.0.0
-     */
-    @Size(max = 36)
-    public String getSchedefId() {
-        return schedefId;
-    }
+/**
+ Set limit time at job execution.
 
-    /**
-     * Set schedule definition id.
-     *
-     * @param schedefId schedule definition id. Cannot update persisted value. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setSchedefId(String schedefId) {
-        this.schedefId = schedefId;
-    }
+ @param limitTime limit time. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setLimitTime(LocalDateTime limitTime) {
+    this.limitTime = limitTime;
+}
 
-    /**
-     * Get schedule definition.
-     *
-     * @return source schedule definition. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public SJson getSchedef() {
-        return schedef;
-    }
+/**
+ Get begin time at job execution.
 
-    /**
-     * Set schedule definition.
-     *
-     * @param schedef source schedule definition. Cannot update persisted value. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setSchedef(SJson schedef) {
-        this.schedef = schedef;
-    }
+ @return begin time. {@code null} if before begin job execution. {@code null} if yet begun.
+ @since 3.0.0
+ */
+@TimeRange
+@TimeAccuracy
+public LocalDateTime getBeginTime() {
+    return beginTime;
+}
 
-    /**
-     * Get result messages.
-     *
-     * @return result messages. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public SJson getResultMessages() {
-        return resultMessages;
-    }
+/**
+ Set begin time at job execution.
 
-    /**
-     * Set result messages.
-     *
-     * @param resultMessages result messages. Cannot insert new.
-     * @since 3.0.0
-     */
-    public void setResultMessages(SJson resultMessages) {
-        this.resultMessages = resultMessages;
-    }
+ @param beginTime begin time. Cannot insert new.
+ @since 3.0.0
+ */
+public void setBeginTime(LocalDateTime beginTime) {
+    this.beginTime = beginTime;
+}
 
-    /**
-     * Returns a hash code value.
-     *
-     * @return a hash code value. It is generated from the primary key value.
-     * @since 3.0.0
-     */
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
+/**
+ Get end time at job execution.
 
-    /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
-     * key is match.
-     *
-     * @param other an any object
-     * @return {@code true} if equals, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof JobEntity o && Objects.equals(id, o.id);
-    }
+ @return end time. {@code null} if before end job execution. {@code null} if yet end.
+ @since 3.0.0
+ */
+@TimeRange
+@TimeAccuracy
+public LocalDateTime getEndTime() {
+    return endTime;
+}
 
-    /**
-     * Returns a string representation.
-     *
-     * @return a string representation
-     * @since 3.0.0
-     */
-    @Override
-    public String toString() {
-        return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target=" + target
-            + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
-            + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId + ", jobdef=" + jobdef
-            + ", schedefId=" + schedefId + ", schedef=" + schedef + ", resultMessages=" + resultMessages + '}';
-    }
+/**
+ Set end time at job execution. It is impossible to insert new.
+
+ @param endTime end time. Cannot insert new.
+ @since 3.0.0
+ */
+public void setEndTime(LocalDateTime endTime) {
+    this.endTime = endTime;
+}
+
+/**
+ Get job properties.
+
+ @return job properties
+ @since 3.0.0
+ */
+@NotNull
+public SJson getProperties() {
+    return properties;
+}
+
+/**
+ Set job properties.
+
+ @param properties job properties. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setProperties(SJson properties) {
+    this.properties = properties;
+}
+
+/**
+ Get job definition id.
+
+ @return job definition id
+ @since 3.0.0
+ */
+@NotBlank
+@Size(max = 36)
+public String getJobdefId() {
+    return jobdefId;
+}
+
+/**
+ Set job definition id.
+
+ @param jobdefId job definition id. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setJobdefId(String jobdefId) {
+    this.jobdefId = jobdefId;
+}
+
+/**
+ Get job definition.
+
+ @return source job definition
+ @since 3.0.0
+ */
+@NotNull
+public SJson getJobdef() {
+    return jobdef;
+}
+
+/**
+ Set job definition.
+
+ @param jobdef source job definition. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setJobdef(SJson jobdef) {
+    this.jobdef = jobdef;
+}
+
+/**
+ Get schedule definition id.
+
+ @return schedule definition id. It may be {@code null}.
+ @since 3.0.0
+ */
+@Size(max = 36)
+public String getSchedefId() {
+    return schedefId;
+}
+
+/**
+ Set schedule definition id.
+
+ @param schedefId schedule definition id. Cannot update persisted value. It can be set {@code null}.
+ @since 3.0.0
+ */
+public void setSchedefId(String schedefId) {
+    this.schedefId = schedefId;
+}
+
+/**
+ Get schedule definition.
+
+ @return source schedule definition. It may be {@code null}.
+ @since 3.0.0
+ */
+public SJson getSchedef() {
+    return schedef;
+}
+
+/**
+ Set schedule definition.
+
+ @param schedef source schedule definition. Cannot update persisted value. It can be set
+ {@code null}.
+ @since 3.0.0
+ */
+public void setSchedef(SJson schedef) {
+    this.schedef = schedef;
+}
+
+/**
+ Get result messages.
+
+ @return result messages. It may be {@code null}.
+ @since 3.0.0
+ */
+public SJson getResultMessages() {
+    return resultMessages;
+}
+
+/**
+ Set result messages.
+
+ @param resultMessages result messages. Cannot insert new.
+ @since 3.0.0
+ */
+public void setResultMessages(SJson resultMessages) {
+    this.resultMessages = resultMessages;
+}
+
+/**
+ Returns a hash code value.
+
+ @return a hash code value. It is generated from the primary key value.
+ @since 3.0.0
+ */
+@Override
+public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+}
+
+/**
+ Indicates that other object is equal to this instance. Equality means that can be cast to this
+ class and primary key is match.
+
+ @param other an any object
+ @return {@code true} if equals, otherwise {@code false}.
+ @since 3.0.0
+ */
+@Override
+public boolean equals(Object other) {
+    return other instanceof JobEntity o && Objects.equals(id, o.id);
+}
+
+/**
+ Returns a string representation.
+
+ @return a string representation
+ @since 3.0.0
+ */
+@Override
+public String toString() {
+    return "JobEntity{" + "id=" + id + ", status=" + status + ", kind=" + kind + ", target="
+        + target
+        + ", scheduleTime=" + scheduleTime + ", limitTime=" + limitTime + ", beginTime=" + beginTime
+        + ", endTime=" + endTime + ", properties=" + properties + ", jobdefId=" + jobdefId
+        + ", jobdef=" + jobdef
+        + ", schedefId=" + schedefId + ", schedef=" + schedef + ", resultMessages=" + resultMessages
+        + '}';
+}
+
 }

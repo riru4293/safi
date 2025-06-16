@@ -25,7 +25,7 @@
  */
 package jp.mydns.projectk.safi.dxo;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonValue;
@@ -37,6 +37,9 @@ import jp.mydns.projectk.safi.service.JsonService;
 import static jp.mydns.projectk.safi.util.CollectionUtils.convertElements;
 import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
+import static jp.mydns.projectk.safi.util.LambdaUtils.f;
+import static jp.mydns.projectk.safi.util.TimeUtils.toLocalDateTime;
+import static jp.mydns.projectk.safi.util.TimeUtils.toOffsetDateTime;
 import jp.mydns.projectk.safi.value.JobCreationContext;
 import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
@@ -44,7 +47,7 @@ import jp.mydns.projectk.safi.value.SchedefValue;
 import jp.mydns.projectk.safi.value.SJson;
 
 /**
- Data exchange processing for <i>Job</i>.
+ <i>Job</i> data exchange processing.
 
  @author riru
  @version 3.0.0
@@ -57,7 +60,7 @@ public interface JobDxo {
 
  @param ctx the {@code JobCreationContext}. Constraint violations must be none.
  @return new job entity. It is not persisted yet.
- @throws NullPointerException if {@code ctx} is {@code null}
+ @throws NullPointerException if {@code ctx} is {@code null}.
  @since 3.0.0
  */
 JobEntity newEntity(JobCreationContext ctx);
@@ -90,10 +93,16 @@ JobValue toValue(JobEntity entity);
  @since 3.0.0
  */
 @Typed(JobDxo.class)
-@RequestScoped
+@ApplicationScoped
 class Impl extends ValidityPeriodDxo implements JobDxo {
 
 private final JsonService jsonSvc;
+
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
 
 @Inject
 Impl(JsonService jsonSvc) {
@@ -143,10 +152,10 @@ public JobEntity toEntity(JobValue value) {
     entity.setStatus(value.getStatus());
     entity.setKind(value.getKind());
     entity.setTarget(value.getTarget());
-    entity.setScheduleTime(TimeUtils.toLocalDateTime(value.getScheduleTime()));
-    entity.setLimitTime(TimeUtils.toLocalDateTime(value.getLimitTime()));
-    entity.setBeginTime(TimeUtils.toLocalDateTime(value.getBeginTime().orElse(null)));
-    entity.setEndTime(TimeUtils.toLocalDateTime(value.getEndTime().orElse(null)));
+    entity.setScheduleTime(toLocalDateTime(value.getScheduleTime()));
+    entity.setLimitTime(toLocalDateTime(value.getLimitTime()));
+    entity.setBeginTime(toLocalDateTime(value.getBeginTime().orElse(null)));
+    entity.setEndTime(toLocalDateTime(value.getEndTime().orElse(null)));
     entity.setProperties(jsonSvc.toSJson(value.getProperties()));
     entity.setJobdefId(value.getJobdefId());
     entity.setJobdef(jsonSvc.toSJson(value.getJobdef()));
@@ -180,24 +189,27 @@ public JobValue toValue(JobEntity entity) {
         .withStatus(entity.getStatus())
         .withKind(entity.getKind())
         .withTarget(entity.getTarget())
-        .withScheduleTime(TimeUtils.toOffsetDateTime(entity.getScheduleTime()))
-        .withLimitTime(TimeUtils.toOffsetDateTime(entity.getLimitTime()))
-        .withBeginTime(TimeUtils.toOffsetDateTime(entity.getBeginTime()))
-        .withEndTime(TimeUtils.toOffsetDateTime(entity.getEndTime()))
+        .withScheduleTime(toOffsetDateTime(entity.getScheduleTime()))
+        .withLimitTime(toOffsetDateTime(entity.getLimitTime()))
+        .withBeginTime(toOffsetDateTime(entity.getBeginTime()))
+        .withEndTime(toOffsetDateTime(entity.getEndTime()))
         .withProperties(entity.getProperties().unwrap().asJsonObject())
         .withJobdefId(entity.getJobdefId())
         .withJobdef(jsonSvc.fromJsonValue(entity.getJobdef().unwrap(), JobdefValue.class))
         .withSchedefId(entity.getSchedefId())
-        .withSchedef(Optional.ofNullable(entity.getSchedef()).map(SJson::unwrap)
-            .map(jsonSvc.fromJsonValue(SchedefValue.class)).orElse(null))
-        .withResultMessages(Optional.ofNullable(entity.getResultMessages()).map(SJson::unwrap)
-            .map(JsonValue::asJsonArray).map(convertElements(JsonValueUtils::toString)).orElse(null))
+        .withSchedef(Optional.ofNullable(entity.getSchedef())
+            .map(f(jsonSvc.fromJsonValue(SchedefValue.class)).compose(SJson::unwrap))
+            .orElse(null))
+        .withResultMessages(Optional.ofNullable(entity.getResultMessages())
+            .map(f(JsonValue::asJsonArray).compose(SJson::unwrap))
+            .map(convertElements(JsonValueUtils::toString))
+            .orElse(null))
         .withNote(entity.getNote())
         .withVersion(entity.getVersion())
-        .withRegisterTime(TimeUtils.toOffsetDateTime(entity.getRegTime()))
+        .withRegisterTime(toOffsetDateTime(entity.getRegTime()))
         .withRegisterAccountId(entity.getRegId())
         .withRegisterProcessName(entity.getRegName())
-        .withUpdateTime(TimeUtils.toOffsetDateTime(entity.getUpdTime()))
+        .withUpdateTime(toOffsetDateTime(entity.getUpdTime()))
         .withUpdateAccountId(entity.getUpdId())
         .withUpdateProcessName(entity.getUpdName())
         .unsafeBuild();

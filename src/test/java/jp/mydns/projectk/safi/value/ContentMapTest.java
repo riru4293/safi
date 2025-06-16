@@ -34,147 +34,175 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 /**
- * Test of class {ContentMap}.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Test of class {ContentMap}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 class ContentMapTest {
 
-    /**
-     * Test of isEmpty method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testIsEmpty() throws IOException {
-        var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+/**
+ Test of isEmpty method.
 
-        var empty = new ContentMap<String>(Collections.emptyIterator(), tmpDir, new TestConvertor());
-        var noEmpty = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
-            new TestConvertor());
+ @since 3.0.0
+ */
+@Test
+void testIsEmpty() throws IOException {
+    var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+
+    // If empty
+    try (var empty = new ContentMap<String>(Collections.emptyIterator(), tmpDir, new TestConvertor());) {
         assertThat(empty.isEmpty()).isTrue();
+    }
+
+    // If contains any entities.
+    var collection = Collections.singleton(Map.entry("k", "v"));
+    try (
+        var noEmpty = new ContentMap<String>(collection.iterator(), tmpDir, new TestConvertor());) {
         assertThat(noEmpty.isEmpty()).isFalse();
     }
+}
 
-    /**
-     * Test of size method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testSize() throws IOException {
-        var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+/**
+ Test of size method.
 
-        var empty = new ContentMap<String>(Collections.emptyIterator(), tmpDir, new TestConvertor());
-        var noEmpty = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
-            new TestConvertor());
+ @since 3.0.0
+ */
+@Test
+void testSize() throws IOException {
+    var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+
+    // If empty
+    try (var empty = new ContentMap<String>(Collections.emptyIterator(), tmpDir, new TestConvertor());) {
         assertThat(empty.size()).isZero();
-        assertThat(noEmpty.size()).isEqualTo(1);
     }
 
-    /**
-     * Test of containsKey method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testContainsKey() throws IOException {
-        var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+    // If contains any entities.
+    var collection = Collections.singleton(Map.entry("k", "v"));
+    try (
+        var noEmpty = new ContentMap<String>(collection.iterator(), tmpDir, new TestConvertor());) {
+        assertThat(noEmpty.size()).isEqualTo(1);
+    }
+}
 
-        var instance = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
-            new TestConvertor());
+/**
+ Test of containsKey method.
+
+ @since 3.0.0
+ */
+@Test
+void testContainsKey() throws IOException {
+    var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+
+    var collection = Collections.singleton(Map.entry("k", "v"));
+    try (
+        var instance = new ContentMap<String>(collection.iterator(), tmpDir, new TestConvertor());) {
         assertThat(instance.containsKey("k")).isTrue();
         assertThat(instance.containsKey("v")).isFalse();
     }
+}
 
-    /**
-     * Test of keySet method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testKeySet() throws IOException {
-        var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+/**
+ Test of keySet method.
 
-        var instance = new ContentMap<String>(Map.of("k", "v", "k2", "v2").entrySet().iterator(), tmpDir,
-            new TestConvertor());
+ @since 3.0.0
+ */
+@Test
+void testKeySet() throws IOException {
+    var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+
+    var iterator = Map.of("k", "v", "k2", "v2").entrySet().iterator();
+    try (
+        var instance = new ContentMap<String>(iterator, tmpDir, new TestConvertor());) {
         assertThat(instance.keySet()).containsExactlyInAnyOrder("k", "k2");
     }
+}
 
-    /**
-     * Test of stream method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testStream() throws IOException {
-        var src = Map.of("k", "v", "k2", "v2");
-        var expect = src.values();
-        var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+/**
+ Test of stream method.
 
-        var instance = new ContentMap<String>(src.entrySet().iterator(), tmpDir, new TestConvertor());
+ @since 3.0.0
+ */
+@Test
+void testStream() throws IOException {
+    var src = Map.of("k", "v", "k2", "v2");
+    var expect = src.values();
+    var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+
+    try (var instance = new ContentMap<String>(src.entrySet().iterator(), tmpDir, new TestConvertor());) {
         assertThat(instance.stream()).containsExactlyInAnyOrderElementsOf(expect);
     }
+}
 
-    /**
-     * Test of get method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testGet() throws IOException {
-        var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+/**
+ Test of get method.
 
-        var instance = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(), tmpDir,
-            new TestConvertor());
+ @since 3.0.0
+ */
+@Test
+void testGet() throws IOException {
+    var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+
+    try (var instance = new ContentMap<String>(Collections.singleton(Map.entry("k", "v")).iterator(),
+        tmpDir, new TestConvertor());) {
 
         assertThat(instance.get("k")).isEqualTo("v");
         assertThat(instance.get("k2")).isNull();
     }
+}
 
-    /**
-     * Test of hasDuplicates method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testHasDuplicates() throws IOException {
-        var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+/**
+ Test of hasDuplicates method.
 
-        var duplicates = new ContentMap<String>(Stream.of(Map.entry("k", "v"), Map.entry("K", "V")).iterator(),
-            tmpDir, new TestConvertor());
-        var noDuplicates = new ContentMap<String>(Stream.of(Map.entry("k", "v")).iterator(), tmpDir, new TestConvertor());
+ @since 3.0.0
+ */
+@Test
+void testHasDuplicates() throws IOException {
+    var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+
+    try (var duplicates = new ContentMap<String>(
+        Stream.of(Map.entry("k", "v"), Map.entry("K", "V")).iterator(),
+        tmpDir, new TestConvertor());) {
+
         assertThat(duplicates.hasDuplicates()).isTrue();
-        assertThat(noDuplicates.hasDuplicates()).isFalse();
     }
 
-    /**
-     * Test of duplicates method.
-     *
-     * @since 3.0.0
-     */
-    @Test
-    void testDuplicates() throws IOException {
-        var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+    try (var noDuplicates = new ContentMap<String>(Stream.of(Map.entry("k", "v")).iterator(), tmpDir,
+        new TestConvertor());) {
 
-        var duplicates = new ContentMap<String>(Stream.of(
-            Map.entry("k", "v"), Map.entry("K", "V"), Map.entry("k", "v2")).iterator(), tmpDir, new TestConvertor());
+        assertThat(noDuplicates.hasDuplicates()).isFalse();
+    }
+}
+
+/**
+ Test of duplicates method.
+
+ @since 3.0.0
+ */
+@Test
+void testDuplicates() throws IOException {
+    var tmpDir = Path.of(System.getProperty("java.io.tmpdir"));
+
+    try (var duplicates = new ContentMap<String>(Stream.of(Map.entry("k", "v"), Map.entry("K", "V"),
+        Map.entry("k", "v2")).iterator(), tmpDir, new TestConvertor());) {
 
         assertThat(duplicates.duplicates()).containsExactlyInAnyOrder("v", "V", "v2");
     }
+}
 
-    private class TestConvertor implements ContentMap.Convertor<String> {
+private class TestConvertor implements ContentMap.Convertor<String> {
 
-        @Override
-        public String serialize(String c) {
-            return c;
-        }
+@Override
+public String serialize(String c) {
+    return c;
+}
 
-        @Override
-        public String deserialize(String s) {
-            return s;
-        }
-    }
+@Override
+public String deserialize(String s) {
+    return s;
+}
+
+}
+
 }

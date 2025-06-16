@@ -34,37 +34,38 @@ import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
 
 /**
- * CDI Producer that provides instances of {@link Validator} for testing.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ CDI Producer that provides instances of {@link Validator} for testing.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @ApplicationScoped
 public class ValidatorProducer {
 
-    private final ValidatorFactory fact = Validation.buildDefaultValidatorFactory();
+private final ValidatorFactory fact = Validation.buildDefaultValidatorFactory();
 
-    /**
-     * Produces an the {@code Validator}.
-     *
-     * @return the {@code Validator}
-     * @since 3.0.0
-     */
-    @Produces
-    @Alternative
-    @ApplicationScoped
-    public Validator produce() {
-        return fact.getValidator();
-    }
+/**
+ Produces an the {@code Validator}.
 
-    /**
-     * Close the {@code ValidatorFactory}.
-     *
-     * @since 3.0.0
-     */
-    @PreDestroy
-    public void closeValidatorFactory() {
-        fact.close();
-    }
+ @return the {@code Validator}
+ @since 3.0.0
+ */
+@Produces
+@Alternative
+@ApplicationScoped
+public Validator produce() {
+    return fact.getValidator();
+}
+
+/**
+ Close the {@code ValidatorFactory}.
+
+ @since 3.0.0
+ */
+@PreDestroy
+public void closeValidatorFactory() {
+    fact.close();
+}
+
 }

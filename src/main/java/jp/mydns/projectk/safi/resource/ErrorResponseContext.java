@@ -118,6 +118,18 @@ public Builder() {
 }
 
 /**
+ Unsupported.
+
+ @param src no use.
+ @return none.
+ @throws UnsupportedOperationException always.
+ */
+@Override
+public Builder with(ErrorResponseContext src) {
+    throw new UnsupportedOperationException();
+}
+
+/**
  Set error code.
 
  @param code error code
@@ -171,7 +183,7 @@ private final URI code;
 private final String message;
 private final List<JsonObject> details;
 
-public Bean(Builder builder) {
+protected Bean(Builder builder) {
     this.code = builder.code;
     this.message = builder.message;
     this.details = builder.details;

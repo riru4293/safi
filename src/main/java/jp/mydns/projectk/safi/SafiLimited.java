@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025, ProjectK
+ * Copyright (c) 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -23,56 +23,28 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.test;
+package jp.mydns.projectk.safi;
 
-import jakarta.enterprise.inject.spi.Bean;
-import jakarta.enterprise.util.TypeLiteral;
-import jp.mydns.projectk.safi.service.RealTimeService;
-import org.jboss.weld.junit.MockBean;
-import static org.mockito.Mockito.mock;
+import jakarta.inject.Qualifier;
+import jakarta.validation.Validator;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Provides the {@code RealTimeService} as CDI bean for testing.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ A qualifier that a dedicated custom instance for <i>SAFI</i>. Used to distinguish an instance from
+ an external CDI bean, for example when you want to inject a custom instance rather than an
+ application server provided class such as {@link Validator}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
-public class RealTimeServiceProvider {
-
-    private final RealTimeService mock;
-    private final Bean<?> bean;
-
-    /**
-     * Constructor.
-     *
-     * @since 3.0.0
-     */
-    public RealTimeServiceProvider() {
-        mock = mock(RealTimeService.class);
-        bean = MockBean.builder().types(new TypeLiteral<RealTimeService>() {
-            @java.io.Serial
-            private static final long serialVersionUID = 1L;
-        }.getType()).creating(mock).build();
-    }
-
-    /**
-     * Get the mock by Mockito.
-     *
-     * @return mock
-     * @since 3.0.0
-     */
-    public RealTimeService getMock() {
-        return mock;
-    }
-
-    /**
-     * Get the CDI bean.
-     *
-     * @return the CDI bean
-     * @since 3.0.0
-     */
-    public Bean<?> getBean() {
-        return bean;
-    }
+@Qualifier
+@Documented
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface SafiLimited {
 }

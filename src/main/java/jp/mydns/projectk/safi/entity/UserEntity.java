@@ -31,53 +31,55 @@ import jakarta.persistence.Table;
 import java.util.Objects;
 
 /**
- * JPA entity for the <i>t_user</i> table.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JPA entity for the <i>t_user</i> table.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @Entity
 @Cacheable(false)
 @Table(name = "t_user")
 public class UserEntity extends ContentEntity {
 
-    @java.io.Serial
-    private static final long serialVersionUID = 2711050439353117979L;
+@java.io.Serial
+private static final long serialVersionUID = 2711050439353117979L;
 
-    /**
-     * Returns a hash code value.
-     *
-     * @return a hash code value. It is generated from the primary key value.
-     * @since 3.0.0
-     */
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
+/**
+ Returns a hash code value.
 
-    /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
-     * key is match.
-     *
-     * @param other an any object
-     * @return {@code true} if equals, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof UserEntity o && Objects.equals(id, o.id);
-    }
+ @return a hash code value. It is generated from the primary key value.
+ @since 3.0.0
+ */
+@Override
+public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+}
 
-    /**
-     * Returns a string representation.
-     *
-     * @return a string representation
-     * @since 3.0.0
-     */
-    @Override
-    public String toString() {
-        return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", validityPeriod=" + validityPeriod
-            + ", name=" + name + ", properties=" + properties + ", digest=" + digest + '}';
-    }
+/**
+ Indicates that other object is equal to this instance. Equality means that can be cast to this
+ class and primary key is match.
+
+ @param other an any object
+ @return {@code true} if equals, otherwise {@code false}.
+ @since 3.0.0
+ */
+@Override
+public boolean equals(Object other) {
+    return other instanceof UserEntity o && Objects.equals(id, o.id);
+}
+
+/**
+ Returns a string representation.
+
+ @return a string representation
+ @since 3.0.0
+ */
+@Override
+public String toString() {
+    return "UserEntity{" + "id=" + id + ", enabled=" + enabled + ", validityPeriod="
+        + validityPeriod
+        + ", name=" + name + ", properties=" + properties + ", digest=" + digest + '}';
+}
+
 }

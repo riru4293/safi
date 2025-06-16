@@ -25,29 +25,31 @@
  */
 package jp.mydns.projectk.safi.dxo;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
+import jakarta.json.bind.JsonbException;
 import jakarta.validation.ConstraintViolationException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import jp.mydns.projectk.safi.entity.JobdefEntity;
 import jp.mydns.projectk.safi.service.JsonService;
 import jp.mydns.projectk.safi.service.ValidationService;
+import static jp.mydns.projectk.safi.util.CollectionUtils.convertValues;
 import static jp.mydns.projectk.safi.util.CollectionUtils.toLinkedHashMap;
-import static jp.mydns.projectk.safi.util.LambdaUtils.compute;
-import jp.mydns.projectk.safi.util.TimeUtils;
 import jp.mydns.projectk.safi.util.JsonValueUtils;
+import static jp.mydns.projectk.safi.util.LambdaUtils.f;
+import static jp.mydns.projectk.safi.util.TimeUtils.toLocalDateTime;
+import static jp.mydns.projectk.safi.util.TimeUtils.toOffsetDateTime;
 import jp.mydns.projectk.safi.value.FiltdefValue;
 import jp.mydns.projectk.safi.value.JobdefValue;
 import jp.mydns.projectk.safi.value.SJson;
 
 /**
- Data exchange processing for <i>Job definition</i>.
+ <i>Job definition</i> data exchange processing.
 
  @author riru
  @version 3.0.0
@@ -68,10 +70,11 @@ JobdefEntity toEntity(JobdefValue value);
 /**
  Exchange to value object from JSON.
 
- @param json job definition as JSON
- @return the {@code JobdefValue}
- @throws NullPointerException if {@code json} is {@code null}
- @throws ConstraintViolationException if {@code json} has constraint violation
+ @param json job definition as JSON.
+ @return the {@code JobdefValue}.
+ @throws NullPointerException if {@code json} is {@code null}.
+ @throws ConstraintViolationException if {@code json} has constraint violation.
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
  @since 3.0.0
  */
 JobdefValue toValue(JsonObject json);
@@ -80,8 +83,9 @@ JobdefValue toValue(JsonObject json);
  Exchange to value object from entity.
 
  @param entity the {@code JobdefEntity}. Constraint violations must be none.
- @return the {@code JobdefValue}
- @throws NullPointerException if {@code entity} is {@code null}
+ @return the {@code JobdefValue}.
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
  @since 3.0.0
  */
 JobdefValue toValue(JobdefEntity entity);
@@ -94,22 +98,29 @@ JobdefValue toValue(JobdefEntity entity);
  @since 3.0.0
  */
 @Typed(JobdefDxo.class)
-@RequestScoped
+@ApplicationScoped
 class Impl extends ValidityPeriodDxo implements JobdefDxo {
 
-private final ValidationService validationSvc;
+private final ValidationService validSvc;
 private final JsonService jsonSvc;
 
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
+
 @Inject
-Impl(ValidationService validationSvc, JsonService jsonSvc) {
-    this.validationSvc = validationSvc;
+Impl(ValidationService validSvc, JsonService jsonSvc) {
+    this.validSvc = validSvc;
     this.jsonSvc = jsonSvc;
 }
 
 /**
  {@inheritDoc}
 
- @throws NullPointerException if {@code entity} is {@code null}
+ @throws NullPointerException if {@code entity} is {@code null}.
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion..
  @since 3.0.0
  */
 @Override
@@ -130,10 +141,10 @@ public JobdefEntity toEntity(JobdefValue value) {
     entity.setJobProperties(SJson.of(value.getJobProperties()));
     entity.setNote(value.getNote().orElse(null));
     entity.setVersion(value.getVersion());
-    entity.setRegTime(TimeUtils.toLocalDateTime(value.getRegisterTime().orElse(null)));
+    entity.setRegTime(toLocalDateTime(value.getRegisterTime().orElse(null)));
     entity.setRegId(value.getRegisterAccountId().orElse(null));
     entity.setRegName(value.getRegisterProcessName().orElse(null));
-    entity.setUpdTime(TimeUtils.toLocalDateTime(value.getUpdateTime().orElse(null)));
+    entity.setUpdTime(toLocalDateTime(value.getUpdateTime().orElse(null)));
     entity.setUpdId(value.getUpdateAccountId().orElse(null));
     entity.setUpdName(value.getUpdateProcessName().orElse(null));
 
@@ -143,13 +154,14 @@ public JobdefEntity toEntity(JobdefValue value) {
 /**
  {@inheritDoc}
 
- @throws NullPointerException if {@code json} is {@code null}
- @throws ConstraintViolationException if {@code json} has constraint violation
+ @throws NullPointerException if {@code json} is {@code null}.
+ @throws ConstraintViolationException if {@code json} has constraint violation.
+ @throws JsonbException if any unexpected error(s) occur(s) during conversion.
  @since 3.0.0
  */
 @Override
 public JobdefValue toValue(JsonObject json) {
-    return validationSvc.requireValid(jsonSvc.fromJsonValue(Objects.requireNonNull(json),
+    return validSvc.requireValid(jsonSvc.fromJsonValue(Objects.requireNonNull(json),
         JobdefValue.class));
 }
 
@@ -173,29 +185,33 @@ public JobdefValue toValue(JobdefEntity entity) {
         .withPluginName(entity.getPluginName())
         .withTrnsdef(toTrnsdef(entity.getTrnsdef()))
         .withFiltdef(toFiltdef(entity.getFiltdef()))
-        .withJobProperties(entity.getJobProperties().unwrap().asJsonObject())
+        .withJobProperties(toJobProps(entity.getJobProperties()))
         .withNote(entity.getNote())
         .withVersion(entity.getVersion())
-        .withRegisterTime(TimeUtils.toOffsetDateTime(entity.getRegTime()))
+        .withRegisterTime(toOffsetDateTime(entity.getRegTime()))
         .withRegisterAccountId(entity.getRegId())
         .withRegisterProcessName(entity.getRegName())
-        .withUpdateTime(TimeUtils.toOffsetDateTime(entity.getUpdTime()))
+        .withUpdateTime(toOffsetDateTime(entity.getUpdTime()))
         .withUpdateAccountId(entity.getUpdId())
         .withUpdateProcessName(entity.getUpdName())
         .unsafeBuild();
 }
 
+private JsonObject toJobProps(SJson json) {
+    return json.unwrap().asJsonObject();
+}
+
 private Map<String, String> toTrnsdef(SJson json) {
-    return Optional.ofNullable(json).map(SJson::unwrap).map(JsonValue::asJsonObject).map(
-        JsonObject::entrySet)
-        .map(Set::stream).map(s -> s.map(compute(JsonValueUtils::toString)).collect(
-        toLinkedHashMap()))
+    return Optional.ofNullable(json)
+        .map(f(JsonValue::asJsonObject).compose(SJson::unwrap))
+        .map(convertValues(JsonValueUtils::toString, toLinkedHashMap()))
         .orElseGet(() -> null);
 }
 
 private FiltdefValue toFiltdef(SJson json) {
-    return Optional.ofNullable(json).map(jsonSvc::toJsonValue)
-        .map(jsonSvc.fromJsonValue(FiltdefValue.class)).orElseGet(() -> null);
+    return Optional.ofNullable(json)
+        .map(f(jsonSvc.fromJsonValue(FiltdefValue.class)).compose(SJson::unwrap))
+        .orElseGet(() -> null);
 }
 
 }

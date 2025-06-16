@@ -29,17 +29,14 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.json.Json;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
-import java.time.Month;
+import java.util.Optional;
 import jp.mydns.projectk.safi.constant.AppConfigId;
 import jp.mydns.projectk.safi.dao.AppConfigDao;
 import jp.mydns.projectk.safi.entity.AppConfigEntity;
-import jp.mydns.projectk.safi.service.AppTimeService;
-import jp.mydns.projectk.safi.service.RealTimeService;
 import jp.mydns.projectk.safi.test.EntityFooterContextProducer;
 import jp.mydns.projectk.safi.test.EntityManagerProducer;
 import jp.mydns.projectk.safi.test.JndiServer;
 import jp.mydns.projectk.safi.test.Values;
-import jp.mydns.projectk.safi.util.JsonValueUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.jboss.weld.junit5.EnableWeld;
 import org.jboss.weld.junit5.WeldInitiator;
@@ -50,78 +47,81 @@ import org.junit.jupiter.api.TestInstance;
 import jp.mydns.projectk.safi.value.SJson;
 
 /**
- * Test application configuration.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Test application configuration.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @EnableWeld
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class AppConfigIT {
 
-    @WeldSetup
-    WeldInitiator weld = WeldInitiator.from(WeldInitiator.createWeld()
-        .alternatives(EntityManagerProducer.class, EntityFooterContextProducer.class)
-        .beanClasses(EntityManagerProducer.class, EntityFooterContextProducer.class, JndiServer.class,
-            AppTimeService.Impl.class, RealTimeService.Impl.class, AppConfigDao.Impl.class)
-    ).activate(RequestScoped.class).build();
+@WeldSetup
+WeldInitiator weld = WeldInitiator.from(WeldInitiator.createWeld()
+    .alternatives(
+        // Enables an alternative implementation for test environments only.
+        EntityManagerProducer.class,
+        EntityFooterContextProducer.class
+    )
+    .beanClasses(
+        // Enables CDI Beans.
+        EntityManagerProducer.class,
+        EntityFooterContextProducer.class,
+        JndiServer.class,
+        AppConfigDao.Impl.class
+    )
+).activate(RequestScoped.class).build();
 
-    @BeforeAll
-    @SuppressWarnings("unused")
-    void init(JndiServer jndiSrv) {
-        jndiSrv.bindBeanManager(weld.getBeanManager());
+@BeforeAll
+@SuppressWarnings("unused")
+void init(JndiServer jndiSrv) {
+    jndiSrv.bindBeanManager(weld.getBeanManager());
+}
+
+/**
+ Test create and get of the {@code AppConfigId.NOW}.
+
+ @param em the {@code EntityManager}. This parameter resolved by CDI.
+ @param appConfDao the {@code AppConfigDao}. This parameter resolved by CDI.
+ @since 3.0.0
+ */
+@Test
+void testAppConfigNow(EntityManager em, AppConfigDao appConfDao) {
+
+    // Create
+    {
+        var e = new AppConfigEntity();
+
+        e.setId(AppConfigId.USELESS);
+        e.setValidityPeriod(Values.defaultValidityPeriodEmb());
+        e.setValue(SJson.of(Json.createValue("HelloHello")));
+        e.setName("Value for testing");
+        e.setNote("Create new");
+
+        em.getTransaction().begin();
+        em.persist(e);
+        em.getTransaction().commit();
     }
 
-    /**
-     * Test create and get of the {@code AppConfigId.NOW}.
-     *
-     * @param em the {@code EntityManager}. This parameter resolved by CDI.
-     * @param appTimeSvc the {@code AppTimeService}. This parameter resolved by CDI.
-     * @since 3.0.0
-     */
-    @Test
-    void testAppConfigNow(EntityManager em, AppTimeService appTimeSvc) {
+    // Verification after create.
+    {
+        Optional<AppConfigEntity> e = appConfDao.getAppConfig(AppConfigId.USELESS);
 
-        // Create
-        {
-            var e = new AppConfigEntity();
-
-            e.setId(AppConfigId.NOW);
-            e.setValidityPeriod(Values.defaultValidityPeriodEmb());
-            e.setValue(SJson.of(JsonValueUtils.toJsonValue(LocalDateTime.of(2111, Month.MARCH, 12, 23, 34))));
-            e.setName("Current time in application");
-            e.setNote("Create new");
-
-            em.getTransaction().begin();
-            em.persist(e);
-            em.getTransaction().commit();
-        }
-
-        // Verification after create.
-        {
-            var e = em.find(AppConfigEntity.class, AppConfigId.NOW);
-
-            assertThat(e).isNotNull()
-                .returns(AppConfigId.NOW, AppConfigEntity::getId)
-                .returns(Values.defaultValidityPeriodEmb(), AppConfigEntity::getValidityPeriod)
-                .returns(SJson.of(Json.createValue("2111-03-12T23:34:00")), AppConfigEntity::getValue)
-                .returns("Current time in application", AppConfigEntity::getName)
-                .returns("Create new", AppConfigEntity::getNote)
-                .returns(1, AppConfigEntity::getVersion)
-                .returns(LocalDateTime.of(2000, 4, 27, 20, 34, 56), AppConfigEntity::getRegTime)
-                .returns("accountId", AppConfigEntity::getRegId)
-                .returns("processName", AppConfigEntity::getRegName)
-                .returns(null, AppConfigEntity::getUpdTime)
-                .returns(null, AppConfigEntity::getUpdId)
-                .returns(null, AppConfigEntity::getUpdName);
-        }
-
-        // Get test.
-        {
-            var result = appTimeSvc.getOffsetNow();
-
-            assertThat(result).isEqualTo("2111-03-12T23:34:00Z");
-        }
+        assertThat(e).isNotEmpty().get()
+            .returns(AppConfigId.USELESS, AppConfigEntity::getId)
+            .returns(Values.defaultValidityPeriodEmb(), AppConfigEntity::getValidityPeriod)
+            .returns(SJson.of(Json.createValue("HelloHello")), AppConfigEntity::getValue)
+            .returns("Value for testing", AppConfigEntity::getName)
+            .returns("Create new", AppConfigEntity::getNote)
+            .returns(1, AppConfigEntity::getVersion)
+            .returns(LocalDateTime.of(2000, 4, 27, 20, 34, 56), AppConfigEntity::getRegTime)
+            .returns("accountId", AppConfigEntity::getRegId)
+            .returns("processName", AppConfigEntity::getRegName)
+            .returns(null, AppConfigEntity::getUpdTime)
+            .returns(null, AppConfigEntity::getUpdId)
+            .returns(null, AppConfigEntity::getUpdName);
     }
+}
+
 }

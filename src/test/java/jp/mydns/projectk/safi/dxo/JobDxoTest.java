@@ -44,6 +44,7 @@ import jp.mydns.projectk.safi.value.JobdefValue;
 import jp.mydns.projectk.safi.value.SJson;
 import jp.mydns.projectk.safi.value.SchedefValue;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -54,239 +55,258 @@ import static org.mockito.Mockito.mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- * Test of class {@code JobDxo}.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Test of class {@code JobDxo}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(JsonbParameterResolver.class)
 class JobDxoTest {
 
-    /**
-     * Test of newEntity method.
-     *
-     * @param jsonSvc the {@code JsonService}. It provides by Mockito.
-     * @since 3.0.0
-     */
-    @Test
-    void testNewEntity(@Mock JsonService jsonSvc) {
+/**
+ Test of default constructor is not supported.
 
-        var jobdef = mock(JobdefValue.class);
+ @since 3.0.0
+ */
+@Test
+void testDefaultConstructor() {
 
-        var jobdefJson = mock(SJson.class);
-        var propsJson = mock(SJson.class);
+    assertThatExceptionOfType(UnsupportedOperationException.class)
+        .isThrownBy(JobDxo.Impl::new);
+}
 
-        // Limit is 2003-03-03T03:03:03
-        doReturn(Duration.ofDays(365).plusDays(29).plusHours(1).plusMinutes(1).plusSeconds(1)).when(jobdef).getTimeout();
+/**
+ Test of newEntity method.
 
-        doReturn("jobdef-id").when(jobdef).getId();
-        doReturn(JobKind.IMPORT).when(jobdef).getJobKind();
-        doReturn(JobTarget.USER).when(jobdef).getJobTarget();
-        doReturn(JsonValue.EMPTY_JSON_OBJECT).when(jobdef).getJobProperties();
+ @param jsonSvc the {@code JsonService}. It provides by Mockito.
+ @since 3.0.0
+ */
+@Test
+void testNewEntity(@Mock JsonService jsonSvc) {
 
-        // Conversion job definition
-        doReturn(jobdefJson).when(jsonSvc).toSJson(jobdef);
+    var jobdef = mock(JobdefValue.class);
 
-        // Conversion properties
-        doReturn(propsJson).when(jsonSvc).toSJson(JsonValue.EMPTY_JSON_OBJECT);
+    var jobdefJson = mock(SJson.class);
+    var propsJson = mock(SJson.class);
 
-        var ctx = new JobCreationContext("job-id", OffsetDateTime.of(2002, 2, 2, 2, 2, 2, 0, UTC), jobdef);
+    // Limit is 2003-03-03T03:03:03
+    doReturn(Duration.ofDays(365).plusDays(29).plusHours(1).plusMinutes(1).plusSeconds(1)).when(
+        jobdef).getTimeout();
 
-        var instance = new JobDxo.Impl(jsonSvc);
+    doReturn("jobdef-id").when(jobdef).getId();
+    doReturn(JobKind.IMPORT).when(jobdef).getJobKind();
+    doReturn(JobTarget.USER).when(jobdef).getJobTarget();
+    doReturn(JsonValue.EMPTY_JSON_OBJECT).when(jobdef).getJobProperties();
 
-        var result = instance.newEntity(ctx);
+    // Conversion job definition
+    doReturn(jobdefJson).when(jsonSvc).toSJson(jobdef);
 
-        assertThat(result).describedAs("Verify properties of the job entity that created new.")
-            .returns("job-id", JobEntity::getId)
-            .returns(JobStatus.SCHEDULE, JobEntity::getStatus)
-            .returns(JobKind.IMPORT, JobEntity::getKind)
-            .returns(JobTarget.USER, JobEntity::getTarget)
-            .returns(LocalDateTime.of(2002, 2, 2, 2, 2, 2), JobEntity::getScheduleTime)
-            .returns(LocalDateTime.of(2003, 3, 3, 3, 3, 3), JobEntity::getLimitTime)
-            .returns(null, JobEntity::getBeginTime)
-            .returns(null, JobEntity::getEndTime)
-            .returns(propsJson, JobEntity::getProperties)
-            .returns("jobdef-id", JobEntity::getJobdefId)
-            .returns(jobdefJson, JobEntity::getJobdef)
-            .returns(null, JobEntity::getSchedefId)
-            .returns(null, JobEntity::getSchedef)
-            .returns(null, JobEntity::getResultMessages)
-            .returns(null, JobEntity::getNote)
-            .returns(0, JobEntity::getVersion)
-            .returns(null, JobEntity::getRegTime)
-            .returns(null, JobEntity::getRegId)
-            .returns(null, JobEntity::getRegName)
-            .returns(null, JobEntity::getUpdTime)
-            .returns(null, JobEntity::getUpdId)
-            .returns(null, JobEntity::getUpdName);
-    }
+    // Conversion properties
+    doReturn(propsJson).when(jsonSvc).toSJson(JsonValue.EMPTY_JSON_OBJECT);
 
-    /**
-     * Test of toEntity method.
-     *
-     * @param jsonSvc the {@code JsonService}. It provides by Mockito.
-     * @since 3.0.0
-     */
-    @Test
-    void testToEntity(@Mock JsonService jsonSvc) {
+    var ctx = new JobCreationContext("job-id", OffsetDateTime.of(2002, 2, 2, 2, 2, 2, 0, UTC), jobdef);
 
-        var jobdef = mock(JobdefValue.class);
-        var schedef = mock(SchedefValue.class);
+    var instance = new JobDxo.Impl(jsonSvc);
 
-        var jobdefJson = mock(SJson.class);
-        var schedefJson = mock(SJson.class);
-        var propsJson = mock(SJson.class);
-        var msgsJson = mock(SJson.class);
+    var result = instance.newEntity(ctx);
 
-        // Conversion job definition
-        doReturn(jobdefJson).when(jsonSvc).toSJson(jobdef);
+    assertThat(result).describedAs("Verify properties of the job entity that created new.")
+        .returns("job-id", JobEntity::getId)
+        .returns(JobStatus.SCHEDULE, JobEntity::getStatus)
+        .returns(JobKind.IMPORT, JobEntity::getKind)
+        .returns(JobTarget.USER, JobEntity::getTarget)
+        .returns(LocalDateTime.of(2002, 2, 2, 2, 2, 2), JobEntity::getScheduleTime)
+        .returns(LocalDateTime.of(2003, 3, 3, 3, 3, 3), JobEntity::getLimitTime)
+        .returns(null, JobEntity::getBeginTime)
+        .returns(null, JobEntity::getEndTime)
+        .returns(propsJson, JobEntity::getProperties)
+        .returns("jobdef-id", JobEntity::getJobdefId)
+        .returns(jobdefJson, JobEntity::getJobdef)
+        .returns(null, JobEntity::getSchedefId)
+        .returns(null, JobEntity::getSchedef)
+        .returns(null, JobEntity::getResultMessages)
+        .returns(null, JobEntity::getNote)
+        .returns(0, JobEntity::getVersion)
+        .returns(null, JobEntity::getRegTime)
+        .returns(null, JobEntity::getRegId)
+        .returns(null, JobEntity::getRegName)
+        .returns(null, JobEntity::getUpdTime)
+        .returns(null, JobEntity::getUpdId)
+        .returns(null, JobEntity::getUpdName);
+}
 
-        // Conversion schedule definition
-        doReturn(schedefJson).when(jsonSvc).toSJson(schedef);
+/**
+ Test of toEntity method.
 
-        // Conversion properties
-        doReturn(propsJson).when(jsonSvc).toSJson(JsonValue.EMPTY_JSON_OBJECT);
+ @param jsonSvc the {@code JsonService}. It provides by Mockito.
+ @since 3.0.0
+ */
+@Test
+void testToEntity(@Mock JsonService jsonSvc) {
 
-        // Conversion result messages
-        doReturn(msgsJson).when(jsonSvc).toSJson(any(List.class));
+    var jobdef = mock(JobdefValue.class);
+    var schedef = mock(SchedefValue.class);
 
-        var value = new JobValue.Builder()
-            .withId("job-id")
-            .withStatus(JobStatus.SUCCESS)
-            .withKind(JobKind.REBUILD)
-            .withTarget(JobTarget.ASSET)
-            .withScheduleTime(OffsetDateTime.of(2001, 1, 1, 1, 1, 1, 0, UTC))
-            .withLimitTime(OffsetDateTime.of(2002, 2, 2, 2, 2, 2, 0, UTC))
-            .withBeginTime(OffsetDateTime.of(2003, 3, 3, 3, 3, 3, 0, UTC))
-            .withEndTime(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, UTC))
-            .withProperties(JsonValue.EMPTY_JSON_OBJECT)
-            .withJobdefId("jobdef-id")
-            .withJobdef(jobdef)
-            .withSchedefId("schedef-id")
-            .withSchedef(schedef)
-            .withResultMessages(List.of())
-            .withNote("note")
-            .withVersion(3)
-            .withRegisterTime(OffsetDateTime.of(2099, 9, 9, 9, 9, 9, 0, UTC))
-            .withRegisterAccountId("reg-id")
-            .withRegisterProcessName("reg-name")
-            .withUpdateTime(OffsetDateTime.of(2088, 8, 8, 8, 8, 8, 0, UTC))
-            .withUpdateAccountId("upd-id")
-            .withUpdateProcessName("upd-name")
-            .unsafeBuild();
+    var jobdefJson = mock(SJson.class);
+    var schedefJson = mock(SJson.class);
+    var propsJson = mock(SJson.class);
+    var msgsJson = mock(SJson.class);
 
-        var instance = new JobDxo.Impl(jsonSvc);
+    // Conversion job definition
+    doReturn(jobdefJson).when(jsonSvc).toSJson(jobdef);
 
-        var result = instance.toEntity(value);
+    // Conversion schedule definition
+    doReturn(schedefJson).when(jsonSvc).toSJson(schedef);
 
-        assertThat(result).describedAs("Verify properties of the job entity that exchange form the job value.")
-            .returns("job-id", JobEntity::getId)
-            .returns(JobStatus.SUCCESS, JobEntity::getStatus)
-            .returns(JobKind.REBUILD, JobEntity::getKind)
-            .returns(JobTarget.ASSET, JobEntity::getTarget)
-            .returns(LocalDateTime.of(2001, 1, 1, 1, 1, 1), JobEntity::getScheduleTime)
-            .returns(LocalDateTime.of(2002, 2, 2, 2, 2, 2), JobEntity::getLimitTime)
-            .returns(LocalDateTime.of(2003, 3, 3, 3, 3, 3), JobEntity::getBeginTime)
-            .returns(LocalDateTime.of(2004, 4, 4, 4, 4, 4), JobEntity::getEndTime)
-            .returns(propsJson, JobEntity::getProperties)
-            .returns("jobdef-id", JobEntity::getJobdefId)
-            .returns(jobdefJson, JobEntity::getJobdef)
-            .returns("schedef-id", JobEntity::getSchedefId)
-            .returns(schedefJson, JobEntity::getSchedef)
-            .returns(msgsJson, JobEntity::getResultMessages)
-            .returns("note", JobEntity::getNote)
-            .returns(3, JobEntity::getVersion)
-            .returns(LocalDateTime.of(2099, 9, 9, 9, 9, 9), JobEntity::getRegTime)
-            .returns("reg-id", JobEntity::getRegId)
-            .returns("reg-name", JobEntity::getRegName)
-            .returns(LocalDateTime.of(2088, 8, 8, 8, 8, 8), JobEntity::getUpdTime)
-            .returns("upd-id", JobEntity::getUpdId)
-            .returns("upd-name", JobEntity::getUpdName);
-    }
+    // Conversion properties
+    doReturn(propsJson).when(jsonSvc).toSJson(JsonValue.EMPTY_JSON_OBJECT);
 
-    /**
-     * Test of toValue method.
-     *
-     * @param jsonSvc the {@code JsonService}. It provides by Mockito.
-     * @since 3.0.0
-     */
-    @Test
-    void testToValue(@Mock JsonService jsonSvc) {
+    // Conversion result messages
+    doReturn(msgsJson).when(jsonSvc).toSJson(any(List.class));
 
-        var jobdefJson = mock(SJson.class);
-        var schedefJson = mock(SJson.class);
-        var propsJson = mock(SJson.class);
-        var msgsJson = mock(SJson.class);
+    var value = new JobValue.Builder()
+        .withId("job-id")
+        .withStatus(JobStatus.SUCCESS)
+        .withKind(JobKind.REBUILD)
+        .withTarget(JobTarget.ASSET)
+        .withScheduleTime(OffsetDateTime.of(2001, 1, 1, 1, 1, 1, 0, UTC))
+        .withLimitTime(OffsetDateTime.of(2002, 2, 2, 2, 2, 2, 0, UTC))
+        .withBeginTime(OffsetDateTime.of(2003, 3, 3, 3, 3, 3, 0, UTC))
+        .withEndTime(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, UTC))
+        .withProperties(JsonValue.EMPTY_JSON_OBJECT)
+        .withJobdefId("jobdef-id")
+        .withJobdef(jobdef)
+        .withSchedefId("schedef-id")
+        .withSchedef(schedef)
+        .withResultMessages(List.of())
+        .withNote("note")
+        .withVersion(3)
+        .withRegisterTime(OffsetDateTime.of(2099, 9, 9, 9, 9, 9, 0, UTC))
+        .withRegisterAccountId("reg-id")
+        .withRegisterProcessName("reg-name")
+        .withUpdateTime(OffsetDateTime.of(2088, 8, 8, 8, 8, 8, 0, UTC))
+        .withUpdateAccountId("upd-id")
+        .withUpdateProcessName("upd-name")
+        .unsafeBuild();
 
-        var jobdef = mock(JobdefValue.class);
-        var schedef = mock(SchedefValue.class);
-        
-        // Conversion job definition
-        doReturn(jobdef).when(jsonSvc).fromJsonValue(any(), eq(JobdefValue.class));
+    var instance = new JobDxo.Impl(jsonSvc);
 
-        // Conversion schedule definition
-        doReturn(JsonValue.EMPTY_JSON_OBJECT).when(schedefJson).unwrap();
-        doReturn((Function<JsonValue, SchedefValue>)z -> schedef).when(jsonSvc).fromJsonValue(SchedefValue.class);
+    var result = instance.toEntity(value);
 
-        // Conversion properties
-        doReturn(JsonValue.EMPTY_JSON_OBJECT).when(propsJson).unwrap();
+    assertThat(result).describedAs(
+        "Verify properties of the job entity that exchange form the job value.")
+        .returns("job-id", JobEntity::getId)
+        .returns(JobStatus.SUCCESS, JobEntity::getStatus)
+        .returns(JobKind.REBUILD, JobEntity::getKind)
+        .returns(JobTarget.ASSET, JobEntity::getTarget)
+        .returns(LocalDateTime.of(2001, 1, 1, 1, 1, 1), JobEntity::getScheduleTime)
+        .returns(LocalDateTime.of(2002, 2, 2, 2, 2, 2), JobEntity::getLimitTime)
+        .returns(LocalDateTime.of(2003, 3, 3, 3, 3, 3), JobEntity::getBeginTime)
+        .returns(LocalDateTime.of(2004, 4, 4, 4, 4, 4), JobEntity::getEndTime)
+        .returns(propsJson, JobEntity::getProperties)
+        .returns("jobdef-id", JobEntity::getJobdefId)
+        .returns(jobdefJson, JobEntity::getJobdef)
+        .returns("schedef-id", JobEntity::getSchedefId)
+        .returns(schedefJson, JobEntity::getSchedef)
+        .returns(msgsJson, JobEntity::getResultMessages)
+        .returns("note", JobEntity::getNote)
+        .returns(3, JobEntity::getVersion)
+        .returns(LocalDateTime.of(2099, 9, 9, 9, 9, 9), JobEntity::getRegTime)
+        .returns("reg-id", JobEntity::getRegId)
+        .returns("reg-name", JobEntity::getRegName)
+        .returns(LocalDateTime.of(2088, 8, 8, 8, 8, 8), JobEntity::getUpdTime)
+        .returns("upd-id", JobEntity::getUpdId)
+        .returns("upd-name", JobEntity::getUpdName);
+}
 
-        // Conversion result messages
-        doReturn(JsonValue.EMPTY_JSON_ARRAY).when(msgsJson).unwrap();
+/**
+ Test of toValue method.
 
-        var entity = new JobEntity();
-        entity.setId("job-id");
-        entity.setStatus(JobStatus.SUCCESS);
-        entity.setKind(JobKind.REBUILD);
-        entity.setTarget(JobTarget.ASSET);
-        entity.setScheduleTime(LocalDateTime.of(2001, 1, 1, 1, 1, 1));
-        entity.setLimitTime(LocalDateTime.of(2002, 2, 2, 2, 2, 2));
-        entity.setBeginTime(LocalDateTime.of(2003, 3, 3, 3, 3, 3));
-        entity.setEndTime(LocalDateTime.of(2004, 4, 4, 4, 4, 4));
-        entity.setProperties(propsJson);
-        entity.setJobdefId("jobdef-id");
-        entity.setJobdef(jobdefJson);
-        entity.setSchedefId("schedef-id");
-        entity.setSchedef(schedefJson);
-        entity.setResultMessages(msgsJson);
-        entity.setNote("note");
-        entity.setRegTime(LocalDateTime.of(2099, 9, 9, 9, 9, 9));
-        entity.setRegId("reg-id");
-        entity.setRegName("reg-name");
-        entity.setUpdTime(LocalDateTime.of(2088, 8, 8, 8, 8, 8));
-        entity.setUpdId("upd-id");
-        entity.setUpdName("upd-name");
+ @param jsonSvc the {@code JsonService}. It provides by Mockito.
+ @since 3.0.0
+ */
+@Test
+void testToValue(@Mock JsonService jsonSvc) {
 
-        var instance = new JobDxo.Impl(jsonSvc);
+    var jobdefJson = mock(SJson.class);
+    var schedefJson = mock(SJson.class);
+    var propsJson = mock(SJson.class);
+    var msgsJson = mock(SJson.class);
 
-        var result = instance.toValue(entity);
+    var jobdef = mock(JobdefValue.class);
+    var schedef = mock(SchedefValue.class);
 
-        assertThat(result).describedAs("Verify properties of the job value that exchange form the job entity.")
-            .returns("job-id", JobValue::getId)
-            .returns(JobStatus.SUCCESS, JobValue::getStatus)
-            .returns(JobKind.REBUILD, JobValue::getKind)
-            .returns(JobTarget.ASSET, JobValue::getTarget)
-            .returns(OffsetDateTime.of(2001, 1, 1, 1, 1, 1, 0, UTC), JobValue::getScheduleTime)
-            .returns(OffsetDateTime.of(2002, 2, 2, 2, 2, 2, 0, UTC), JobValue::getLimitTime)
-            .satisfies(v -> assertThat(v.getBeginTime()).hasValue(OffsetDateTime.of(2003, 3, 3, 3, 3, 3, 0, UTC)))
-            .satisfies(v -> assertThat(v.getEndTime()).hasValue(OffsetDateTime.of(2004, 4, 4, 4, 4, 4, 0, UTC)))
-            .returns(JsonValue.EMPTY_JSON_OBJECT, JobValue::getProperties)
-            .returns("jobdef-id", JobValue::getJobdefId)
-            .returns(jobdef, JobValue::getJobdef)
-            .satisfies(v -> assertThat(v.getSchedefId()).hasValue("schedef-id"))
-            .satisfies(v -> assertThat(v.getSchedef()).hasValue(schedef))
-            .satisfies(v -> assertThat(v.getResultMessages()).hasValue(List.of()))
-            .satisfies(v -> assertThat(v.getNote()).hasValue("note"))
-            .returns(0, JobValue::getVersion)
-            .satisfies(v -> assertThat(v.getRegisterTime())
+    // Conversion job definition
+    doReturn(jobdef).when(jsonSvc).fromJsonValue(any(), eq(JobdefValue.class));
+
+    // Conversion schedule definition
+    doReturn(JsonValue.EMPTY_JSON_OBJECT).when(schedefJson).unwrap();
+    doReturn((Function<JsonValue, SchedefValue>) z -> schedef).when(jsonSvc).fromJsonValue(
+        SchedefValue.class);
+
+    // Conversion properties
+    doReturn(JsonValue.EMPTY_JSON_OBJECT).when(propsJson).unwrap();
+
+    // Conversion result messages
+    doReturn(JsonValue.EMPTY_JSON_ARRAY).when(msgsJson).unwrap();
+
+    var entity = new JobEntity();
+    entity.setId("job-id");
+    entity.setStatus(JobStatus.SUCCESS);
+    entity.setKind(JobKind.REBUILD);
+    entity.setTarget(JobTarget.ASSET);
+    entity.setScheduleTime(LocalDateTime.of(2001, 1, 1, 1, 1, 1));
+    entity.setLimitTime(LocalDateTime.of(2002, 2, 2, 2, 2, 2));
+    entity.setBeginTime(LocalDateTime.of(2003, 3, 3, 3, 3, 3));
+    entity.setEndTime(LocalDateTime.of(2004, 4, 4, 4, 4, 4));
+    entity.setProperties(propsJson);
+    entity.setJobdefId("jobdef-id");
+    entity.setJobdef(jobdefJson);
+    entity.setSchedefId("schedef-id");
+    entity.setSchedef(schedefJson);
+    entity.setResultMessages(msgsJson);
+    entity.setNote("note");
+    entity.setRegTime(LocalDateTime.of(2099, 9, 9, 9, 9, 9));
+    entity.setRegId("reg-id");
+    entity.setRegName("reg-name");
+    entity.setUpdTime(LocalDateTime.of(2088, 8, 8, 8, 8, 8));
+    entity.setUpdId("upd-id");
+    entity.setUpdName("upd-name");
+
+    var instance = new JobDxo.Impl(jsonSvc);
+
+    var result = instance.toValue(entity);
+
+    assertThat(result).describedAs(
+        "Verify properties of the job value that exchange form the job entity.")
+        .returns("job-id", JobValue::getId)
+        .returns(JobStatus.SUCCESS, JobValue::getStatus)
+        .returns(JobKind.REBUILD, JobValue::getKind)
+        .returns(JobTarget.ASSET, JobValue::getTarget)
+        .returns(OffsetDateTime.of(2001, 1, 1, 1, 1, 1, 0, UTC), JobValue::getScheduleTime)
+        .returns(OffsetDateTime.of(2002, 2, 2, 2, 2, 2, 0, UTC), JobValue::getLimitTime)
+        .satisfies(v -> assertThat(v.getBeginTime()).hasValue(OffsetDateTime.of(2003, 3, 3, 3, 3,
+            3, 0, UTC)))
+        .satisfies(v -> assertThat(v.getEndTime()).hasValue(OffsetDateTime.of(2004, 4, 4, 4, 4, 4,
+            0, UTC)))
+        .returns(JsonValue.EMPTY_JSON_OBJECT, JobValue::getProperties)
+        .returns("jobdef-id", JobValue::getJobdefId)
+        .returns(jobdef, JobValue::getJobdef)
+        .satisfies(v -> assertThat(v.getSchedefId()).hasValue("schedef-id"))
+        .satisfies(v -> assertThat(v.getSchedef()).hasValue(schedef))
+        .satisfies(v -> assertThat(v.getResultMessages()).hasValue(List.of()))
+        .satisfies(v -> assertThat(v.getNote()).hasValue("note"))
+        .returns(0, JobValue::getVersion)
+        .satisfies(v -> assertThat(v.getRegisterTime())
             .hasValue(OffsetDateTime.of(2099, 9, 9, 9, 9, 9, 0, UTC)))
-            .satisfies(v -> assertThat(v.getRegisterAccountId()).hasValue("reg-id"))
-            .satisfies(v -> assertThat(v.getRegisterProcessName()).hasValue("reg-name"))
-            .satisfies(v -> assertThat(v.getUpdateTime())
+        .satisfies(v -> assertThat(v.getRegisterAccountId()).hasValue("reg-id"))
+        .satisfies(v -> assertThat(v.getRegisterProcessName()).hasValue("reg-name"))
+        .satisfies(v -> assertThat(v.getUpdateTime())
             .hasValue(OffsetDateTime.of(2088, 8, 8, 8, 8, 8, 0, UTC)))
-            .satisfies(v -> assertThat(v.getUpdateAccountId()).hasValue("upd-id"))
-            .satisfies(v -> assertThat(v.getUpdateProcessName()).hasValue("upd-name"));
-    }
+        .satisfies(v -> assertThat(v.getUpdateAccountId()).hasValue("upd-id"))
+        .satisfies(v -> assertThat(v.getUpdateProcessName()).hasValue("upd-name"));
+}
+
 }

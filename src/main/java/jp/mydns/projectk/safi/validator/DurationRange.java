@@ -30,11 +30,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE_USE;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -42,84 +38,79 @@ import java.lang.annotation.Target;
 import java.time.Duration;
 
 /**
- * Validates that the duration is in the specified range. Supported type is {@code Duration}.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Validates that the duration is in the specified range. Supported type is {@code Duration}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+@Target({METHOD, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {DurationRange.Validator.class})
 public @interface DurationRange {
 
-    String message() default "{jp.mydns.projectk.safi.validator.DurationRange.message}";
+String message() default "{jp.mydns.projectk.safi.validator.DurationRange.message}";
 
-    Class<?>[] groups() default {};
+Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+Class<? extends Payload>[] payload() default {};
 
-    /**
-     * Minimum of range. It is second. Default value is 0.
-     *
-     * @return second the element must be higher or equal to
-     */
-    long minSecond() default 0L;
+/**
+ Minimum of range. It is second. Default value is 0.
 
-    /**
-     * Maximum of range. It is second. Default value is 9223372036854775807.
-     *
-     * @return second the element must be lower or equal to
-     */
-    long maxSecond() default Long.MAX_VALUE;
+ @return second the element must be higher or equal to
+ */
+long minSecond() default 0L;
 
-    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @interface List {
+/**
+ Maximum of range. It is second. Default value is 9223372036854775807.
 
-        DurationRange[] value();
+ @return second the element must be lower or equal to
+ */
+long maxSecond() default Long.MAX_VALUE;
+
+/**
+ A validator that checks that the time is in the specified range. Default range is 0 to
+ 9223372036854775807.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class Validator implements ConstraintValidator<DurationRange, Duration> {
+
+private long min;
+private long max;
+
+/**
+ Initialize the minimum and maximum values.
+
+ @param annon the {@code DurationRange}
+ @since 3.0.0
+ */
+@Override
+public void initialize(DurationRange annon) {
+    this.min = annon.minSecond();
+    this.max = annon.maxSecond();
+}
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+
+    if (value == null) {
+        return true;
     }
 
-    /**
-     * A validator that checks that the time is in the specified range. Default range is 0 to 9223372036854775807.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class Validator implements ConstraintValidator<DurationRange, Duration> {
+    long seconds = value.getSeconds();
+    return seconds >= min && seconds <= max;
+}
 
-        private long min;
-        private long max;
+}
 
-        /**
-         * Initialize the minimum and maximum values.
-         *
-         * @param annon the {@code DurationRange}
-         * @since 3.0.0
-         */
-        @Override
-        public void initialize(DurationRange annon) {
-            this.min = annon.minSecond();
-            this.max = annon.maxSecond();
-        }
-
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
-
-            if (value == null) {
-                return true;
-            }
-
-            long seconds = value.getSeconds();
-            return seconds >= min && seconds <= max;
-        }
-    }
 }

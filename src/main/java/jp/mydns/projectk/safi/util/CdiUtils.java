@@ -26,8 +26,9 @@
 package jp.mydns.projectk.safi.util;
 
 import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.CDI;
+import java.lang.annotation.Annotation;
 import java.util.Objects;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
 
 /**
  Utilities for Jakarta Contexts and Dependency Injection.
@@ -48,24 +49,40 @@ private CdiUtils() {
 }
 
 /**
- Validate the {@code Instance} to see if there is exactly one bean that matches the required type
- and qualifiers.
+ Obtains a child Instance for the given additional required qualifiers.
 
- @param <T> the required bean type
- @param inst the {@code Instance}
- @return instance of {@code T}
- @throws NullPointerException if {@code inst} is {@code null}
- @throws PublishableIllegalStateException if {@code inst} is not resolvable
+ @param <T> the required type.
+ @param clazz a {@link java.lang.Class} representing the required type.
+ @param qualifiers the additional required qualifiers.
+ @return the child <code>Instance</code>
+ @throws NullPointerException if any argument is {@code null}.
+ @throws IllegalArgumentException if passed two instances of the same non repeating qualifier type,
+ or an instance of an annotation that is not a qualifier type.
+ @throws IllegalStateException if the CDI container is already shutdown.
  @since 3.0.0
  */
-public static <T> T requireResolvable(Instance<T> inst) {
-    Objects.requireNonNull(inst);
+public static <T> Instance<T> getInstance(Class<T> clazz, Annotation... qualifiers) {
+    return CDI.current().select(Objects.requireNonNull(clazz), Objects.requireNonNull(qualifiers));
+}
 
-    try {
-        return inst.get();
-    } catch (RuntimeException ex) {
-        throw new PublishableIllegalStateException(ex);
-    }
+/**
+ Provides a fully-constructed and injected instance of {@code T}.
+
+ @param <T> the required type.
+ @param clazz a {@link java.lang.Class} representing the required type.
+ @param qualifiers the additional required qualifiers.
+ @return instance of {@code T}.
+ @throws NullPointerException if any argument is {@code null}.
+ @throws IllegalArgumentException if passed two instances of the same non repeating qualifier type,
+ or an instance of an annotation that is not a qualifier type.
+ @throws IllegalStateException if the CDI container is already shutdown.
+ @throws RuntimeException if the injector detects an error while providing the instance. The caller
+ should not attempt to handle such an exception, as this is most likely due to an implementation
+ bug.
+ @since 3.0.0
+ */
+public static <T> T get(Class<T> clazz, Annotation... qualifiers) {
+    return getInstance(clazz, qualifiers).get();
 }
 
 }

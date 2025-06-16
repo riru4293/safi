@@ -23,47 +23,54 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi;
+package jp.mydns.projectk.safi.resource.filter;
 
-import java.util.Objects;
+import java.time.LocalDateTime;
+import jp.mydns.projectk.safi.service.TimeService;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import static org.mockito.Mockito.doReturn;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- An {@code IllegalStateException} implementation with a message that can be exposed to the consumer.
- This exception has a message for the consumer. This message conveys that the consumer is not
- responsible, that the problem was caused by a flaw in the implementation, and that they should ask
- a maintainer to deal with it. The message should not include information about the internals of the
- implementation, as that is unnecessary for the consumer. Any message or stack trace for the
- maintainer should be provided in the internal {@code Throwable}.
+ Test of class {@code RestApiReferenceTimeResolver}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public class PublishableIllegalStateException extends IllegalStateException {
-
-@java.io.Serial
-private static final long serialVersionUID = 8274928374928374900L;
+@ExtendWith(MockitoExtension.class)
+class RestApiReferenceTimeResolverTest {
 
 /**
- Construct with the {@code Throwable}.
+ Test of filter method.
 
- @param cause the {@code Throwable} for maintainer.
- @throws NullPointerException if {@code cause} is {@code null}
+ @param timeSvc the {@code TimeService}. It provides by Mockito.
  @since 3.0.0
  */
-public PublishableIllegalStateException(Throwable cause) {
-    super(Objects.requireNonNull(cause));
-}
+@Test
+void testInvoke(@Mock TimeService timeSvc) {
 
-/**
- Get publishable message.
+    // [Setup mocks] Context provider.
+    var ctx = new RestApiReferenceTimeResolver.Impl.ContextImpl();
 
- @return the reason for the exception and how to handle it to users
- @since 3.0.0
- */
-@Override
-public String getMessage() {
-    return "Illegal internal configuration. Please contact your system administrator.";
+    // [Setup mocks] TimeService.
+    doReturn(LocalDateTime.of(2000, 1, 1, 0, 0)).when(timeSvc).getSafiTime();
+
+    // [Pre-Exec] Create an instance that target for testing.
+    var instance = new RestApiReferenceTimeResolver.Impl();
+    instance.setCtx(ctx);
+    instance.setTimeService(timeSvc);
+
+    // [Execute] Extract a REST API process name.
+    instance.filter(null /* no use */);
+
+    // [Verify]
+    assertThat(ctx).returns(LocalDateTime.of(2000, 1, 1, 0, 0),
+        RestApiReferenceTimeResolver.Impl.ContextImpl::getValue)
+        .hasToString("RestApiReferenceTimeContext{value=2000-01-01T00:00}");
 }
 
 }

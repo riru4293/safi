@@ -28,10 +28,12 @@ package jp.mydns.projectk.safi.service;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.IntStream;
+import jp.mydns.projectk.safi.util.TimeUtils;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -73,6 +75,19 @@ Path getTmpDir();
  @since 3.0.0
  */
 Path getPluginDir();
+
+/**
+ If the current time within SAFI is provided as a configuration, the configured value will be
+ returned. In normal cases, such a configuration value is not expected. This value is to be provided
+ only when a specific time should be treated as the current time. When the value is provided, it
+ must always be used instead of the system's current time.
+ <p>
+ If the configuration value is invalid, the value is ignored and returns empty.
+
+ @return special current time
+ @since 3.0.0
+ */
+Optional<LocalDateTime> getFrozenTime();
 
 /**
  Implements of the {@code ConfigService}.
@@ -125,8 +140,22 @@ public Path getPluginDir() {
     return getValueAsPath("safi.plugin.dir").orElseThrow();
 }
 
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public Optional<LocalDateTime> getFrozenTime() {
+    return getValue("safi.now").flatMap(TimeUtils::tryToLocalDateTime);
+}
+
 Config getConfig() {
     return ConfigProvider.getConfig();
+}
+
+Optional<String> getValue(String name) {
+    return Optional.ofNullable(getConfig().getConfigValue(name).getRawValue());
 }
 
 List<String> getValueAsList(String name) {

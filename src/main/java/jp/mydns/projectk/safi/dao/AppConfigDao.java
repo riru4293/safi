@@ -25,22 +25,23 @@
  */
 package jp.mydns.projectk.safi.dao;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceException;
+import jakarta.persistence.QueryTimeoutException;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
-import java.util.Objects;
 import java.util.Optional;
 import jp.mydns.projectk.safi.constant.AppConfigId;
 import jp.mydns.projectk.safi.entity.AppConfigEntity;
 import jp.mydns.projectk.safi.entity.AppConfigEntity_;
 
 /**
- Data access for <i>Application Configuration</i>.
+ <i>Application Configuration</i> data access processing.
 
  @author riru
  @version 3.0.0
@@ -51,9 +52,13 @@ public interface AppConfigDao {
 /**
  Get an application configuration.
 
- @param id the {@code AppConfigId}
- @return application configuration entity
- @throws PersistenceException if the query execution was failed
+ @param id the {@code AppConfigId}.
+ @return application configuration entity.
+ @throws PersistenceException if the query execution was failed.
+ @throws QueryTimeoutException if the query execution exceeds the query timeout value set and only
+ the statement is rolled back.
+ @throws PersistenceException if the query execution exceeds the query timeout value set and the
+ transaction is rolled back.
  @since 3.0.0
  */
 Optional<AppConfigEntity> getAppConfig(AppConfigId id);
@@ -66,31 +71,43 @@ Optional<AppConfigEntity> getAppConfig(AppConfigId id);
  @since 3.0.0
  */
 @Typed(AppConfigDao.class)
-@RequestScoped
+@ApplicationScoped
 class Impl implements AppConfigDao {
 
-private final EntityManager em;
+private final Provider<EntityManager> emPvd;
+
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
 
 @Inject
 @SuppressWarnings("unused")
-Impl(EntityManager em) {
-    this.em = em;
+Impl(Provider<EntityManager> emPvd) {
+    this.emPvd = emPvd;
 }
 
 /**
  {@inheritDoc}
 
- @throws PersistenceException if the query execution was failed
+ @throws PersistenceException if the query execution was failed.
+ @throws QueryTimeoutException if the query execution exceeds the query timeout value set and only
+ the statement is rolled back.
+ @throws PersistenceException if the query execution exceeds the query timeout value set and the
+ transaction is rolled back.
  @since 3.0.0
  */
 @Override
 public Optional<AppConfigEntity> getAppConfig(AppConfigId id) {
+    EntityManager em = emPvd.get();
+
     CriteriaBuilder cb = em.getCriteriaBuilder();
     CriteriaQuery<AppConfigEntity> cq = cb.createQuery(AppConfigEntity.class);
 
-    Root<AppConfigEntity> mAppConfig = cq.from(AppConfigEntity.class);
+    Root<AppConfigEntity> appConf = cq.from(AppConfigEntity.class);
 
-    return em.createQuery(cq.where(cb.equal(mAppConfig.get(AppConfigEntity_.id), id)))
+    return em.createQuery(cq.where(cb.equal(appConf.get(AppConfigEntity_.id), id)))
         .getResultStream().findFirst();
 }
 

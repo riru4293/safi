@@ -25,7 +25,7 @@
  */
 package jp.mydns.projectk.safi.service;
 
-import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.json.JsonObject;
@@ -111,10 +111,16 @@ SJson toSJson(Object value);
  @since 3.0.0
  */
 @Typed(JsonService.class)
-@RequestScoped
+@ApplicationScoped
 class Impl implements JsonService {
 
 private final Jsonb jsonb;
+
+@SuppressWarnings("unused")
+Impl() {
+    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+    throw new UnsupportedOperationException();
+}
 
 @Inject
 @SuppressWarnings("unused")

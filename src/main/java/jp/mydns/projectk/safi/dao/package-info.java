@@ -24,10 +24,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- * Database access process.
- * 
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Database access process.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 package jp.mydns.projectk.safi.dao;

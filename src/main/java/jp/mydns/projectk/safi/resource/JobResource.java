@@ -48,7 +48,6 @@ import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.util.Objects;
-import jp.mydns.projectk.safi.PublishableIllegalStateException;
 import jp.mydns.projectk.safi.service.JobdefService;
 import jp.mydns.projectk.safi.service.JobService;
 import jp.mydns.projectk.safi.value.JobCreationContext;
@@ -57,7 +56,13 @@ import jp.mydns.projectk.safi.value.JobValue;
 import jp.mydns.projectk.safi.value.RequestContext;
 
 /**
- JAX-RS resource for <i>Job</i>.
+ Rest API for <i>Job</i>.
+ <p>
+ Implementation requirements.
+ <ul>
+ <li>This class is immutable and not thread-safe.</li>
+ <li>A unique instance per HTTP request or batch process.</li>
+ </ul>
 
  @author riru
  @version 3.0.0
@@ -104,11 +109,11 @@ Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
 /**
  {@inheritDoc}
 
- @throws ConstraintViolationException if {@code req} is not valid
- @throws BadRequestException if not found valid job definition
  @throws PersistenceException if failed database operation
- @throws PublishableIllegalStateException if an exception occurs due to an implementation bug or
- data inconsistency.
+ @throws BadRequestException if a Job definition is not found. However, the probability of this
+ occurring is very low because the existence of a Job definition has already been confirmed at the
+ time of parameter validation. This occurs only if a Job definition is deleted in the short time
+ between the time of validation and the time a Job definition is retrieved.
  @since 3.0.0
  */
 @Override
@@ -116,18 +121,26 @@ Impl(JobdefService jobdefSvc, JobService jobSvc, RequestContext reqCtx) {
 @Consumes(APPLICATION_JSON)
 @Produces(APPLICATION_JSON)
 @RestApiProcessName("CreateJob")
-@Operation(tags = {"jobs"}, summary = "Create a new job. Used to create a job manualy.",
-           requestBody = @RequestBody(content = @Content(schema = @Schema(implementation
-               = JobCreationRequest.class))),
-           responses = {
-               @ApiResponse(responseCode = "201", description = "Successful operation.",
-                            headers = @Header(name = LOCATION, description = "Created job.",
-                                              schema = @Schema(type = "string", format = "uri")),
-                            content = @Content(schema = @Schema(implementation = JobValue.class))),
-               @ApiResponse(responseCode = "400", description = "If not found job definition."
-                            + " Additionally, there may be violations of required value constraints.",
-                            content = @Content(schema = @Schema(
-                                implementation = ErrorResponseContext.class)))})
+@Operation(
+    tags = {"jobs"}, summary = "Create a new job. Used to create a job manualy.",
+    requestBody = @RequestBody(
+        content = @Content(schema = @Schema(implementation = JobCreationRequest.class))
+    ),
+    responses = {
+        @ApiResponse(
+            responseCode = "201", description = "Successful operation.",
+            headers = @Header(
+                name = LOCATION, description = "Created job.",
+                schema = @Schema(type = "string", format = "uri")
+            ),
+            content = @Content(
+                schema = @Schema(implementation = JobValue.class))
+        ),
+        @ApiResponse(
+            responseCode = "400", description = "If not found job definition."
+            + " Additionally, there may be violations of required value constraints.",
+            content = @Content(
+                schema = @Schema(implementation = ErrorResponseContext.class)))})
 public Response createJob(@NotNull @Valid JobCreationRequest req) {
 
     final JobCreationContext ctx;

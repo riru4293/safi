@@ -33,48 +33,49 @@ import java.io.StringReader;
 import jp.mydns.projectk.safi.value.SJson;
 
 /**
- * JPA attribute convertor for the {@code SJson}.This convertor is applied automatically.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JPA attribute convertor for the {@code SJson}.This convertor is applied automatically.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @Converter(autoApply = true)
 public final class JsonConvertor implements AttributeConverter<SJson, String> {
 
-    /**
-     * Convert to database column type.
-     *
-     * @param javaVal the {@code SJson}
-     * @return {@code javaVal} that converted to string representation of {@code SJson}. Returns {@code null} if
-     * {@code javaVal} is {@code null}.
-     * @since 3.0.0
-     */
-    @Override
-    public String convertToDatabaseColumn(SJson javaVal) {
-        if (javaVal == null) {
-            return null;
-        }
+/**
+ Convert to database column type.
 
-        return javaVal.toString();
+ @param javaVal the {@code SJson}
+ @return {@code javaVal} that converted to string representation of {@code SJson}. Returns
+ {@code null} if {@code javaVal} is {@code null}.
+ @since 3.0.0
+ */
+@Override
+public String convertToDatabaseColumn(SJson javaVal) {
+    if (javaVal == null) {
+        return null;
     }
 
-    /**
-     * Convert to entity attribute type.
-     *
-     * @param dbVal value ​​retrieved from database. It must be a string representation of {@code SJson}.
-     * @return {@code dbVal} as {@code SJson}. Returns {@code null} if {@code dbVal} is {@code null}.
-     * @throws JsonParsingException if {@code dbVal} is malformed as {@code SJson}
-     * @since 3.0.0
-     */
-    @Override
-    public SJson convertToEntityAttribute(String dbVal) {
-        if (dbVal == null) {
-            return null;
-        }
+    return javaVal.toString();
+}
 
-        try (var r = Json.createReader(new StringReader(dbVal))) {
-            return SJson.of(r.readValue());
-        }
+/**
+ Convert to entity attribute type.
+
+ @param dbVal value ​​retrieved from database. It must be a string representation of {@code SJson}.
+ @return {@code dbVal} as {@code SJson}. Returns {@code null} if {@code dbVal} is {@code null}.
+ @throws JsonParsingException if {@code dbVal} is malformed as {@code SJson}
+ @since 3.0.0
+ */
+@Override
+public SJson convertToEntityAttribute(String dbVal) {
+    if (dbVal == null) {
+        return null;
     }
+
+    try (var r = Json.createReader(new StringReader(dbVal))) {
+        return SJson.of(r.readValue());
+    }
+}
+
 }

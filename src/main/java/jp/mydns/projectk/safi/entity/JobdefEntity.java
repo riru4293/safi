@@ -46,255 +46,258 @@ import jp.mydns.projectk.safi.validator.TimeAccuracy;
 import jp.mydns.projectk.safi.value.SJson;
 
 /**
- * JPA entity for the <i>m_jobdef</i> table.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JPA entity for the <i>m_jobdef</i> table.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @Entity
 @Cacheable(false)
 @Table(name = "m_jobdef")
 public class JobdefEntity extends NamedEntity {
 
-    @java.io.Serial
-    private static final long serialVersionUID = -8597141002815361653L;
+@java.io.Serial
+private static final long serialVersionUID = -8597141002815361653L;
 
-    @Id
-    @Basic(optional = false)
-    @Column(name = "id", nullable = false, updatable = false, length = 36)
-    private String id;
+@Id
+@Basic(optional = false)
+@Column(name = "id", nullable = false, updatable = false, length = 36)
+private String id;
 
-    @Basic(optional = false)
-    @Column(name = "job_kind", nullable = false, updatable = false, length = 20)
-    @Enumerated(EnumType.STRING)
-    private JobKind jobKind;
+@Basic(optional = false)
+@Column(name = "job_kind", nullable = false, updatable = false, length = 20)
+@Enumerated(EnumType.STRING)
+private JobKind jobKind;
 
-    @Basic(optional = false)
-    @Column(name = "job_target", nullable = false, updatable = false, length = 20)
-    @Enumerated(EnumType.STRING)
-    private JobTarget jobTarget;
+@Basic(optional = false)
+@Column(name = "job_target", nullable = false, updatable = false, length = 20)
+@Enumerated(EnumType.STRING)
+private JobTarget jobTarget;
 
-    @Basic(optional = false)
-    @Column(name = "timeout", nullable = false, length = 20)
-    private Duration timeout;
+@Basic(optional = false)
+@Column(name = "timeout", nullable = false, length = 20)
+private Duration timeout;
 
-    @Column(name = "plugin", length = 50)
-    private String pluginName;
+@Column(name = "plugin", length = 50)
+private String pluginName;
 
-    @Column(name = "trnsdef")
-    private SJson trnsdef;
+@Column(name = "trnsdef")
+private SJson trnsdef;
 
-    @Column(name = "filtdef")
-    private SJson filtdef;
+@Column(name = "filtdef")
+private SJson filtdef;
 
-    @Basic(optional = false)
-    @Column(name = "job_props", nullable = false)
-    private SJson jobProperties;
+@Basic(optional = false)
+@Column(name = "job_props", nullable = false)
+private SJson jobProperties;
 
-    /**
-     * Get job definition id.
-     *
-     * @return job definition id
-     * @since 3.0.0
-     */
-    @NotBlank
-    @Size(max = 36)
-    public String getId() {
-        return id;
-    }
+/**
+ Get job definition id.
 
-    /**
-     * Set job definition id.
-     *
-     * @param id job definition id. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setId(String id) {
-        this.id = id;
-    }
+ @return job definition id
+ @since 3.0.0
+ */
+@NotBlank
+@Size(max = 36)
+public String getId() {
+    return id;
+}
 
-    /**
-     * Get job kind.
-     *
-     * @return job kind
-     * @since 3.0.0
-     */
-    @NotNull
-    public JobKind getJobKind() {
-        return jobKind;
-    }
+/**
+ Set job definition id.
 
-    /**
-     * Set job kind.
-     *
-     * @param jobKind job kind. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setJobKind(JobKind jobKind) {
-        this.jobKind = jobKind;
-    }
+ @param id job definition id. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setId(String id) {
+    this.id = id;
+}
 
-    /**
-     * Get job target.
-     *
-     * @return job target
-     * @since 3.0.0
-     */
-    @NotNull
-    public JobTarget getJobTarget() {
-        return jobTarget;
-    }
+/**
+ Get job kind.
 
-    /**
-     * Set job target.
-     *
-     * @param jobTarget job target. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setJobTarget(JobTarget jobTarget) {
-        this.jobTarget = jobTarget;
-    }
+ @return job kind
+ @since 3.0.0
+ */
+@NotNull
+public JobKind getJobKind() {
+    return jobKind;
+}
 
-    /**
-     * Set job processing timeout.
-     *
-     * @return job processing timeout
-     * @since 3.0.0
-     */
-    @NotNull
-    @PositiveOrZeroDuration
-    @DurationRange(maxSecond = 86_399L/*23h59m59s*/)
-    @TimeAccuracy
-    public Duration getTimeout() {
-        return timeout;
-    }
+/**
+ Set job kind.
 
-    /**
-     * Set job processing timeout.
-     *
-     * @param timeout job processing timeout
-     * @since 3.0.0
-     */
-    public void setTimeout(Duration timeout) {
-        this.timeout = timeout;
-    }
+ @param jobKind job kind. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setJobKind(JobKind jobKind) {
+    this.jobKind = jobKind;
+}
 
-    /**
-     * Get plugin name.
-     *
-     * @return plugin name. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public String getPluginName() {
-        return pluginName;
-    }
+/**
+ Get job target.
 
-    /**
-     * Set plugin name.
-     *
-     * @param pluginName plugin name. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setPluginName(String pluginName) {
-        this.pluginName = pluginName;
-    }
+ @return job target
+ @since 3.0.0
+ */
+@NotNull
+public JobTarget getJobTarget() {
+    return jobTarget;
+}
 
-    /**
-     * Get transform definition.
-     *
-     * @return transform definition. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public SJson getTrnsdef() {
-        return trnsdef;
-    }
+/**
+ Set job target.
 
-    /**
-     * Set transform definition.
-     *
-     * @param trnsdef transform definition. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setTrnsdef(SJson trnsdef) {
-        this.trnsdef = trnsdef;
-    }
+ @param jobTarget job target. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setJobTarget(JobTarget jobTarget) {
+    this.jobTarget = jobTarget;
+}
 
-    /**
-     * Get filtering definition.
-     *
-     * @return filtering definition. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public SJson getFiltdef() {
-        return filtdef;
-    }
+/**
+ Set job processing timeout.
 
-    /**
-     * Set filtering definition.
-     *
-     * @param filtdef filtering definition. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setFiltdef(SJson filtdef) {
-        this.filtdef = filtdef;
-    }
+ @return job processing timeout
+ @since 3.0.0
+ */
+@NotNull
+@PositiveOrZeroDuration
+@DurationRange(maxSecond = 86_399L/*23h59m59s*/)
+@TimeAccuracy
+public Duration getTimeout() {
+    return timeout;
+}
 
-    /**
-     * Get job properties.
-     *
-     * @return job properties
-     * @since 3.0.0
-     */
-    @NotNull
-    public SJson getJobProperties() {
-        return jobProperties;
-    }
+/**
+ Set job processing timeout.
 
-    /**
-     * Set job properties.
-     *
-     * @param jobProperties job properties
-     * @since 3.0.0
-     */
-    public void setJobProperties(SJson jobProperties) {
-        this.jobProperties = jobProperties;
-    }
+ @param timeout job processing timeout
+ @since 3.0.0
+ */
+public void setTimeout(Duration timeout) {
+    this.timeout = timeout;
+}
 
-    /**
-     * Returns a hash code value.
-     *
-     * @return a hash code value. It is generated from the primary key value.
-     * @since 3.0.0
-     */
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
+/**
+ Get plugin name.
 
-    /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
-     * key is match.
-     *
-     * @param other an any object
-     * @return {@code true} if equals, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof JobdefEntity o && Objects.equals(id, o.id);
-    }
+ @return plugin name. It may be {@code null}.
+ @since 3.0.0
+ */
+public String getPluginName() {
+    return pluginName;
+}
 
-    /**
-     * Returns a string representation.
-     *
-     * @return a string representation
-     * @since 3.0.0
-     */
-    @Override
-    public String toString() {
-        return "JobdefEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind=" + jobKind
-            + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name + ", pluginName=" + pluginName
-            + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef + ", jobProperties=" + jobProperties + '}';
-    }
+/**
+ Set plugin name.
+
+ @param pluginName plugin name. It can be set {@code null}.
+ @since 3.0.0
+ */
+public void setPluginName(String pluginName) {
+    this.pluginName = pluginName;
+}
+
+/**
+ Get transform definition.
+
+ @return transform definition. It may be {@code null}.
+ @since 3.0.0
+ */
+public SJson getTrnsdef() {
+    return trnsdef;
+}
+
+/**
+ Set transform definition.
+
+ @param trnsdef transform definition. It can be set {@code null}.
+ @since 3.0.0
+ */
+public void setTrnsdef(SJson trnsdef) {
+    this.trnsdef = trnsdef;
+}
+
+/**
+ Get filtering definition.
+
+ @return filtering definition. It may be {@code null}.
+ @since 3.0.0
+ */
+public SJson getFiltdef() {
+    return filtdef;
+}
+
+/**
+ Set filtering definition.
+
+ @param filtdef filtering definition. It can be set {@code null}.
+ @since 3.0.0
+ */
+public void setFiltdef(SJson filtdef) {
+    this.filtdef = filtdef;
+}
+
+/**
+ Get job properties.
+
+ @return job properties
+ @since 3.0.0
+ */
+@NotNull
+public SJson getJobProperties() {
+    return jobProperties;
+}
+
+/**
+ Set job properties.
+
+ @param jobProperties job properties
+ @since 3.0.0
+ */
+public void setJobProperties(SJson jobProperties) {
+    this.jobProperties = jobProperties;
+}
+
+/**
+ Returns a hash code value.
+
+ @return a hash code value. It is generated from the primary key value.
+ @since 3.0.0
+ */
+@Override
+public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+}
+
+/**
+ Indicates that other object is equal to this instance. Equality means that can be cast to this
+ class and primary key is match.
+
+ @param other an any object
+ @return {@code true} if equals, otherwise {@code false}.
+ @since 3.0.0
+ */
+@Override
+public boolean equals(Object other) {
+    return other instanceof JobdefEntity o && Objects.equals(id, o.id);
+}
+
+/**
+ Returns a string representation.
+
+ @return a string representation
+ @since 3.0.0
+ */
+@Override
+public String toString() {
+    return "JobdefEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", jobKind="
+        + jobKind
+        + ", jobTarget=" + jobTarget + ", timeout=" + timeout + ", name=" + name + ", pluginName="
+        + pluginName
+        + ", trnsdef=" + trnsdef + ", filtdef=" + filtdef + ", jobProperties=" + jobProperties + '}';
+}
+
 }

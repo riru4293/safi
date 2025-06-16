@@ -28,74 +28,95 @@ package jp.mydns.projectk.safi.value;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import java.util.Objects;
+import jp.mydns.projectk.safi.util.CdiUtils;
 import jp.mydns.projectk.safi.util.ValidationUtils;
 
 /**
- * Template of value object.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class is immutable and thread-safe.</li>
- * </ul>
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Template of value object.
+
+ <p>
+ Implementation requirements.
+ <ul>
+ <li>This class is immutable and thread-safe.</li>
+ </ul>
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public interface ValueTemplate {
 
-    /**
-     * Abstract builder of the {@code Template}.
-     *
-     * @param <B> builder type
-     * @param <V> value type
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ValueTemplate> {
+/**
+ Abstract builder of the {@code Template}.
 
-        protected final Class<B> builderType;
+ @param <B> builder type
+ @param <V> value type
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+abstract class AbstractBuilder<B extends AbstractBuilder<B, V>, V extends ValueTemplate> {
 
-        protected AbstractBuilder(Class<B> builderType) {
-            this.builderType = Objects.requireNonNull(builderType);
-        }
+protected final Class<B> builderType;
 
-        /**
-         * Set all properties from {@code src}.
-         *
-         * @param src source value
-         * @return updated this
-         * @throws NullPointerException if {@code src} is {@code null}
-         * @since 3.0.0
-         */
-        public B with(V src) {
-            Objects.requireNonNull(src);
-            return builderType.cast(this);
-        }
+protected AbstractBuilder(Class<B> builderType) {
+    this.builderType = Objects.requireNonNull(builderType);
+}
 
-        /**
-         * Build a new inspected instance.
-         *
-         * @param validator the {@code Validator}
-         * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-         * @return new inspected instance
-         * @throws NullPointerException if any argument is {@code null}
-         * @throws ConstraintViolationException if occurred constraint violations when building
-         * @since 3.0.0
-         */
-        public V build(Validator validator, Class<?>... groups) {
-            return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
-        }
+/**
+ Set all properties from {@code src}.
 
-        /**
-         * Build a new instance. It instance may not meet that constraint. Use only if the original value is completely
-         * reliable.
-         *
-         * @return new unsafe instance
-         * @since 3.0.0
-         */
-        public abstract V unsafeBuild();
-    }
+ @param src source value
+ @return updated this
+ @throws NullPointerException if {@code src} is {@code null}
+ @since 3.0.0
+ */
+public B with(V src) {
+    Objects.requireNonNull(src);
+    return builderType.cast(this);
+}
+
+/**
+ Build a new inspected instance.
+ <p>
+ The {@link Validator} to use for validation will attempt to obtain it from the CDI container.
+ <p>
+ Note that while this is convenient, it can be slow, so if you are doing large builds, consider
+ using {@link #build(jakarta.validation.Validator, java.lang.Class...)}.
+
+ @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+ @return new inspected instance.
+ @throws NullPointerException if any argument is {@code null}.
+ @throws ConstraintViolationException if occurred constraint violations when building.
+ @since 3.0.0
+ */
+public V build(Class<?>... groups) {
+    return build(CdiUtils.get(Validator.class), groups);
+}
+
+/**
+ Build a new inspected instance.
+
+ @param validator the {@code Validator}
+ @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+ @return new inspected instance
+ @throws NullPointerException if any argument is {@code null}
+ @throws ConstraintViolationException if occurred constraint violations when building
+ @since 3.0.0
+ */
+public V build(Validator validator, Class<?>... groups) {
+    return ValidationUtils.requireValid(unsafeBuild(), validator, groups);
+}
+
+/**
+ Build a new instance. It instance may not meet that constraint. Use only if the original value is
+ completely reliable.
+
+ @return new unsafe instance
+ @since 3.0.0
+ */
+public abstract V unsafeBuild();
+
+}
+
 }

@@ -26,66 +26,66 @@
 package jp.mydns.projectk.safi.constant;
 
 /**
- * Target content of the <i>Job</i>.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Target content of the <i>Job</i>.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public enum JobTarget {
 
-    /**
-     * Indicates that the <i>User</i> content.
-     *
-     * @since 3.0.0
-     */
-    USER,
-    /**
-     * Indicates that the <i>Asset</i> content.
-     *
-     * @since 3.0.0
-     */
-    ASSET,
-    /**
-     * Indicates that the <i>Belong Organization</i> content.
-     *
-     * @since 3.0.0
-     */
-    BELONG_ORG,
-    /**
-     * Indicates that the primary <i>Organization</i> content.
-     *
-     * @since 3.0.0
-     */
-    ORG1,
-    /**
-     * Indicates that the secondary <i>Organization</i> content.
-     *
-     * @since 3.0.0
-     */
-    ORG2,
-    /**
-     * Indicates that the <i>Belong Group</i> content.
-     *
-     * @since 3.0.0
-     */
-    BELONG_GRP,
-    /**
-     * Indicates that the <i>Group</i> content.
-     *
-     * @since 3.0.0
-     */
-    GRP,
-    /**
-     * Indicates that the combined all content per <i>User</i>.
-     *
-     * @since 3.0.0
-     */
-    PER_USER,
-    /**
-     * Indicates that the combined all content per <i>Asset</i>.
-     *
-     * @since 3.0.0
-     */
-    PER_ASSET,
+/**
+ Indicates that the <i>User</i> content.
+
+ @since 3.0.0
+ */
+USER,
+/**
+ Indicates that the <i>Asset</i> content.
+
+ @since 3.0.0
+ */
+ASSET,
+/**
+ Indicates that the <i>Belong Organization</i> content.
+
+ @since 3.0.0
+ */
+BELONG_ORG,
+/**
+ Indicates that the primary <i>Organization</i> content.
+
+ @since 3.0.0
+ */
+ORG1,
+/**
+ Indicates that the secondary <i>Organization</i> content.
+
+ @since 3.0.0
+ */
+ORG2,
+/**
+ Indicates that the <i>Belong Group</i> content.
+
+ @since 3.0.0
+ */
+BELONG_GRP,
+/**
+ Indicates that the <i>Group</i> content.
+
+ @since 3.0.0
+ */
+GRP,
+/**
+ Indicates that the combined all content per <i>User</i>.
+
+ @since 3.0.0
+ */
+PER_USER,
+/**
+ Indicates that the combined all content per <i>Asset</i>.
+
+ @since 3.0.0
+ */
+PER_ASSET,
 }

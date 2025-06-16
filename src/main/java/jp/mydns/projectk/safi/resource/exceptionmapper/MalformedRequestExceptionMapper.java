@@ -25,6 +25,7 @@
  */
 package jp.mydns.projectk.safi.resource.exceptionmapper;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.ExceptionMapper;
 import jakarta.ws.rs.ext.Provider;
@@ -44,11 +45,12 @@ import org.slf4j.LoggerFactory;
  @since 3.0.0
  */
 @Provider
+@ApplicationScoped
 public class MalformedRequestExceptionMapper implements ExceptionMapper<MalformedRequestException> {
 
 private static final URI CODE = URI.create(
     "https://project-k.mydns.jp/safi/errors/malformed-request.html");
-private static final String MSG = "Malformed request.";
+private static final String MSG = "Request format is malformed.";
 
 private static final Logger log = LoggerFactory.getLogger(MalformedRequestExceptionMapper.class);
 
@@ -62,7 +64,18 @@ private static final Logger log = LoggerFactory.getLogger(MalformedRequestExcept
 @Override
 public Response toResponse(MalformedRequestException ex) {
 
-    log.debug("Malformed request was detected.", ex);
+    /*
+        == Reasons for the log level being at WARNING ==
+
+        There are two reasons for the WARNING level.
+
+        1. The request is invalid and outside the scope of the SAFI's responsibility,
+           so an ERROR level is inappropriate. A WARNING level or lower is considered appropriate.
+
+        2. The assumption is that the request is constructed by software. Therefore,
+           format errors do not usually occur. A WARNING level or higher is probably appropriate.
+     */
+    log.warn("Malformed request was detected.", ex);
 
     return Response.status(BAD_REQUEST).type(APPLICATION_JSON).entity(
         new ErrorResponseContext.Builder().withCode(CODE).withMessage(MSG).unsafeBuild()).build();

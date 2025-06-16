@@ -30,11 +30,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import jakarta.validation.Payload;
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.CONSTRUCTOR;
-import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.ElementType.TYPE_USE;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -45,13 +41,14 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 
 /**
- * Validates that no value is less than seconds. Supported types are {@code LocalDateTime} and {@code OffsetDateTime}.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Validates that no value is less than seconds. Supported types are {@code LocalDateTime} and
+ {@code OffsetDateTime}.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
-@Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
+@Target({METHOD, TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = {
@@ -60,92 +57,88 @@ import java.time.temporal.ChronoUnit;
     TimeAccuracy.OffsetDateTimeValidator.class})
 public @interface TimeAccuracy {
 
-    String message() default "{jp.mydns.projectk.safi.validator.TimeAccuracy.message}";
+String message() default "{jp.mydns.projectk.safi.validator.TimeAccuracy.message}";
 
-    Class<?>[] groups() default {};
+Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+Class<? extends Payload>[] payload() default {};
 
-    @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER})
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @interface List {
+/**
+ A validator that validates that there is no fractional seconds value.
 
-        TimeAccuracy[] value();
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class LocalDateTimeValidator implements ConstraintValidator<TimeAccuracy, LocalDateTime> {
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public boolean isValid(LocalDateTime value, ConstraintValidatorContext ctx) {
+
+    if (value == null) {
+        return true;
     }
 
-    /**
-     * A validator that validates that there is no fractional seconds value.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class LocalDateTimeValidator implements ConstraintValidator<TimeAccuracy, LocalDateTime> {
+    return value.truncatedTo(ChronoUnit.SECONDS).isEqual(value);
+}
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isValid(LocalDateTime value, ConstraintValidatorContext ctx) {
+}
 
-            if (value == null) {
-                return true;
-            }
+/**
+ A validator that validates that there is no fractional seconds value.
 
-            return value.truncatedTo(ChronoUnit.SECONDS).isEqual(value);
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class OffsetDateTimeValidator implements ConstraintValidator<TimeAccuracy, OffsetDateTime> {
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public boolean isValid(OffsetDateTime value, ConstraintValidatorContext ctx) {
+
+    if (value == null) {
+        return true;
     }
 
-    /**
-     * A validator that validates that there is no fractional seconds value.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class OffsetDateTimeValidator implements ConstraintValidator<TimeAccuracy, OffsetDateTime> {
+    return value.truncatedTo(ChronoUnit.SECONDS).isEqual(value);
+}
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isValid(OffsetDateTime value, ConstraintValidatorContext ctx) {
+}
 
-            if (value == null) {
-                return true;
-            }
+/**
+ A validator that validates that there is no fractional seconds value.
 
-            return value.truncatedTo(ChronoUnit.SECONDS).isEqual(value);
-        }
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+class DurationValidator implements ConstraintValidator<TimeAccuracy, Duration> {
+
+/**
+ {@inheritDoc}
+
+ @since 3.0.0
+ */
+@Override
+public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+
+    if (value == null) {
+        return true;
     }
 
-    /**
-     * A validator that validates that there is no fractional seconds value.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class DurationValidator implements ConstraintValidator<TimeAccuracy, Duration> {
+    return value.truncatedTo(ChronoUnit.SECONDS).equals(value);
+}
 
-        /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
-         */
-        @Override
-        public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+}
 
-            if (value == null) {
-                return true;
-            }
-
-            return value.truncatedTo(ChronoUnit.SECONDS).equals(value);
-        }
-    }
 }

@@ -39,102 +39,104 @@ import jp.mydns.projectk.safi.constant.AppConfigId;
 import jp.mydns.projectk.safi.value.SJson;
 
 /**
- * JPA entity for the <i>m_appconf</i> table.
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ JPA entity for the <i>m_appconf</i> table.
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 @Entity
 @Cacheable(false)
 @Table(name = "m_appconf")
 public class AppConfigEntity extends NamedEntity {
 
-    @java.io.Serial
-    private static final long serialVersionUID = 3895102690716080340L;
+@java.io.Serial
+private static final long serialVersionUID = 3895102690716080340L;
 
-    @Id
-    @Basic(optional = false)
-    @Column(name = "id", nullable = false, updatable = false, length = 36)
-    @Enumerated(EnumType.STRING)
-    private AppConfigId id;
+@Id
+@Basic(optional = false)
+@Column(name = "id", nullable = false, updatable = false, length = 36)
+@Enumerated(EnumType.STRING)
+private AppConfigId id;
 
-    @Column(name = "val")
-    private SJson value;
+@Column(name = "val")
+private SJson value;
 
-    /**
-     * Get application configuration id.
-     *
-     * @return application configuration id
-     * @since 3.0.0
-     */
-    @NotNull
-    public AppConfigId getId() {
-        return id;
-    }
+/**
+ Get application configuration id.
 
-    /**
-     * Set application configuration id.
-     *
-     * @param id application configuration id. Cannot update persisted value.
-     * @since 3.0.0
-     */
-    public void setId(AppConfigId id) {
-        this.id = id;
-    }
+ @return application configuration id
+ @since 3.0.0
+ */
+@NotNull
+public AppConfigId getId() {
+    return id;
+}
 
-    /**
-     * Get configuration value.
-     *
-     * @return configuration value. It may be {@code null}.
-     * @since 3.0.0
-     */
-    public SJson getValue() {
-        return value;
-    }
+/**
+ Set application configuration id.
 
-    /**
-     * Set configuration value.
-     *
-     * @param value configuration value. It can be set {@code null}.
-     * @since 3.0.0
-     */
-    public void setValue(SJson value) {
-        this.value = value;
-    }
+ @param id application configuration id. Cannot update persisted value.
+ @since 3.0.0
+ */
+public void setId(AppConfigId id) {
+    this.id = id;
+}
 
-    /**
-     * Returns a hash code value.
-     *
-     * @return a hash code value. It is generated from the primary key value.
-     * @since 3.0.0
-     */
-    @Override
-    public int hashCode() {
-        return id != null ? id.hashCode() : 0;
-    }
+/**
+ Get configuration value.
 
-    /**
-     * Indicates that other object is equal to this instance. Equality means that can be cast to this class and primary
-     * key is match.
-     *
-     * @param other an any object
-     * @return {@code true} if equals, otherwise {@code false}.
-     * @since 3.0.0
-     */
-    @Override
-    public boolean equals(Object other) {
-        return other instanceof AppConfigEntity o && Objects.equals(id, o.id);
-    }
+ @return configuration value. It may be {@code null}.
+ @since 3.0.0
+ */
+public SJson getValue() {
+    return value;
+}
 
-    /**
-     * Returns a string representation.
-     *
-     * @return a string representation
-     * @since 3.0.0
-     */
-    @Override
-    public String toString() {
-        return "AppConfigEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod + ", value=" + value + '}';
-    }
+/**
+ Set configuration value.
+
+ @param value configuration value. It can be set {@code null}.
+ @since 3.0.0
+ */
+public void setValue(SJson value) {
+    this.value = value;
+}
+
+/**
+ Returns a hash code value.
+
+ @return a hash code value. It is generated from the primary key value.
+ @since 3.0.0
+ */
+@Override
+public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+}
+
+/**
+ Indicates that other object is equal to this instance. Equality means that can be cast to this
+ class and primary key is match.
+
+ @param other an any object
+ @return {@code true} if equals, otherwise {@code false}.
+ @since 3.0.0
+ */
+@Override
+public boolean equals(Object other) {
+    return other instanceof AppConfigEntity o && Objects.equals(id, o.id);
+}
+
+/**
+ Returns a string representation.
+
+ @return a string representation
+ @since 3.0.0
+ */
+@Override
+public String toString() {
+    return "AppConfigEntity{" + "id=" + id + ", validityPeriod=" + validityPeriod
+        + ", value=" + value + '}';
+}
+
 }
