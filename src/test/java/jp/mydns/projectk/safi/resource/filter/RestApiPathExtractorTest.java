@@ -23,63 +23,53 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.validator;
+package jp.mydns.projectk.safi.resource.filter;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.Payload;
-import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE_USE;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.time.Duration;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.UriInfo;
+import java.net.URI;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import static org.mockito.Mockito.doReturn;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- Validates that the {@code Duration} is positive or zero. Supported type is {@code Duration}.
+ Test of class {@code RestApiPathExtractor}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-@Target({METHOD, TYPE_USE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Constraint(validatedBy = {PositiveOrZeroDuration.Validator.class})
-public @interface PositiveOrZeroDuration {
-
-String message() default "{jp.mydns.projectk.safi.validator.PositiveOrZeroDuration.message}";
-
-Class<?>[] groups() default {};
-
-Class<? extends Payload>[] payload() default {};
+@ExtendWith(MockitoExtension.class)
+class RestApiPathExtractorTest {
 
 /**
- A validator that checks that the {@code Duration} is positive or zero.
+ Test of filter method.
 
- @author riru
- @version 3.0.0
+ @param crc the {@code ContainerRequestContext}. It provides by Mockito.
  @since 3.0.0
  */
-class Validator implements ConstraintValidator<PositiveOrZeroDuration, Duration> {
+@Test
+void testFilter(@Mock ContainerRequestContext crc, @Mock UriInfo uriInfo) {
 
-/**
- {@inheritDoc}
+    // [Setup mocks] URI info absolute path.
+    URI baseUri = URI.create("https://safi/");
+    doReturn(baseUri).when(uriInfo).getAbsolutePath();
+    doReturn(uriInfo).when(crc).getUriInfo();
 
- @since 3.0.0
- */
-@Override
-public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+    // [Pre-Exec] Create an instance that target for testing.
+    var instance = new RestApiPathExtractor.Impl();
+    var ctx = new RestApiPathExtractor.Impl.RestApiPathContextImpl();
+    instance.setCtx(ctx);
 
-    if (value == null) {
-        return true;
-    }
+    // [Execute] Extract a locale.
+    instance.filter(crc);
 
-    return !value.isNegative();
-}
-
+    // [Verify]
+    assertThat(ctx).returns(baseUri, RestApiPathExtractor.Impl.RestApiPathContextImpl::getValue)
+        .hasToString("RestApiPathContext{value=%s}", baseUri);
 }
 
 }

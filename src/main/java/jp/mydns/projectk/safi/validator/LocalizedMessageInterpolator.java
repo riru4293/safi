@@ -27,7 +27,6 @@ package jp.mydns.projectk.safi.validator;
 
 import jakarta.inject.Provider;
 import jakarta.validation.MessageInterpolator;
-import jakarta.validation.MessageInterpolator.Context;
 import jakarta.validation.Validation;
 import java.util.Locale;
 import java.util.Optional;
@@ -82,7 +81,7 @@ private Locale resolveLocale() {
 
     // Retrieves the cached provider, or resolves the provider if it is not cached.
     Provider<RequestContext> pvd = cachedReqCtxPvd.updateAndGet(
-        p -> p != null ? p : resolveRequestContext());
+        p -> p != null ? p : resolveRequestContextProvider());
 
     // Returns the locale obtained from the provider, or the default locale if not available.
     return Optional.ofNullable(pvd)
@@ -91,7 +90,7 @@ private Locale resolveLocale() {
         .orElse(Locale.ENGLISH);
 }
 
-private Provider<RequestContext> resolveRequestContext() {
+private Provider<RequestContext> resolveRequestContextProvider() {
     try {
         return CdiUtils.getInstance(RequestContext.class);
     } catch (RuntimeException ex) {

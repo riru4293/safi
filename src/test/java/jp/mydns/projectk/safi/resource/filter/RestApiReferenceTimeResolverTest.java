@@ -23,63 +23,54 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.validator;
+package jp.mydns.projectk.safi.resource.filter;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.Payload;
-import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE_USE;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.time.Duration;
+import java.time.LocalDateTime;
+import jp.mydns.projectk.safi.service.TimeService;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import static org.mockito.Mockito.doReturn;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- Validates that the {@code Duration} is positive or zero. Supported type is {@code Duration}.
+ Test of class {@code RestApiReferenceTimeResolver}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-@Target({METHOD, TYPE_USE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Constraint(validatedBy = {PositiveOrZeroDuration.Validator.class})
-public @interface PositiveOrZeroDuration {
-
-String message() default "{jp.mydns.projectk.safi.validator.PositiveOrZeroDuration.message}";
-
-Class<?>[] groups() default {};
-
-Class<? extends Payload>[] payload() default {};
+@ExtendWith(MockitoExtension.class)
+class RestApiReferenceTimeResolverTest {
 
 /**
- A validator that checks that the {@code Duration} is positive or zero.
+ Test of filter method.
 
- @author riru
- @version 3.0.0
+ @param timeSvc the {@code TimeService}. It provides by Mockito.
  @since 3.0.0
  */
-class Validator implements ConstraintValidator<PositiveOrZeroDuration, Duration> {
+@Test
+void testInvoke(@Mock TimeService timeSvc) {
 
-/**
- {@inheritDoc}
+    // [Setup mocks] Context provider.
+    var ctx = new RestApiReferenceTimeResolver.Impl.ContextImpl();
 
- @since 3.0.0
- */
-@Override
-public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+    // [Setup mocks] TimeService.
+    doReturn(LocalDateTime.of(2000, 1, 1, 0, 0)).when(timeSvc).getSafiTime();
 
-    if (value == null) {
-        return true;
-    }
+    // [Pre-Exec] Create an instance that target for testing.
+    var instance = new RestApiReferenceTimeResolver.Impl();
+    instance.setCtx(ctx);
+    instance.setTimeService(timeSvc);
 
-    return !value.isNegative();
-}
+    // [Execute] Extract a REST API process name.
+    instance.filter(null /* no use */);
 
+    // [Verify]
+    assertThat(ctx).returns(LocalDateTime.of(2000, 1, 1, 0, 0),
+        RestApiReferenceTimeResolver.Impl.ContextImpl::getValue)
+        .hasToString("RestApiReferenceTimeContext{value=2000-01-01T00:00}");
 }
 
 }

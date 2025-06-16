@@ -23,63 +23,52 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.validator;
+package jp.mydns.projectk.safi.resource.filter;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.Payload;
-import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE_USE;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.time.Duration;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import java.util.List;
+import java.util.Locale;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import static org.mockito.Mockito.doReturn;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /**
- Validates that the {@code Duration} is positive or zero. Supported type is {@code Duration}.
+ Test of class {@code LocaleExtractor}.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-@Target({METHOD, TYPE_USE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Constraint(validatedBy = {PositiveOrZeroDuration.Validator.class})
-public @interface PositiveOrZeroDuration {
-
-String message() default "{jp.mydns.projectk.safi.validator.PositiveOrZeroDuration.message}";
-
-Class<?>[] groups() default {};
-
-Class<? extends Payload>[] payload() default {};
+@ExtendWith(MockitoExtension.class)
+class LocaleExtractorTest {
 
 /**
- A validator that checks that the {@code Duration} is positive or zero.
+ Test of filter method.
 
- @author riru
- @version 3.0.0
+ @param crc the {@code ContainerRequestContext}. It provides by Mockito.
  @since 3.0.0
  */
-class Validator implements ConstraintValidator<PositiveOrZeroDuration, Duration> {
+@Test
+void testFilter(@Mock ContainerRequestContext crc) {
 
-/**
- {@inheritDoc}
+    // [Setup mocks] Acceptable languages.
+    var locales = List.of(Locale.CHINESE, Locale.ITALIAN);
+    doReturn(locales).when(crc).getAcceptableLanguages();
 
- @since 3.0.0
- */
-@Override
-public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+    // [Pre-Exec] Create an instance that target for testing.
+    var instance = new LocaleExtractor.Impl();
+    var ctx = new LocaleExtractor.Impl.ContextImpl();
+    instance.setCtx(ctx);
 
-    if (value == null) {
-        return true;
-    }
+    // [Execute] Extract a locale.
+    instance.filter(crc);
 
-    return !value.isNegative();
-}
-
+    // [Verify]
+    assertThat(ctx).returns(Locale.CHINESE, LocaleExtractor.Impl.ContextImpl::getValue)
+        .hasToString("LocaleContext{value=%s}", Locale.CHINESE);
 }
 
 }

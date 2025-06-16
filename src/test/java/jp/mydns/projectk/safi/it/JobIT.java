@@ -29,6 +29,7 @@ import jakarta.enterprise.context.RequestScoped;
 import jakarta.json.Json;
 import jakarta.json.JsonValue;
 import jakarta.persistence.EntityManager;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.core.Response;
 import java.net.URI;
 import java.time.Duration;
@@ -69,6 +70,8 @@ import jp.mydns.projectk.safi.value.LeafConditionValue;
 import jp.mydns.projectk.safi.value.RequestContext;
 import jp.mydns.projectk.safi.value.SJson;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import org.jboss.weld.junit5.EnableWeld;
 import org.jboss.weld.junit5.WeldInitiator;
 import org.jboss.weld.junit5.WeldSetup;
@@ -152,6 +155,42 @@ private void registerJobdef(EntityManager em) {
 
     em.getTransaction().begin();
     em.persist(entity);
+    em.getTransaction().commit();
+}
+
+/**
+ Test validate exists a Job definition id.
+
+ @param em the {@code EntityManager}. This parameter resolved by CDI.
+ @since 3.0.0
+ */
+@Test
+void testJobdefIdValidationIfValid(EntityManager em) {
+
+    em.getTransaction().begin();
+
+    // [Execute] Validate Job definition id, if valid.
+    assertThatCode(new JobCreationRequest.Builder().withJobdefId("jobdef-id")::build)
+        .doesNotThrowAnyException();
+
+    // [Execute] Validate Job definition id, if invalid.
+    String nullVal = null;
+    String tooFew = "";
+    String tooMany = "tooooooooooooooooooooooooooooooo many";
+    String notExists = "not-exists";
+
+    assertThatExceptionOfType(ConstraintViolationException.class)
+        .isThrownBy(new JobCreationRequest.Builder().withJobdefId(nullVal)::build);
+
+    assertThatExceptionOfType(ConstraintViolationException.class)
+        .isThrownBy(new JobCreationRequest.Builder().withJobdefId(tooFew)::build);
+
+    assertThatExceptionOfType(ConstraintViolationException.class)
+        .isThrownBy(new JobCreationRequest.Builder().withJobdefId(tooMany)::build);
+
+    assertThatExceptionOfType(ConstraintViolationException.class)
+        .isThrownBy(new JobCreationRequest.Builder().withJobdefId(notExists)::build);
+
     em.getTransaction().commit();
 }
 

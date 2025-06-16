@@ -116,7 +116,7 @@ void setValue(URI value) {
 
 @Override
 public String toString() {
-    return "RestApiPathContextImpl{" + "value=" + value + '}';
+    return "RestApiPathContext{" + "value=" + value + '}';
 }
 
 }

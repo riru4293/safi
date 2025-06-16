@@ -118,6 +118,18 @@ public Builder() {
 }
 
 /**
+ Unsupported.
+
+ @param src no use.
+ @return none.
+ @throws UnsupportedOperationException always.
+ */
+@Override
+public Builder with(ErrorResponseContext src) {
+    throw new UnsupportedOperationException();
+}
+
+/**
  Set error code.
 
  @param code error code

@@ -25,59 +25,48 @@
  */
 package jp.mydns.projectk.safi.validator;
 
-import jakarta.validation.Constraint;
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
-import jakarta.validation.Payload;
-import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE_USE;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.time.Duration;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.Set;
+import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
+import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
- Validates that the {@code Duration} is positive or zero. Supported type is {@code Duration}.
+ Test of class LocalizedMessageInterpolator.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-@Target({METHOD, TYPE_USE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Constraint(validatedBy = {PositiveOrZeroDuration.Validator.class})
-public @interface PositiveOrZeroDuration {
-
-String message() default "{jp.mydns.projectk.safi.validator.PositiveOrZeroDuration.message}";
-
-Class<?>[] groups() default {};
-
-Class<? extends Payload>[] payload() default {};
+@ExtendWith(ValidatorParameterResolver.class)
+class LocalizedMessageInterpolatorTest {
 
 /**
- A validator that checks that the {@code Duration} is positive or zero.
+ Test of the default locale.
 
- @author riru
- @version 3.0.0
+ @param validator the {@code Validator}. This parameter resolved by
+ {@code ValidatorParameterResolver}.
  @since 3.0.0
  */
-class Validator implements ConstraintValidator<PositiveOrZeroDuration, Duration> {
+@Test
+void testDefaultLocale(Validator validator) {
+    Set<ConstraintViolation<Bean>> violations = validator.validate(new Bean());
 
-/**
- {@inheritDoc}
+    Optional<String> result = violations.stream().map(ConstraintViolation::getMessage).findFirst();
 
- @since 3.0.0
- */
-@Override
-public boolean isValid(Duration value, ConstraintValidatorContext ctx) {
+    // Note: In non-CDI environments, the locale is English.
+    assertThat(result).hasValue("out of range");
+}
 
-    if (value == null) {
-        return true;
-    }
+public static class Bean {
 
-    return !value.isNegative();
+@TimeRange
+public LocalDateTime getInvalidValue() {
+    return LocalDateTime.of(1999, 12, 31, 0, 0);
 }
 
 }

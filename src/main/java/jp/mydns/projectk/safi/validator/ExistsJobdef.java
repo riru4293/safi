@@ -36,6 +36,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import jp.mydns.projectk.safi.dao.JobdefDao;
 import jp.mydns.projectk.safi.util.CdiUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  Validates that a Job definition exists.
@@ -65,6 +67,8 @@ Class<? extends Payload>[] payload() default {};
  */
 class Validator implements ConstraintValidator<ExistsJobdef, String> {
 
+private static final Logger log = LoggerFactory.getLogger(Validator.class);
+
 /**
  {@inheritDoc}
 
@@ -72,7 +76,21 @@ class Validator implements ConstraintValidator<ExistsJobdef, String> {
  */
 @Override
 public boolean isValid(String value, ConstraintValidatorContext ctx) {
-    return CdiUtils.get(JobdefDao.class).getJobdef(value).isPresent();
+    
+    if (value == null || value.isBlank() || value.length() > 36) {
+        return false;
+    }
+
+    try {
+        return CdiUtils.get(JobdefDao.class).getJobdef(value).isPresent();
+    } catch (IllegalStateException ex) {
+        // Note: If the CDI container is not running.
+        //       In this case, since validation is not possible, it is considered as validation OK.
+        log.warn("The validation was OK because the existence of the Job definition id could not be"
+            + " validated. This is because the CDI container is not running.");
+    }
+
+    return true;
 }
 
 }

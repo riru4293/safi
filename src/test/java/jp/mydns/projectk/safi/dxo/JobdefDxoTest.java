@@ -31,17 +31,16 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.json.bind.Jsonb;
 import jakarta.validation.Validator;
-import jp.mydns.projectk.safi.service.TimeService;
 import jp.mydns.projectk.safi.service.MockJsonService;
 import jp.mydns.projectk.safi.service.MockValidationService;
 import jp.mydns.projectk.safi.test.junit.JsonbParameterResolver;
 import jp.mydns.projectk.safi.test.junit.ValidatorParameterResolver;
 import jp.mydns.projectk.safi.value.RequestContext;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import static org.mockito.Mockito.doReturn;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -56,6 +55,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(ValidatorParameterResolver.class)
 @ExtendWith(MockitoExtension.class)
 class JobdefDxoTest {
+
+/**
+ Test of default constructor is not supported.
+
+ @since 3.0.0
+ */
+@Test
+void testDefaultConstructor() {
+
+    assertThatExceptionOfType(UnsupportedOperationException.class)
+        .isThrownBy(JobdefDxo.Impl::new);
+}
 
 /**
  Test of toValue method.
