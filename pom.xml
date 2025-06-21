@@ -126,6 +126,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${version.slf4j}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- SLF4J implemented by JUL(java.util.logging.Logger) -->
@@ -134,6 +135,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>${version.slf4j}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Log4j implemented over SLF4J -->
@@ -142,6 +144,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
             <version>${version.slf4j}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Apache Commons Logging implemented over SLF4J -->
@@ -150,6 +153,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${version.slf4j}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Swagger Annotations for Jakarta EE -->
