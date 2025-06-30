@@ -41,6 +41,7 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
@@ -66,7 +67,7 @@ public interface HeartbeatService {
  <p>
  <h4>Receiver implementation.</h4>
  To act as a handler for this event, write a method in your CDI managed class that looks like this:
- {@code void someMethod(@}{@link Observes} {@link Notification} {@code ntf)}.
+ {@code void someMethod(@}{@link Observes} {@link JustOneSecond} {@code ntf)}.
 
  @since 3.0.0
  */
@@ -132,7 +133,8 @@ private static final long INITIAL_DELAY_SEC = 10;
 private final Object lock = new Object();
 
 private final Provider<HeartbeatService> selfPvd;
-private final Provider<Event<Notification>> ntfPvd;
+private final Provider<Event<Reset>> resetPvd;
+private final Provider<Event<JustOneSecond>> ntfPvd;
 private final TimeService timeSvc;
 
 private ManagedScheduledExecutorService scheduler;  // Note: Automatically looked up and set from JNDI.
@@ -140,10 +142,13 @@ private ManagedScheduledExecutorService scheduler;  // Note: Automatically looke
 private ScheduledFuture<?> scheduledTask;           // Note: Set when the start method is executed.
 
 @Inject
-public Impl(
-    Provider<HeartbeatService> selfPvd, Provider<Event<Notification>> ntfPvd, TimeService timeSvc) {
+@SuppressWarnings("unused")
+Impl(
+    Provider<HeartbeatService> selfPvd, Provider<Event<Reset>> resetPvd,
+    Provider<Event<JustOneSecond>> ntfPvd, TimeService timeSvc) {
 
     this.selfPvd = selfPvd;
+    this.resetPvd = resetPvd;
     this.ntfPvd = ntfPvd;
     this.timeSvc = timeSvc;
 }
@@ -156,14 +161,14 @@ void setScheduler(ManagedScheduledExecutorService scheduler) {
 }
 
 /**
- Notifies {@link Notification} as a CDI event. Along with the notification, enable request context.
+ Notifies {@link JustOneSecond} as a CDI event. Along with the notification, enable request context.
 
  @since 3.0.0
  */
 @ActivateRequestContext
 @Override
 public void fire() {
-    Notification heartbeat = new Notification(timeSvc.getExactlyLocalNow());
+    JustOneSecond heartbeat = new JustOneSecond(timeSvc.getExactlyLocalNow());
 
     log.debug("Notify heartbeat. {}", heartbeat.getHappened());
 
@@ -189,6 +194,8 @@ void start(@Observes Startup startup) {
  Start the heartbeat. Restart if already started.
  <p>
  Enable {@link RequestScoped} by calling the {@link #fire} method via our own CDI instance.
+ <p>
+ Send the {@link Reset} as CDI event when previous start.
 
  @since 3.0.0
  */
@@ -199,6 +206,8 @@ public void start() {
         stop();
 
         log.info("Start the heartbeat.");
+
+        resetPvd.get().fire(new Reset(timeSvc.getExactlyLocalNow()));
 
         scheduledTask = scheduler.scheduleAtFixedRate(
             selfPvd.get()::fire, INITIAL_DELAY_SEC, INTERVAL_SEC, SECONDS);
@@ -263,12 +272,18 @@ private boolean cancelScheduledTaskExecution(Future<?> scheduledTask) {
  @version 3.0.0
  @since 3.0.0
  */
-static class Notification {
+static abstract class PeriodicEvent {
 
-private final LocalDateTime happened;
+protected final LocalDateTime happened;
 
-Notification(LocalDateTime happened) {
-    this.happened = happened;
+/**
+ Construct with happened time.
+
+ @param happened happened time
+ @since 3.0.0
+ */
+protected PeriodicEvent(LocalDateTime happened) {
+    this.happened = Objects.requireNonNull(happened);
 }
 
 /**
@@ -281,6 +296,26 @@ public LocalDateTime getHappened() {
     return happened;
 }
 
+}
+
+/**
+ One second periodic event.
+ <p>
+ Implementation requirements.
+ <ul>
+ <li>This class is immutable and thread-safe.</li>
+ </ul>
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+static class JustOneSecond extends PeriodicEvent {
+
+private JustOneSecond(LocalDateTime happened) {
+    super(happened);
+}
+
 /**
  Returns a string representation.
 
@@ -289,7 +324,38 @@ public LocalDateTime getHappened() {
  */
 @Override
 public String toString() {
-    return "Heartbeat{" + "happened=" + happened + '}';
+    return "JustOneSecond{" + "happened=" + happened + '}';
+}
+
+}
+
+/**
+ Event that reset the heartbeat.
+ <p>
+ Implementation requirements.
+ <ul>
+ <li>This class is immutable and thread-safe.</li>
+ </ul>
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+static class Reset extends PeriodicEvent {
+
+private Reset(LocalDateTime happened) {
+    super(happened);
+}
+
+/**
+ Returns a string representation.
+
+ @return string representation.
+ @since 3.0.0
+ */
+@Override
+public String toString() {
+    return "HeartBeat.Reset{" + "happened=" + happened + '}';
 }
 
 }
