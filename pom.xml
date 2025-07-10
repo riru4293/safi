@@ -40,26 +40,30 @@ POSSIBILITY OF SUCH DAMAGE.
         <failOnMissingWebXml>false</failOnMissingWebXml>
         <jacocoArgLine/>
 
-        <!-- Library versions -->
-        <!-- Jakarta EE library versions must match GlassFish 7.0.21 -->
+
+        <!-- Jakarta EE library versions must match GlassFish 7.0.25 -->
         <version.jakartaee>10.0.0</version.jakartaee>
         <version.jakartaee-lang-model>4.1.0</version.jakartaee-lang-model>
-        <version.eclipselink>4.0.3</version.eclipselink>
-        <version.hibernate-validator>8.0.1.Final</version.hibernate-validator>
+        <version.eclipselink>4.0.5</version.eclipselink>
+        <version.hibernate-validator>8.0.2.Final</version.hibernate-validator>
         <version.expressly>5.0.0</version.expressly>
         <version.yasson>3.0.4</version.yasson>
-        <version.slf4j>2.0.17</version.slf4j>
         <version.microprofile-config>3.1</version.microprofile-config>
-        <version.helidon-config>4.2.0</version.helidon-config>
-        <version.swagger>2.2.28</version.swagger>
-        <version.swagger-ui>5.18.3</version.swagger-ui>
-        <version.junit>5.12.1</version.junit>
-        <version.mockito>5.16.0</version.mockito>
+
+
+        <!-- Library versions -->
+        <version.slf4j>2.0.17</version.slf4j>
+        <version.helidon-config>4.2.3</version.helidon-config>
+        <version.swagger>2.2.34</version.swagger>
+        <version.swagger-ui>5.25.3</version.swagger-ui>
+        <version.junit>5.13.3</version.junit>
+        <version.mockito>5.18.0</version.mockito>
         <version.assertj>3.27.3</version.assertj>
-        <version.weld-junit5>5.0.0.Final</version.weld-junit5>
         <version.h2database>2.3.232</version.h2database>
         <version.jacoco>0.8.13</version.jacoco>
-        <version.sonar>5.0.0.4389</version.sonar>
+        <version.sonar>5.1.0.4751</version.sonar>
+        <version.weld-junit5>5.0.1.Final</version.weld-junit5>
+
 
         <!-- Versions for Apache Maven Plugins -->
         <version.maven-antrun>3.1.0</version.maven-antrun>
