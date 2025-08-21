@@ -28,6 +28,7 @@ package jp.mydns.projectk.safi.service;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
+import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
 import jakarta.persistence.PersistenceException;
 import jakarta.validation.ConstraintViolationException;
@@ -135,11 +136,14 @@ Impl(JobdefDxo jobdefDxo, JobdefDao jobdefDao, ValidationService validSvc,
 public JobCreationContext buildJobCreationContext(JobCreationRequest req) throws JobdefIOException {
     Objects.requireNonNull(req);
 
+    JsonObject ow = jsonSvc.toJsonValue(req).asJsonObject();
+
     JobdefValue jobdef = jobdefDao.getJobdef(req.getJobdefId())
         .filter(validSvc::isEnabled)
         .map(jobdefDxo::toValue)
         .map(f(jsonSvc::toJsonValue).andThen(JsonValue::asJsonObject))
-        .map(f(jsonSvc::merge, jsonSvc.toJsonValue(req).asJsonObject())).map(jobdefDxo::toValue)
+        .map(b -> jsonSvc.merge(b, ow))
+        .map(jobdefDxo::toValue)
         .orElseThrow(notFoundJobdef);
 
     return new JobCreationContext(idSvc.generateJobId(),

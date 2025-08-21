@@ -35,11 +35,9 @@ import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ResourceInfo;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.ext.Provider;
-import java.lang.reflect.Method;
 import java.util.Optional;
 import jp.mydns.projectk.safi.resource.RestApiProcessName;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
-import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import jp.mydns.projectk.safi.value.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +106,7 @@ void setResInf(ResourceInfo resInf) {
 public void filter(ContainerRequestContext crc) {
     Optional.of(resInf)
         .map(ResourceInfo::getResourceMethod)
-        .map(f(Method::getAnnotation, RestApiProcessName.class))
+        .map(m -> m.getAnnotation(RestApiProcessName.class))
         .map(RestApiProcessName::value)
         .ifPresent(c(ctx::setValue).andThen(n -> log.debug("Process name is {}.", n)));
 }

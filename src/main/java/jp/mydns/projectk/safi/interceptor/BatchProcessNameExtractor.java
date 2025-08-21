@@ -32,13 +32,11 @@ import jakarta.inject.Provider;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-import java.lang.reflect.Method;
 import java.util.Optional;
 import static java.util.function.Predicate.not;
 import jp.mydns.projectk.safi.batch.BatchProcessName;
 import static jp.mydns.projectk.safi.util.LambdaUtils.c;
 import jp.mydns.projectk.safi.value.RequestContext;
-import static jp.mydns.projectk.safi.util.LambdaUtils.f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +85,7 @@ Impl(Provider<ContextImpl> ctxPvd) {
 public Object invoke(InvocationContext ic) throws Exception {
 
     Optional.ofNullable(ic.getMethod())
-        .map(f(Method::getAnnotation, BatchProcessName.class))
+        .map(m -> m.getAnnotation(BatchProcessName.class))
         .map(BatchProcessName::value)
         .filter(not(String::isBlank))
         .ifPresent(c(ctxPvd.get()::setValue)

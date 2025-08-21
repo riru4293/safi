@@ -28,7 +28,6 @@ package jp.mydns.projectk.safi.util;
 import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -178,42 +177,6 @@ public static <I, O> Function<I, O> f(Function<I, O> toBeReturned) {
  */
 public static <I, O> Function<I, O> function(Function<I, O> toBeReturned) {
     return Objects.requireNonNull(toBeReturned);
-}
-
-/**
- Returns a function with one fixed argument applied. This method is alias of
- {@link #function(java.util.function.BiFunction, java.lang.Object)}.
-
- @param <I> input value type
- @param <A> fixed argument type
- @param <O> output value type
- @param biFunc function that has one fixed argument
- @param fixedArg fixed argument that applied to {@code biFunction}
- @return a function with one fixed argument applied
- @throws NullPointerException if any argument is {@code null}
- @since 3.0.0
- */
-public static <I, A, O> Function<I, O> f(BiFunction<I, A, O> biFunc, A fixedArg) {
-    return function(biFunc, fixedArg);
-}
-
-/**
- Returns a function with one fixed argument applied.
-
- @param <I> input value type
- @param <A> fixed argument type
- @param <O> output value type
- @param biFunc function that has one fixed argument
- @param fixedArg fixed argument that applied to {@code biFunction}
- @return a function with one fixed argument applied
- @throws NullPointerException if any argument is {@code null}
- @since 3.0.0
- */
-public static <I, A, O> Function<I, O> function(BiFunction<I, A, O> biFunc, A fixedArg) {
-    Objects.requireNonNull(biFunc);
-    Objects.requireNonNull(fixedArg);
-
-    return v -> biFunc.apply(v, fixedArg);
 }
 
 /**
