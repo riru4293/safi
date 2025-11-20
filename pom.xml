@@ -41,11 +41,11 @@ POSSIBILITY OF SUCH DAMAGE.
         <jacocoArgLine/>
 
         <!-- Library versions -->
-        <!-- Jakarta EE library versions must match GlassFish 7.0.21 -->
+        <!-- Jakarta EE library versions must match GlassFish 7.0.25 -->
         <version.jakartaee>10.0.0</version.jakartaee>
-        <version.jakartaee-lang-model>4.1.0</version.jakartaee-lang-model>
-        <version.eclipselink>4.0.3</version.eclipselink>
-        <version.hibernate-validator>8.0.1.Final</version.hibernate-validator>
+        <version.jakartaee-lang-model>4.0.1</version.jakartaee-lang-model>
+        <version.eclipselink>4.0.5</version.eclipselink>
+        <version.hibernate-validator>8.0.2.Final</version.hibernate-validator>
         <version.expressly>5.0.0</version.expressly>
         <version.yasson>3.0.4</version.yasson>
         <version.slf4j>2.0.17</version.slf4j>
