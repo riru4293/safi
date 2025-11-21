@@ -60,6 +60,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.h2database>2.4.240</version.h2database>
         <version.jacoco>0.8.14</version.jacoco>
         <version.sonar>13.4.0.3221</version.sonar>
+        <version.jersey>3.1.11</version.jersey>
 
         <!-- Versions for Apache Maven Plugins -->
         <version.maven-antrun>3.2.0</version.maven-antrun>
@@ -295,7 +296,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
-            <version>3.1.9</version>
+            <version>${version.jersey}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
