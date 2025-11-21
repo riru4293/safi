@@ -64,7 +64,6 @@ public interface HeartbeatService {
 
 /**
  Notifies a heartbeat as CDI event. Along with the notification, enable request context.
- <p>
  <h4>Receiver implementation.</h4>
  To act as a handler for this event, write a method in your CDI managed class that looks like this:
  {@code void someMethod(@}{@link Observes} {@link JustOneSecond} {@code ntf)}.
