@@ -131,9 +131,9 @@ private static final long INITIAL_DELAY_SEC = 10;
 
 private final Object lock = new Object();
 
-private final Provider<HeartbeatService> selfPvd;
-private final Provider<Event<Reset>> resetPvd;
-private final Provider<Event<JustOneSecond>> ntfPvd;
+private final Provider<HeartbeatService> selfPvd;   // Note: Self-injection for execution via CDI proxy.
+private final Provider<Event<Reset>> resetPvd;      // The event that notify start heartbeat.
+private final Provider<Event<JustOneSecond>> ntfPvd;// The event that notify per 1 second.
 private final TimeService timeSvc;
 
 private ManagedScheduledExecutorService scheduler;  // Note: Automatically looked up and set from JNDI.
@@ -141,7 +141,7 @@ private ManagedScheduledExecutorService scheduler;  // Note: Automatically looke
 private ScheduledFuture<?> scheduledTask;           // Note: Set when the start method is executed.
 
 @Inject
-@SuppressWarnings("unused")
+@SuppressWarnings("unused") // Note: To be called by CDI.
 Impl(
     Provider<HeartbeatService> selfPvd, Provider<Event<Reset>> resetPvd,
     Provider<Event<JustOneSecond>> ntfPvd, TimeService timeSvc) {
@@ -154,7 +154,7 @@ Impl(
 
 @Resource(lookup = "java:module/concurrent/Heartbeat",
           name = "java:module/concurrent/env/HeartbeatRef")
-@SuppressWarnings("unused")
+@SuppressWarnings("unused") // Note: To be called by CDI.
 void setScheduler(ManagedScheduledExecutorService scheduler) {
     this.scheduler = scheduler;
 }
