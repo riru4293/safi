@@ -32,7 +32,7 @@ import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import java.util.concurrent.atomic.AtomicReference;
-import jp.mydns.projectk.safi.batch.HeartbeatService;
+import jp.mydns.projectk.safi.service.HeartbeatService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
