@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2025, Project-K
+ * Copyright 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -40,21 +40,32 @@ import jakarta.enterprise.event.Startup;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
-import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledFuture;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.function.Predicate.not;
-import jp.mydns.projectk.safi.service.TimeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- Notifies heartbeat events. It starts automatically when the application starts. The notification
- interval is 1 second, and the start delay is 10 seconds. It can also be stopped and started
- manually.
+ Provides a 1‑second heartbeat notification as CDI events.
+ <p>
+ This service publishes a {@link JustOneSecond} event every second using a
+ {@link ManagedScheduledExecutorService}. An initial delay of 10 seconds is applied only to the
+ first automatic startup triggered by the CDI Startup event. The service starts automatically at
+ application startup and stops at shutdown. It can also be started and stopped manually.
+ <p>
+ Heartbeat events are fired from a managed executor thread, and a request context is activated for
+ each publication. Lifecycle operations ({@link start()}, {@link stop()}, {@link isRunning()}) are
+ synchronized and thread‑safe. A {@link Reset} event is published whenever the service is
+ (re)started. All events are immutable and thread‑safe.
+ <p>
+ Typical usage includes second‑level polling. For example, a 3‑second periodic task can be
+ implemented by counting three {@code JustOneSecond} events.
+ <p>
+ Scheduling uses {@link ManagedScheduledExecutorService#scheduleAtFixedRate scheduleAtFixedRate} to
+ minimize drift. Slow handlers may delay the next tick, but no backlog is accumulated.
 
  @author riru
  @version 3.0.0
@@ -62,301 +73,238 @@ import org.slf4j.LoggerFactory;
  */
 public interface HeartbeatService {
 
-/**
- Notifies a heartbeat as CDI event. Along with the notification, enable request context.
- <h4>Receiver implementation.</h4>
- To act as a handler for this event, write a method in your CDI managed class that looks like this:
- {@code void someMethod(@}{@link Observes} {@link JustOneSecond} {@code ntf)}.
+    /**
+     Fires a {@link JustOneSecond} event.
+     <p>
+     This method is invoked periodically by the internal scheduler. The request context is activated
+     for the duration of this method.
 
- @since 3.0.0
- */
-@ActivateRequestContext
-void fire();
+     <h4>Receiver Example</h4>
+     <pre>{@code
+     void onHeartbeat(@Observes JustOneSecond e) {
+         // handle tick
+     }
+     }</pre>
 
-/**
- Returns {@code true} if this service is running.
+     @since 3.0.0
+     */
+    @ActivateRequestContext
+    void fire();
 
- @return {@code true} if running, otherwise {@code false}.
- @since 3.0.0
- */
-boolean isRunning();
+    /**
+     Returns whether the heartbeat scheduler is currently active.
 
-/**
- Start this service. Restart this service if already started.
- <p>
- Enable {@link RequestScoped} by calling the {@link #fire} method via our own CDI instance.
+     @return {@code true} if running, otherwise {@code false}.
+     @since 3.0.0
+     */
+    boolean isRunning();
 
- @since 3.0.0
- */
-@ActivateRequestContext
-void start();
+    /**
+     Starts the heartbeat scheduler. If already running, the scheduler is stopped and restarted.
+     <p>
+     When restarted, a {@link Reset} event is fired before scheduling the periodic heartbeat. This
+     method is also invoked automatically when the CDI container fires the {@link Startup} event.
 
-/**
- Stop the heartbeat. Do nothing if not started yet.
+     @since 3.0.0
+     */
+    @ActivateRequestContext
+    void start();
 
- @since 3.0.0
- */
-void stop();
+    /**
+     Stops the heartbeat scheduler. If the scheduler is not running, this method does nothing.
+     <p>
+     This method is also invoked automatically when the CDI container fires the {@link Shutdown}
+     event.
 
-/**
- Implements of the {@code HeartbeatService}.
+     @since 3.0.0
+     */
+    void stop();
 
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-/* Define a scheduled Executor. */
-@ManagedScheduledExecutorDefinition(
-    /* The JNDI name of the Executor. */
-    name = "java:module/concurrent/Heartbeat",
-    /* The JNDI name of the context the executor will use. */
-    context = "java:module/concurrent/HeartbeatContext"
-)
-/* Defines the context to be propagated to threads associated with the Executor. */
-@ContextServiceDefinition(
-    /* The JNDI name of the context. */
-    name = "java:module/concurrent/HeartbeatContext",
-    /* Set the context type to propagate. */
-    /* - APPLICATION: Inherits CDI, Resource, and Transaction. */
-    propagated = {APPLICATION}
-)
-@Typed(HeartbeatService.class)
-@ApplicationScoped
-class Impl implements HeartbeatService {
+    /**
+     Implements of the {@code HeartbeatService}.
 
-private static final Logger log = LoggerFactory.getLogger(Impl.class);
+     @author riru
+     @version 3.0.0
+     @since 3.0.0
+     */
+    /* Define a scheduled Executor. */
+    @ManagedScheduledExecutorDefinition(
+        /* The JNDI name of the Executor. */
+        name = "java:module/concurrent/Heartbeat",
+        /* The JNDI name of the context the executor will use. */
+        context = "java:module/concurrent/HeartbeatContext"
+    )
+    /* Defines the context to be propagated to threads associated with the Executor. */
+    @ContextServiceDefinition(
+        /* The JNDI name of the context. */
+        name = "java:module/concurrent/HeartbeatContext",
+        /* Set the context type to propagate. */
+        /* - APPLICATION: Inherits CDI, Resource, and Transaction. */
+        propagated = {APPLICATION}
+    )
+    @Typed(HeartbeatService.class)
+    @ApplicationScoped
+    class Impl implements HeartbeatService
+    {
+        private static final Logger log = LoggerFactory.getLogger(Impl.class);
 
-private static final long INTERVAL_SEC = 1;
-private static final long INITIAL_DELAY_SEC = 10;
+        private static final long INTERVAL_SEC = 1;
+        private static final long INITIAL_DELAY_SEC = 10;
 
-private final Object lock = new Object();
+        private final Object lock = new Object();
 
-private final Provider<HeartbeatService> selfPvd;   // Note: Self-injection for execution via CDI proxy.
-private final Provider<Event<Reset>> resetPvd;      // The event that notify start heartbeat.
-private final Provider<Event<JustOneSecond>> ntfPvd;// The event that notify per 1 second.
-private final TimeService timeSvc;
+        private final Provider<HeartbeatService> selfPvd;   // Note: Self-injection for execution via CDI proxy.
+        private final Provider<Event<Reset>> resetPvd;      // The event that notify start heartbeat.
+        private final Provider<Event<JustOneSecond>> ntfPvd;// The event that notify per 1 second.
 
-private ManagedScheduledExecutorService scheduler;  // Note: Automatically looked up and set from JNDI.
+        private ManagedScheduledExecutorService scheduler;  // Note: Automatically looked up and set from JNDI.
+        private ScheduledFuture<?> scheduledTask;           // Note: Set when the start method is executed.
 
-private ScheduledFuture<?> scheduledTask;           // Note: Set when the start method is executed.
+        @Inject
+        @SuppressWarnings("unused") // Note: To be called by CDI.
+        Impl(Provider<HeartbeatService> selfPvd,
+             Provider<Event<Reset>> resetPvd,
+             Provider<Event<JustOneSecond>> ntfPvd)
+        {
+            this.selfPvd = selfPvd;
+            this.resetPvd = resetPvd;
+            this.ntfPvd = ntfPvd;
+        }
 
-@Inject
-@SuppressWarnings("unused") // Note: To be called by CDI.
-Impl(
-    Provider<HeartbeatService> selfPvd, Provider<Event<Reset>> resetPvd,
-    Provider<Event<JustOneSecond>> ntfPvd, TimeService timeSvc) {
+        @Resource(lookup = "java:module/concurrent/Heartbeat",
+                  name = "java:module/concurrent/env/HeartbeatRef")
+        @SuppressWarnings("unused") // Note: To be called by CDI.
+        void setScheduler(ManagedScheduledExecutorService scheduler)
+        {
+            this.scheduler = scheduler;
+        }
 
-    this.selfPvd = selfPvd;
-    this.resetPvd = resetPvd;
-    this.ntfPvd = ntfPvd;
-    this.timeSvc = timeSvc;
-}
+        /**
+         Notifies {@link JustOneSecond} as a CDI event. Along with the notification, enable request
+         context.
 
-@Resource(lookup = "java:module/concurrent/Heartbeat",
-          name = "java:module/concurrent/env/HeartbeatRef")
-@SuppressWarnings("unused") // Note: To be called by CDI.
-void setScheduler(ManagedScheduledExecutorService scheduler) {
-    this.scheduler = scheduler;
-}
+         @since 3.0.0
+         */
+        @ActivateRequestContext
+        @Override
+        public void fire()
+        {
+            ntfPvd.get().fire(new JustOneSecond());
+        }
 
-/**
- Notifies {@link JustOneSecond} as a CDI event. Along with the notification, enable request context.
+        /**
+         Start the heartbeat.
+         <p>
+         Handles the {@code Startup} event fired by the CDI container during application
+         initialization, i.e. it is called once, when the application starts.
 
- @since 3.0.0
- */
-@ActivateRequestContext
-@Override
-public void fire() {
-    JustOneSecond heartbeat = new JustOneSecond(timeSvc.getExactlyLocalNow());
+         @param startup the {@code Startup}.
+         @since 3.0.0
+         */
+        @ActivateRequestContext
+        @SuppressWarnings("unused")
+        void start(@Observes Startup startup)
+        {
+            start();
+        }
 
-    log.debug("Notify heartbeat. {}", heartbeat.getHappened());
+        /**
+         Start the heartbeat. Restart if already started.
+         <p>
+         Enable {@link RequestScoped} by calling the {@link #fire} method via our own CDI instance.
+         <p>
+         Send the {@link Reset} as CDI event when previous start.
 
-    ntfPvd.get().fire(heartbeat);
-}
+         @since 3.0.0
+         */
+        @ActivateRequestContext
+        @Override
+        public void start()
+        {
+            synchronized (lock)
+            {
+                stop();
 
-/**
- Start the heartbeat.
- <p>
- Handles the {@code Startup} event fired by the CDI container during application initialization,
- i.e. it is called once, when the application starts.
+                log.info("Start the heartbeat.");
 
- @param startup the {@code Startup}.
- @since 3.0.0
- */
-@ActivateRequestContext
-@SuppressWarnings("unused")
-void start(@Observes Startup startup) {
-    start();
-}
+                resetPvd.get().fire(new Reset());
 
-/**
- Start the heartbeat. Restart if already started.
- <p>
- Enable {@link RequestScoped} by calling the {@link #fire} method via our own CDI instance.
- <p>
- Send the {@link Reset} as CDI event when previous start.
+                scheduledTask = scheduler.scheduleAtFixedRate(
+                    selfPvd.get()::fire, INITIAL_DELAY_SEC, INTERVAL_SEC, SECONDS);
+            }
+        }
 
- @since 3.0.0
- */
-@ActivateRequestContext
-@Override
-public void start() {
-    synchronized (lock) {
-        stop();
+        /**
+         Stop the heartbeat.
+         <p>
+         Handles the {@code Startup} event fired by the CDI container during application shutdown,
+         i.e. it is called once, when the application shutdown.
 
-        log.info("Start the heartbeat.");
+         @param shutdown the {@code Shutdown}.
+         @since 3.0.0
+         */
+        @SuppressWarnings("unused")
+        void stop(@Observes Shutdown shutdown)
+        {
+            stop();
+        }
 
-        resetPvd.get().fire(new Reset(timeSvc.getExactlyLocalNow()));
+        /**
+         Stop the heartbeat. Do nothing if not started yet.
 
-        scheduledTask = scheduler.scheduleAtFixedRate(
-            selfPvd.get()::fire, INITIAL_DELAY_SEC, INTERVAL_SEC, SECONDS);
+         @since 3.0.0
+         */
+        @Override
+        public void stop()
+        {
+            synchronized (lock)
+            {
+                Optional.ofNullable(scheduledTask)
+                    .filter(this::cancelScheduledTaskExecution)
+                    .ifPresent(t -> log.info("Stop the heartbeat."));
+            }
+        }
+
+        /**
+         Returns {@code true} if the heartbeat service is running.
+
+         @return {@code true} if running, otherwise {@code false}.
+         @since 3.0.0
+         */
+        @Override
+        public boolean isRunning()
+        {
+            synchronized (lock)
+            {
+                return Optional.ofNullable(scheduledTask)
+                    .filter(not(Future::isCancelled))
+                    .isPresent();
+            }
+        }
+
+        private boolean cancelScheduledTaskExecution(Future<?> scheduledTask)
+        {
+            return scheduledTask.cancel(false);
+        }
+
     }
-}
 
-/**
- Stop the heartbeat.
- <p>
- Handles the {@code Startup} event fired by the CDI container during application shutdown, i.e. it
- is called once, when the application shutdown.
+    /**
+     One‑second heartbeat event.
 
- @param shutdown the {@code Shutdown}.
- @since 3.0.0
- */
-@SuppressWarnings("unused")
-void stop(@Observes Shutdown shutdown) {
-    stop();
-}
+     @author riru
+     @version 3.0.0
+     @since 3.0.0
+     */
+    static class JustOneSecond { @SuppressWarnings("unused") private JustOneSecond() {} }
 
-/**
- Stop the heartbeat. Do nothing if not started yet.
+    /**
+     Event indicating that the heartbeat service has been started or restarted.
 
- @since 3.0.0
- */
-@Override
-public void stop() {
-    synchronized (lock) {
-        Optional.ofNullable(scheduledTask).filter(this::cancelScheduledTaskExecution)
-            .ifPresent(t -> log.info("Stop the heartbeat."));
-    }
-}
-
-/**
- Returns {@code true} if the heart is running.
-
- @return {@code true} if running, otherwise {@code false}.
- @since 3.0.0
- */
-@Override
-public boolean isRunning() {
-    synchronized (lock) {
-        return Optional.ofNullable(scheduledTask).filter(not(Future::isCancelled)).isPresent();
-    }
-}
-
-private boolean cancelScheduledTaskExecution(Future<?> scheduledTask) {
-    return scheduledTask.cancel(false);
-}
-
-}
-
-/**
- Events notified at fixed intervals.
- <p>
- Implementation requirements.
- <ul>
- <li>This class is immutable and thread-safe.</li>
- </ul>
-
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-static abstract class PeriodicEvent {
-
-protected final LocalDateTime happened;
-
-/**
- Construct with happened time.
-
- @param happened happened time
- @since 3.0.0
- */
-protected PeriodicEvent(LocalDateTime happened) {
-    this.happened = Objects.requireNonNull(happened);
-}
-
-/**
- Get the time when this happened.
-
- @return happened time.
- @since 3.0.0
- */
-public LocalDateTime getHappened() {
-    return happened;
-}
-
-}
-
-/**
- One second periodic event.
- <p>
- Implementation requirements.
- <ul>
- <li>This class is immutable and thread-safe.</li>
- </ul>
-
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-static class JustOneSecond extends PeriodicEvent {
-
-private JustOneSecond(LocalDateTime happened) {
-    super(happened);
-}
-
-/**
- Returns a string representation.
-
- @return string representation.
- @since 3.0.0
- */
-@Override
-public String toString() {
-    return "JustOneSecond{" + "happened=" + happened + '}';
-}
-
-}
-
-/**
- Event that reset the heartbeat.
- <p>
- Implementation requirements.
- <ul>
- <li>This class is immutable and thread-safe.</li>
- </ul>
-
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-static class Reset extends PeriodicEvent {
-
-private Reset(LocalDateTime happened) {
-    super(happened);
-}
-
-/**
- Returns a string representation.
-
- @return string representation.
- @since 3.0.0
- */
-@Override
-public String toString() {
-    return "HeartBeat.Reset{" + "happened=" + happened + '}';
-}
-
-}
+     @author riru
+     @version 3.0.0
+     @since 3.0.0
+     */
+    static class Reset { @SuppressWarnings("unused") private Reset() {} }
 
 }
