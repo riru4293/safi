@@ -31,7 +31,6 @@ import static jakarta.enterprise.concurrent.ContextServiceDefinition.APPLICATION
 import jakarta.enterprise.concurrent.ManagedScheduledExecutorDefinition;
 import jakarta.enterprise.concurrent.ManagedScheduledExecutorService;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.event.Observes;
@@ -121,26 +120,17 @@ public interface HeartbeatService {
     void stop();
 
     /**
-     Implements of the {@code HeartbeatService}.
-
-     @author riru
-     @version 3.0.0
-     @since 3.0.0
+     @hidden
      */
     /* Define a scheduled Executor. */
     @ManagedScheduledExecutorDefinition(
-        /* The JNDI name of the Executor. */
-        name = "java:module/concurrent/Heartbeat",
-        /* The JNDI name of the context the executor will use. */
-        context = "java:module/concurrent/HeartbeatContext"
+        name = "java:module/concurrent/Heartbeat", // The JNDI name of the Executor.
+        context = "java:module/concurrent/HeartbeatContext" // The JNDI name of the context the executor will use.
     )
     /* Defines the context to be propagated to threads associated with the Executor. */
     @ContextServiceDefinition(
-        /* The JNDI name of the context. */
-        name = "java:module/concurrent/HeartbeatContext",
-        /* Set the context type to propagate. */
-        /* - APPLICATION: Inherits CDI, Resource, and Transaction. */
-        propagated = {APPLICATION}
+        name = "java:module/concurrent/HeartbeatContext", // The JNDI name of the context.
+        propagated = {APPLICATION} // Context type = Inherits CDI, Resource, and Transaction.
     )
     @Typed(HeartbeatService.class)
     @ApplicationScoped
@@ -179,12 +169,6 @@ public interface HeartbeatService {
             this.scheduler = scheduler;
         }
 
-        /**
-         Notifies {@link JustOneSecond} as a CDI event. Along with the notification, enable request
-         context.
-
-         @since 3.0.0
-         */
         @ActivateRequestContext
         @Override
         public void fire()
@@ -192,31 +176,13 @@ public interface HeartbeatService {
             ntfPvd.get().fire(new JustOneSecond());
         }
 
-        /**
-         Start the heartbeat.
-         <p>
-         Handles the {@code Startup} event fired by the CDI container during application
-         initialization, i.e. it is called once, when the application starts.
-
-         @param startup the {@code Startup}.
-         @since 3.0.0
-         */
         @ActivateRequestContext
-        @SuppressWarnings("unused")
+        @SuppressWarnings("unused") // Note: To be called by CDI.
         void start(@Observes Startup startup)
         {
             start();
         }
 
-        /**
-         Start the heartbeat. Restart if already started.
-         <p>
-         Enable {@link RequestScoped} by calling the {@link #fire} method via our own CDI instance.
-         <p>
-         Send the {@link Reset} as CDI event when previous start.
-
-         @since 3.0.0
-         */
         @ActivateRequestContext
         @Override
         public void start()
@@ -234,26 +200,12 @@ public interface HeartbeatService {
             }
         }
 
-        /**
-         Stop the heartbeat.
-         <p>
-         Handles the {@code Startup} event fired by the CDI container during application shutdown,
-         i.e. it is called once, when the application shutdown.
-
-         @param shutdown the {@code Shutdown}.
-         @since 3.0.0
-         */
-        @SuppressWarnings("unused")
+        @SuppressWarnings("unused") // Note: To be called by CDI.
         void stop(@Observes Shutdown shutdown)
         {
             stop();
         }
 
-        /**
-         Stop the heartbeat. Do nothing if not started yet.
-
-         @since 3.0.0
-         */
         @Override
         public void stop()
         {
@@ -265,12 +217,6 @@ public interface HeartbeatService {
             }
         }
 
-        /**
-         Returns {@code true} if the heartbeat service is running.
-
-         @return {@code true} if running, otherwise {@code false}.
-         @since 3.0.0
-         */
         @Override
         public boolean isRunning()
         {

@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2025, Project-K
+ * Copyright 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -40,143 +40,160 @@ import org.eclipse.microprofile.config.ConfigProvider;
 /**
  Provides configuration values for this application.
 
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-public interface ConfigService {
-
-/**
- Get variable data directory. This directory is guaranteed to exist and be writable.
-
- @return variable data directory
- @throws NoSuchElementException if no value is found. If this exception occurs, the execution
- environment does not meet the prerequisites.
- @since 3.0.0
- */
-Path getVarDir();
-
-/**
- Get temporary directory. This directory is guaranteed to exist and be writable.
-
- @return temporary directory
- @throws NoSuchElementException if no value is found. If this exception occurs, the execution
- environment does not meet the prerequisites.
- @since 3.0.0
- */
-Path getTmpDir();
-
-/**
- Get plugin stored directory. This directory is guaranteed to exist and be readable.
-
- @return plugin stored directory
- @throws NoSuchElementException if no value is found. If this exception occurs, the execution
- environment does not meet the prerequisites.
- @since 3.0.0
- */
-Path getPluginDir();
-
-/**
- If the current time within SAFI is provided as a configuration, the configured value will be
- returned. In normal cases, such a configuration value is not expected. This value is to be provided
- only when a specific time should be treated as the current time. When the value is provided, it
- must always be used instead of the system's current time.
  <p>
- If the configuration value is invalid, the value is ignored and returns empty.
+ Configuration values can be overridden through external sources such as environment variables,
+ system properties, JNDI entries, or external configuration files. This allows environment‑dependent
+ settings and temporary configuration changes to be applied without modifying the application code.
 
- @return special current time
- @since 3.0.0
- */
-Optional<LocalDateTime> getFrozenTime();
+ <p>
+ Overrides are resolved in the following order (highest priority first):
+ <ol>
+     <li>System properties</li>
+     <li>Environment variables</li>
+     <li>JNDI entries</li>
+     <li>External configuration files</li>
+     <li>Built‑in default values</li>
+ </ol>
+ <p>
+ Placeholders such as <code>${key}</code> are resolved recursively using the same priority rules.
+ All changes take effect immediately.
 
-/**
- Implements of the {@code ConfigService}.
+ <h3>Configurations</h3>
+ <table>
+     <tr>
+         <th>Key name (Environment variable name)</th>
+         <th>Built‑in default value</th>
+         <th>Description</th>
+     </tr>
+     <tr>
+         <td>safi.home (SAFI_HOME)</td>
+         <td><i>(none — must be provided)</i></td>
+         <td>Base directory.</td>
+     </tr>
+     <tr>
+         <td>safi.var.dir (SAFI_VAR_DIR)</td>
+         <td>${safi.home},var</td>
+         <td>"${safi.home}/var" directory.</td>
+     </tr>
+     <tr>
+         <td>safi.tmp.dir (SAFI_TMP_DIR)</td>
+         <td>${safi.home},tmp</td>
+         <td>"${safi.home}/tmp" directory.</td>
+     </tr>
+     <tr>
+         <td>safi.plugin.dir (SAFI_PLUGIN_DIR)</td>
+         <td>${safi.var.dir},plugin</td>
+         <td>"${safi.var.dir}/plugin" directory.</td>
+     </tr>
+ </table>
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-@Typed(ConfigService.class)
-@ApplicationScoped
-class Impl implements ConfigService {
+public interface ConfigService
+{
+    /**
+     Get variable data directory. This directory is guaranteed to exist and be writable.
 
-@SuppressWarnings("unused")
-Impl() {
-}
+     @return variable data directory
+     @throws NoSuchElementException If not found. The application is in an invalid state due to
+                                    unmet prerequisites. Processing cannot continue.
+     @since 3.0.0
+     */
+    Path getVarDir();
 
-/**
- {@inheritDoc}
+    /**
+     Get temporary directory. This directory is guaranteed to exist and be writable.
 
- @throws NoSuchElementException if no value is found. If this exception occurs, the execution
- environment does not meet the prerequisites.
- @since 3.0.0
- */
-@Override
-public Path getVarDir() {
-    return getValueAsPath("safi.var.dir").orElseThrow();
-}
+     @return temporary directory
+     @throws NoSuchElementException If not found. The application is in an invalid state due to
+                                    unmet prerequisites. Processing cannot continue.
+     @since 3.0.0
+     */
+    Path getTmpDir();
 
-/**
- {@inheritDoc}
+    /**
+     Get plugin stored directory. This directory is guaranteed to exist and be readable.
 
- @throws NoSuchElementException if no value is found. If this exception occurs, the execution
- environment does not meet the prerequisites.
- @since 3.0.0
- */
-@Override
-public Path getTmpDir() {
-    return getValueAsPath("safi.tmp.dir").orElseThrow();
-}
+     @return plugin stored directory
+     @throws NoSuchElementException If not found. The application is in an invalid state due to
+                                    unmet prerequisites. Processing cannot continue.
+     @since 3.0.0
+     */
+    Path getPluginDir();
 
-/**
- {@inheritDoc}
+    /**
+     If the current time within this application is provided as a configuration, the configured
+     value will be returned. In normal cases, such a configuration value is not expected. This value
+     is to be provided only when a specific time should be treated as the current time. When the
+     value is provided, it must always be used instead of the system's current time.
+     <p>
+     If the configuration value is invalid, the value is ignored and returns empty.
 
- @throws NoSuchElementException if no value is found. If this exception occurs, the execution
- environment does not meet the prerequisites.
- @since 3.0.0
- */
-@Override
-public Path getPluginDir() {
-    return getValueAsPath("safi.plugin.dir").orElseThrow();
-}
+     @return special current time
+     @since 3.0.0
+     */
+    Optional<LocalDateTime> getFrozenTime();
 
-/**
- {@inheritDoc}
+    /**
+     @hidden
+     */
+    @Typed(ConfigService.class)
+    @ApplicationScoped
+    class Impl implements ConfigService
+    {
+        @SuppressWarnings("unused")
+        Impl() {}
 
- @since 3.0.0
- */
-@Override
-public Optional<LocalDateTime> getFrozenTime() {
-    return getValue("safi.now").flatMap(TimeUtils::tryToLocalDateTime);
-}
+        @Override
+        public Path getVarDir() {
+            return getValueAsPath("safi.var.dir").orElseThrow();
+        }
 
-Config getConfig() {
-    return ConfigProvider.getConfig();
-}
+        @Override
+        public Path getTmpDir() {
+            return getValueAsPath("safi.tmp.dir").orElseThrow();
+        }
 
-Optional<String> getValue(String name) {
-    return Optional.ofNullable(getConfig().getConfigValue(name).getRawValue());
-}
+        @Override
+        public Path getPluginDir() {
+            return getValueAsPath("safi.plugin.dir").orElseThrow();
+        }
 
-List<String> getValueAsList(String name) {
-    return getConfig().getOptionalValues(name, String.class).orElseGet(List::of);
-}
+        @Override
+        public Optional<LocalDateTime> getFrozenTime() {
+            return getValue("safi.now").flatMap(TimeUtils::tryToLocalDateTime);
+        }
 
-Optional<Path> getValueAsPath(String name) {
+        Config getConfig() {
+            return ConfigProvider.getConfig();
+        }
 
-    List<String> paths = getValueAsList(name);
+        Optional<String> getValue(String name) {
+            return Optional.ofNullable(getConfig().getConfigValue(name).getRawValue());
+        }
 
-    if (paths.isEmpty()) {
-        return Optional.empty();
+        List<String> getValueAsList(String name) {
+            return getConfig().getOptionalValues(name, String.class).orElseGet(List::of);
+        }
+
+        Optional<Path> getValueAsPath(String name)
+        {
+            List<String> paths = getValueAsList(name);
+
+            if (paths.isEmpty()) {
+                return Optional.empty();
+            }
+
+            String first = paths.get(0);
+            String[] remainings = IntStream.range(1, paths.size())
+                                            .mapToObj(paths::get)
+                                            .toArray(String[]::new);
+
+            return Optional.of(Path.of(first, remainings));
+        }
+
     }
-
-    String first = paths.get(0);
-    String[] remainings = IntStream.range(1, paths.size()).mapToObj(paths::get).toArray(
-        String[]::new);
-
-    return Optional.of(Path.of(first, remainings));
-}
-
-}
 
 }
