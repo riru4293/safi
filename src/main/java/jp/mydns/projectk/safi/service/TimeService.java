@@ -48,6 +48,12 @@ import java.util.concurrent.atomic.AtomicReference;
         The real system time. For only special purposes where real system time is needed.</li>
  </ul>
 
+ <p>
+ Implementation requirements.
+ <ul>
+     <li>This class is immutable and thread-safe.</li>
+ </ul>
+
  @author riru
  @version 3.0.0
  @since 3.0.0
@@ -93,8 +99,7 @@ public interface TimeService {
     {
         private final ConfigService confSvc;
 
-        @SuppressWarnings("FieldMayBeFinal")
-        private AtomicReference<LocalDateTime> cachedAppLocalNow = new AtomicReference<>();
+        private final AtomicReference<LocalDateTime> cachedAppLocalNow;
 
         @SuppressWarnings("unused")
         Impl() {
@@ -103,9 +108,10 @@ public interface TimeService {
         }
 
         @Inject
-        @SuppressWarnings("unused")
+        @SuppressWarnings("unused") // Note: To be called by CDI.
         Impl(ConfigService confSvc) {
             this.confSvc = confSvc;
+            this.cachedAppLocalNow = new AtomicReference<>();
         }
 
         @Override

@@ -1,0 +1,40 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://project-k.mydns.jp/safi/schemas/error-response-context.schema.json",
+    "title": "ErrorResponseContext",
+    "description": "Error response information.",
+    "type": "object",
+    "properties": {
+        "$schema": {
+            "description": "JSON schema URI.",
+            "type": "string",
+            "format": "uri"
+        },
+        "code": {
+            "description": "Error code.",
+            "type": "string",
+            "format": "uri"
+        },
+        "message": {
+            "description": "Error message.",
+            "type": "string"
+        },
+        "details": {
+            "description": "Error details.",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["$schema"],
+                "properties": {
+                    "$schema": {
+                        "description": "JSON schema URI.",
+                        "type": "string",
+                        "format": "uri"
+                    }
+                },
+                "additionalProperties": true
+            }
+        },
+        "required": ["code", "message"]
+    }
+}

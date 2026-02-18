@@ -1,0 +1,12 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://project-k.mydns.jp/safi/schemas/trnsdef.schema.json",
+    "title": "Trnsdef",
+    "description": "An information for transform content values.",
+    "type": "object",
+    "patternProperties": {
+        "^.*$": {
+            "type": "string"
+        }
+    }
+}

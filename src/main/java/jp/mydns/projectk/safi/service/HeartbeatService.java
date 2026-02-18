@@ -49,22 +49,32 @@ import org.slf4j.LoggerFactory;
 
 /**
  Provides a 1‑second heartbeat notification as CDI events.
+
  <p>
  This service publishes a {@link JustOneSecond} event every second using a
  {@link ManagedScheduledExecutorService}. An initial delay of 10 seconds is applied only to the
  first automatic startup triggered by the CDI Startup event. The service starts automatically at
  application startup and stops at shutdown. It can also be started and stopped manually.
+
  <p>
  Heartbeat events are fired from a managed executor thread, and a request context is activated for
  each publication. Lifecycle operations ({@link start()}, {@link stop()}, {@link isRunning()}) are
  synchronized and thread‑safe. A {@link Reset} event is published whenever the service is
  (re)started. All events are immutable and thread‑safe.
+
  <p>
  Typical usage includes second‑level polling. For example, a 3‑second periodic task can be
  implemented by counting three {@code JustOneSecond} events.
+
  <p>
  Scheduling uses {@link ManagedScheduledExecutorService#scheduleAtFixedRate scheduleAtFixedRate} to
  minimize drift. Slow handlers may delay the next tick, but no backlog is accumulated.
+
+ <p>
+ Implementation requirements.
+ <ul>
+     <li>This class is immutable and thread-safe.</li>
+ </ul>
 
  @author riru
  @version 3.0.0
@@ -242,7 +252,10 @@ public interface HeartbeatService {
      @version 3.0.0
      @since 3.0.0
      */
-    static class JustOneSecond { @SuppressWarnings("unused") private JustOneSecond() {} }
+    static class JustOneSecond {
+        @SuppressWarnings("unused") // Note: To be called by CDI.
+        private JustOneSecond() {}
+    }
 
     /**
      Event indicating that the heartbeat service has been started or restarted.
@@ -251,6 +264,9 @@ public interface HeartbeatService {
      @version 3.0.0
      @since 3.0.0
      */
-    static class Reset { @SuppressWarnings("unused") private Reset() {} }
+    static class Reset {
+        @SuppressWarnings("unused")  // Note: To be called by CDI.
+        private Reset() {}
+    }
 
 }

@@ -12,6 +12,11 @@
 - 不揮発データはシリアライズ形式をデータ自体が定義する
 - スコープの最小化を優先する
 
+## Rule
+
+- 固有名詞はItaric
+- packageのjavadocにはauther/version書かない
+- Implのjavadocには@hidden
 
 ## HeartbeatService
 

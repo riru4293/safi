@@ -54,6 +54,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
      <li>External configuration files</li>
      <li>Built‑in default values</li>
  </ol>
+
  <p>
  Placeholders such as <code>${key}</code> are resolved recursively using the same priority rules.
  All changes take effect immediately.
@@ -86,6 +87,12 @@ import org.eclipse.microprofile.config.ConfigProvider;
          <td>"${safi.var.dir}/plugin" directory.</td>
      </tr>
  </table>
+
+ <p>
+ Implementation requirements.
+ <ul>
+     <li>This class is immutable and thread-safe.</li>
+ </ul>
 
  @author riru
  @version 3.0.0
@@ -143,7 +150,7 @@ public interface ConfigService
     @ApplicationScoped
     class Impl implements ConfigService
     {
-        @SuppressWarnings("unused")
+        @SuppressWarnings("unused") // Note: To be called by CDI.
         Impl() {}
 
         @Override
@@ -163,7 +170,7 @@ public interface ConfigService
 
         @Override
         public Optional<LocalDateTime> getFrozenTime() {
-            return getValue("safi.now").flatMap(TimeUtils::tryToLocalDateTime);
+            return getValue("safi.now").flatMap(TimeUtils::tryParseToLocalDateTime);
         }
 
         Config getConfig() {
