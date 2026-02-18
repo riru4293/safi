@@ -43,8 +43,8 @@ import jakarta.json.bind.JsonbBuilder;
  @version 3.0.0
  @since 3.0.0
  */
-public interface JsonbProducer {
-
+public interface JsonbProducer
+{
     /**
      Produce the {@code Jsonb}.
 
@@ -66,28 +66,31 @@ public interface JsonbProducer {
      */
     @Typed(JsonbProducer.class)
     @Dependent
-    class Impl implements JsonbProducer {
-
+    class Impl implements JsonbProducer
+    {
         @SuppressWarnings("unused") // Note: To be called by CDI.
         Impl() {}
 
         @Produces
         @ApplicationScoped
         @Override
-        public Jsonb produce() {
+        public Jsonb produce()
+        {
             return JsonbBuilder.create();
         }
 
         @Override
-        public void close(@Disposes Jsonb jsonb) {
-            try {
+        public void close(@Disposes Jsonb jsonb)
+        {
+            try
+            {
                 jsonb.close();
-            } catch (Exception ignore) {
+            }
+            catch (Exception ignore)
+            {
                 // Do nothing.
                 // Note: No expected to occur the exception.
             }
         }
-
     }
-
 }

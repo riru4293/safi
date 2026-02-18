@@ -80,8 +80,8 @@ import org.slf4j.LoggerFactory;
  @version 3.0.0
  @since 3.0.0
  */
-public interface HeartbeatService {
-
+public interface HeartbeatService
+{
     /**
      Fires a {@link JustOneSecond} event.
      <p>
@@ -242,7 +242,6 @@ public interface HeartbeatService {
         {
             return scheduledTask.cancel(false);
         }
-
     }
 
     /**
@@ -252,7 +251,8 @@ public interface HeartbeatService {
      @version 3.0.0
      @since 3.0.0
      */
-    static class JustOneSecond {
+    static class JustOneSecond
+    {
         @SuppressWarnings("unused") // Note: To be called by CDI.
         private JustOneSecond() {}
     }
@@ -264,9 +264,9 @@ public interface HeartbeatService {
      @version 3.0.0
      @since 3.0.0
      */
-    static class Reset {
+    static class Reset
+    {
         @SuppressWarnings("unused")  // Note: To be called by CDI.
         private Reset() {}
     }
-
 }

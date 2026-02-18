@@ -58,8 +58,8 @@ import java.util.concurrent.atomic.AtomicReference;
  @version 3.0.0
  @since 3.0.0
  */
-public interface TimeService {
-
+public interface TimeService
+{
     /**
      Get the current time for the application.
      <p>
@@ -102,41 +102,45 @@ public interface TimeService {
         private final AtomicReference<LocalDateTime> cachedAppLocalNow;
 
         @SuppressWarnings("unused")
-        Impl() {
+        Impl()
+        {
             // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
             throw new UnsupportedOperationException();
         }
 
         @Inject
         @SuppressWarnings("unused") // Note: To be called by CDI.
-        Impl(ConfigService confSvc) {
+        Impl(ConfigService confSvc)
+        {
             this.confSvc = confSvc;
             this.cachedAppLocalNow = new AtomicReference<>();
         }
 
         @Override
-        public LocalDateTime getAppLocalNow() {
+        public LocalDateTime getAppLocalNow()
+        {
             cachedAppLocalNow.getAndUpdate(c -> c != null ? c : calculateAppLocalNow());
             return cachedAppLocalNow.get();
         }
 
-        LocalDateTime calculateAppLocalNow() {
+        LocalDateTime calculateAppLocalNow()
+        {
             return confSvc.getFrozenTime().orElseGet(this::getRealLocalNow);
         }
 
         @Override
-        public LocalDateTime getRealLocalNow() {
+        public LocalDateTime getRealLocalNow()
+        {
             return getRealOffsetNow()
-                    .toLocalDateTime()
-                    .truncatedTo(ChronoUnit.SECONDS);
-        }
-
-        @Override
-        public OffsetDateTime getRealOffsetNow() {
-            return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized())
+                .toLocalDateTime()
                 .truncatedTo(ChronoUnit.SECONDS);
         }
 
+        @Override
+        public OffsetDateTime getRealOffsetNow()
+        {
+            return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized())
+                .truncatedTo(ChronoUnit.SECONDS);
+        }
     }
-
 }

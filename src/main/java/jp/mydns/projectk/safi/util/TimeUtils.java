@@ -47,8 +47,8 @@ import java.util.Optional;
  @version 3.0.0
  @since 3.0.0
  */
-public class TimeUtils {
-
+public class TimeUtils
+{
     private TimeUtils() {}
 
     /**
@@ -58,9 +58,10 @@ public class TimeUtils {
      @return the {@code OffsetDateTime}. {@code null} if {@code localDateTime} is {@code null}.
      @since 3.0.0
      */
-    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime) {
-
-        if (localDateTime == null) {
+    public static OffsetDateTime toOffsetDateTime(LocalDateTime localDateTime)
+    {
+        if (localDateTime == null)
+        {
             return null;
         }
 
@@ -75,8 +76,10 @@ public class TimeUtils {
      @throws DateTimeException if the result exceeds the supported range
      @since 3.0.0
      */
-    public static LocalDateTime toLocalDateTime(OffsetDateTime offsetDateTime) {
-        if (offsetDateTime == null) {
+    public static LocalDateTime toLocalDateTime(OffsetDateTime offsetDateTime)
+    {
+        if (offsetDateTime == null)
+        {
             return null;
         }
 
@@ -93,7 +96,8 @@ public class TimeUtils {
      @see DateTimeFormatter#ISO_LOCAL_DATE_TIME
      @since 3.0.0
      */
-    public static LocalDateTime parseToLocalDateTime(String localDateTime) {
+    public static LocalDateTime parseToLocalDateTime(String localDateTime)
+    {
         return LocalDateTime.parse(Objects.requireNonNull(localDateTime), ISO_LOCAL_DATE_TIME);
     }
 
@@ -105,10 +109,14 @@ public class TimeUtils {
      @see DateTimeFormatter#ISO_LOCAL_DATE_TIME
      @since 3.0.0
      */
-    public static Optional<LocalDateTime> tryParseToLocalDateTime(String localDateTime) {
-        try {
+    public static Optional<LocalDateTime> tryParseToLocalDateTime(String localDateTime)
+    {
+        try
+        {
             return Optional.of(parseToLocalDateTime(localDateTime));
-        } catch (RuntimeException ignore) {
+        }
+        catch (RuntimeException ignore)
+        {
             return Optional.empty();
         }
     }

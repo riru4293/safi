@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2025, Project-K
+ * Copyright 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -44,104 +44,114 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- * Serializable JSON value. It is wrapper of the {@link JsonValue}.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class is immutable and thread-safe.</li>
- * <li>This class is serializable.</li>
- * </ul>
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
- */
-@JsonbTypeDeserializer(SJson.Deserializer.class)
-public interface SJson extends Serializable {
+ Serializable JSON value. It is wrapper of the {@link JsonValue}.
 
+ <p>
+ Implementation requirements.
+ <ul>
+     <li>This class is immutable and thread-safe.</li>
+     <li>This class is serializable.</li>
+ </ul>
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+@JsonbTypeDeserializer(JsonValueWrapper.Deserializer.class)
+public interface JsonValueWrapper extends Serializable
+{
     /**
-     * Build with {@code JsonValue}.
-     *
-     * @param value an any JSON object
-     * @return received as is
-     * @throws NullPointerException if {@code value} is {@code null}
-     * @since 3.0.0
+     Construct with {@code JsonValue}.
+
+     @param value an any {@code JsonValue}
+     @return the {@code JsonValueWrapper} wrapped {@code value}
+     @throws NullPointerException if {@code value} is {@code null}
+     @since 3.0.0
      */
-    static SJson of(JsonValue value) {
+    static JsonValueWrapper of(JsonValue value)
+    {
         return new Deserializer.Impl(Objects.requireNonNull(value));
     }
 
     /**
-     * Get wrapped value.
-     *
-     * @return wrapped value
-     * @since 3.0.0
+     Get unwrapped value.
+
+     @return unwrapped value
+     @since 3.0.0
      */
     JsonValue unwrap();
 
     /**
-     * JSON deserializer for {@code SJson}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class Deserializer implements JsonbDeserializer<SJson> {
+     JSON deserializer for {@code JsonValueWrapper}.
 
+     @author riru
+     @version 3.0.0
+     @since 3.0.0
+     */
+    class Deserializer implements JsonbDeserializer<JsonValueWrapper>
+    {
         /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
+         {@inheritDoc}
+
+         @since 3.0.0
          */
         @Override
-        public SJson deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+        public JsonValueWrapper deserialize(JsonParser jp, DeserializationContext dc, Type type)
+        {
             return new Impl(dc.deserialize(JsonValue.class, jp));
         }
 
-        @JsonbTypeSerializer(SJson.Serializer.class)
-        private static class Impl implements SJson {
-
+        @JsonbTypeSerializer(JsonValueWrapper.Serializer.class)
+        private static class Impl implements JsonValueWrapper
+        {
             @java.io.Serial
             private static final long serialVersionUID = 6337206561334398852L;
 
-            private transient JsonValue value; // Note: immutable
+            private transient JsonValue value; // Note: Mutable definition for deserialization purposes, but immutable.
 
-            private Impl(JsonValue value) {
+            private Impl(JsonValue value)
+            {
                 this.value = Objects.requireNonNull(value);
             }
 
             @Override
-            public JsonValue unwrap() {
+            public JsonValue unwrap()
+            {
                 return value;
             }
 
             @Override
-            public int hashCode() {
+            public int hashCode()
+            {
                 return value.hashCode();
             }
 
             @Override
-            public boolean equals(Object other) {
-                return other instanceof SJson o && value.equals(o.unwrap());
+            public boolean equals(Object other)
+            {
+                return other instanceof JsonValueWrapper o && value.equals(o.unwrap());
             }
 
             @Override
-            public String toString() {
+            public String toString()
+            {
                 return value.toString();
             }
 
             @java.io.Serial
-            private void writeObject(ObjectOutputStream stream) throws IOException {
+            private void writeObject(ObjectOutputStream stream) throws IOException
+            {
                 stream.defaultWriteObject();
                 stream.writeUTF(value.toString());
             }
 
             @java.io.Serial
-            private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+            private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException
+            {
                 stream.defaultReadObject();
 
-                try (var r = Json.createReader(new StringReader(stream.readUTF()))) {
+                try (var r = Json.createReader(new StringReader(stream.readUTF())))
+                {
                     value = r.readValue();
                 }
             }
@@ -149,21 +159,22 @@ public interface SJson extends Serializable {
     }
 
     /**
-     * JSON serializer for {@code SJson}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
-     */
-    class Serializer implements JsonbSerializer<SJson> {
+     JSON serializer for {@code JsonValueWrapper}.
 
+     @author riru
+     @version 3.0.0
+     @since 3.0.0
+     */
+    class Serializer implements JsonbSerializer<JsonValueWrapper>
+    {
         /**
-         * {@inheritDoc}
-         *
-         * @since 3.0.0
+         {@inheritDoc}
+
+         @since 3.0.0
          */
         @Override
-        public void serialize(SJson obj, JsonGenerator generator, SerializationContext ctx) {
+        public void serialize(JsonValueWrapper obj, JsonGenerator generator, SerializationContext ctx)
+        {
             generator.write(obj.unwrap());
         }
     }

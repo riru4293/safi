@@ -154,34 +154,41 @@ public interface ConfigService
         Impl() {}
 
         @Override
-        public Path getVarDir() {
+        public Path getVarDir()
+        {
             return getValueAsPath("safi.var.dir").orElseThrow();
         }
 
         @Override
-        public Path getTmpDir() {
+        public Path getTmpDir()
+        {
             return getValueAsPath("safi.tmp.dir").orElseThrow();
         }
 
         @Override
-        public Path getPluginDir() {
+        public Path getPluginDir()
+        {
             return getValueAsPath("safi.plugin.dir").orElseThrow();
         }
 
         @Override
-        public Optional<LocalDateTime> getFrozenTime() {
+        public Optional<LocalDateTime> getFrozenTime()
+        {
             return getValue("safi.now").flatMap(TimeUtils::tryParseToLocalDateTime);
         }
 
-        Config getConfig() {
+        Config getConfig()
+        {
             return ConfigProvider.getConfig();
         }
 
-        Optional<String> getValue(String name) {
+        Optional<String> getValue(String name)
+        {
             return Optional.ofNullable(getConfig().getConfigValue(name).getRawValue());
         }
 
-        List<String> getValueAsList(String name) {
+        List<String> getValueAsList(String name)
+        {
             return getConfig().getOptionalValues(name, String.class).orElseGet(List::of);
         }
 
@@ -189,14 +196,16 @@ public interface ConfigService
         {
             List<String> paths = getValueAsList(name);
 
-            if (paths.isEmpty()) {
+            if (paths.isEmpty())
+            {
                 return Optional.empty();
             }
 
             String first = paths.get(0);
-            String[] remainings = IntStream.range(1, paths.size())
-                                            .mapToObj(paths::get)
-                                            .toArray(String[]::new);
+            String[] remainings
+                = IntStream.range(1, paths.size())
+                    .mapToObj(paths::get)
+                    .toArray(String[]::new);
 
             return Optional.of(Path.of(first, remainings));
         }
