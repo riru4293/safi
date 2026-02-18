@@ -24,6 +24,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- Contains service-layer components that implement the application's business logic.
+ Service-layer components that implement the application's business logic.
  */
 package jp.mydns.projectk.safi.service;
