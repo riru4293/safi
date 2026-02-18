@@ -101,7 +101,7 @@ void setTimeService(TimeService timeSvc) {
 @RestApiProcessName
 public void filter(ContainerRequestContext crc) {
 
-    LocalDateTime refTime = timeSvc.getSafiTime();
+    LocalDateTime refTime = timeSvc.getAppLocalNow();
 
     ctx.setValue(refTime);
 

@@ -91,7 +91,7 @@ private class ContextImpl implements EntityFooterUpdater.Context {
 
 @Override
 public LocalDateTime getUtcNow() {
-    return timeSvc.getLocalNow();
+    return timeSvc.getRealLocalNow();
 }
 
 @Override

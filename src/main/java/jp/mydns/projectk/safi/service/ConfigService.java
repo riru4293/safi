@@ -67,7 +67,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
      </tr>
      <tr>
          <td>safi.home (SAFI_HOME)</td>
-         <td><i>(none — must be provided)</i></td>
+         <td><i>(none - Must be provided)</i></td>
          <td>Base directory.</td>
      </tr>
      <tr>

@@ -84,7 +84,7 @@ Impl(Provider<ContextImpl> ctxPvd, TimeService timeSvc) {
 @AroundInvoke
 public Object invoke(InvocationContext ic) throws Exception {
 
-    LocalDateTime refTime = timeSvc.getSafiTime();
+    LocalDateTime refTime = timeSvc.getAppLocalNow();
 
     ctxPvd.get().setValue(refTime);
 

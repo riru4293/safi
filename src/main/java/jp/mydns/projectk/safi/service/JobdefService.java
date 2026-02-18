@@ -147,7 +147,7 @@ public JobCreationContext buildJobCreationContext(JobCreationRequest req) throws
         .orElseThrow(notFoundJobdef);
 
     return new JobCreationContext(idSvc.generateJobId(),
-        req.getScheduleTime().orElseGet(timeSvc::getOffsetNow), jobdef);
+        req.getScheduleTime().orElseGet(timeSvc::getRealOffsetNow), jobdef);
 }
 
 }

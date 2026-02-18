@@ -122,7 +122,7 @@ public Stream<JobEntity> lockActiveJobs() {
     Predicate onlyActive = job.get(JobEntity_.status).in(SCHEDULE, RUNNING);
 
     Predicate isRunnable = cb.lessThanOrEqualTo(job.get(JobEntity_.scheduleTime),
-        timeSvc.getLocalNow());
+        timeSvc.getRealLocalNow());
 
     return em.createQuery(cq.where(onlyActive, isRunnable)
         .orderBy(
