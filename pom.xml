@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Copyright 2025, Project-K
 All rights reserved.
@@ -41,16 +41,18 @@ POSSIBILITY OF SUCH DAMAGE.
         <jacocoArgLine/>
 
         <!-- Library versions -->
-        <!-- Jakarta EE library versions must match GlassFish 7.0.25 -->
-        <version.jakartaee>10.0.0</version.jakartaee>
-        <version.jakartaee-lang-model>4.0.1</version.jakartaee-lang-model>
-        <version.eclipselink>4.0.5</version.eclipselink>
-        <version.hibernate-validator>8.0.2.Final</version.hibernate-validator>
-        <version.expressly>5.0.0</version.expressly>
+        <!-- Jakarta EE library versions must match GlassFish 8.0.0 -->
+        <version.jakartaee>11.0.0</version.jakartaee>
+        <version.jakartaee-lang-model>4.1.0</version.jakartaee-lang-model>
+        <version.eclipselink>5.0.0-B13</version.eclipselink>
+        <version.hibernate-validator>9.1.0.Final</version.hibernate-validator>
+        <version.expressly>6.0.0</version.expressly>
         <version.yasson>3.0.4</version.yasson>
         <version.slf4j>2.0.17</version.slf4j>
         <version.microprofile-config>3.1</version.microprofile-config>
-        <version.helidon-config>4.3.2</version.helidon-config>
+        <version.helidon-config>4.3.3</version.helidon-config>
+
+
         <version.swagger>2.2.40</version.swagger>
         <version.swagger-ui>5.30.2</version.swagger-ui>
         <version.junit>6.0.1</version.junit>
