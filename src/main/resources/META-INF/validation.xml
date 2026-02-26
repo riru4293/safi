@@ -29,5 +29,6 @@ POSSIBILITY OF SUCH DAMAGE.
                    xsi:schemaLocation="https://jakarta.ee/xml/ns/validation/configuration
                                        https://jakarta.ee/xml/ns/validation/configuration/validation-configuration-3.1.xsd"
                    version="3.1">
-    <message-interpolator>jp.mydns.projectk.safi.validator.ValidationMessageLocalizer</message-interpolator>
+    <!-- [TODO] To be enabled -->
+    <!--<message-interpolator>jp.mydns.projectk.safi.validator.ValidationMessageLocalizer</message-interpolator>-->
 </validation-config>
