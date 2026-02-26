@@ -42,6 +42,7 @@ import java.time.temporal.ChronoUnit;
 
 /**
  Validates that the time does not have fractional seconds.
+
  <p>
  Supported types are {@code Duration}, {@code LocalDateTime} and {@code OffsetDateTime}.
 
