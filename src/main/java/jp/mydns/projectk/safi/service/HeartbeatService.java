@@ -130,6 +130,8 @@ public interface HeartbeatService
     void stop();
 
     /**
+     Internal Implementation.
+ 
      @hidden
      */
     /* Define a scheduled Executor. */

@@ -62,6 +62,8 @@ public interface JsonbProducer
     void close(Jsonb jsonb);
 
     /**
+     Internal Implementation.
+ 
      @hidden
      */
     @Typed(JsonbProducer.class)

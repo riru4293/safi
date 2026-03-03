@@ -24,9 +24,9 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 -->
-<project xmlns="http://maven.apache.org/POM/4.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
-    <modelVersion>4.1.0</modelVersion>
+<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <groupId>jp.mydns.project-k</groupId>
     <artifactId>safi</artifactId>
     <version>3.0.0-M9</version>
@@ -35,13 +35,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>25</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.implicit>none</maven.compiler.implicit>
-        <failOnMissingWebXml>false</failOnMissingWebXml>
         <jacocoArgLine/>
 
-        <!-- Library versions -->
-        <!-- Jakarta EE library versions must match GlassFish 8.0.0 -->
+        <!-- GlassFish 8.0.0 library version -->
         <version.jakartaee>11.0.0</version.jakartaee>
         <version.jakartaee-lang-model>4.1.0</version.jakartaee-lang-model>
         <version.eclipselink>5.0.0-B13</version.eclipselink>
@@ -52,7 +50,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.microprofile-config>3.1</version.microprofile-config>
         <version.helidon-config>4.3.3</version.helidon-config>
 
-
+        <!-- Additional library versions -->
         <version.swagger>2.2.40</version.swagger>
         <version.swagger-ui>5.30.2</version.swagger-ui>
         <version.junit>6.0.1</version.junit>
@@ -64,7 +62,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.sonar>13.4.0.3221</version.sonar>
         <version.jersey>3.1.11</version.jersey>
 
-        <!-- Versions for Apache Maven Plugins -->
+        <!-- Maven Plugin versions -->
         <version.maven-antrun>3.2.0</version.maven-antrun>
         <version.maven-clean>3.5.0</version.maven-clean>
         <version.maven-resources>3.3.1</version.maven-resources>
@@ -75,6 +73,8 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.maven-war>3.5.0</version.maven-war>
         <version.maven-javadoc>3.12.0</version.maven-javadoc>
         <version.maven-install>3.1.4</version.maven-install>
+        <version.maven-source>3.4.0</version.maven-source>
+        <version.maven-deploy>3.1.4</version.maven-deploy>
     </properties>
 
     <licenses>
@@ -257,7 +257,6 @@ POSSIBILITY OF SUCH DAMAGE.
             <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
-        <!-- License: MIT -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -376,6 +375,20 @@ POSSIBILITY OF SUCH DAMAGE.
                     <version>${version.maven-failsafe}</version>
                 </plugin>
 
+                <!-- License: ASL-2.0 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${version.maven-source}</version>
+                </plugin>
+
+                <!-- License: ASL-2.0 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${version.maven-deploy}</version>
+                </plugin>
+
                 <!-- Code coverage measurement -->
                 <!-- License: EPL-2.0 -->
                 <plugin>
@@ -450,7 +463,7 @@ POSSIBILITY OF SUCH DAMAGE.
                         </executions>
                     </plugin>
 
-                    <!-- Report code coverage. -->
+                    <!-- Report code coverage -->
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
@@ -491,7 +504,7 @@ POSSIBILITY OF SUCH DAMAGE.
                                 <exclude>**/trial/**</exclude>
                             </sourceFileExcludes>
                             <links>
-                                <link>https://jakarta.ee/specifications/platform/10/apidocs</link>
+                                <link>https://jakarta.ee/specifications/platform/11/apidocs</link>
                             </links>
                         </configuration>
                         <executions>
@@ -509,7 +522,7 @@ POSSIBILITY OF SUCH DAMAGE.
                         </executions>
                     </plugin>
 
-                    <!-- Make OpenAPI JSON. -->
+                    <!-- Make OpenAPI JSON -->
                     <plugin>
                         <groupId>io.swagger.core.v3</groupId>
                         <artifactId>swagger-maven-plugin-jakarta</artifactId>
@@ -553,7 +566,7 @@ POSSIBILITY OF SUCH DAMAGE.
                         </executions>
                     </plugin>
 
-                    <!-- Replace URL of Swagger UI to OpenAPI JSON. -->
+                    <!-- Replace URL of Swagger UI to OpenAPI JSON -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
@@ -575,13 +588,22 @@ POSSIBILITY OF SUCH DAMAGE.
                         </executions>
                     </plugin>
 
-
-                    <!-- Create the war package. -->
+                    <!-- Create the war package -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <executions>
-                            <!-- Appends Swagger UI. -->
+                            <!-- Appends a Swagger UI -->
+                            <!--
+                                This configuration deploy Swagger UI's static resources to the
+                                /swagger directory within the WAR file. This ensures that the UI
+                                assets required for API browsing are automatically included during
+                                the packaging process.
+
+                                ja: 本設定は Swagger UI の静的リソースを WAR ファイル内の /swagger
+                                    ディレクトリに配備するものです。これにより、API を閲覧するために
+                                    必要な UI アセットを自動的にパッケージングに含めることができます。
+                            -->
                             <execution>
                                 <id>copy-swagger-ui</id>
                                 <phase>package</phase>
@@ -601,7 +623,18 @@ POSSIBILITY OF SUCH DAMAGE.
                                 </configuration>
                             </execution>
 
-                            <!-- Appends JavaDoc. -->
+                            <!-- Appends a JavaDoc -->
+                            <!--
+                                This configuration deploy the generated JavaDoc to the /javadoc
+                                directory within the WAR file. This ensures that the API reference
+                                documentation is automatically included during the packaging
+                                process.
+
+                                ja: 本設定はビルド時に生成された JavaDoc を WAR ファイル内の
+                                    /javadoc ディレクトリに配備するものです。
+                                    これにより、API リファレンスドキュメント
+                                    を自動的にパッケージングに含めることができます。
+                            -->
                             <execution>
                                 <id>copy-javadoc</id>
                                 <phase>package</phase>
@@ -621,7 +654,18 @@ POSSIBILITY OF SUCH DAMAGE.
                                 </configuration>
                             </execution>
 
-                            <!-- Appends OpenAPI JSON. -->
+                            <!-- Appends an OpenAPI JSON -->
+                            <!--
+                                This configuration deploy the generated openapi.json into the
+                                /swagger directory within the WAR file. This ensures that the API
+                                definition file, required by tools like Swagger UI, is automatically
+                                included during the packaging process.
+
+                                ja: 本設定はビルド時に生成された openapi.json を WAR ファイル内の
+                                    /swagger ディレクトリに配備するものです。
+                                    これにより、 Swagger UI 等から参照する API 定義ファイルを
+                                    自動的にパッケージングに含めることができます。
+                            -->
                             <execution>
                                 <id>copy-openapi-json</id>
                                 <phase>package</phase>

@@ -59,8 +59,8 @@ import org.eclipse.microprofile.config.ConfigProvider;
  Placeholders such as <code>${key}</code> are resolved recursively using the same priority rules.
  All changes take effect immediately.
 
- <h3>Configurations</h3>
  <table>
+     <caption>Configurations</caption>
      <tr>
          <th>Key name (Environment variable name)</th>
          <th>Built‑in default value</th>
@@ -144,6 +144,8 @@ public interface ConfigService
     Optional<LocalDateTime> getFrozenTime();
 
     /**
+     Internal Implementation.
+ 
      @hidden
      */
     @Typed(ConfigService.class)

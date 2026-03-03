@@ -91,6 +91,12 @@ public interface JsonValueWrapper extends Serializable
     class Deserializer implements JsonbDeserializer<JsonValueWrapper>
     {
         /**
+         @hidden
+        */
+        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
+        Deserializer() {}
+
+        /**
          {@inheritDoc}
 
          @since 3.0.0
@@ -167,6 +173,12 @@ public interface JsonValueWrapper extends Serializable
      */
     class Serializer implements JsonbSerializer<JsonValueWrapper>
     {
+        /**
+         @hidden
+        */
+        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
+        Serializer() {}
+
         /**
          {@inheritDoc}
 

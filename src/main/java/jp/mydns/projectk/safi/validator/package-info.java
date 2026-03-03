@@ -24,6 +24,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 /**
- Value object.
+ <i>Jakarta Validation</i> validator.
  */
-package jp.mydns.projectk.safi.value;
+package jp.mydns.projectk.safi.validator;

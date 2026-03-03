@@ -83,7 +83,13 @@ public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, Li
      @version 3.0.0
      @since 3.0.0
      */
-    class SequencedMonthSetAdapter implements SequencedSetAdapter<Month> {}
+    class SequencedMonthSetAdapter implements SequencedSetAdapter<Month> {
+        /**
+         @hidden
+        */
+        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
+        SequencedMonthSetAdapter() {}
+    }
 
     /**
      <i>Jakarta JSON-B</i> adapter for {@code SequencedSetAdapter<DayOfWeek>}.
@@ -92,7 +98,13 @@ public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, Li
      @version 3.0.0
      @since 3.0.0
      */
-    class SequencedDayOfWeekSetAdapter implements SequencedSetAdapter<DayOfWeek> {}
+    class SequencedDayOfWeekSetAdapter implements SequencedSetAdapter<DayOfWeek> {
+        /**
+         @hidden
+        */
+        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
+        SequencedDayOfWeekSetAdapter() {}
+    }
 
     /**
      <i>Jakarta JSON-B</i> adapter for {@code SequencedSetAdapter<Integer>}.
@@ -101,5 +113,11 @@ public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, Li
      @version 3.0.0
      @since 3.0.0
      */
-    class SequencedIntegerSetAdapter implements SequencedSetAdapter<Integer> {}
+    class SequencedIntegerSetAdapter implements SequencedSetAdapter<Integer> {
+        /**
+         @hidden
+        */
+        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
+        SequencedIntegerSetAdapter() {}
+    }
 }

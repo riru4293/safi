@@ -60,13 +60,43 @@ import java.time.temporal.ChronoUnit;
 })
 public @interface NoFractionalSeconds
 {
-    String message() default "{jp.mydns.projectk.safi.validator.NoFractionalSeconds.message}";
+    /**
+     Private constants.
+
+     @hidden
+    */
+    static final String DEFAULT_MESSAGE = "{jp.mydns.projectk.safi.validator.NoFractionalSeconds.message}";
+
+    /**
+     Default validation message.
+
+     @return {@value DEFAULT_MESSAGE}
+     */
+    String message() default DEFAULT_MESSAGE;
+
+    /**
+     Unused.
+
+     @hidden
+
+     @return empty
+     */
     Class<?>[] groups() default {};
+
+    /**
+     Unused.
+
+     @hidden
+
+     @return empty
+     */
     Class<? extends Payload>[] payload() default {};
 
     /**
+     Internal Implementation.
+
      @hidden
-    */
+     */
     class LocalDateTimeValidator implements ConstraintValidator<NoFractionalSeconds, LocalDateTime>
     {
         @Override
@@ -78,8 +108,10 @@ public @interface NoFractionalSeconds
     }
 
     /**
+     Internal Implementation.
+
      @hidden
-    */
+     */
     class OffsetDateTimeValidator implements ConstraintValidator<NoFractionalSeconds, OffsetDateTime>
     {
         @Override
@@ -90,8 +122,10 @@ public @interface NoFractionalSeconds
     }
 
     /**
+     Internal Implementation.
+
      @hidden
-    */
+     */
     class DurationValidator implements ConstraintValidator<NoFractionalSeconds, Duration>
     {
         @Override
