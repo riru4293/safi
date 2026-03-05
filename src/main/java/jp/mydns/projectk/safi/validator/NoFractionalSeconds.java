@@ -75,20 +75,20 @@ public @interface NoFractionalSeconds
     String message() default DEFAULT_MESSAGE;
 
     /**
-     Unused.
+     The validation groups to which this constraint belongs.
+     <p>
+     Groups allow selective application of constraints during validation.
 
-     @hidden
-
-     @return empty
+     @return the groups for this constraint
      */
     Class<?>[] groups() default {};
 
     /**
-     Unused.
+     Payload for clients to associate metadata with this constraint.
+     <p>
+     This is not used by the validation engine itself.
 
-     @hidden
-
-     @return empty
+     @return the payload types
      */
     Class<? extends Payload>[] payload() default {};
 
