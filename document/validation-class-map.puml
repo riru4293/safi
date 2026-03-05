@@ -1,0 +1,87 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+' ===== Jakarta Validation API の主要インタフェース =====
+
+interface ValidatorFactory {
+  +getValidator() : Validator
+  +getMessageInterpolator() : MessageInterpolator
+  --
+  ' 実装例: DefaultValidatorFactory
+}
+
+interface Validator {
+  +validate(object) : Set<ConstraintViolation>
+  --
+  ' 実装例: ValidatorImpl
+}
+
+interface ConstraintValidator {
+  +initialize(annotation)
+  +isValid(value, context) : boolean
+  --
+  ' 実装例: NotNullValidator, SizeValidator など
+}
+
+interface ConstraintValidatorFactory {
+  +getInstance(Class) : ConstraintValidator
+  --
+  ' 実装例: DefaultConstraintValidatorFactory
+}
+
+interface ConstraintDescriptor {
+  +getAnnotation()
+  +getAttributes()
+  +getMessageTemplate()
+}
+
+interface ConstraintViolation {
+  +getMessage() : String
+  +getMessageTemplate() : String
+  +getPropertyPath()
+  +getInvalidValue()
+}
+
+interface MessageInterpolator {
+  +interpolate(messageTemplate, context) : String
+  --
+  ' 実装例: ResourceBundleMessageInterpolator
+  '   - ResourceBundleLocator を内部で使用
+  '   - ValidationMessages_xx.properties を検索
+}
+
+interface RequestContext {
+  +getLocale() : Locale
+}
+
+interface ResourceBundleLocator {
+  +getResourceBundle(locale) : ResourceBundle
+  --
+  ' 実装例: PlatformResourceBundleLocator
+}
+
+interface ValidationContext {
+  +getConstraintDescriptor()
+  +getValidatedValue()
+  +getLocale()
+}
+
+' ===== 関係 =====
+
+ValidatorFactory --> Validator
+ValidatorFactory --> MessageInterpolator
+
+Validator --> ConstraintValidatorFactory
+Validator --> ConstraintDescriptor
+Validator --> ConstraintViolation
+Validator --> ValidationContext
+
+ConstraintValidatorFactory --> ConstraintValidator
+ConstraintDescriptor --> ConstraintValidator
+ConstraintDescriptor --> MessageInterpolator
+
+MessageInterpolator --> ValidationContext
+MessageInterpolator --> ResourceBundleLocator
+MessageInterpolator --> RequestContext
+
+@enduml
