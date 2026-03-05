@@ -46,7 +46,7 @@ import java.util.Objects;
 
 /**
  JSON serialize and deserialize processing for <i>Jakarta RESTful Web Services</i>.
- <p>
+
  Implementation requirements.
  <ul>
      <li>This class is immutable and thread-safe.</li>

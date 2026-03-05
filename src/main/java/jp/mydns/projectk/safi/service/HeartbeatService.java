@@ -50,27 +50,22 @@ import org.slf4j.LoggerFactory;
 /**
  Provides a 1‑second heartbeat notification as CDI events.
 
- <p>
  This service publishes a {@link JustOneSecond} event every second using a
  {@link ManagedScheduledExecutorService}. An initial delay of 10 seconds is applied only to the
  first automatic startup triggered by the CDI Startup event. The service starts automatically at
  application startup and stops at shutdown. It can also be started and stopped manually.
 
- <p>
  Heartbeat events are fired from a managed executor thread, and a request context is activated for
  each publication. Lifecycle operations ({@link start()}, {@link stop()}, {@link isRunning()}) are
  synchronized and thread‑safe. A {@link Reset} event is published whenever the service is
  (re)started. All events are immutable and thread‑safe.
 
- <p>
  Typical usage includes second‑level polling. For example, a 3‑second periodic task can be
  implemented by counting three {@code JustOneSecond} events.
 
- <p>
  Scheduling uses {@link ManagedScheduledExecutorService#scheduleAtFixedRate scheduleAtFixedRate} to
  minimize drift. Slow handlers may delay the next tick, but no backlog is accumulated.
 
- <p>
  Implementation requirements.
  <ul>
      <li>This class is immutable and thread-safe.</li>
@@ -84,7 +79,7 @@ public interface HeartbeatService
 {
     /**
      Fires a {@link JustOneSecond} event.
-     <p>
+
      This method is invoked periodically by the internal scheduler. The request context is activated
      for the duration of this method.
 
@@ -110,7 +105,7 @@ public interface HeartbeatService
 
     /**
      Starts the heartbeat scheduler. If already running, the scheduler is stopped and restarted.
-     <p>
+
      When restarted, a {@link Reset} event is fired before scheduling the periodic heartbeat. This
      method is also invoked automatically when the CDI container fires the {@link Startup} event.
 
@@ -121,7 +116,7 @@ public interface HeartbeatService
 
     /**
      Stops the heartbeat scheduler. If the scheduler is not running, this method does nothing.
-     <p>
+
      This method is also invoked automatically when the CDI container fires the {@link Shutdown}
      event.
 
@@ -131,7 +126,7 @@ public interface HeartbeatService
 
     /**
      Internal Implementation.
- 
+
      @hidden
      */
     /* Define a scheduled Executor. */

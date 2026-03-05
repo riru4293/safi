@@ -40,12 +40,10 @@ import org.eclipse.microprofile.config.ConfigProvider;
 /**
  Provides configuration values for this application.
 
- <p>
  Configuration values can be overridden through external sources such as environment variables,
  system properties, JNDI entries, or external configuration files. This allows environment‑dependent
  settings and temporary configuration changes to be applied without modifying the application code.
 
- <p>
  Overrides are resolved in the following order (highest priority first):
  <ol>
      <li>System properties</li>
@@ -55,7 +53,6 @@ import org.eclipse.microprofile.config.ConfigProvider;
      <li>Built‑in default values</li>
  </ol>
 
- <p>
  Placeholders such as <code>${key}</code> are resolved recursively using the same priority rules.
  All changes take effect immediately.
 
@@ -88,7 +85,6 @@ import org.eclipse.microprofile.config.ConfigProvider;
      </tr>
  </table>
 
- <p>
  Implementation requirements.
  <ul>
      <li>This class is immutable and thread-safe.</li>
@@ -135,7 +131,7 @@ public interface ConfigService
      value will be returned. In normal cases, such a configuration value is not expected. This value
      is to be provided only when a specific time should be treated as the current time. When the
      value is provided, it must always be used instead of the system's current time.
-     <p>
+
      If the configuration value is invalid, the value is ignored and returns empty.
 
      @return special current time
@@ -145,7 +141,7 @@ public interface ConfigService
 
     /**
      Internal Implementation.
- 
+
      @hidden
      */
     @Typed(ConfigService.class)

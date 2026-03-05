@@ -37,7 +37,6 @@ import java.util.Optional;
 /**
  Utilities for time.
 
- <p>
  Implementation requirements.
  <ul>
      <li>This class has not variable field member and it has all method is static.</li>

@@ -23,75 +23,55 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package jp.mydns.projectk.safi.producer;
+package jp.mydns.projectk.safi.util;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
-import jakarta.enterprise.inject.Disposes;
-import jakarta.enterprise.inject.Produces;
-import jakarta.enterprise.inject.Typed;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Stream;
 
 /**
- <i>Jakarta CDI</i> producer of the {@link Jsonb}.
+ Utilities for Jakarta Bean Validation.
 
- Instance is created only once, reducing construction costs.
+ Implementation requirements.
+ <ul>
+     <li>This class has not variable field member and it has all method is static.</li>
+ </ul>
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface JsonbProducer
-{
-    /**
-     Produce the {@code Jsonb}.
+public class ValidationUtils {
 
-     @return the {@code Jsonb}
+    private ValidationUtils() {
+    }
+
+    /**
+     Verify that the value is valid using {@code jakarta.validation.Validator}.
+
+     @param <T> value type
+     @param value value that to be validated
+     @param validator the {@code Validator}
+     @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+     @return value as is that received by argument {@code value}
+     @throws NullPointerException if any argument is {@code null}
+     @throws ConstraintViolationException if {@code value} is invalid
      @since 3.0.0
      */
-    Jsonb produce();
+    public static <T> T requireValid(T value, Validator validator, Class<?>... groups) {
+        Objects.requireNonNull(value);
+        Objects.requireNonNull(validator);
+        Stream.of(Objects.requireNonNull(groups)).forEach(Objects::requireNonNull);
 
-    /**
-     Close the produced {@code Jsonb} if disposed.
+        Set<ConstraintViolation<T>> violations = validator.validate(value, groups);
 
-     @param jsonb the produced {@code Jsonb}
-     @since 3.0.0
-     */
-    void close(Jsonb jsonb);
-
-    /**
-     Internal Implementation.
-
-     @hidden
-     */
-    @Typed(JsonbProducer.class)
-    @Dependent
-    class Impl implements JsonbProducer
-    {
-        @SuppressWarnings("unused") // Note: To be called by CDI.
-        Impl() {}
-
-        @Produces
-        @ApplicationScoped
-        @Override
-        public Jsonb produce()
-        {
-            return JsonbBuilder.create();
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
         }
 
-        @Override
-        public void close(@Disposes Jsonb jsonb)
-        {
-            try
-            {
-                jsonb.close();
-            }
-            catch (Exception ignore)
-            {
-                // Do nothing.
-                // Note: No expected to occur the exception.
-            }
-        }
+        return value;
     }
 }

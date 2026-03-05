@@ -43,7 +43,6 @@ import java.time.temporal.ChronoUnit;
 /**
  Validates that the time does not have fractional seconds.
 
- <p>
  Supported types are {@code Duration}, {@code LocalDateTime} and {@code OffsetDateTime}.
 
  @author riru
@@ -76,7 +75,7 @@ public @interface NoFractionalSeconds
 
     /**
      The validation groups to which this constraint belongs.
-     <p>
+
      Groups allow selective application of constraints during validation.
 
      @return the groups for this constraint
@@ -85,7 +84,7 @@ public @interface NoFractionalSeconds
 
     /**
      Payload for clients to associate metadata with this constraint.
-     <p>
+
      This is not used by the validation engine itself.
 
      @return the payload types

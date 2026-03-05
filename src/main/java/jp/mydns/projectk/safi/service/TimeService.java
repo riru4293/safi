@@ -37,18 +37,17 @@ import java.util.concurrent.atomic.AtomicReference;
 
 /**
  Provides a time.
- <p>
- The service provides two categories of time values, all in UTC time zone. The categories are:
- <ul>
-    <li><p>Application time</p>
-        The current time for this application.
-        This value acts as an anchor time within the request scope,
-        and the same value will be provided within that scope.</li>
-    <li><p>Real time</p>
-        The real system time. For only special purposes where real system time is needed.</li>
- </ul>
 
- <p>
+ The service provides two categories of time values, all in UTC time zone. The categories are:
+
+ <dl>
+     <dt>- Application time</dt>
+     <dd>The current time for this application. This value acts as an anchor time within the request scope, and the same value will be provided within that scope.</dd>
+
+     <dt>- Real time</dt>
+     <dd>The real system time. For only special purposes where real system time is needed.</dd>
+ </dl>
+
  Implementation requirements.
  <ul>
      <li>This class is immutable and thread-safe.</li>
@@ -62,7 +61,7 @@ public interface TimeService
 {
     /**
      Get the current time for the application.
-     <p>
+
      Accuracy is seconds. The value returned is the same as the first value retrieved.
 
      @return current time for the application
@@ -72,7 +71,7 @@ public interface TimeService
 
     /**
      Get the real time.
-     <p>
+
      Accuracy is seconds. This is not application time and should not be used normally.
 
      @return system time
@@ -82,7 +81,7 @@ public interface TimeService
 
     /**
      Get the real time.
-     <p>
+
      Accuracy is seconds. This is not application time and should not be used normally.
 
      @return system time
@@ -92,7 +91,7 @@ public interface TimeService
 
     /**
      Internal Implementation.
- 
+
      @hidden
      */
     @Typed(TimeService.class)

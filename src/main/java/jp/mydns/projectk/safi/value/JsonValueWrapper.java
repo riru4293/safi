@@ -46,7 +46,6 @@ import java.util.Objects;
 /**
  Serializable JSON value. It is wrapper of the {@link JsonValue}.
 
- <p>
  Implementation requirements.
  <ul>
      <li>This class is immutable and thread-safe.</li>
