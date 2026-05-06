@@ -1,0 +1,57 @@
+@startuml
+actor Client
+participant ValidatorFactory
+participant Validator
+participant ConstraintValidator
+participant MessageInterpolator
+participant RequestContext
+participant ResourceBundle
+participant ConstraintViolation
+
+Client -> ValidatorFactory : getValidator()
+ValidatorFactory --> Client : Validator
+
+Client -> Validator : validate(bean)
+
+Validator -> ConstraintValidator : isValid(value, context)
+ConstraintValidator --> Validator : false
+
+Validator -> MessageInterpolator : interpolate(messageTemplate, context)
+
+MessageInterpolator --> RequestContext : getLocale
+RequestContext --> MessageInterpolator : locale
+
+MessageInterpolator -> ResourceBundle : lookup(message key, locale)
+ResourceBundle --> MessageInterpolator : localized message
+
+MessageInterpolator --> Validator : interpolated message
+
+Validator -> ConstraintViolation : create(message)
+ConstraintViolation --> Client : violations
+
+@enduml
+
+## ValidatorFactory
+
+組み込み
+
+## Validator
+
+組み込みをカスタマイズしてProvide
+
+## ConstraintValidator
+
+組み込み
+
+## MessageInterpolator
+
+リクエスト「」で言語制御するカスタム実装
+
+## ResourceBundle
+
+組み込み。Resource自体は自前。
+
+## ConstraintViolation
+
+組み込み
+

@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2025, Project-K
+ * Copyright 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -36,65 +36,88 @@ import java.util.SequencedSet;
 import static java.util.stream.Collectors.toCollection;
 
 /**
- * A custom <i>Jakarta JSON-B</i> adapter used to maintain ordering in a {@code Set}.
- *
- * @param <T> value type
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
- */
-public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, List<T>> {
+ A custom <i>Jakarta JSON-B</i> adapter used to maintain ordering in a {@code Set}.
 
+ @param <T> value type
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
+ */
+public interface SequencedSetAdapter<T> extends JsonbAdapter<SequencedSet<T>, List<T>>
+{
     /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     * @throws NullPointerException if {@code s} is {@code null}
+     {@inheritDoc}
+
+     @since 3.0.0
+     @throws NullPointerException if {@code s} is {@code null}
      */
     @Override
-    default List<T> adaptToJson(SequencedSet<T> s) {
-        return Objects.requireNonNull(s).stream().sequential().toList();
+    default List<T> adaptToJson(SequencedSet<T> s)
+    {
+        return Objects.requireNonNull(s)
+            .stream().sequential()
+            .toList();
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * @since 3.0.0
-     * @throws NullPointerException if {@code l} is {@code null}
+     {@inheritDoc}
+
+     @since 3.0.0
+     @throws NullPointerException if {@code l} is {@code null}
      */
     @Override
-    default SequencedSet<T> adaptFromJson(List<T> l) {
-        LinkedHashSet<T> s = Objects.requireNonNull(l).stream().sequential().collect(toCollection(LinkedHashSet::new));
+    default SequencedSet<T> adaptFromJson(List<T> l)
+    {
+        LinkedHashSet<T> s
+            = Objects.requireNonNull(l)
+                .stream().sequential()
+                .collect(toCollection(LinkedHashSet::new));
+
         return Collections.unmodifiableSequencedSet(s);
     }
 
     /**
-     * Implements of the {@code SequencedSetAdapter<Month>}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
+     <i>Jakarta JSON-B</i> adapter for {@code SequencedSetAdapter<Month>}.
+
+     @author riru
+     @version 3.0.0
+     @since 3.0.0
      */
     class SequencedMonthSetAdapter implements SequencedSetAdapter<Month> {
+        /**
+         @hidden
+        */
+        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
+        SequencedMonthSetAdapter() {}
     }
 
     /**
-     * Implements of the {@code SequencedSetAdapter<DayOfWeek>}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
+     <i>Jakarta JSON-B</i> adapter for {@code SequencedSetAdapter<DayOfWeek>}.
+
+     @author riru
+     @version 3.0.0
+     @since 3.0.0
      */
     class SequencedDayOfWeekSetAdapter implements SequencedSetAdapter<DayOfWeek> {
+        /**
+         @hidden
+        */
+        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
+        SequencedDayOfWeekSetAdapter() {}
     }
 
     /**
-     * Implements of the {@code SequencedSetAdapter<Integer>}.
-     *
-     * @author riru
-     * @version 3.0.0
-     * @since 3.0.0
+     <i>Jakarta JSON-B</i> adapter for {@code SequencedSetAdapter<Integer>}.
+
+     @author riru
+     @version 3.0.0
+     @since 3.0.0
      */
     class SequencedIntegerSetAdapter implements SequencedSetAdapter<Integer> {
+        /**
+         @hidden
+        */
+        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
+        SequencedIntegerSetAdapter() {}
     }
 }

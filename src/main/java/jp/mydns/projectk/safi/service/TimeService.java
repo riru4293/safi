@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2025, Project-K
+ * Copyright 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -25,7 +25,7 @@
  */
 package jp.mydns.projectk.safi.service;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import java.time.Instant;
@@ -33,137 +33,115 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- Provides a real date-time, reference date-time.
+ Provides a time.
+
+ The service provides two categories of time values, all in UTC time zone. The categories are:
+
+ <dl>
+     <dt>- Application time</dt>
+     <dd>The current time for this application. This value acts as an anchor time within the request scope, and the same value will be provided within that scope.</dd>
+
+     <dt>- Real time</dt>
+     <dd>The real system time. For only special purposes where real system time is needed.</dd>
+ </dl>
+
+ Implementation requirements.
+ <ul>
+     <li>This class is immutable and thread-safe.</li>
+ </ul>
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface TimeService {
+public interface TimeService
+{
+    /**
+     Get the current time for the application.
 
-/**
- Gets the current time for the SAFI, which is typically the system time in UTC, but may not be the
- case depending on the configuration.
+     Accuracy is seconds. The value returned is the same as the first value retrieved.
 
- @return reference time
- @since 3.0.0
- */
-LocalDateTime getSafiTime();
+     @return current time for the application
+     @since 3.0.0
+     */
+    LocalDateTime getAppLocalNow();
 
-/**
- Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the
- same value is returned.
+    /**
+     Get the real time.
 
- @return current time, in that case timezone is UTC.
- @since 3.0.0
- */
-OffsetDateTime getOffsetNow();
+     Accuracy is seconds. This is not application time and should not be used normally.
 
-/**
- Get current time. Accuracy is seconds. The first value is remembered so that subsequent times the
- same value is returned.
+     @return system time
+     @since 3.0.0
+     */
+    LocalDateTime getRealLocalNow();
 
- @return current time, in that case timezone is UTC.
- @since 3.0.0
- */
-LocalDateTime getLocalNow();
+    /**
+     Get the real time.
 
-/**
- Get exactly current time. Can only be used when {@link #getOffsetNow()} has insufficient precision.
- The first value is remembered so that subsequent times the same value is returned.
+     Accuracy is seconds. This is not application time and should not be used normally.
 
- @return current time, in that case timezone is UTC.
- @since 3.0.0
- */
-OffsetDateTime getExactlyOffsetNow();
+     @return system time
+     @since 3.0.0
+     */
+    OffsetDateTime getRealOffsetNow();
 
-/**
- Get exactly current time. Can only be used when {@link #getLocalNow()} has insufficient precision.
- The first value is remembered so that subsequent times the same value is returned.
+    /**
+     Internal Implementation.
 
- @return current time, in that case timezone is UTC.
- @since 3.0.0
- */
-LocalDateTime getExactlyLocalNow();
+     @hidden
+     */
+    @Typed(TimeService.class)
+    @RequestScoped
+    class Impl implements TimeService
+    {
+        private final ConfigService confSvc;
 
-/**
- Implements of the {@code TimeService}.
+        private final AtomicReference<LocalDateTime> cachedAppLocalNow;
 
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-@Typed(TimeService.class)
-@ApplicationScoped
-class Impl implements TimeService {
+        @SuppressWarnings("unused")
+        Impl()
+        {
+            // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
+            throw new UnsupportedOperationException();
+        }
 
-private final ConfigService confSvc;
+        @Inject
+        @SuppressWarnings("unused") // Note: To be called by CDI.
+        Impl(ConfigService confSvc)
+        {
+            this.confSvc = confSvc;
+            this.cachedAppLocalNow = new AtomicReference<>();
+        }
 
-@SuppressWarnings("unused")
-Impl() {
-    // Note: The default constructor exists only to allow NetBeans to recognize the CDI bean.
-    throw new UnsupportedOperationException();
-}
+        @Override
+        public LocalDateTime getAppLocalNow()
+        {
+            cachedAppLocalNow.getAndUpdate(c -> c != null ? c : calculateAppLocalNow());
+            return cachedAppLocalNow.get();
+        }
 
-@Inject
-@SuppressWarnings("unused")
-Impl(ConfigService confSvc) {
-    this.confSvc = confSvc;
-}
+        LocalDateTime calculateAppLocalNow()
+        {
+            return confSvc.getFrozenTime().orElseGet(this::getRealLocalNow);
+        }
 
-/**
- {@inheritDoc}
+        @Override
+        public LocalDateTime getRealLocalNow()
+        {
+            return getRealOffsetNow()
+                .toLocalDateTime()
+                .truncatedTo(ChronoUnit.SECONDS);
+        }
 
- @since 3.0.0
- */
-@Override
-public LocalDateTime getSafiTime() {
-    return confSvc.getFrozenTime().orElseGet(this::getLocalNow);
-}
-
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Override
-public OffsetDateTime getOffsetNow() {
-    return getExactlyOffsetNow().truncatedTo(ChronoUnit.SECONDS);
-}
-
-/**
- {@inheritDoc}
-
- @return current time, in that case timezone is UTC.
- @since 3.0.0
- */
-@Override
-public LocalDateTime getLocalNow() {
-    return getExactlyLocalNow().truncatedTo(ChronoUnit.SECONDS);
-}
-
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Override
-public OffsetDateTime getExactlyOffsetNow() {
-    return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized());
-}
-
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Override
-public LocalDateTime getExactlyLocalNow() {
-    return getExactlyOffsetNow().toLocalDateTime();
-}
-
-}
-
+        @Override
+        public OffsetDateTime getRealOffsetNow()
+        {
+            return OffsetDateTime.ofInstant(Instant.now(), ZoneOffset.UTC.normalized())
+                .truncatedTo(ChronoUnit.SECONDS);
+        }
+    }
 }

@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2025, Project-K
+ * Copyright 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -34,71 +34,64 @@ import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
 /**
- Producer of the {@link Jsonb}. Instances are created only once, reducing construction costs.
+ <i>Jakarta CDI</i> producer of the {@link Jsonb}.
+
+ Instance is created only once, reducing construction costs.
 
  @author riru
  @version 3.0.0
  @since 3.0.0
  */
-public interface JsonbProducer {
+public interface JsonbProducer
+{
+    /**
+     Produce the {@code Jsonb}.
 
-/**
- Produce the {@code Jsonb}.
+     @return the {@code Jsonb}
+     @since 3.0.0
+     */
+    Jsonb produce();
 
- @return the {@code Jsonb}
- @since 3.0.0
- */
-Jsonb produce();
+    /**
+     Close the produced {@code Jsonb} if disposed.
 
-/**
- Close the produced {@code Jsonb} if disposed.
+     @param jsonb the produced {@code Jsonb}
+     @since 3.0.0
+     */
+    void close(Jsonb jsonb);
 
- @param jsonb the produced {@code Jsonb}
- @since 3.0.0
- */
-void close(Jsonb jsonb);
+    /**
+     Internal Implementation.
 
-/**
- Implements of the {@code JsonbProducer}.
+     @hidden
+     */
+    @Typed(JsonbProducer.class)
+    @Dependent
+    class Impl implements JsonbProducer
+    {
+        @SuppressWarnings("unused") // Note: To be called by CDI.
+        Impl() {}
 
- @author riru
- @version 3.0.0
- @since 3.0.0
- */
-@Typed(JsonbProducer.class)
-@Dependent
-class Impl implements JsonbProducer {
+        @Produces
+        @ApplicationScoped
+        @Override
+        public Jsonb produce()
+        {
+            return JsonbBuilder.create();
+        }
 
-@SuppressWarnings("unused")
-Impl() {
-}
-
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Produces
-@ApplicationScoped
-@Override
-public Jsonb produce() {
-    return JsonbBuilder.create();
-}
-
-/**
- {@inheritDoc}
-
- @since 3.0.0
- */
-@Override
-public void close(@Disposes Jsonb jsonb) {
-    try {
-        jsonb.close();
-    } catch (Exception ex) {
-        // Do nothing. Because not expected to occur the exception.
+        @Override
+        public void close(@Disposes Jsonb jsonb)
+        {
+            try
+            {
+                jsonb.close();
+            }
+            catch (Exception ignore)
+            {
+                // Do nothing.
+                // Note: No expected to occur the exception.
+            }
+        }
     }
-}
-
-}
-
 }

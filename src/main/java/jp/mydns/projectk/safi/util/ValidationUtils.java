@@ -1,15 +1,15 @@
 /*
- * Copyright (c) 2025, Project-K
+ * Copyright 2025, Project-K
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -33,17 +33,16 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 /**
- * Utilities for Jakarta Bean Validation.
- *
- * <p>
- * Implementation requirements.
- * <ul>
- * <li>This class has not variable field member and it has all method is static.</li>
- * </ul>
- *
- * @author riru
- * @version 3.0.0
- * @since 3.0.0
+ Utilities for Jakarta Bean Validation.
+
+ Implementation requirements.
+ <ul>
+     <li>This class has not variable field member and it has all method is static.</li>
+ </ul>
+
+ @author riru
+ @version 3.0.0
+ @since 3.0.0
  */
 public class ValidationUtils {
 
@@ -51,16 +50,16 @@ public class ValidationUtils {
     }
 
     /**
-     * Verify that the value is valid using {@code jakarta.validation.Validator}.
-     *
-     * @param <T> value type
-     * @param value value that to be validated
-     * @param validator the {@code Validator}
-     * @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
-     * @return value as is that received by argument {@code value}
-     * @throws NullPointerException if any argument is {@code null}
-     * @throws ConstraintViolationException if {@code value} is invalid
-     * @since 3.0.0
+     Verify that the value is valid using {@code jakarta.validation.Validator}.
+
+     @param <T> value type
+     @param value value that to be validated
+     @param validator the {@code Validator}
+     @param groups validation groups. Use the {@link jakarta.validation.groups.Default} if empty.
+     @return value as is that received by argument {@code value}
+     @throws NullPointerException if any argument is {@code null}
+     @throws ConstraintViolationException if {@code value} is invalid
+     @since 3.0.0
      */
     public static <T> T requireValid(T value, Validator validator, Class<?>... groups) {
         Objects.requireNonNull(value);

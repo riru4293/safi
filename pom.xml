@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright (c) 2025, riru
+Copyright 2025, Project-K
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
-* Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -24,12 +24,12 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 -->
-<project xmlns="http://maven.apache.org/POM/4.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.1.0 http://maven.apache.org/xsd/maven-4.1.0.xsd">
-    <modelVersion>4.1.0</modelVersion>
+<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <groupId>jp.mydns.project-k</groupId>
     <artifactId>safi</artifactId>
-    <version>3.0.0-M8</version>
+    <version>3.0.0-M9</version>
     <packaging>war</packaging>
     <name>SAFI-${project.version}</name>
 
@@ -37,45 +37,43 @@ POSSIBILITY OF SUCH DAMAGE.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.implicit>none</maven.compiler.implicit>
-        <failOnMissingWebXml>false</failOnMissingWebXml>
         <jacocoArgLine/>
 
-
-        <!-- Jakarta EE library versions must match GlassFish 7.0.25 -->
-        <version.jakartaee>10.0.0</version.jakartaee>
+        <!-- GlassFish 8.0.0 library version -->
+        <version.jakartaee>11.0.0</version.jakartaee>
         <version.jakartaee-lang-model>4.1.0</version.jakartaee-lang-model>
-        <version.eclipselink>4.0.5</version.eclipselink>
-        <version.hibernate-validator>8.0.2.Final</version.hibernate-validator>
-        <version.expressly>5.0.0</version.expressly>
+        <version.eclipselink>5.0.0-B13</version.eclipselink>
+        <version.hibernate-validator>9.1.0.Final</version.hibernate-validator>
+        <version.expressly>6.0.0</version.expressly>
         <version.yasson>3.0.4</version.yasson>
         <version.microprofile-config>3.1</version.microprofile-config>
+        <version.helidon-config>4.3.3</version.helidon-config>
 
+        <!-- Additional library versions -->
+        <version.swagger>2.2.40</version.swagger>
+        <version.swagger-ui>5.30.2</version.swagger-ui>
+        <version.junit>6.0.1</version.junit>
+        <version.mockito>5.20.0</version.mockito>
+        <version.assertj>3.27.6</version.assertj>
+        <version.weld-junit5>5.0.3.Final</version.weld-junit5>
+        <version.h2database>2.4.240</version.h2database>
+        <version.jacoco>0.8.14</version.jacoco>
+        <version.sonar>13.4.0.3221</version.sonar>
+        <version.jersey>3.1.11</version.jersey>
 
-        <!-- Library versions -->
-        <version.slf4j>2.0.17</version.slf4j>
-        <version.helidon-config>4.2.3</version.helidon-config>
-        <version.swagger>2.2.34</version.swagger>
-        <version.swagger-ui>5.25.3</version.swagger-ui>
-        <version.junit>5.13.3</version.junit>
-        <version.mockito>5.18.0</version.mockito>
-        <version.assertj>3.27.3</version.assertj>
-        <version.h2database>2.3.232</version.h2database>
-        <version.jacoco>0.8.13</version.jacoco>
-        <version.sonar>5.1.0.4751</version.sonar>
-        <version.weld-junit5>5.0.1.Final</version.weld-junit5>
-
-
-        <!-- Versions for Apache Maven Plugins -->
-        <version.maven-antrun>3.1.0</version.maven-antrun>
+        <!-- Maven Plugin versions -->
+        <version.maven-antrun>3.2.0</version.maven-antrun>
         <version.maven-clean>3.5.0</version.maven-clean>
         <version.maven-resources>3.3.1</version.maven-resources>
-        <version.maven-compiler>3.14.0</version.maven-compiler>
-        <version.maven-dependency>3.8.1</version.maven-dependency>
-        <version.maven-surefire>3.5.3</version.maven-surefire>
-        <version.maven-failsafe>3.5.3</version.maven-failsafe>
-        <version.maven-war>3.4.0</version.maven-war>
-        <version.maven-javadoc>3.11.2</version.maven-javadoc>
+        <version.maven-compiler>3.14.1</version.maven-compiler>
+        <version.maven-dependency>3.9.0</version.maven-dependency>
+        <version.maven-surefire>3.5.4</version.maven-surefire>
+        <version.maven-failsafe>3.5.4</version.maven-failsafe>
+        <version.maven-war>3.5.0</version.maven-war>
+        <version.maven-javadoc>3.12.0</version.maven-javadoc>
         <version.maven-install>3.1.4</version.maven-install>
+        <version.maven-source>3.4.0</version.maven-source>
+        <version.maven-deploy>3.1.4</version.maven-deploy>
     </properties>
 
     <licenses>
@@ -130,6 +128,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${version.slf4j}</version>
+            <scope>compile</scope>
         </dependency>
 
         <!-- SLF4J implemented by JUL(java.util.logging.Logger) -->
@@ -138,6 +137,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
             <version>${version.slf4j}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Log4j implemented over SLF4J -->
@@ -146,6 +146,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.slf4j</groupId>
             <artifactId>log4j-over-slf4j</artifactId>
             <version>${version.slf4j}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Apache Commons Logging implemented over SLF4J -->
@@ -154,6 +155,7 @@ POSSIBILITY OF SUCH DAMAGE.
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${version.slf4j}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- Swagger Annotations for Jakarta EE -->
@@ -254,7 +256,6 @@ POSSIBILITY OF SUCH DAMAGE.
             <version>${version.mockito}</version>
             <scope>test</scope>
         </dependency>
-        <!-- License: MIT -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -295,7 +296,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-common</artifactId>
-            <version>3.1.9</version>
+            <version>${version.jersey}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -373,6 +374,20 @@ POSSIBILITY OF SUCH DAMAGE.
                     <version>${version.maven-failsafe}</version>
                 </plugin>
 
+                <!-- License: ASL-2.0 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${version.maven-source}</version>
+                </plugin>
+
+                <!-- License: ASL-2.0 -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${version.maven-deploy}</version>
+                </plugin>
+
                 <!-- Code coverage measurement -->
                 <!-- License: EPL-2.0 -->
                 <plugin>
@@ -447,7 +462,7 @@ POSSIBILITY OF SUCH DAMAGE.
                         </executions>
                     </plugin>
 
-                    <!-- Report code coverage. -->
+                    <!-- Report code coverage -->
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
@@ -488,7 +503,7 @@ POSSIBILITY OF SUCH DAMAGE.
                                 <exclude>**/trial/**</exclude>
                             </sourceFileExcludes>
                             <links>
-                                <link>https://jakarta.ee/specifications/platform/10/apidocs</link>
+                                <link>https://jakarta.ee/specifications/platform/11/apidocs</link>
                             </links>
                         </configuration>
                         <executions>
@@ -506,7 +521,7 @@ POSSIBILITY OF SUCH DAMAGE.
                         </executions>
                     </plugin>
 
-                    <!-- Make OpenAPI JSON. -->
+                    <!-- Make OpenAPI JSON -->
                     <plugin>
                         <groupId>io.swagger.core.v3</groupId>
                         <artifactId>swagger-maven-plugin-jakarta</artifactId>
@@ -550,7 +565,7 @@ POSSIBILITY OF SUCH DAMAGE.
                         </executions>
                     </plugin>
 
-                    <!-- Replace URL of Swagger UI to OpenAPI JSON. -->
+                    <!-- Replace URL of Swagger UI to OpenAPI JSON -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
@@ -572,13 +587,22 @@ POSSIBILITY OF SUCH DAMAGE.
                         </executions>
                     </plugin>
 
-
-                    <!-- Create the war package. -->
+                    <!-- Create the war package -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-war-plugin</artifactId>
                         <executions>
-                            <!-- Appends Swagger UI. -->
+                            <!-- Appends a Swagger UI -->
+                            <!--
+                                This configuration deploy Swagger UI's static resources to the
+                                /swagger directory within the WAR file. This ensures that the UI
+                                assets required for API browsing are automatically included during
+                                the packaging process.
+
+                                ja: 本設定は Swagger UI の静的リソースを WAR ファイル内の /swagger
+                                    ディレクトリに配備するものです。これにより、API を閲覧するために
+                                    必要な UI アセットを自動的にパッケージングに含めることができます。
+                            -->
                             <execution>
                                 <id>copy-swagger-ui</id>
                                 <phase>package</phase>
@@ -598,7 +622,18 @@ POSSIBILITY OF SUCH DAMAGE.
                                 </configuration>
                             </execution>
 
-                            <!-- Appends JavaDoc. -->
+                            <!-- Appends a JavaDoc -->
+                            <!--
+                                This configuration deploy the generated JavaDoc to the /javadoc
+                                directory within the WAR file. This ensures that the API reference
+                                documentation is automatically included during the packaging
+                                process.
+
+                                ja: 本設定はビルド時に生成された JavaDoc を WAR ファイル内の
+                                    /javadoc ディレクトリに配備するものです。
+                                    これにより、API リファレンスドキュメント
+                                    を自動的にパッケージングに含めることができます。
+                            -->
                             <execution>
                                 <id>copy-javadoc</id>
                                 <phase>package</phase>
@@ -618,7 +653,18 @@ POSSIBILITY OF SUCH DAMAGE.
                                 </configuration>
                             </execution>
 
-                            <!-- Appends OpenAPI JSON. -->
+                            <!-- Appends an OpenAPI JSON -->
+                            <!--
+                                This configuration deploy the generated openapi.json into the
+                                /swagger directory within the WAR file. This ensures that the API
+                                definition file, required by tools like Swagger UI, is automatically
+                                included during the packaging process.
+
+                                ja: 本設定はビルド時に生成された openapi.json を WAR ファイル内の
+                                    /swagger ディレクトリに配備するものです。
+                                    これにより、 Swagger UI 等から参照する API 定義ファイルを
+                                    自動的にパッケージングに含めることができます。
+                            -->
                             <execution>
                                 <id>copy-openapi-json</id>
                                 <phase>package</phase>
