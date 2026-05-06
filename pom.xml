@@ -46,7 +46,6 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.hibernate-validator>9.1.0.Final</version.hibernate-validator>
         <version.expressly>6.0.0</version.expressly>
         <version.yasson>3.0.4</version.yasson>
-        <version.slf4j>2.0.17</version.slf4j>
         <version.microprofile-config>3.1</version.microprofile-config>
         <version.helidon-config>4.3.3</version.helidon-config>
 
