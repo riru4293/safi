@@ -1,31 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-Copyright 2025, Project-K
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-
-1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer.
-2. Redistributions in binary form must reproduce the above copyright notice,
-   this list of conditions and the following disclaimer in the documentation
-   and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
--->
-<project xmlns="https://maven.apache.org/POM/4.0.0" xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- Copyright 2025, Project-K -->
+<!-- SPDX-License-Identifier: BSD-2-Clause -->
+<project
+    xmlns="https://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
     <modelVersion>4.0.0</modelVersion>
     <groupId>jp.mydns.project-k</groupId>
     <artifactId>safi</artifactId>
@@ -37,7 +17,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
         <maven.compiler.implicit>none</maven.compiler.implicit>
-        <jacocoArgLine/>
+        <jacocoArgLine />
 
         <!-- GlassFish 8.0.0 library version -->
         <version.jakartaee>11.0.0</version.jakartaee>
@@ -50,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
         <version.helidon-config>4.3.3</version.helidon-config>
 
         <!-- Additional library versions -->
+        <version.slf4j>2.0.17</version.slf4j>
         <version.swagger>2.2.40</version.swagger>
         <version.swagger-ui>5.30.2</version.swagger-ui>
         <version.junit>6.0.1</version.junit>
@@ -171,7 +152,8 @@ POSSIBILITY OF SUCH DAMAGE.
         <!-- License: EPL-2.0 -->
         <dependency>
             <groupId>org.eclipse.persistence</groupId>
-            <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
+            <artifactId
+            >org.eclipse.persistence.jpa.modelgen.processor</artifactId>
             <version>${version.eclipselink}</version>
             <scope>provided</scope>
         </dependency>
@@ -433,7 +415,8 @@ POSSIBILITY OF SUCH DAMAGE.
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>"@{jacocoArgLine}" "-Dfile.encoding=${project.build.sourceEncoding}" "-javaagent:${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar" "-XX:+EnableDynamicAgentLoading" "-Xshare:off"</argLine>
+                    <argLine
+                    >"@{jacocoArgLine}" "-Dfile.encoding=${project.build.sourceEncoding}" "-javaagent:${settings.localRepository}/org/mockito/mockito-core/${version.mockito}/mockito-core-${version.mockito}.jar" "-XX:+EnableDynamicAgentLoading" "-Xshare:off"</argLine>
                 </configuration>
             </plugin>
         </plugins>
@@ -450,7 +433,8 @@ POSSIBILITY OF SUCH DAMAGE.
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
-                            <argLine>@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
+                            <argLine
+                            >@{jacocoArgLine} -Dfile.encoding=${project.build.sourceEncoding}</argLine>
                         </configuration>
                         <executions>
                             <execution>
@@ -503,7 +487,8 @@ POSSIBILITY OF SUCH DAMAGE.
                                 <exclude>**/trial/**</exclude>
                             </sourceFileExcludes>
                             <links>
-                                <link>https://jakarta.ee/specifications/platform/11/apidocs</link>
+                                <link
+                                >https://jakarta.ee/specifications/platform/11/apidocs</link>
                             </links>
                         </configuration>
                         <executions>
@@ -514,7 +499,8 @@ POSSIBILITY OF SUCH DAMAGE.
                                 </goals>
                                 <configuration>
                                     <additionalOptions>
-                                        <additionalOption>-Xdoclint:all,-missing</additionalOption>
+                                        <additionalOption
+                                        >-Xdoclint:all,-missing</additionalOption>
                                     </additionalOptions>
                                 </configuration>
                             </execution>
@@ -529,7 +515,8 @@ POSSIBILITY OF SUCH DAMAGE.
                             <outputPath>${project.build.directory}</outputPath>
                             <prettyPrint>TRUE</prettyPrint>
                             <contextId>${project.build.finalName}</contextId>
-                            <resourcePackages>jp.mydns.projectk.safi</resourcePackages>
+                            <resourcePackages
+                            >jp.mydns.projectk.safi</resourcePackages>
                         </configuration>
                         <executions>
                             <execution>
@@ -559,7 +546,8 @@ POSSIBILITY OF SUCH DAMAGE.
                                             <artifactId>swagger-ui</artifactId>
                                         </artifactItem>
                                     </artifactItems>
-                                    <outputDirectory>${project.build.directory}/swagger-ui</outputDirectory>
+                                    <outputDirectory
+                                    >${project.build.directory}/swagger-ui</outputDirectory>
                                 </configuration>
                             </execution>
                         </executions>
@@ -578,9 +566,11 @@ POSSIBILITY OF SUCH DAMAGE.
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <replace file="${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${version.swagger-ui}/swagger-initializer.js"
-                                                 token="https://petstore.swagger.io/v2/swagger.json"
-                                                 value="openapi.json"/>
+                                        <replace
+                                            file="${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${version.swagger-ui}/swagger-initializer.js"
+                                            token="https://petstore.swagger.io/v2/swagger.json"
+                                            value="openapi.json"
+                                        />
                                     </target>
                                 </configuration>
                             </execution>
@@ -612,7 +602,8 @@ POSSIBILITY OF SUCH DAMAGE.
                                 <configuration>
                                     <webResources>
                                         <resource>
-                                            <directory>${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${version.swagger-ui}</directory>
+                                            <directory
+                                            >${project.build.directory}/swagger-ui/META-INF/resources/webjars/swagger-ui/${version.swagger-ui}</directory>
                                             <includes>
                                                 <include>**/*.*</include>
                                             </includes>
@@ -643,7 +634,8 @@ POSSIBILITY OF SUCH DAMAGE.
                                 <configuration>
                                     <webResources>
                                         <resource>
-                                            <directory>${project.build.directory}/reports/apidocs</directory>
+                                            <directory
+                                            >${project.build.directory}/reports/apidocs</directory>
                                             <includes>
                                                 <include>**/*.*</include>
                                             </includes>
@@ -674,7 +666,8 @@ POSSIBILITY OF SUCH DAMAGE.
                                 <configuration>
                                     <webResources>
                                         <resource>
-                                            <directory>${project.build.directory}</directory>
+                                            <directory
+                                            >${project.build.directory}</directory>
                                             <includes>
                                                 <include>openapi.json</include>
                                             </includes>
