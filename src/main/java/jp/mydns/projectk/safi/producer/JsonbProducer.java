@@ -3,72 +3,72 @@
 package jp.mydns.projectk.safi.producer;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.context.Dependent;
 import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
-import jakarta.enterprise.inject.Typed;
 import jakarta.json.bind.Jsonb;
 import jakarta.json.bind.JsonbBuilder;
 
 /**
- <i>Jakarta CDI</i> producer of the {@link Jsonb}.
-
- Instance is created only once, reducing construction costs.
-
- @author riru
- @version 3.0.0
- @since 3.0.0
+ * <i>Jakarta CDI</i> producer implementations for application-specific
+ * {@link Jsonb}.
+ *
+ * <p>
+ * This class provides CDI producers for the application-specific {@code Jsonb}.
+ * Centralizing {@code Jsonb} instantiation ensures consistent usage across the
+ * application.
+ * 
+ * <p>
+ * Only a single instance is created, reducing construction overhead.
+ * 
+ * @author riru
+ * @version 3.0.0
+ * @since 3.0.0
  */
-public interface JsonbProducer
-{
-    /**
-     Produce the {@code Jsonb}.
-
-     @return the {@code Jsonb}
-     @since 3.0.0
-     */
-    Jsonb produce();
+@ApplicationScoped
+public class JsonbProducer {
 
     /**
-     Close the produced {@code Jsonb} if disposed.
-
-     @param jsonb the produced {@code Jsonb}
-     @since 3.0.0
+     * Create a new instance of {@code JsonbProducer}.
+     * 
+     * <p>
+     * This constructor is intended solely for CDI instantiation.
+     * 
+     * @since 3.0.0
      */
-    void close(Jsonb jsonb);
+    public JsonbProducer() {
+    }
 
     /**
-     Internal Implementation.
-
-     @hidden
+     * Produce the {@code Jsonb}.
+     * 
+     * @return the {@code Jsonb}
+     * @since 3.0.0
      */
-    @Typed(JsonbProducer.class)
-    @Dependent
-    class Impl implements JsonbProducer
-    {
-        @SuppressWarnings("unused") // Note: To be called by CDI.
-        Impl() {}
+    @Produces
+    @ApplicationScoped
+    public Jsonb produce() {
+        /* Note:
+            In the future, we may be able to create customized instances,
+            such as by specifying the JSON serialization format.
+        */
+        return JsonbBuilder.create();
+    }
 
-        @Produces
-        @ApplicationScoped
-        @Override
-        public Jsonb produce()
-        {
-            return JsonbBuilder.create();
-        }
-
-        @Override
-        public void close(@Disposes Jsonb jsonb)
-        {
-            try
-            {
-                jsonb.close();
-            }
-            catch (Exception ignore)
-            {
-                // Do nothing.
-                // Note: No expected to occur the exception.
-            }
+    /**
+     * Close the produced {@code Jsonb} if disposed.
+     * 
+     * @param jsonb the produced {@code Jsonb}
+     * @since 3.0.0
+     */
+    public void close(@Disposes Jsonb jsonb) {
+        try {
+            jsonb.close();
+        } catch (Exception ignore) {
+            /* Note:
+                While exceptions are not expected,
+                they will be intentionally ignored to
+                eliminate the possibility of unnecessary logging.
+            */
         }
     }
 }
