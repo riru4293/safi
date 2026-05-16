@@ -1,38 +1,15 @@
-/*
- * Copyright 2025, Project-K
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- *
- * 1. Redistributions of source code must retain the above copyright notice, this
- *    list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- */
+// Copyright 2025, Project-K
+// SPDX-License-Identifier: BSD-2-Clause
 package jp.mydns.projectk.safi.value;
 
-import jakarta.json.Json;
-import jakarta.json.JsonValue;
 import jakarta.json.bind.annotation.JsonbTypeDeserializer;
 import jakarta.json.bind.annotation.JsonbTypeSerializer;
 import jakarta.json.bind.serializer.DeserializationContext;
 import jakarta.json.bind.serializer.JsonbDeserializer;
 import jakarta.json.bind.serializer.JsonbSerializer;
 import jakarta.json.bind.serializer.SerializationContext;
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 import jakarta.json.stream.JsonGenerator;
 import jakarta.json.stream.JsonParser;
 import java.io.IOException;
@@ -44,149 +21,156 @@ import java.lang.reflect.Type;
 import java.util.Objects;
 
 /**
- Serializable JSON value. It is wrapper of the {@link JsonValue}.
-
- Implementation requirements.
- <ul>
-     <li>This class is immutable and thread-safe.</li>
-     <li>This class is serializable.</li>
- </ul>
-
- @author riru
- @version 3.0.0
- @since 3.0.0
+ * Serializable wrapper for {@link JsonValue} with support for <i>Jakarta JSON
+ * Binding</i> serialization and deserialization.
+ *
+ * This class wraps any {@code JsonValue} and makes it compatible with
+ * <i>Jakarta JSON Binding</i> serialization and deserialization. This allows
+ * {@code JsonValue} to be used in environments where object serialization is
+ * required.
+ *
+ * Serialization support is provided through custom implementations of
+ * {@link JsonbSerializer} and {@link JsonbDeserializer}.
+ *
+ * Implementation requirements:
+ * <ul>
+ * <li>This class is immutable and thread-safe.</li>
+ * <li>This class is serializable.</li>
+ * </ul>
+ *
+ * @author riru
+ * @version 3.0.0
  */
+@JsonbTypeSerializer(JsonValueWrapper.Serializer.class)
 @JsonbTypeDeserializer(JsonValueWrapper.Deserializer.class)
-public interface JsonValueWrapper extends Serializable
-{
-    /**
-     Construct with {@code JsonValue}.
+public final class JsonValueWrapper implements Serializable {
+    @java.io.Serial
+    private static final long serialVersionUID = 6337206561334398852L;
 
-     @param value an any {@code JsonValue}
-     @return the {@code JsonValueWrapper} wrapped {@code value}
-     @throws NullPointerException if {@code value} is {@code null}
-     @since 3.0.0
+    // Note: Mutable definition for deserialization purposes, but immutable.
+    private transient JsonValue value;
+
+    /**
+    * Creates a wrapper for the specified {@code JsonValue}.
+     * 
+    * @param any the {@code JsonValue} to wrap
+    * @return a {@code JsonValueWrapper} that wraps {@code any}
+     * @throws NullPointerException if {@code any} is {@code null}
      */
-    static JsonValueWrapper of(JsonValue value)
-    {
-        return new Deserializer.Impl(Objects.requireNonNull(value));
+    public static JsonValueWrapper of(JsonValue any) {
+        return new JsonValueWrapper(Objects.requireNonNull(any));
+    }
+
+    private JsonValueWrapper(JsonValue value) {
+        this.value = Objects.requireNonNull(value);
     }
 
     /**
-     Get unwrapped value.
-
-     @return unwrapped value
-     @since 3.0.0
+    * Returns the {@code JsonValue} wrapped by this class.
+     * 
+     * @return the unwrapped {@code JsonValue}. Never {@code null}.
      */
-    JsonValue unwrap();
+    public JsonValue unwrap() {
+        return value;
+    }
 
     /**
-     JSON deserializer for {@code JsonValueWrapper}.
-
-     @author riru
-     @version 3.0.0
-     @since 3.0.0
+     * Returns a string representation.
+     * 
+     * @return a string representation
      */
-    class Deserializer implements JsonbDeserializer<JsonValueWrapper>
-    {
-        /**
-         @hidden
-        */
-        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
-        Deserializer() {}
+    @Override
+    public String toString() {
+        return "JsonValueWrapper{" + "value=" + value.toString() + '}';
+    }
 
-        /**
-         {@inheritDoc}
+    @java.io.Serial
+    private void writeObject(ObjectOutputStream stream) throws IOException {
+        stream.defaultWriteObject();
+        stream.writeUTF(value.toString());
+    }
 
-         @since 3.0.0
-         */
-        @Override
-        public JsonValueWrapper deserialize(JsonParser jp, DeserializationContext dc, Type type)
-        {
-            return new Impl(dc.deserialize(JsonValue.class, jp));
-        }
+    @java.io.Serial
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+        stream.defaultReadObject();
 
-        @JsonbTypeSerializer(JsonValueWrapper.Serializer.class)
-        private static class Impl implements JsonValueWrapper
-        {
-            @java.io.Serial
-            private static final long serialVersionUID = 6337206561334398852L;
-
-            private transient JsonValue value; // Note: Mutable definition for deserialization purposes, but immutable.
-
-            private Impl(JsonValue value)
-            {
-                this.value = Objects.requireNonNull(value);
-            }
-
-            @Override
-            public JsonValue unwrap()
-            {
-                return value;
-            }
-
-            @Override
-            public int hashCode()
-            {
-                return value.hashCode();
-            }
-
-            @Override
-            public boolean equals(Object other)
-            {
-                return other instanceof JsonValueWrapper o && value.equals(o.unwrap());
-            }
-
-            @Override
-            public String toString()
-            {
-                return value.toString();
-            }
-
-            @java.io.Serial
-            private void writeObject(ObjectOutputStream stream) throws IOException
-            {
-                stream.defaultWriteObject();
-                stream.writeUTF(value.toString());
-            }
-
-            @java.io.Serial
-            private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException
-            {
-                stream.defaultReadObject();
-
-                try (var r = Json.createReader(new StringReader(stream.readUTF())))
-                {
-                    value = r.readValue();
-                }
-            }
+        try (var r = Json.createReader(new StringReader(stream.readUTF()))) {
+            value = r.readValue();
         }
     }
 
     /**
-     JSON serializer for {@code JsonValueWrapper}.
-
-     @author riru
-     @version 3.0.0
-     @since 3.0.0
+     * JSON deserializer for {@code JsonValueWrapper}.
+     * 
+     * <p>
+    * Custom deserializer for {@code JsonValueWrapper} using
+    * <i>Jakarta JSON Binding</i>. It reads JSON data, deserializes it as a
+    * {@code JsonValue}, and wraps it in a {@code JsonValueWrapper}.
+     * 
+     * @author riru
+     * @version 3.0.0
      */
-    class Serializer implements JsonbSerializer<JsonValueWrapper>
-    {
+    public static class Deserializer implements JsonbDeserializer<JsonValueWrapper> {
         /**
-         @hidden
-        */
-        @SuppressWarnings("unused") // Note: To be called by Jakarta JSON Binding.
-        Serializer() {}
+         * Default constructor.
+         *
+         * Required by <i>Jakarta JSON Binding</i> to instantiate the deserializer.
+         */
+        public Deserializer() {
+        }
 
         /**
-         {@inheritDoc}
-
-         @since 3.0.0
+         * Deserializes JSON content into a {@code JsonValueWrapper}.
+         * 
+         * The deserialized {@code JsonValue} is wrapped and returned.
+         * 
+         * @param jp   the {@code JsonParser} used to read JSON content
+         * @param dc   the {@code DeserializationContext} providing context for
+         *             deserialization
+         * @param type the {@code Type} of the object to deserialize
+         * @return a {@code JsonValueWrapper} instance containing the deserialized
+         *         {@code JsonValue}
          */
         @Override
-        public void serialize(JsonValueWrapper obj, JsonGenerator generator, SerializationContext ctx)
-        {
-            generator.write(obj.unwrap());
+        public JsonValueWrapper deserialize(JsonParser jp, DeserializationContext dc, Type type) {
+            return new JsonValueWrapper(dc.deserialize(JsonValue.class, jp));
+        }
+    }
+
+    /**
+     * JSON serializer for {@code JsonValueWrapper}.
+     *
+     * <p>
+    * Custom serializer for {@code JsonValueWrapper} using
+    * <i>Jakarta JSON Binding</i>. It serializes the wrapped
+    * {@code JsonValue} to JSON.
+     *
+     * @author riru
+     * @version 3.0.0
+     */
+    public static class Serializer implements JsonbSerializer<JsonValueWrapper> {
+        /**
+         * Default constructor.
+         *
+         * Required by <i>Jakarta JSON Binding</i> to instantiate the serializer.
+         */
+        public Serializer() {
+        }
+
+        /**
+         * Serializes a {@code JsonValueWrapper} to JSON.
+         * 
+         * Unwraps the given {@code JsonValueWrapper} and writes its
+         * {@code JsonValue} to the JSON output.
+         * 
+         * @param obj the {@code JsonValueWrapper} instance to serialize
+         * @param jg  the {@code JsonGenerator} used to write JSON content
+         * @param ctx the {@code SerializationContext} providing context for
+         *            serialization
+         */
+        @Override
+        public void serialize(JsonValueWrapper obj, JsonGenerator jg, SerializationContext ctx) {
+            jg.write(obj.unwrap());
         }
     }
 }
